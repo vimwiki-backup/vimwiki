@@ -1,0 +1,7 @@
+\.pyc$
+\.gz$
+\.zip$
+\.vba$
+^test/wiki$
+^test/html$
+^src/doc/tags$
