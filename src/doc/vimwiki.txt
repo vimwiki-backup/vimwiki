@@ -1770,11 +1770,6 @@ Maxim Kim.
 14. Changelog                                              *vimwiki-changelog*
 
 dev~
-    * Issue 200: Generated HTML for todo lists does not show completion status
-      the fix relies on CSS, thus your old stylesheets need to be updated!;
-      may not work in obsolete browsers or font-deficient systems.
-    * Issue 199: Generated HTML for sublists is invalid.
-    * NEW: Added <Leader>wh mapping to call |:Vimwiki2HTML|
     * Issue 72: Do not convert again for unchanged file. |:VimwikiAll2HTML|
       converts only changed wiki files.
     * Issue 117: |VimwikiDiaryIndex| command that opens diary index wiki page.
@@ -1814,6 +1809,12 @@ dev~
       strange.
     * Issue 182: Browser command does not quote url.
     * Issue 184: Wrong foldlevel in some cases.
+    * Issue 196: vim: modeline bug -- syn=vim doesn't work.
+    * Issue 200: Generated HTML for todo lists does not show completion status
+      the fix relies on CSS, thus your old stylesheets need to be updated!;
+      may not work in obsolete browsers or font-deficient systems.
+    * Issue 199: Generated HTML for sublists is invalid.
+    * NEW: Added <Leader>wh mapping to call |:Vimwiki2HTML|
 
 
 1.1.1~

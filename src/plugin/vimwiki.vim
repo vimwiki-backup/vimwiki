@@ -96,8 +96,11 @@ function! s:setup_buffer_enter() "{{{
 
   " If you have
   "     au GUIEnter * VimwikiIndex
-  " in your vimrc the next line is essential.
-  setf vimwiki
+  " Then change it to
+  "     au GUIEnter * nested VimwikiIndex
+  if &filetype == ''
+    set filetype=vimwiki
+  endif
 
   " Update existed/non-existed links highlighting.
   call vimwiki#highlight_links()
