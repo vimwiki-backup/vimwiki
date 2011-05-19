@@ -20,7 +20,7 @@ let b:undo_ftplugin = "setlocal ".
 " MISC STUFF {{{
 
 setlocal autowriteall
-setlocal commentstring=<!--%s-->
+setlocal commentstring=%%%s
 
 if g:vimwiki_conceallevel && exists("+conceallevel")
   let &conceallevel = g:vimwiki_conceallevel

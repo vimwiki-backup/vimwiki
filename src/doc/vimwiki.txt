@@ -763,9 +763,9 @@ Text started with 4 or more spaces is a blockquote.
 ------------------------------------------------------------------------------
 5.9. Comments                                        *vimwiki-syntax-comments*
 
-Text between <!-- and --> is a comment.
+Text line started with %% is a comment.
 E.g.: >
- <!-- this text would not be in HTML -->
+ %% this text would not be in HTML
 <
 
 
@@ -1750,11 +1750,12 @@ Issues can be filed at http://code.google.com/p/vimwiki/issues .
 
     - Maxim Kim <habamax@gmail.com>
       Original author.
-    - Mikhail Trishchenkov <kriomant(at)gmail.com>
-      Joined in at Dec 2009.
+    - See the http://code.google.com/p/vimwiki/people/list
 
-Vimwiki's website: http://code.google.com/p/vimwiki/
-Vim plugins website: http://www.vim.org/scripts/script.php?script_id=2226
+Web: http://code.google.com/p/vimwiki/
+Mail-List: https://groups.google.com/forum/#!forum/vimwiki
+Vim plugins: http://www.vim.org/scripts/script.php?script_id=2226
+
 
 ... afterword
 
@@ -1810,10 +1811,15 @@ dev~
     * Issue 182: Browser command does not quote url.
     * Issue 184: Wrong foldlevel in some cases.
     * Issue 196: vim: modeline bug -- syn=vim doesn't work.
+    * Issue 199: Generated HTML for sublists is invalid.
     * Issue 200: Generated HTML for todo lists does not show completion status
       the fix relies on CSS, thus your old stylesheets need to be updated!;
       may not work in obsolete browsers or font-deficient systems.
-    * Issue 199: Generated HTML for sublists is invalid.
+    * Issue 205: Block code: highlighting differs from processing. Inline code
+      block {{{ ... }}} is removed. Use `...` instead.
+    * Issue 209: Wild comments slow down html generation. Comments are
+      changed, use %% to comment out entire line.
+    * Issue 210: HTML: para enclose header.
     * NEW: Added <Leader>wh mapping to call |:Vimwiki2HTML|
 
 

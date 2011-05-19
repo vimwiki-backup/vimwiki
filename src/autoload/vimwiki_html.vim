@@ -202,153 +202,6 @@ function! s:delete_html_files(path) "{{{
   endfor
 endfunction "}}}
 
-function! s:remove_comments(lines) "{{{
-
-  " Kind of a Finite State Machine
-  function! s:strip_comment(line, state) "{{{
-    let state = a:state
-    let line = ''
-    let bufline = ''
-    let idx = 0
-    while idx < len(a:line)
-      if state == 'normal'
-        if a:line[idx] == '<'
-          let state = '<'
-        elseif a:line[idx] == '{'
-          let state = '{'
-        elseif a:line[idx] == '`'
-          let state = 'code'
-        endif
-        let bufline .= a:line[idx]
-      elseif state == '<'
-        if a:line[idx] == '!'
-          let state = '<!'
-        elseif a:line[idx] == '{'
-          let state = '{'
-        elseif a:line[idx] == '`'
-          let state = 'code'
-        else
-          let state = 'normal'
-        endif
-        let bufline .= a:line[idx]
-      elseif state == '<!'
-        if a:line[idx] == '-'
-          let state = '<!-'
-        elseif a:line[idx] == '{'
-          let state = '{'
-        elseif a:line[idx] == '`'
-          let state = 'code'
-        else
-          let state = 'normal'
-        endif
-        let bufline .= a:line[idx]
-      elseif state == '<!-'
-        if a:line[idx] == '-'
-          let state = 'comment'
-          let bufline = ''
-        elseif a:line[idx] == '{'
-          let state = '{'
-          let bufline .= a:line[idx]
-        elseif a:line[idx] == '`'
-          let state = 'code'
-          let bufline .= a:line[idx]
-        else
-          let state = 'normal'
-          let bufline .= a:line[idx]
-        endif
-      elseif state == '{'
-        if a:line[idx] == '{'
-          let state = '{{'
-        elseif a:line[idx] == '<'
-          let state = '<'
-        elseif a:line[idx] == '`'
-          let state = 'code'
-        else
-          let state = 'normal'
-        endif
-        let bufline .= a:line[idx]
-      elseif state == '{{'
-        if a:line[idx] == '{'
-          let state = 'pre'
-        elseif a:line[idx] == '<'
-          let state = '<'
-        elseif a:line[idx] == '`'
-          let state = 'code'
-        else
-          let state = 'normal'
-        endif
-        let bufline .= a:line[idx]
-      elseif state == 'comment'
-        if a:line[idx] == '-'
-          let state = '-'
-        endif
-      elseif state == '-'
-        if a:line[idx] == '-'
-          let state = '--'
-        else
-          let state = 'comment'
-        endif
-      elseif state == '--'
-        if a:line[idx] == '>'
-          let state = 'normal'
-          let bufline = ''
-        else
-          let state = 'comment'
-        endif
-      elseif state == 'pre'
-        if a:line[idx] == '}'
-          let state = '}'
-        endif
-        let bufline .= a:line[idx]
-      elseif state == '}'
-        if a:line[idx] == '}'
-          let state = '}}'
-        else
-          let state = 'pre'
-        endif
-        let bufline .= a:line[idx]
-      elseif state == '}}'
-        if a:line[idx] == '}'
-          let state = 'normal'
-        else
-          let state = 'pre'
-        endif
-        let bufline .= a:line[idx]
-      elseif state == 'code'
-        if a:line[idx] == '`'
-          let state = 'normal'
-        endif
-        let bufline .= a:line[idx]
-      endif
-
-      if state == 'normal' || state == 'pre' || state == 'code'
-        let line = line . bufline
-        let bufline = ''
-      endif
-
-      let idx += 1
-    endwhile
-    return [line, state]
-  endfunction "}}}
-
-  let res = []
-  let state = 'normal'
-
-  let idx = 0
-  while idx < len(a:lines)
-    let line = a:lines[idx]
-    let idx += 1
-
-    let [strip_line, state] = s:strip_comment(line, state)
-    if !len(strip_line) && len(line)
-      continue
-    endif
-
-    call add(res, strip_line)
-  endwhile
-  return res
-endfunction "}}}
-
 function! s:mid(value, cnt) "{{{
   return strpart(a:value, a:cnt, len(a:value) - 2 * a:cnt)
 endfunction "}}}
@@ -744,8 +597,6 @@ function! s:process_tags_typefaces(line) "{{{
   let line = s:make_tag(line, g:vimwiki_rxSuperScript, 's:tag_super')
   let line = s:make_tag(line, g:vimwiki_rxSubScript, 's:tag_sub')
   let line = s:make_tag(line, g:vimwiki_rxCode, 's:tag_code')
-  let line = s:make_tag(line, g:vimwiki_rxPreStart.'.\+'.g:vimwiki_rxPreEnd,
-        \ 's:tag_pre')
   return line
 endfunction " }}}
 
@@ -1184,6 +1035,12 @@ function! s:parse_line(line, state) " {{{
 
   let processed = 0
 
+  if !processed
+    if line =~ g:vimwiki_rxComment
+      let processed = 1
+    endif
+  endif
+
   " nohtml -- placeholder
   if !processed
     if line =~ '^\s*%nohtml'
@@ -1277,6 +1134,7 @@ function! s:parse_line(line, state) " {{{
       let state.table = s:close_tag_table(state.table, res_lines)
       let state.pre = s:close_tag_pre(state.pre, res_lines)
       let state.quote = s:close_tag_quote(state.quote, res_lines)
+      let state.para = s:close_tag_para(state.para, res_lines)
 
       let line = s:process_inline_tags(line)
 
@@ -1385,7 +1243,7 @@ function! vimwiki_html#Wiki2HTML(path, wikifile) "{{{
   let wikifile = fnamemodify(a:wikifile, ":p")
   let subdir = vimwiki#subdir(VimwikiGet('path'), wikifile)
 
-  let lsource = s:remove_comments(readfile(wikifile))
+  let lsource = readfile(wikifile)
   let ldest = []
 
   let path = expand(a:path).subdir
