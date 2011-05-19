@@ -169,7 +169,7 @@ hi def VimwikiUnderline gui=underline
 hi def link VimwikiCode PreProc
 hi def link VimwikiCodeT VimwikiCode
 
-hi def link VimwikiNoExistsLink SpellRare
+hi def link VimwikiNoExistsLink SpellBad
 hi def link VimwikiNoExistsLinkT VimwikiNoExistsLink
 
 hi def link VimwikiPre PreProc
