@@ -100,11 +100,12 @@ execute 'syntax match VimwikiSubScriptT /'.g:vimwiki_rxSubScript.'/ contained co
 execute 'syntax match VimwikiCode /'.g:vimwiki_rxCode.'/ contains=VimwikiCodeChar'
 execute 'syntax match VimwikiCodeT /'.g:vimwiki_rxCode.'/ contained contains=VimwikiCodeCharT'
 
+
 " <hr> horizontal rule
 execute 'syntax match VimwikiHR /'.g:vimwiki_rxHR.'/'
 
-execute 'syntax region VimwikiPre start=/'.g:vimwiki_rxPreStart.
-      \ '/ end=/'.g:vimwiki_rxPreEnd.'/'
+execute 'syntax region VimwikiPre start=/^\s*'.g:vimwiki_rxPreStart.
+      \ '/ end=/^\s*'.g:vimwiki_rxPreEnd.'\s*$/'
 
 " List item checkbox
 syntax match VimwikiCheckBox /\[.\?\]/
@@ -131,7 +132,7 @@ execute 'syntax match VimwikiBold #\c<b>.\{-}</b># contains=VimwikiHTMLTag'
 execute 'syntax match VimwikiItalic #\c<i>.\{-}</i># contains=VimwikiHTMLTag'
 execute 'syntax match VimwikiUnderline #\c<u>.\{-}</u># contains=VimwikiHTMLTag'
 
-syntax region VimwikiComment start='<!--' end='-->'
+execute 'syntax match VimwikiComment /'.g:vimwiki_rxComment.'/'
 
 if g:vimwiki_hl_headers == 0
   execute 'syntax match VimwikiHeader /'.g:vimwiki_rxHeader.'/ contains=VimwikiTodo,VimwikiHeaderChar'
