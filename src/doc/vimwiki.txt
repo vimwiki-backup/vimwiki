@@ -586,8 +586,6 @@ You can set up different colors for each header level: >
 Set up colors for all 6 header levels or none at all.
 
 === Header level 3 ===~
-Check |g:vimwiki_hl_headers|.
-
 ==== Header level 4 ====~
 ===== Header level 5 =====~
 ====== Header level 6 ======~
@@ -1328,19 +1326,6 @@ Use: >
 to set them.
 
 ------------------------------------------------------------------------------
-*g:vimwiki_hl_headers*
-
-Highlight headers with =Reddish=, ==Greenish==, ===Blueish=== colors.
-
-Value           Description~
-1               Use predefined colors to highlight different header levels.
-0               Use |hl-Title| or  VimwikiHeader1-VimwikiHeader6 (if defined
-                in a colorscheme)
-
-Default: 1
-
-
-------------------------------------------------------------------------------
 *g:vimwiki_hl_cb_checked*
 
 Checked list items can be highlighted with a color:
@@ -1817,6 +1802,9 @@ dev~
       may not work in obsolete browsers or font-deficient systems.
     * Issue 205: Block code: highlighting differs from processing. Inline code
       block {{{ ... }}} is removed. Use `...` instead.
+    * Issue 208: Default highlight colors are problematic in many
+      colorschemes. Option g:vimwiki_hl_headers is gone. Headers are
+      highlighted as Using |hl-Title| by default.
     * Issue 209: Wild comments slow down html generation. Comments are
       changed, use %% to comment out entire line.
     * Issue 210: HTML: para enclose header.
