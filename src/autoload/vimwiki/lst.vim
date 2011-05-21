@@ -46,7 +46,7 @@ endfunction "}}}
 " Get level of the list item.
 function! s:get_level(lnum) "{{{
   if VimwikiGet('syntax') == 'media'
-    let level = vimwiki#count_first_sym(getline(a:lnum))
+    let level = vimwiki#base#count_first_sym(getline(a:lnum))
   else
     let level = indent(a:lnum)
   endif
@@ -287,7 +287,7 @@ endfunction "}}}
 " Script functions }}}
 
 " Toggle list item between [ ] and [X]
-function! vimwiki_lst#ToggleListItem(line1, line2) "{{{
+function! vimwiki#lst#ToggleListItem(line1, line2) "{{{
   let line1 = a:line1
   let line2 = a:line2
 
@@ -316,7 +316,7 @@ function! vimwiki_lst#ToggleListItem(line1, line2) "{{{
 
 endfunction "}}}
 
-function! vimwiki_lst#kbd_cr() "{{{
+function! vimwiki#lst#kbd_cr() "{{{
   " This function is heavily relies on proper 'set comments' option.
   let cr = "\<CR>"
   if getline('.') =~ s:rx_cb_list_item()
@@ -325,7 +325,7 @@ function! vimwiki_lst#kbd_cr() "{{{
   return cr
 endfunction "}}}
 
-function! vimwiki_lst#kbd_oO(cmd) "{{{
+function! vimwiki#lst#kbd_oO(cmd) "{{{
   " cmd should be 'o' or 'O'
 
   let l:count = v:count1

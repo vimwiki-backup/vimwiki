@@ -53,7 +53,7 @@ function! s:create_default_CSS(path) " {{{
   let path = expand(a:path)
   let css_full_name = path.VimwikiGet('css_name')
   if glob(css_full_name) == ""
-    call vimwiki#mkdir(fnamemodify(css_full_name, ':p:h'))
+    call vimwiki#base#mkdir(fnamemodify(css_full_name, ':p:h'))
     let lines = []
 
     call add(lines, 'body {font-family: Tahoma, Geneva, sans-serif; margin: 1em 2em 1em 2em; font-size: 100%; line-height: 130%;}')
@@ -187,7 +187,7 @@ function! s:delete_html_files(path) "{{{
     endif
 
     " delete if there is no corresponding wiki file
-    let subdir = vimwiki#subdir(VimwikiGet('path_html'), fname)
+    let subdir = vimwiki#base#subdir(VimwikiGet('path_html'), fname)
     let wikifile = VimwikiGet("path").subdir.
           \fnamemodify(fname, ":t:r").VimwikiGet("ext")
     if filereadable(wikifile)
@@ -313,7 +313,7 @@ function! s:is_html_uptodate(wikifile) "{{{
   endif
 
   let wikifile = fnamemodify(a:wikifile, ":p")
-  let subdir = vimwiki#subdir(VimwikiGet('path'), wikifile)
+  let subdir = vimwiki#base#subdir(VimwikiGet('path'), wikifile)
   let htmlfile = expand(VimwikiGet('path_html').subdir.
         \fnamemodify(wikifile, ":t:r").".html")
 
@@ -399,19 +399,19 @@ function! s:tag_internal_link(value) "{{{
     if s:is_img_link(a:caption)
       let link = '<a href="'.a:src.'"><img src="'.a:caption.'"'.style_str.' />'.
             \ '</a>'
-    elseif vimwiki#is_non_wiki_link(a:src)
+    elseif vimwiki#base#is_non_wiki_link(a:src)
       let link = '<a href="'.a:src.'">'.a:caption.'</a>'
     elseif s:is_img_link(a:src)
       let link = '<img src="'.a:src.'" alt="'.a:caption.'"'. style_str.' />'
-    elseif vimwiki#is_link_to_dir(a:src)
+    elseif vimwiki#base#is_link_to_dir(a:src)
       if g:vimwiki_dir_link == ''
-        let link = '<a href="'.vimwiki#safe_link(a:src).'">'.a:caption.'</a>'
+        let link = '<a href="'.vimwiki#base#safe_link(a:src).'">'.a:caption.'</a>'
       else
-        let link = '<a href="'.vimwiki#safe_link(a:src).
+        let link = '<a href="'.vimwiki#base#safe_link(a:src).
               \ g:vimwiki_dir_link.'.html">'.a:caption.'</a>'
       endif
     else
-      let link = '<a href="'.vimwiki#safe_link(a:src).
+      let link = '<a href="'.vimwiki#base#safe_link(a:src).
             \ '.html">'.a:caption.'</a>'
     endif
 
@@ -1231,7 +1231,7 @@ function! s:parse_line(line, state) " {{{
 
 endfunction " }}}
 
-function! vimwiki_html#Wiki2HTML(path, wikifile) "{{{
+function! vimwiki#html#Wiki2HTML(path, wikifile) "{{{
 
   let starttime = reltime()  " start the clock
   echo 'Generating HTML ... '
@@ -1241,13 +1241,13 @@ function! vimwiki_html#Wiki2HTML(path, wikifile) "{{{
   endif
 
   let wikifile = fnamemodify(a:wikifile, ":p")
-  let subdir = vimwiki#subdir(VimwikiGet('path'), wikifile)
+  let subdir = vimwiki#base#subdir(VimwikiGet('path'), wikifile)
 
   let lsource = readfile(wikifile)
   let ldest = []
 
   let path = expand(a:path).subdir
-  call vimwiki#mkdir(path)
+  call vimwiki#base#mkdir(path)
 
   " nohtml placeholder -- to skip html generation.
   let nohtml = 0
@@ -1338,7 +1338,7 @@ function! vimwiki_html#Wiki2HTML(path, wikifile) "{{{
   echon "\r".wwFileNameOnly.'.html written (time: '.elapsedtimestr.'s)'
 endfunction "}}}
 
-function! vimwiki_html#WikiAll2HTML(path) "{{{
+function! vimwiki#html#WikiAll2HTML(path) "{{{
   if !s:syntax_supported()
     echomsg 'vimwiki: Only vimwiki_default syntax supported!!!'
     return
@@ -1353,7 +1353,7 @@ function! vimwiki_html#WikiAll2HTML(path) "{{{
   let &eventignore = save_eventignore
 
   let path = expand(a:path)
-  call vimwiki#mkdir(path)
+  call vimwiki#base#mkdir(path)
 
   echomsg 'Deleting non-wiki html files...'
   call s:delete_html_files(path)
@@ -1366,7 +1366,7 @@ function! vimwiki_html#WikiAll2HTML(path) "{{{
   for wikifile in wikifiles
     if !s:is_html_uptodate(wikifile)
       echomsg 'Processing '.wikifile
-      call vimwiki_html#Wiki2HTML(path, wikifile)
+      call vimwiki#html#Wiki2HTML(path, wikifile)
     else
       echomsg 'Skipping '.wikifile
     endif
