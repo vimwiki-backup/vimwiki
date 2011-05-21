@@ -1325,6 +1325,18 @@ Use: >
     let g:option_name=option_value
 to set them.
 
+-----------------------------------------------------------------------------
+*g:vimwiki_hl_headers*
+
+Highlight headers with =Reddish=, ==Greenish==, ===Blueish=== colors.
+
+Value           Description~
+1               Use VimwikiHeader1-VimwikiHeader6 group colors to highlight
+                different header levels.
+0               Use |hl-Title| color for headers.
+Default: 0
+
+
 ------------------------------------------------------------------------------
 *g:vimwiki_hl_cb_checked*
 
@@ -1803,9 +1815,9 @@ dev~
     * Issue 205: Block code: highlighting differs from processing. Inline code
       block {{{ ... }}} is removed. Use `...` instead.
     * Issue 208: Default highlight colors are problematic in many
-      colorschemes. Option g:vimwiki_hl_headers is gone. Headers are
-      highlighted as |hl-Title| by default. Some other changes in
-      highlighting.
+      colorschemes. Headers are highlighted as |hl-Title| by default, use
+      |g:vimwiki_hl_headers| to restore previous default Red, Green, Blue or
+      custom header colors. Some other changes in highlighting.
     * Issue 209: Wild comments slow down html generation. Comments are
       changed, use %% to comment out entire line.
     * Issue 210: HTML: para enclose header.
