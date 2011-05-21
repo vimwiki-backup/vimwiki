@@ -566,10 +566,10 @@ function! vimwiki#base#nested_syntax(filetype, start, end, textSnipHl) abort "{{
   else
     unlet b:current_syntax
   endif
-  execute 'syntax region textSnip'.ft.
-        \ ' matchgroup='.a:textSnipHl.
-        \ ' start="'.a:start.'" end="'.a:end.'"'.
-        \ ' contains=@'.group.' keepend'
+  " execute 'syntax region textSnip'.ft.
+        " \ ' matchgroup='.a:textSnipHl.
+        " \ ' start="'.a:start.'" end="'.a:end.'"'.
+        " \ ' contains=@'.group.' keepend'
 
   " A workaround to Issue 115: Nested Perl syntax highlighting differs from
   " regular one.
