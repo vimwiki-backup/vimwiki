@@ -526,39 +526,6 @@ function! s:highlight_existed_links() "{{{
   endfor
 endfunction "}}}
 
-function! vimwiki#base#setup_colors() "{{{
-
-  function! s:set_visible_ignore_color() "{{{
-    if !exists("g:colors_name") || g:colors_name == 'default'
-      if &background == 'light'
-        hi VimwikiIgnore guifg=#d0d0d0
-      else
-        hi VimwikiIgnore guifg=#505050
-      endif
-    else
-      hi link VimwikiIgnore Normal
-    endif
-  endfunction "}}}
-
-  let hlfg_ignore = vimwiki#base#get_hl_param('Ignore', 'guifg')
-  let hlbg_normal = vimwiki#base#get_hl_param('Normal', 'guibg')
-  if hlfg_ignore == 'bg' || hlfg_ignore == hlbg_normal
-    call s:set_visible_ignore_color()
-  else
-    hi link VimwikiIgnore Ignore
-  endif
-endfunction "}}}
-
-function! vimwiki#base#get_hl_param(hgroup, hparam) "{{{
-  redir => hlstatus
-  try
-    exe "silent hi ".a:hgroup
-  catch /E411/
-  endtry
-  redir END
-  return matchstr(hlstatus, a:hparam.'\s*=\s*\zs\S\+')
-endfunction "}}}
-
 function! vimwiki#base#hl_exists(hl) "{{{
   if !hlexists(a:hl)
     return 0
