@@ -33,7 +33,7 @@ endfunction "}}}
 function! s:find_wiki(path) "{{{
   let idx = 0
   while idx < len(g:vimwiki_list)
-    let path = vimwiki#chomp_slash(expand(VimwikiGet('path', idx)))
+    let path = vimwiki#base#chomp_slash(expand(VimwikiGet('path', idx)))
     if s:str_common_pfx(path, a:path) == path
       return idx
     endif
@@ -103,7 +103,7 @@ function! s:setup_buffer_enter() "{{{
   endif
 
   " Update existed/non-existed links highlighting.
-  call vimwiki#highlight_links()
+  call vimwiki#base#highlight_links()
 
   " Settings foldmethod, foldexpr and foldtext are local to window. Thus in a
   " new tab with the same buffer folding is reset to vim defaults. So we
@@ -335,32 +335,32 @@ augroup vimwiki
     " ColorScheme could have or could have not a
     " VimwikiHeader1..VimwikiHeader6 highlight groups. We need to refresh
     " syntax after colorscheme change.
-    exe 'autocmd ColorScheme *'.ext.' call vimwiki#setup_colors()'.
-          \ ' | call vimwiki#highlight_links()'
+    exe 'autocmd ColorScheme *'.ext.' call vimwiki#base#setup_colors()'.
+          \ ' | call vimwiki#base#highlight_links()'
 
     " Format tables when exit from insert mode. Do not use textwidth to
     " autowrap tables.
     if g:vimwiki_table_auto_fmt
-      exe 'autocmd InsertLeave *'.ext.' call vimwiki_tbl#format(line("."))'
-      exe 'autocmd InsertEnter *'.ext.' call vimwiki_tbl#reset_tw(line("."))'
+      exe 'autocmd InsertLeave *'.ext.' call vimwiki#tbl#format(line("."))'
+      exe 'autocmd InsertEnter *'.ext.' call vimwiki#tbl#reset_tw(line("."))'
     endif
   endfor
 augroup END
 "}}}
 
 " COMMANDS {{{
-command! VimwikiUISelect call vimwiki#ui_select()
+command! VimwikiUISelect call vimwiki#base#ui_select()
 command! -count VimwikiIndex
-      \ call vimwiki#goto_index(v:count1)
+      \ call vimwiki#base#goto_index(v:count1)
 command! -count VimwikiTabIndex tabedit <bar>
-      \ call vimwiki#goto_index(v:count1)
+      \ call vimwiki#base#goto_index(v:count1)
 
 command! -count VimwikiDiaryIndex
-      \ call vimwiki_diary#goto_index(v:count1)
+      \ call vimwiki#diary#goto_index(v:count1)
 command! -count VimwikiMakeDiaryNote
-      \ call vimwiki_diary#make_note(v:count1)
+      \ call vimwiki#diary#make_note(v:count1)
 command! -count VimwikiTabMakeDiaryNote tabedit <bar>
-      \ call vimwiki_diary#make_note(v:count1)
+      \ call vimwiki#diary#make_note(v:count1)
 "}}}
 
 " MAPPINGS {{{
@@ -404,9 +404,9 @@ function! s:build_menu(topmenu)
     let norm_path = fnamemodify(VimwikiGet('path', idx), ':h:t')
     let norm_path = escape(norm_path, '\ \.')
     execute 'menu '.a:topmenu.'.Open\ index.'.norm_path.
-          \ ' :call vimwiki#goto_index('.(idx + 1).')<CR>'
+          \ ' :call vimwiki#base#goto_index('.(idx + 1).')<CR>'
     execute 'menu '.a:topmenu.'.Open/Create\ diary\ note.'.norm_path.
-          \ ' :call vimwiki_diary#make_note('.(idx + 1).')<CR>'
+          \ ' :call vimwiki#diary#make_note('.(idx + 1).')<CR>'
     let idx += 1
   endwhile
 endfunction
@@ -428,8 +428,8 @@ endif
 
 " CALENDAR Hook "{{{
 if g:vimwiki_use_calendar
-  let g:calendar_action = 'vimwiki_diary#calendar_action'
-  let g:calendar_sign = 'vimwiki_diary#calendar_sign'
+  let g:calendar_action = 'vimwiki#diary#calendar_action'
+  let g:calendar_sign = 'vimwiki#diary#calendar_sign'
 endif
 "}}}
 

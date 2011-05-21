@@ -47,12 +47,12 @@ if !empty(&langmap)
   " Valid only if langmap is a comma separated pairs of chars
   let l_o = matchstr(&langmap, '\C,\zs.\zeo,')
   if l_o
-    exe 'nnoremap <buffer> '.l_o.' :call vimwiki_lst#kbd_oO("o")<CR>a'
+    exe 'nnoremap <buffer> '.l_o.' :call vimwiki#lst#kbd_oO("o")<CR>a'
   endif
 
   let l_O = matchstr(&langmap, '\C,\zs.\zeO,')
   if l_O
-    exe 'nnoremap <buffer> '.l_O.' :call vimwiki_lst#kbd_oO("O")<CR>a'
+    exe 'nnoremap <buffer> '.l_O.' :call vimwiki#lst#kbd_oO("O")<CR>a'
   endif
 endif
 
@@ -64,7 +64,7 @@ function! VimwikiFoldLevel(lnum) "{{{
 
   " Header folding...
   if line =~ g:vimwiki_rxHeader
-    let n = vimwiki#count_first_sym(line)
+    let n = vimwiki#base#count_first_sym(line)
     return '>'.n
   endif
 
@@ -74,7 +74,7 @@ function! VimwikiFoldLevel(lnum) "{{{
     let nnline = getline(a:lnum + 1)
   endif
   if nnline =~ g:vimwiki_rxHeader
-    let n = vimwiki#count_first_sym(nnline)
+    let n = vimwiki#base#count_first_sym(nnline)
     return '<'.n
   endif
 
@@ -129,7 +129,7 @@ function! s:get_base_level(lnum) "{{{
   let lnum = a:lnum - 1
   while lnum > 0
     if getline(lnum) =~ g:vimwiki_rxHeader
-      return vimwiki#count_first_sym(getline(lnum))
+      return vimwiki#base#count_first_sym(getline(lnum))
     endif
     let lnum -= 1
   endwhile
@@ -169,7 +169,7 @@ endfunction "}}}
 
 function! s:get_li_level(lnum) "{{{
   if VimwikiGet('syntax') == 'media'
-    let level = vimwiki#count_first_sym(getline(a:lnum))
+    let level = vimwiki#base#count_first_sym(getline(a:lnum))
   else
     let level = (indent(a:lnum) / &sw)
   endif
@@ -198,25 +198,25 @@ endfunction "}}}
 
 " COMMANDS {{{
 command! -buffer Vimwiki2HTML
-      \ call vimwiki_html#Wiki2HTML(expand(VimwikiGet('path_html')),
+      \ call vimwiki#html#Wiki2HTML(expand(VimwikiGet('path_html')),
       \                             expand('%'))
 command! -buffer VimwikiAll2HTML
-      \ call vimwiki_html#WikiAll2HTML(expand(VimwikiGet('path_html')))
+      \ call vimwiki#html#WikiAll2HTML(expand(VimwikiGet('path_html')))
 
-command! -buffer VimwikiNextLink call vimwiki#find_next_link()
-command! -buffer VimwikiPrevLink call vimwiki#find_prev_link()
-command! -buffer VimwikiDeleteLink call vimwiki#delete_link()
-command! -buffer VimwikiRenameLink call vimwiki#rename_link()
-command! -buffer VimwikiFollowLink call vimwiki#follow_link('nosplit')
-command! -buffer VimwikiGoBackLink call vimwiki#go_back_link()
-command! -buffer VimwikiSplitLink call vimwiki#follow_link('split')
-command! -buffer VimwikiVSplitLink call vimwiki#follow_link('vsplit')
+command! -buffer VimwikiNextLink call vimwiki#base#find_next_link()
+command! -buffer VimwikiPrevLink call vimwiki#base#find_prev_link()
+command! -buffer VimwikiDeleteLink call vimwiki#base#delete_link()
+command! -buffer VimwikiRenameLink call vimwiki#base#rename_link()
+command! -buffer VimwikiFollowLink call vimwiki#base#follow_link('nosplit')
+command! -buffer VimwikiGoBackLink call vimwiki#base#go_back_link()
+command! -buffer VimwikiSplitLink call vimwiki#base#follow_link('split')
+command! -buffer VimwikiVSplitLink call vimwiki#base#follow_link('vsplit')
 
-command! -buffer VimwikiTabnewLink call vimwiki#follow_link('tabnew')
+command! -buffer VimwikiTabnewLink call vimwiki#base#follow_link('tabnew')
 
-command! -buffer -range VimwikiToggleListItem call vimwiki_lst#ToggleListItem(<line1>, <line2>)
+command! -buffer -range VimwikiToggleListItem call vimwiki#lst#ToggleListItem(<line1>, <line2>)
 
-command! -buffer VimwikiGenerateLinks call vimwiki#generate_links()
+command! -buffer VimwikiGenerateLinks call vimwiki#base#generate_links()
 
 exe 'command! -buffer -nargs=* VimwikiSearch lvimgrep <args> '.
       \ escape(VimwikiGet('path').'**/*'.VimwikiGet('ext'), ' ')
@@ -224,18 +224,18 @@ exe 'command! -buffer -nargs=* VimwikiSearch lvimgrep <args> '.
 exe 'command! -buffer -nargs=* VWS lvimgrep <args> '.
       \ escape(VimwikiGet('path').'**/*'.VimwikiGet('ext'), ' ')
 
-command! -buffer -nargs=1 VimwikiGoto call vimwiki#goto("<args>")
+command! -buffer -nargs=1 VimwikiGoto call vimwiki#base#goto("<args>")
 
 " table commands
-command! -buffer -nargs=* VimwikiTable call vimwiki_tbl#create(<f-args>)
-command! -buffer VimwikiTableAlignQ call vimwiki_tbl#align_or_cmd('gqq')
-command! -buffer VimwikiTableAlignW call vimwiki_tbl#align_or_cmd('gww')
-command! -buffer VimwikiTableMoveColumnLeft call vimwiki_tbl#move_column_left()
-command! -buffer VimwikiTableMoveColumnRight call vimwiki_tbl#move_column_right()
+command! -buffer -nargs=* VimwikiTable call vimwiki#tbl#create(<f-args>)
+command! -buffer VimwikiTableAlignQ call vimwiki#tbl#align_or_cmd('gqq')
+command! -buffer VimwikiTableAlignW call vimwiki#tbl#align_or_cmd('gww')
+command! -buffer VimwikiTableMoveColumnLeft call vimwiki#tbl#move_column_left()
+command! -buffer VimwikiTableMoveColumnRight call vimwiki#tbl#move_column_right()
 
 " diary commands
-command! -buffer VimwikiDiaryNextDay call vimwiki_diary#goto_next_day()
-command! -buffer VimwikiDiaryPrevDay call vimwiki_diary#goto_prev_day()
+command! -buffer VimwikiDiaryNextDay call vimwiki#diary#goto_next_day()
+command! -buffer VimwikiDiaryPrevDay call vimwiki#diary#goto_prev_day()
 
 " COMMANDS }}}
 
@@ -334,9 +334,9 @@ nnoremap <silent><script><buffer>
       \ <Plug>VimwikiDiaryPrevDay :VimwikiDiaryPrevDay<CR>
 
 function! s:CR() "{{{
-  let res = vimwiki_lst#kbd_cr()
+  let res = vimwiki#lst#kbd_cr()
   if res == "\<CR>" && g:vimwiki_table_auto_fmt
-    let res = vimwiki_tbl#kbd_cr()
+    let res = vimwiki#tbl#kbd_cr()
   endif
   return res
 endfunction "}}}
@@ -345,13 +345,13 @@ endfunction "}}}
 inoremap <buffer> <expr> <CR> <SID>CR()
 
 " List mappings
-nnoremap <buffer> o :<C-U>call vimwiki_lst#kbd_oO('o')<CR>
-nnoremap <buffer> O :<C-U>call vimwiki_lst#kbd_oO('O')<CR>
+nnoremap <buffer> o :<C-U>call vimwiki#lst#kbd_oO('o')<CR>
+nnoremap <buffer> O :<C-U>call vimwiki#lst#kbd_oO('O')<CR>
 
 " Table mappings
 if g:vimwiki_table_auto_fmt
-  inoremap <expr> <buffer> <Tab> vimwiki_tbl#kbd_tab()
-  inoremap <expr> <buffer> <S-Tab> vimwiki_tbl#kbd_shift_tab()
+  inoremap <expr> <buffer> <Tab> vimwiki#tbl#kbd_tab()
+  inoremap <expr> <buffer> <S-Tab> vimwiki#tbl#kbd_shift_tab()
 endif
 
 nnoremap <buffer> gqq :VimwikiTableAlignQ<CR>
@@ -372,26 +372,26 @@ inoremap <buffer> <S-CR> <br /><CR>
 
 
 " Text objects {{{
-onoremap <silent><buffer> ah :<C-U>call vimwiki#TO_header(0, 0)<CR>
-vnoremap <silent><buffer> ah :<C-U>call vimwiki#TO_header(0, 1)<CR>
+onoremap <silent><buffer> ah :<C-U>call vimwiki#base#TO_header(0, 0)<CR>
+vnoremap <silent><buffer> ah :<C-U>call vimwiki#base#TO_header(0, 1)<CR>
 
-onoremap <silent><buffer> ih :<C-U>call vimwiki#TO_header(1, 0)<CR>
-vnoremap <silent><buffer> ih :<C-U>call vimwiki#TO_header(1, 1)<CR>
+onoremap <silent><buffer> ih :<C-U>call vimwiki#base#TO_header(1, 0)<CR>
+vnoremap <silent><buffer> ih :<C-U>call vimwiki#base#TO_header(1, 1)<CR>
 
-onoremap <silent><buffer> a\ :<C-U>call vimwiki#TO_table_cell(0, 0)<CR>
-vnoremap <silent><buffer> a\ :<C-U>call vimwiki#TO_table_cell(0, 1)<CR>
+onoremap <silent><buffer> a\ :<C-U>call vimwiki#base#TO_table_cell(0, 0)<CR>
+vnoremap <silent><buffer> a\ :<C-U>call vimwiki#base#TO_table_cell(0, 1)<CR>
 
-onoremap <silent><buffer> i\ :<C-U>call vimwiki#TO_table_cell(1, 0)<CR>
-vnoremap <silent><buffer> i\ :<C-U>call vimwiki#TO_table_cell(1, 1)<CR>
+onoremap <silent><buffer> i\ :<C-U>call vimwiki#base#TO_table_cell(1, 0)<CR>
+vnoremap <silent><buffer> i\ :<C-U>call vimwiki#base#TO_table_cell(1, 1)<CR>
 
-onoremap <silent><buffer> ac :<C-U>call vimwiki#TO_table_col(0, 0)<CR>
-vnoremap <silent><buffer> ac :<C-U>call vimwiki#TO_table_col(0, 1)<CR>
+onoremap <silent><buffer> ac :<C-U>call vimwiki#base#TO_table_col(0, 0)<CR>
+vnoremap <silent><buffer> ac :<C-U>call vimwiki#base#TO_table_col(0, 1)<CR>
 
-onoremap <silent><buffer> ic :<C-U>call vimwiki#TO_table_col(1, 0)<CR>
-vnoremap <silent><buffer> ic :<C-U>call vimwiki#TO_table_col(1, 1)<CR>
+onoremap <silent><buffer> ic :<C-U>call vimwiki#base#TO_table_col(1, 0)<CR>
+vnoremap <silent><buffer> ic :<C-U>call vimwiki#base#TO_table_col(1, 1)<CR>
 
-nnoremap <silent><buffer> = :call vimwiki#AddHeaderLevel()<CR>
-nnoremap <silent><buffer> - :call vimwiki#RemoveHeaderLevel()<CR>
+nnoremap <silent><buffer> = :call vimwiki#base#AddHeaderLevel()<CR>
+nnoremap <silent><buffer> - :call vimwiki#base#RemoveHeaderLevel()<CR>
 
 " }}}
 

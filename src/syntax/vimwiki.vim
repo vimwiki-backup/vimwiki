@@ -10,7 +10,7 @@ elseif exists("b:current_syntax")
   finish
 endif
 
-" Links highlighting is controlled by vimwiki#highlight_links() function.
+" Links highlighting is controlled by vimwiki#base#highlight_links() function.
 " It is called from setup_buffer_enter() function in the BufEnter autocommand.
 
 " Load concrete Wiki syntax
@@ -144,7 +144,7 @@ execute 'syntax match VimwikiHeader6 /'.g:vimwiki_rxH6.'/ contains=VimwikiTodo,V
 
 " group names "{{{
 
-call vimwiki#setup_colors()
+call vimwiki#base#setup_colors()
 
 if g:vimwiki_hl_headers == 0
   hi link VimwikiHeader1 Title
@@ -250,7 +250,7 @@ let b:current_syntax="vimwiki"
 let nested = VimwikiGet('nested_syntaxes')
 if !empty(nested)
   for [hl_syntax, vim_syntax] in items(nested)
-    call vimwiki#nested_syntax(vim_syntax, 
+    call vimwiki#base#nested_syntax(vim_syntax, 
           \ '^\s*{{{\%(.*[[:blank:][:punct:]]\)\?'.
           \ hl_syntax.'\%([[:blank:][:punct:]].*\)\?',
           \ '^\s*}}}', 'VimwikiPre')
