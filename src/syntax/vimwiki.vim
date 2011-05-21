@@ -144,7 +144,7 @@ execute 'syntax match VimwikiHeader6 /'.g:vimwiki_rxH6.'/ contains=VimwikiTodo,V
 
 " group names "{{{
 
-call vimwiki#base#setup_colors()
+" call vimwiki#base#setup_colors()
 
 if g:vimwiki_hl_headers == 0
   hi link VimwikiHeader1 Title
@@ -184,6 +184,8 @@ hi def link VimwikiItalicBoldT VimwikiBoldItalic
 
 hi def VimwikiUnderline gui=underline
 
+hi def link VimwikiMarkers Comment
+
 hi def link VimwikiCode PreProc
 hi def link VimwikiCodeT VimwikiCode
 
@@ -194,9 +196,9 @@ hi def link VimwikiPre PreProc
 hi def link VimwikiPreT VimwikiPre
 
 hi def link VimwikiLink Underlined
-hi def link VimwikiLinkT Underlined
+hi def link VimwikiLinkT VimwikiLink
 
-hi def link VimwikiList Function
+hi def link VimwikiList Identifier
 hi def link VimwikiCheckBox VimwikiList
 hi def link VimwikiCheckBoxDone Comment
 hi def link VimwikiEmoticons Character
@@ -219,27 +221,27 @@ hi def link VimwikiPlaceholder SpecialKey
 hi def link VimwikiPlaceholderParam String
 hi def link VimwikiHTMLtag SpecialKey
 
-hi def link VimwikiBoldChar VimwikiIgnore
-hi def link VimwikiItalicChar VimwikiIgnore
-hi def link VimwikiBoldItalicChar VimwikiIgnore
-hi def link VimwikiItalicBoldChar VimwikiIgnore
-hi def link VimwikiDelTextChar VimwikiIgnore
-hi def link VimwikiSuperScriptChar VimwikiIgnore
-hi def link VimwikiSubScriptChar VimwikiIgnore
-hi def link VimwikiCodeChar VimwikiIgnore
-hi def link VimwikiHeaderChar VimwikiIgnore
+hi def link VimwikiBoldChar VimwikiMarkers
+hi def link VimwikiItalicChar VimwikiMarkers
+hi def link VimwikiBoldItalicChar VimwikiMarkers
+hi def link VimwikiItalicBoldChar VimwikiMarkers
+hi def link VimwikiDelTextChar VimwikiMarkers
+hi def link VimwikiSuperScriptChar VimwikiMarkers
+hi def link VimwikiSubScriptChar VimwikiMarkers
+hi def link VimwikiCodeChar VimwikiMarkers
+hi def link VimwikiHeaderChar VimwikiMarkers
 hi def link VimwikiLinkChar VimwikiLink
 hi def link VimwikiNoLinkChar VimwikiNoExistsLink
 
-hi def link VimwikiBoldCharT VimwikiIgnore
-hi def link VimwikiItalicCharT VimwikiIgnore
-hi def link VimwikiBoldItalicCharT VimwikiIgnore
-hi def link VimwikiItalicBoldCharT VimwikiIgnore
-hi def link VimwikiDelTextCharT VimwikiIgnore
-hi def link VimwikiSuperScriptCharT VimwikiIgnore
-hi def link VimwikiSubScriptCharT VimwikiIgnore
-hi def link VimwikiCodeCharT VimwikiIgnore
-hi def link VimwikiHeaderCharT VimwikiIgnore
+hi def link VimwikiBoldCharT VimwikiMarkers
+hi def link VimwikiItalicCharT VimwikiMarkers
+hi def link VimwikiBoldItalicCharT VimwikiMarkers
+hi def link VimwikiItalicBoldCharT VimwikiMarkers
+hi def link VimwikiDelTextCharT VimwikiMarkers
+hi def link VimwikiSuperScriptCharT VimwikiMarkers
+hi def link VimwikiSubScriptCharT VimwikiMarkers
+hi def link VimwikiCodeCharT VimwikiMarkers
+hi def link VimwikiHeaderCharT VimwikiMarkers
 hi def link VimwikiLinkCharT VimwikiLinkT
 hi def link VimwikiNoLinkCharT VimwikiNoExistsLinkT
 "}}}

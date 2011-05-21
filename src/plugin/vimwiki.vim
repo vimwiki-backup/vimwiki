@@ -335,7 +335,7 @@ augroup vimwiki
     " ColorScheme could have or could have not a
     " VimwikiHeader1..VimwikiHeader6 highlight groups. We need to refresh
     " syntax after colorscheme change.
-    exe 'autocmd ColorScheme *'.ext.' call vimwiki#base#setup_colors()'.
+    exe 'autocmd ColorScheme *'.ext.' syntax enable'.
           \ ' | call vimwiki#base#highlight_links()'
 
     " Format tables when exit from insert mode. Do not use textwidth to
