@@ -343,7 +343,7 @@ function! s:update_wiki_links_dir(dir, old_fname, new_fname) " {{{
     let old_fname_r = '\[\[\zs'.vimwiki#base#unsafe_link(old_fname).
           \ '\ze\%(|.*\)\?\%(\]\[.*\)\?\]\]'
   else
-    let old_fname_r = '\<'.old_fname.'\>'
+    let old_fname_r = '!\@<!\<'.old_fname.'\>'
   endif
 
   let files = split(glob(VimwikiGet('path').a:dir.'*'.VimwikiGet('ext')), '\n')
