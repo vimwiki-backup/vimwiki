@@ -203,6 +203,7 @@ NORMAL MODE                                           *vimwiki-local-mappings*
 <
                         *vimwiki_<S-CR>*
 <S-CR>                  Split and follow (create target wiki page if needed).
+                        May not work in some terminals. Remapping could help.
                         Maps to |:VimwikiSplitLink|.
                         To remap: >
                         :map <Leader>we <Plug>VimwikiSplitLink
@@ -210,6 +211,7 @@ NORMAL MODE                                           *vimwiki-local-mappings*
                         *vimwiki_<C-CR>*
 <C-CR>                  Vertical split and follow (create target wiki page if
                         needed).
+                        May not work in some terminals. Remapping could help.
                         Maps to |:VimwikiVSplitLink|.
                         To remap: >
                         :map <Leader>wq <Plug>VimwikiVSplitLink
@@ -217,6 +219,7 @@ NORMAL MODE                                           *vimwiki-local-mappings*
                         *vimwiki_<C-S-CR>*    *vimwiki_<D-CR>*
 <C-S-CR>, <D-CR>        Follow wiki link (create target wiki page if needed),
                         opening in a new tab.
+                        May not work in some terminals. Remapping could help.
                         Maps to |:VimwikiTabnewLink|.
                         To remap: >
                         :map <Leader>wt <Plug>VimwikiTabnewLink
