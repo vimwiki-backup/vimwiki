@@ -49,55 +49,27 @@ function! s:has_abs_path(fname) "{{{
   return 0
 endfunction "}}}
 
+function! s:find_autoload_file(name) " {{{
+  for path in split(&runtimepath, ',')
+    let fname = path.'/autoload/vimwiki/'.a:name
+    if glob(fname) != ''
+      return fname
+    endif
+  endfor
+  return ''
+endfunction " }}}
+
 function! s:create_default_CSS(path) " {{{
   let path = expand(a:path)
   let css_full_name = path.VimwikiGet('css_name')
   if glob(css_full_name) == ""
     call vimwiki#base#mkdir(fnamemodify(css_full_name, ':p:h'))
-    let lines = []
-
-    call add(lines, 'body {font-family: Tahoma, Geneva, sans-serif; margin: 1em 2em 1em 2em; font-size: 100%; line-height: 130%;}')
-    call add(lines, 'h1, h2, h3, h4, h5, h6 {font-family: Trebuchet MS, Helvetica, sans-serif; font-weight: bold; margin-top: 1.5em; margin-bottom: 0.5em; color: MediumOrchid;}')
-    call add(lines, 'h1 {font-size: 2.1em; color: Fuchsia;}')
-    call add(lines, 'h2 {font-size: 1.8em; color: Fuchsia;}')
-    call add(lines, 'h3 {font-size: 1.6em; color: MediumVioletRed;}')
-    call add(lines, 'h4 {font-size: 1.4em; color: MediumVioletRed;}')
-    call add(lines, 'h5 {font-size: 1.2em; color: DarkMagenta;}')
-    call add(lines, 'h6 {font-size: 1.1em; color: DarkMagenta;}')
-    call add(lines, 'p, pre, blockquote, table, ul, ol, dl {margin-top: 1em; margin-bottom: 1em;}')
-    call add(lines, 'ul ul, ul ol, ol ol, ol ul {margin-top: 0.5em; margin-bottom: 0.5em;}')
-    call add(lines, 'li {margin: 0.3em auto;}')
-    call add(lines, 'ul {margin-left: 2em; padding-left: 0.5em;}')
-    call add(lines, 'dt {font-weight: bold;}')
-    call add(lines, 'img {border: none;}')
-    call add(lines, 'pre {border-left: 1px solid #ccc; margin-left: 2em; padding-left: 0.5em;}')
-    call add(lines, 'blockquote {padding: 0.4em; background-color: #f6f5eb;}')
-    call add(lines, 'th, td {border: 1px solid #ccc; padding: 0.3em;}')
-    call add(lines, 'th {background-color: #f0f0f0;}')
-    call add(lines, 'hr {border: none; border-top: 1px solid #ccc; width: 100%;}')
-    call add(lines, 'del {text-decoration: line-through; color: #777777;}')
-    call add(lines, '.toc li {list-style-type: none;}')
-    call add(lines, '.todo {font-weight: bold; background-color: #f0ece8; color: #a03020;}')
-    call add(lines, '.justleft {text-align: left;}')
-    call add(lines, '.justright {text-align: right;}')
-    call add(lines, '.justcenter {text-align: center;}')
-    call add(lines, '.center {margin-left: auto; margin-right: auto;}')
-    call add(lines, '/* classes for items of todo lists */')
-    call add(lines, '.done0:before {content: "\2592\2592\2592\2592"; color: SkyBlue;}')
-    call add(lines, '.done1:before {content: "\2588\2592\2592\2592"; color: SkyBlue;}')
-    call add(lines, '.done2:before {content: "\2588\2588\2592\2592"; color: SkyBlue;}')
-    call add(lines, '.done3:before {content: "\2588\2588\2588\2592"; color: SkyBlue;}')
-    call add(lines, '.done4:before {content: "\2588\2588\2588\2588"; color: SkyBlue;}')
-    call add(lines, '/* comment the next four or five lines out   *')
-    call add(lines, ' * if you do not want color-coded todo lists */ ')
-    call add(lines, '.done0 {color: #c00000;}')
-    call add(lines, '.done1 {color: #c08000;}')
-    call add(lines, '.done2 {color: #80a000;}')
-    call add(lines, '.done3 {color: #00c000;}')
-    call add(lines, '.done4 {color: #7f7f7f; text-decoration: line-through;}')
-
-    call writefile(lines, css_full_name)
-    echomsg "Default style.css has been created."
+    let default_css = s:find_autoload_file('style.css')
+    if default_css != ''
+      let lines = readfile(default_css)
+      call writefile(lines, css_full_name)
+      echomsg "Default style.css has been created."
+    endif
   endif
 endfunction "}}}
 
@@ -119,7 +91,8 @@ function! s:template_full_name(name) "{{{
   endif
 endfunction "}}}
 
-function! s:get_html_template(subdir, wikifile, template) "{{{
+function! s:get_html_template(wikifile, template) "{{{
+  " TODO: refactor it!!!
   let lines=[]
 
   let template_name = s:template_full_name(a:template)
@@ -133,33 +106,12 @@ function! s:get_html_template(subdir, wikifile, template) "{{{
     endtry
   endif
 
-  let css_name = expand(VimwikiGet('css_name'))
-  let css_name = substitute(css_name, '\', '/', 'g')
-  if !s:has_abs_path(css_name)
-    " Relative css file for deep links: [[dir1/dir2/dir3/filename]]
-    let css_name = s:root_path(a:subdir).css_name
-  endif
-
-  let enc = &fileencoding
-  if enc == ''
-    let enc = &encoding
-  endif
-
   " if no VimwikiGet('html_template') set up or error while reading template
   " file -- use default one.
-  call add(lines, '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">')
-  call add(lines, '<html>')
-  call add(lines, '<head>')
-  call add(lines, '<link rel="Stylesheet" type="text/css" href="'.
-        \ css_name.'">')
-  call add(lines, '<title>%title%</title>')
-  call add(lines, '<meta http-equiv="Content-Type" content="text/html;'.
-        \ ' charset='.&enc.'">')
-  call add(lines, '</head>')
-  call add(lines, '<body>')
-  call add(lines, '%content%')
-  call add(lines, '</body>')
-  call add(lines, '</html>')
+  let default_tpl = s:find_autoload_file('default.tpl')
+  if default_tpl != ''
+    let lines = readfile(default_tpl)
+  endif
   return lines
 endfunction "}}}
 
@@ -1319,12 +1271,23 @@ function! vimwiki#html#Wiki2HTML(path, wikifile) "{{{
 
   let title = s:process_title(placeholders, fnamemodify(a:wikifile, ":t:r"))
 
-  let html_lines = s:get_html_template(subdir, a:wikifile, template_name)
+  let html_lines = s:get_html_template(a:wikifile, template_name)
 
   " processing template variables (refactor to a function)
   call map(html_lines, 'substitute(v:val, "%title%", "'. title .'", "g")')
   call map(html_lines, 'substitute(v:val, "%root_path%", "'.
         \ s:root_path(subdir) .'", "g")')
+
+  let css_name = expand(VimwikiGet('css_name'))
+  let css_name = substitute(css_name, '\', '/', 'g')
+  call map(html_lines, 'substitute(v:val, "%css%", "'. css_name .'", "g")')
+
+  let enc = &fileencoding
+  if enc == ''
+    let enc = &encoding
+  endif
+  call map(html_lines, 'substitute(v:val, "%encoding%", "'. enc .'", "g")')
+
   let html_lines = s:html_insert_contents(html_lines, ldest) " %contents%
   
   
