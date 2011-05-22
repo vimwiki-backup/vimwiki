@@ -1812,6 +1812,7 @@ dev~
     * Issue 183: Spelling error highlighting is not possible with nested
       syntaxes.
     * Issue 184: Wrong foldlevel in some cases.
+    * Issue 195: Page renaming issue.
     * Issue 196: vim: modeline bug -- syn=vim doesn't work.
     * Issue 199: Generated HTML for sublists is invalid.
     * Issue 200: Generated HTML for todo lists does not show completion status
