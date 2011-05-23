@@ -19,22 +19,25 @@ function! s:default(varname, value) "{{{
   endif
 endfunction "}}}
 
-" return longest common prefix of 2 given strings.
-" 'Hello world', 'Hello worm' => 'Hello wor'
-function! s:str_common_pfx(str1, str2) "{{{
+" return longest common path prefix of 2 given paths.
+" '~/home/usrname/wiki', '~/home/usrname/wiki/shmiki' => '~/home/usrname/wiki'
+function! s:path_common_pfx(path1, path2) "{{{
+  let p1 = split(a:path1, '[/\\]', 1)
+  let p2 = split(a:path2, '[/\\]', 1)
+
   let idx = 0
-  let minlen = min([len(a:str1), len(a:str2)])
-  while (idx < minlen) && (a:str1[idx] ==? a:str2[idx])
+  let minlen = min([len(p1), len(p2)])
+  while (idx < minlen) && (p1[idx] ==? p2[idx])
     let idx = idx + 1
   endwhile
-  return strpart(a:str1, 0, idx)
+  return join(p1[: idx-1], '/')
 endfunction "}}}
 
 function! s:find_wiki(path) "{{{
   let idx = 0
   while idx < len(g:vimwiki_list)
     let path = vimwiki#base#chomp_slash(expand(VimwikiGet('path', idx)))
-    if s:str_common_pfx(path, a:path) == path
+    if s:path_common_pfx(path, a:path) == path
       return idx
     endif
     let idx += 1
