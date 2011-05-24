@@ -37,6 +37,7 @@ function! s:find_wiki(path) "{{{
   let idx = 0
   while idx < len(g:vimwiki_list)
     let path = vimwiki#base#chomp_slash(expand(VimwikiGet('path', idx)))
+    let path = vimwiki#base#path_norm(path)
     if s:path_common_pfx(path, a:path) == path
       return idx
     endif

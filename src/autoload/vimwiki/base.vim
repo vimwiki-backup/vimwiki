@@ -22,6 +22,10 @@ function! vimwiki#base#chomp_slash(str) "{{{
   return substitute(a:str, '[/\\]\+$', '', '')
 endfunction "}}}
 
+function! vimwiki#base#path_norm(path) "{{{
+  return substitute(a:path, '\', '/', 'g')
+endfunction "}}}
+
 function! vimwiki#base#mkdir(path) "{{{
   let path = expand(a:path)
   if !isdirectory(path) && exists("*mkdir")
