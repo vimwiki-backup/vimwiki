@@ -33,19 +33,22 @@ def get_vimwiki_version():
                 return r.groups()[0]
 
 
+def vimwiki_files(src_dir):
+    for root, dirs, files in os.walk(src_dir):
+        root = root.replace(src_dir, '')
+        for f in files:
+            if f.endswith(('.vim','.txt','.css','.tpl')):
+                f = os.path.join(root, f)
+                yield f
+
+
 def make_vba_file(src_dir, vba_file_name):
     try:
         os.makedirs(os.path.dirname(vba_file_name))
     except:
         pass
 
-    inc_names = []
-    for root, dirs, files in os.walk(src_dir):
-        root = root.replace(src_dir, '')
-        for f in files:
-            if f.endswith(('.vim','.txt','.css','.tpl')):
-                f = os.path.join(root, f)
-                inc_names.append(f)
+    inc_names = [f for f in vimwiki_files(src_dir)]
     vba.mk_vimball(src_dir, inc_names, vba_file_name)
 
 
@@ -56,10 +59,8 @@ def make_zip_folder(folder, arcname):
         pass
 
     arc = zipfile.ZipFile(arcname, "w")
-    for file in glob.glob(os.path.join(folder, "*", "*")):
-        afile = os.path.normpath(file)
-        afile = os.sep.join(afile.split(os.sep)[-2:])
-        arc.write(file, afile, zipfile.ZIP_DEFLATED)
+    for f in vimwiki_files(folder):
+        arc.write(os.path.join(folder, f), f, zipfile.ZIP_DEFLATED)
     arc.close()
 
 
