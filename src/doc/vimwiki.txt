@@ -9,7 +9,7 @@
               |___|  |___| |_|   |_||__| |__||___| |___| |_||___|            ~
 
 
-                               Version: 1.2dev
+                               Version: 1.2 2011-05
 
 ==============================================================================
 CONTENTS                                                    *vimwiki-contents*
@@ -1774,8 +1774,6 @@ dev~
     * Issue 72: Do not convert again for unchanged file. |:VimwikiAll2HTML|
       converts only changed wiki files.
     * Issue 117: |VimwikiDiaryIndex| command that opens diary index wiki page.
-    * Issue 119: HTML comments are removed from preformatted text blocks but
-      should not.
     * Issue 120: Links in headers are not highlighted in vimwiki but are
       highlighted in HTML.
     * Issue 138: Added possibility to remap table-column move bindings. See
@@ -1784,7 +1782,7 @@ dev~
       and |vimwiki_<A-Right>|.
     * Issue 125: Problem with 'o' command given while at the of the file.
     * Issue 131: FileType is not set up when GUIEnter autocommand is used in
-      vimrc.
+      vimrc. Use 'nested' in 'au GUIEnter * nested VimwikiIndex'
     * Issue 132: Link to perl (or any non-wiki) file in vimwiki subdirectory
       doesn't work as intended.
     * Issue 135: %title and %toc used together cause TOC to appear in an
