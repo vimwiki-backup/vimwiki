@@ -1,3 +1,4 @@
+#! /usr/bin/python
 """
 Vimwiki deployment script.
     * Make Vimball archive (vba) file in DEPLOY_DIR directory.
@@ -6,7 +7,7 @@ Vimwiki deployment script.
     * gz vba file into 'DEPLOY_DIR/vimwiki-{VERSION}.vba.gz'
 """
 
-# from __future__ import print_function
+from __future__ import print_function
 import os
 import glob
 import shutil
@@ -31,6 +32,7 @@ def get_vimwiki_version():
             if r:
                 return r.groups()[0]
 
+
 def make_vba_file(src_dir, vba_file_name):
     try:
         os.makedirs(os.path.dirname(vba_file_name))
@@ -38,11 +40,14 @@ def make_vba_file(src_dir, vba_file_name):
         pass
 
     inc_names = []
-    for file in glob.glob(os.path.join(src_dir, "**/*")):
-        file = os.path.normpath(file)
-        file = os.sep.join(file.split(os.sep)[-2:])
-        inc_names.append(file)
+    for root, dirs, files in os.walk(src_dir):
+        root = root.replace(src_dir, '')
+        for f in files:
+            if f.endswith(('.vim','.txt','.css','.tpl')):
+                f = os.path.join(root, f)
+                inc_names.append(f)
     vba.mk_vimball(src_dir, inc_names, vba_file_name)
+
 
 def make_zip_folder(folder, arcname):
     try:
