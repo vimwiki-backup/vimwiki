@@ -719,7 +719,7 @@ function! s:process_tag_list(line, lists) "{{{
         if chk[1] =~ '[.*\\^$~]'
           let chk[1] ='\'.chk[1]
         endif
-        let completion = match(g:vimwiki_listsyms, chk[1])
+        let completion = match(g:vimwiki_listsyms, '\C' . chk[1])
         if completion >= 0 && completion <=4 
           let st_tag = '<li class="done'.completion.'">'
         endif
