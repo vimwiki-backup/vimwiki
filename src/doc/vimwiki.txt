@@ -1781,6 +1781,7 @@ Maxim Kim.
 14. Changelog                                              *vimwiki-changelog*
 
 dev~
+    * Issue 70: Table spanning cell support.
     * Issue 72: Do not convert again for unchanged file. |:VimwikiAll2HTML|
       converts only changed wiki files.
     * Issue 117: |VimwikiDiaryIndex| command that opens diary index wiki page.
