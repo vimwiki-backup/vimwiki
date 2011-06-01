@@ -708,6 +708,16 @@ is higlighted as a table header.
 
 If you indent a table then it will be centered in HTML.
 
+If you set > in a cell, the cell spans the left column.
+If you set \/ in a cell, the cell spans the above row.
+For example: >
+
+ | a  | b  | c | d |
+ | \/ | e  | > | f |
+ | \/ | \/ | > | g |
+ | h  | >  | > | > |
+>
+
 See |vimwiki-tables| for more details on how to manage tables.
 
 Note: You can not use [[link|description]] type of links in tables. Use
