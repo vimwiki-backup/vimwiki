@@ -597,13 +597,100 @@ function! s:close_tag_table(table, ldest) "{{{
   " The first element of table list is a string which tells us if table should be centered.
   " The rest elements are rows which are lists of columns:
   " ['center', 
-  "   ['col1', 'col2', 'col3'],
-  "   ['col1', 'col2', 'col3'],
-  "   ['col1', 'col2', 'col3']
+  "   [ CELL1, CELL2, CELL3 ],
+  "   [ CELL1, CELL2, CELL3 ],
+  "   [ CELL1, CELL2, CELL3 ],
   " ]
+  " And CELLx is: { 'body': 'col_x', 'rowspan': r, 'colspan': c }
+
+  function! s:sum_rowspan(table) "{{{
+    let table = a:table
+
+    " Get max cells
+    let max_cells = 0 
+    for row in table[1:]
+      let n_cells = len(row)
+      if n_cells > max_cells
+        let max_cells = n_cells
+      end
+    endfor
+
+    " Sum rowspan
+    for cell_idx in range(max_cells)
+      let rows = 1
+
+      for row_idx in range(len(table)-1, 1, -1)
+        if cell_idx >= len(table[row_idx])
+          let rows = 1
+          continue
+        endif
+
+        if table[row_idx][cell_idx].rowspan == 0
+          let rows += 1
+        else " table[row_idx][cell_idx].rowspan == 1
+          let table[row_idx][cell_idx].rowspan = rows
+          let rows = 1
+        endif
+      endfor
+    endfor
+  endfunction "}}}
+
+  function! s:sum_colspan(table) "{{{
+    for row in a:table[1:]
+      let cols = 1
+
+      for cell_idx in range(len(row)-1, 0, -1)
+        if row[cell_idx].colspan == 0
+          let cols += 1
+        else "row[cell_idx].colspan == 1
+          let row[cell_idx].colspan = cols
+          let cols = 1
+        endif
+      endfor
+    endfor
+  endfunction "}}}
+
+  function! s:close_tag_row(row, header, ldest) "{{{
+    call add(a:ldest, '<tr>')
+
+    " Set tag element of columns 
+    if a:header
+      let tag_name = 'th'
+    else
+      let tag_name = 'td'
+    end
+
+    " Close tag of columns 
+    for cell in a:row
+      if cell.rowspan == 0 || cell.colspan == 0
+        continue
+      endif
+
+      if cell.rowspan > 1
+        let rowspan_attr = ' rowspan="' . cell.rowspan . '"'
+      else "cell.rowspan == 1
+        let rowspan_attr = ''
+      endif
+      if cell.colspan > 1
+        let colspan_attr = ' colspan="' . cell.colspan . '"'
+      else "cell.colspan == 1
+        let colspan_attr = ''
+      endif
+
+      call add(a:ldest, '<' . tag_name . rowspan_attr . colspan_attr .'>')
+      call add(a:ldest, s:process_inline_tags(cell.body))
+      call add(a:ldest, '</'. tag_name . '>')
+    endfor
+
+    call add(a:ldest, '</tr>')
+  endfunction "}}}
+
   let table = a:table
   let ldest = a:ldest
   if len(table)
+    call s:sum_rowspan(table)
+    call s:sum_colspan(table)
+
     if table[0] == 'center'
       call add(ldest, "<table class='center'>")
     else
@@ -624,21 +711,15 @@ function! s:close_tag_table(table, ldest) "{{{
     if head > 0
       for row in table[1 : head-1]
         if !empty(filter(row, '!empty(v:val)'))
-          call add(ldest, '<tr>')
-          call extend(ldest, map(row, '"<th>".s:process_inline_tags(v:val)."</th>"'))
-          call add(ldest, '</tr>')
+          call s:close_tag_row(row, 1, ldest)
         endif
       endfor
       for row in table[head+1 :]
-        call add(ldest, '<tr>')
-        call extend(ldest, map(row, '"<td>".s:process_inline_tags(v:val)."</td>"'))
-        call add(ldest, '</tr>')
+        call s:close_tag_row(row, 0, ldest)
       endfor
     else
       for row in table[1 :]
-        call add(ldest, '<tr>')
-        call extend(ldest, map(row, '"<td>".s:process_inline_tags(v:val)."</td>"'))
-        call add(ldest, '</tr>')
+        call s:close_tag_row(row, 0, ldest)
       endfor
     endif
     call add(ldest, "</table>")
@@ -925,10 +1006,27 @@ endfunction "}}}
 
 function! s:process_tag_table(line, table) "{{{
   function! s:table_empty_cell(value) "{{{
-    if a:value =~ '^\s*$'
-      return '&nbsp;'
+    let cell = {}
+
+    if a:value =~ '^\s*\\/\s*$'
+      let cell.body    = ''
+      let cell.rowspan = 0
+      let cell.colspan = 1
+    elseif a:value =~ '^\s*&gt;\s*$'
+      let cell.body    = ''
+      let cell.rowspan = 1
+      let cell.colspan = 0
+    elseif a:value =~ '^\s*$'
+      let cell.body    = '&nbsp;'
+      let cell.rowspan = 1
+      let cell.colspan = 1
+    else
+      let cell.body    = a:value
+      let cell.rowspan = 1
+      let cell.colspan = 1
     endif
-    return a:value
+
+    return cell
   endfunction "}}}
 
   function! s:table_add_row(table, line) "{{{
