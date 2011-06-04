@@ -1838,6 +1838,7 @@ dev~
       changed, use %% to comment out entire line.
     * Issue 210: HTML: para enclose header.
     * NEW: Added <Leader>wh mapping to call |:Vimwiki2HTML|
+    * Issue 214: External links containing Chinese characters get trimmed.
 
 
 1.1.1~
