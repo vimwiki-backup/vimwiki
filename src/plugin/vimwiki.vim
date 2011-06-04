@@ -30,7 +30,11 @@ function! s:path_common_pfx(path1, path2) "{{{
   while (idx < minlen) && (p1[idx] ==? p2[idx])
     let idx = idx + 1
   endwhile
-  return join(p1[: idx-1], '/')
+  if idx == 0
+    return ''
+  else
+    return join(p1[: idx-1], '/')
+  endif
 endfunction "}}}
 
 function! s:find_wiki(path) "{{{
