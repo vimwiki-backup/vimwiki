@@ -1293,10 +1293,12 @@ function! vimwiki#html#Wiki2HTML(path, wikifile) "{{{
   let wikifile = fnamemodify(a:wikifile, ":p")
   let subdir = vimwiki#base#subdir(VimwikiGet('path'), wikifile)
 
+  let path = expand(a:path).subdir
+  let htmlfile = fnamemodify(wikifile, ":t:r").'.html'
+
   let lsource = readfile(wikifile)
   let ldest = []
 
-  let path = expand(a:path).subdir
   call vimwiki#base#mkdir(path)
 
   " nohtml placeholder -- to skip html generation.
@@ -1388,16 +1390,15 @@ function! vimwiki#html#Wiki2HTML(path, wikifile) "{{{
 
   let html_lines = s:html_insert_contents(html_lines, ldest) " %contents%
   
-  
-
   "" make html file.
-  let wwFileNameOnly = fnamemodify(wikifile, ":t:r")
-  call writefile(html_lines, path.wwFileNameOnly.'.html')
+  call writefile(html_lines, path.htmlfile)
 
   " measure the elapsed time and cut away miliseconds and smaller
   let elapsedtimestr = matchstr(reltimestr(reltime(starttime)),'\d\+\(\.\d\d\)\=')
-  echon "\r".wwFileNameOnly.'.html written (time: '.elapsedtimestr.'s)'
+  echon "\r".htmlfile.' written (time: '.elapsedtimestr.'s)'
+  return path.htmlfile
 endfunction "}}}
+
 
 function! vimwiki#html#WikiAll2HTML(path) "{{{
   if !s:syntax_supported()

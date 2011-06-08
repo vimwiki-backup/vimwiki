@@ -200,6 +200,10 @@ endfunction "}}}
 command! -buffer Vimwiki2HTML
       \ call vimwiki#html#Wiki2HTML(expand(VimwikiGet('path_html')),
       \                             expand('%'))
+command! -buffer Vimwiki2HTMLBrowse
+      \ call VimwikiWeblinkHandler(
+      \   vimwiki#html#Wiki2HTML(expand(VimwikiGet('path_html')),
+      \                          expand('%')))
 command! -buffer VimwikiAll2HTML
       \ call vimwiki#html#WikiAll2HTML(expand(VimwikiGet('path_html')))
 
@@ -255,6 +259,12 @@ if !hasmapto('<Plug>Vimwiki2HTML')
 endif
 nnoremap <script><buffer>
       \ <Plug>Vimwiki2HTML :Vimwiki2HTML<CR>
+
+if !hasmapto('<Plug>Vimwiki2HTMLBrowse')
+  nmap <buffer> <Leader>whh <Plug>Vimwiki2HTMLBrowse
+endif
+nnoremap <script><buffer>
+      \ <Plug>Vimwiki2HTMLBrowse :Vimwiki2HTMLBrowse<CR>
 
 if !hasmapto('<Plug>VimwikiFollowLink')
   nmap <silent><buffer> <CR> <Plug>VimwikiFollowLink

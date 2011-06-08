@@ -195,6 +195,13 @@ NORMAL MODE                                           *vimwiki-local-mappings*
                         To remap: >
                         :map <Leader>wc <Plug>Vimwiki2HTML
 <
+                        *vimwiki_<Leader>whh*
+<Leader>whh             Convert current wiki page to HTML and open it in
+                        webbrowser.
+                        Maps to |:Vimwiki2HTML|
+                        To remap: >
+                        :map <Leader>wcc <Plug>Vimwiki2HTMLBrowse
+<
                         *vimwiki_<CR>*
 <CR>                    Follow wiki link (create target wiki page if needed).
                         Maps to |:VimwikiFollowLink|.
@@ -402,6 +409,9 @@ ic                      An inner column in a table.
 
 *:Vimwiki2HTML*
     Convert current wiki page to HTML.
+
+*:Vimwiki2HTMLBrowse*
+    Convert current wiki page to HTML and open in in webbrowser.
 
 *:VimwikiAll2HTML*
     Convert all wiki pages to HTML.
@@ -1837,8 +1847,10 @@ dev~
     * Issue 209: Wild comments slow down html generation. Comments are
       changed, use %% to comment out entire line.
     * Issue 210: HTML: para enclose header.
-    * NEW: Added <Leader>wh mapping to call |:Vimwiki2HTML|
     * Issue 214: External links containing Chinese characters get trimmed.
+    * Issue 218: Command to generate HTML file and open it in webbrowser. See
+      |:Vimwiki2HTMLBrowse|(bind to <leader>whh)
+    * NEW: Added <Leader>wh mapping to call |:Vimwiki2HTML|
 
 
 1.1.1~
