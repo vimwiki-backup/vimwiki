@@ -265,6 +265,7 @@ if has("win32")
 else
   call s:default('browsers',
         \ [
+        \  'chromium-browser',
         \  'opera',
         \  'firefox',
         \  'konqueror',
