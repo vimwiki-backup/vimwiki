@@ -198,10 +198,10 @@ endfunction "}}}
 
 " COMMANDS {{{
 command! -buffer Vimwiki2HTML
-      \ call vimwiki#html#Wiki2HTML(expand(VimwikiGet('path_html')),
+      \ w <bar> call vimwiki#html#Wiki2HTML(expand(VimwikiGet('path_html')),
       \                             expand('%'))
 command! -buffer Vimwiki2HTMLBrowse
-      \ call VimwikiWeblinkHandler(
+      \ w <bar> call VimwikiWeblinkHandler(
       \   vimwiki#html#Wiki2HTML(expand(VimwikiGet('path_html')),
       \                          expand('%')))
 command! -buffer VimwikiAll2HTML
