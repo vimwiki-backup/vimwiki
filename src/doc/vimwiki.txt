@@ -9,7 +9,7 @@
               |___|  |___| |_|   |_||__| |__||___| |___| |_||___|            ~
 
 
-                               Version: 1.2 2011-05
+                               Version: 1.2
 
 ==============================================================================
 CONTENTS                                                    *vimwiki-contents*
@@ -1768,29 +1768,18 @@ Issues can be filed at http://code.google.com/p/vimwiki/issues .
 ==============================================================================
 13. Developers                                            *vimwiki-developers*
 
-    - Maxim Kim <habamax@gmail.com>
-      Original author.
-    - See the http://code.google.com/p/vimwiki/people/list
+    - Maxim Kim <habamax@gmail.com> as original author.
+    - See the http://code.google.com/p/vimwiki/people/list for the others.
 
 Web: http://code.google.com/p/vimwiki/
 Mail-List: https://groups.google.com/forum/#!forum/vimwiki
 Vim plugins: http://www.vim.org/scripts/script.php?script_id=2226
 
 
-... afterword
-
-Many thanks to all of you for voting vimwiki up on www.vim.org. I do vimwiki
-in my spare time I could use to dance argentine tango with beautiful women.
-Your votes are kind of a good replacement. ;)
-
-Sincerely yours,
-Maxim Kim.
-
-
 ==============================================================================
 14. Changelog                                              *vimwiki-changelog*
 
-dev~
+1.2~
     * Issue 70: Table spanning cell support.
     * Issue 72: Do not convert again for unchanged file. |:VimwikiAll2HTML|
       converts only changed wiki files.
