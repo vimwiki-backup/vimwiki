@@ -148,8 +148,6 @@ execute 'syntax match VimwikiHeader6 /'.g:vimwiki_rxH6.'/ contains=VimwikiTodo,V
 
 " group names "{{{
 
-" call vimwiki#base#setup_colors()
-
 if g:vimwiki_hl_headers == 0
   hi link VimwikiHeader1 Title
   hi link VimwikiHeader2 Title
@@ -175,6 +173,8 @@ else
   endif
 endif
 
+hi def link VimwikiMarkers Normal
+
 hi def VimwikiBold term=bold cterm=bold gui=bold
 hi def link VimwikiBoldT VimwikiBold
 
@@ -188,7 +188,6 @@ hi def link VimwikiItalicBoldT VimwikiBoldItalic
 
 hi def VimwikiUnderline gui=underline
 
-hi def link VimwikiMarkers Comment
 
 hi def link VimwikiCode PreProc
 hi def link VimwikiCodeT VimwikiCode
