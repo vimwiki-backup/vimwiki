@@ -65,7 +65,6 @@ execute 'syntax match VimwikiTodo /'. g:vimwiki_rxTodo .'/'
 
 
 " Tables
-" execute 'syntax match VimwikiTable /'.g:vimwiki_rxTable.'/'
 syntax match VimwikiTableRow /^\s*|.\+|\s*$/ 
       \ transparent contains=VimwikiCellSeparator,VimwikiLinkT,
       \ VimwikiNoExistsLinkT,VimwikiEmoticons,VimwikiTodo,
@@ -188,15 +187,14 @@ hi def link VimwikiItalicBoldT VimwikiBoldItalic
 
 hi def VimwikiUnderline gui=underline
 
-
 hi def link VimwikiCode PreProc
 hi def link VimwikiCodeT VimwikiCode
 
-hi def link VimwikiNoExistsLink SpellBad
-hi def link VimwikiNoExistsLinkT VimwikiNoExistsLink
-
 hi def link VimwikiPre PreProc
 hi def link VimwikiPreT VimwikiPre
+
+hi def link VimwikiNoExistsLink SpellBad
+hi def link VimwikiNoExistsLinkT VimwikiNoExistsLink
 
 hi def link VimwikiLink Underlined
 hi def link VimwikiLinkT VimwikiLink
@@ -218,12 +216,11 @@ hi def link VimwikiSubScriptT VimwikiSubScript
 hi def link VimwikiTodo Todo
 hi def link VimwikiComment Comment
 
-hi def link VimwikiCellSeparator PreProc
-
 hi def link VimwikiPlaceholder SpecialKey
 hi def link VimwikiPlaceholderParam String
 hi def link VimwikiHTMLtag SpecialKey
 
+hi def link VimwikiCellSeparator VimwikiMarkers
 hi def link VimwikiBoldChar VimwikiMarkers
 hi def link VimwikiItalicChar VimwikiMarkers
 hi def link VimwikiBoldItalicChar VimwikiMarkers
