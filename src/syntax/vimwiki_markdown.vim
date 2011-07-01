@@ -54,13 +54,13 @@ let g:vimwiki_rxSubScript = ',,[^,`]\+,,'
 let g:vimwiki_char_subscript = ',,'
 
 " Header levels, 1-6
-let g:vimwiki_rxH = '='
-let g:vimwiki_rxH1 = '^\s*'.g:vimwiki_rxH.'\{1}[^'.g:vimwiki_rxH.']\+.*[^'.g:vimwiki_rxH.']\+'.g:vimwiki_rxH.'\{1}\s*$'
-let g:vimwiki_rxH2 = '^\s*'.g:vimwiki_rxH.'\{2}[^'.g:vimwiki_rxH.']\+.*[^'.g:vimwiki_rxH.']\+'.g:vimwiki_rxH.'\{2}\s*$'
-let g:vimwiki_rxH3 = '^\s*'.g:vimwiki_rxH.'\{3}[^'.g:vimwiki_rxH.']\+.*[^'.g:vimwiki_rxH.']\+'.g:vimwiki_rxH.'\{3}\s*$'
-let g:vimwiki_rxH4 = '^\s*'.g:vimwiki_rxH.'\{4}[^'.g:vimwiki_rxH.']\+.*[^'.g:vimwiki_rxH.']\+'.g:vimwiki_rxH.'\{4}\s*$'
-let g:vimwiki_rxH5 = '^\s*'.g:vimwiki_rxH.'\{5}[^'.g:vimwiki_rxH.']\+.*[^'.g:vimwiki_rxH.']\+'.g:vimwiki_rxH.'\{5}\s*$'
-let g:vimwiki_rxH6 = '^\s*'.g:vimwiki_rxH.'\{6}[^'.g:vimwiki_rxH.']\+.*[^'.g:vimwiki_rxH.']\+'.g:vimwiki_rxH.'\{6}\s*$'
+let g:vimwiki_rxH = '#'
+let g:vimwiki_rxH1 = '^\s*'.g:vimwiki_rxH.'\{1}[^'.g:vimwiki_rxH.']\+.*'
+let g:vimwiki_rxH2 = '^\s*'.g:vimwiki_rxH.'\{2}[^'.g:vimwiki_rxH.']\+.*'
+let g:vimwiki_rxH3 = '^\s*'.g:vimwiki_rxH.'\{3}[^'.g:vimwiki_rxH.']\+.*'
+let g:vimwiki_rxH4 = '^\s*'.g:vimwiki_rxH.'\{4}[^'.g:vimwiki_rxH.']\+.*'
+let g:vimwiki_rxH5 = '^\s*'.g:vimwiki_rxH.'\{5}[^'.g:vimwiki_rxH.']\+.*'
+let g:vimwiki_rxH6 = '^\s*'.g:vimwiki_rxH.'\{6}[^'.g:vimwiki_rxH.']\+.*'
 let g:vimwiki_rxHeader = '\%('.g:vimwiki_rxH1.'\)\|'.
       \ '\%('.g:vimwiki_rxH2.'\)\|'.
       \ '\%('.g:vimwiki_rxH3.'\)\|'.
@@ -73,13 +73,13 @@ let g:vimwiki_char_header = '\%(^\s*=\+\)\|\%(=\+\s*$\)'
 " <hr>, horizontal rule
 let g:vimwiki_rxHR = '^----.*$'
 
-" Tables. Each line starts and ends with '|'; each cell is separated by '+'
-let g:vimwiki_rxTableBeginEnd = '|'
-let g:vimwiki_rxTableSep = '+'
+" Tables. Each line starts and ends with '|'; each cell is separated by '|'
+let g:vimwiki_rxTableBeginEnd = '||'
+let g:vimwiki_rxTableSep = '##'
 
-" List items start with optional whitespace(s) then '* ' or '# '
+" List items start with optional whitespace(s) then '* ' or '1. ', '2. ', etc.
 let g:vimwiki_rxListBullet = '^\s*\%(\*\|-\)\s'
-let g:vimwiki_rxListNumber = '^\s*#\s'
+let g:vimwiki_rxListNumber = '^\s*[0-9]\+\.\s'
 
 let g:vimwiki_rxListDefine = '::\(\s\|$\)'
 
