@@ -59,11 +59,12 @@ endfunction "}}}
 function! s:is_last_column(lnum, cnum) "{{{
   let line = strpart(getline(a:lnum), a:cnum - 1)
   "echomsg "DEBUG is_last_column> ".(line =~ s:rxEnds.'\s*$' && line !~ s:rxSep.'.*'.s:rxEnds.'\s*$')
-  return line =~ s:rxEnds.'\s*$' && line !~ s:rxSep
+  return line =~ s:rxEnds.'\s*$' && line !~ s:rxSep.'.*'.s:rxEnds.'\s*$'
 endfunction "}}}
 
 function! s:is_first_column(lnum, cnum) "{{{
   let line = strpart(getline(a:lnum), 0, a:cnum - 1)
+  "echomsg "DEBUG is_first_column> ".(line =~ '^\s*'.s:rxEnds && line !~ '^\s*'.s:rxEnds.'.*'.s:rxSep)
   return line =~ '^\s*$' || (line =~ '^\s*'.s:rxEnds && line !~ '^\s*'.s:rxEnds.'.*'.s:rxSep)
 endfunction "}}}
 
@@ -390,11 +391,11 @@ function! vimwiki#tbl#kbd_tab() "{{{
   endif
 
   let last = s:is_last_column(lnum, col('.'))
+  "echomsg "DEBUG kbd_tab> ".last
   if last && !s:is_table(getline(lnum+1))
     let cols = len(s:get_values(getline(lnum)))
     return s:kbd_create_new_row(cols, 1)
   endif
-  "echomsg "DEBUG kbd_tab> ".last
   return s:kbd_goto_next_col(last)
 endfunction "}}}
 
@@ -405,9 +406,9 @@ function! vimwiki#tbl#kbd_shift_tab() "{{{
   endif
 
   let first = s:is_first_column(lnum, col('.'))
+  "echomsg "DEBUG kbd_tab> ".first
   if first && !s:is_table(getline(lnum-1))
     return ""
-  "echomsg "DEBUG kbd_tab> ".first
   endif
   return s:kbd_goto_prev_col(first)
 endfunction "}}}
