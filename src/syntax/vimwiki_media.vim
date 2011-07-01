@@ -35,12 +35,13 @@ let g:vimwiki_rxSubScript = ',,[^,]\+,,'
 let g:vimwiki_char_subscript = ',,'
 
 " Header levels, 1-6
-let g:vimwiki_rxH1 = '^\s*=\{1}[^=]\+.*[^=]\+=\{1}\s*$'
-let g:vimwiki_rxH2 = '^\s*=\{2}[^=]\+.*[^=]\+=\{2}\s*$'
-let g:vimwiki_rxH3 = '^\s*=\{3}[^=]\+.*[^=]\+=\{3}\s*$'
-let g:vimwiki_rxH4 = '^\s*=\{4}[^=]\+.*[^=]\+=\{4}\s*$'
-let g:vimwiki_rxH5 = '^\s*=\{5}[^=]\+.*[^=]\+=\{5}\s*$'
-let g:vimwiki_rxH6 = '^\s*=\{6}[^=]\+.*[^=]\+=\{6}\s*$'
+let g:vimwiki_rxH = '='
+let g:vimwiki_rxH1 = '^\s*'.g:vimwiki_rxH.'\{1}[^'.g:vimwiki_rxH.']\+.*[^'.g:vimwiki_rxH.']\+'.g:vimwiki_rxH.'\{1}\s*$'
+let g:vimwiki_rxH2 = '^\s*'.g:vimwiki_rxH.'\{2}[^'.g:vimwiki_rxH.']\+.*[^'.g:vimwiki_rxH.']\+'.g:vimwiki_rxH.'\{2}\s*$'
+let g:vimwiki_rxH3 = '^\s*'.g:vimwiki_rxH.'\{3}[^'.g:vimwiki_rxH.']\+.*[^'.g:vimwiki_rxH.']\+'.g:vimwiki_rxH.'\{3}\s*$'
+let g:vimwiki_rxH4 = '^\s*'.g:vimwiki_rxH.'\{4}[^'.g:vimwiki_rxH.']\+.*[^'.g:vimwiki_rxH.']\+'.g:vimwiki_rxH.'\{4}\s*$'
+let g:vimwiki_rxH5 = '^\s*'.g:vimwiki_rxH.'\{5}[^'.g:vimwiki_rxH.']\+.*[^'.g:vimwiki_rxH.']\+'.g:vimwiki_rxH.'\{5}\s*$'
+let g:vimwiki_rxH6 = '^\s*'.g:vimwiki_rxH.'\{6}[^'.g:vimwiki_rxH.']\+.*[^'.g:vimwiki_rxH.']\+'.g:vimwiki_rxH.'\{6}\s*$'
 let g:vimwiki_rxHeader = '\%('.g:vimwiki_rxH1.'\)\|'.
       \ '\%('.g:vimwiki_rxH2.'\)\|'.
       \ '\%('.g:vimwiki_rxH3.'\)\|'.
@@ -53,12 +54,13 @@ let g:vimwiki_char_header = '\%(^\s*=\+\)\|\%(=\+\s*$\)'
 let g:vimwiki_rxHR = '^----.*$'
 
 " Tables. Each line starts and ends with '||'; each cell is separated by '||'
-let g:vimwiki_rxTable = '||'
+let g:vimwiki_rxTableBeginEnd = '||'
+let g:vimwiki_rxTableSep = '||'
 
 " Bulleted list items start with whitespace(s), then '*'
 " highlight only bullets and digits.
-let g:vimwiki_rxListBullet = '^\s*\*\+\([^*]*$\)\@='
-let g:vimwiki_rxListNumber = '^\s*#\+'
+let g:vimwiki_rxListBullet = '^\s*\*\+\s\([^*]*$\)\@='
+let g:vimwiki_rxListNumber = '^\s*#\+\s'
 
 let g:vimwiki_rxListDefine = '^\%(;\|:\)\s'
 
