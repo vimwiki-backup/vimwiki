@@ -74,8 +74,8 @@ let g:vimwiki_char_header = '\%(^\s*=\+\)\|\%(=\+\s*$\)'
 let g:vimwiki_rxHR = '^----.*$'
 
 " Tables. Each line starts and ends with '|'; each cell is separated by '|'
-let g:vimwiki_rxTableBeginEnd = '||'
-let g:vimwiki_rxTableSep = '##'
+let g:vimwiki_rxTableBeginEnd = '|'
+let g:vimwiki_rxTableSep = '|'
 
 " List items start with optional whitespace(s) then '* ' or '1. ', '2. ', etc.
 let g:vimwiki_rxListBullet = '^\s*\%(\*\|-\)\s'
