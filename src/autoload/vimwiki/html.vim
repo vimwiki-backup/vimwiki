@@ -799,7 +799,11 @@ function! s:process_tag_math(line, math) "{{{
   if !math[0] && a:line =~ '^\s*{{\$[^\(}}$\)]*\s*$'
     let class = matchstr(a:line, '{{$\zs.*$')
     let class = substitute(class, '\s\+$', '', 'g')
-    if class != ""
+    " Check the math placeholder (default: displaymath)
+    let b:vimwiki_mathEnv = matchstr(class, '^%\zs\S\+\ze%')
+    if b:vimwiki_mathEnv != ""
+        call add(lines, substitute(class, '^%\(\S\+\)%','\\begin{\1}', ''))
+    elseif class != ""
       call add(lines, "\\\[".class)
     else
       call add(lines, "\\\[")
@@ -808,7 +812,11 @@ function! s:process_tag_math(line, math) "{{{
     let processed = 1
   elseif math[0] && a:line =~ '^\s*}}\$\s*$'
     let math = [0, 0]
-    call add(lines, "\\\]")
+    if b:vimwiki_mathEnv != ""
+      call add(lines, "\\end{".b:vimwiki_mathEnv."}")
+    else
+      call add(lines, "\\\]")
+    endif
     let processed = 1
   elseif math[0]
     let processed = 1
