@@ -1046,7 +1046,7 @@ function! s:process_tag_table(line, table) "{{{
   let lines = []
   let processed = 0
 
-  if a:line =~ '^\s*|[-+]\+|\s*$'
+  if a:line =~ '^\s*|\(--\+|\)\+\s*$'
     call extend(table, s:table_add_row(a:table, a:line))
     let processed = 1
   elseif a:line =~ '^\s*|.\+|\s*$'
