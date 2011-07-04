@@ -16,9 +16,8 @@ let g:loaded_vimwiki_tbl_auto = 1
 "}}}
 
 let s:textwidth = &tw
-let s:rxEnds = g:vimwiki_rxTableBeginEnd
 let s:rxSep = g:vimwiki_rxTableSep
-let s:rxSplitter = '\s*'.s:rxEnds.'\s*\|\s*'.s:rxSep.'\s*'
+let s:rxSplitter = '\s*'.s:rxSep.'\s*'
 
 " Misc functions {{{
 function! s:wide_len(str) "{{{
@@ -44,28 +43,28 @@ function! s:wide_len(str) "{{{
 endfunction "}}}
 
 function! s:is_table(line) "{{{
-  let test1 = a:line =~ '^\s*'.s:rxEnds.'.\+'.s:rxEnds.'\s*$'
-  let test2 = a:line !~ s:rxEnds.'.*'.s:rxEnds.'.*'.s:rxEnds || s:rxEnds =~ s:rxSep
-  let test3 = a:line !~ s:rxEnds.s:rxSep
-  let test4 = a:line !~ s:rxSep.s:rxSep
-  let test5 = a:line !~ s:rxSep.s:rxEnds
-  return (test1 && test2 && test3 && test4 && test5) ||  s:is_separator(a:line)
+  return s:is_separator(a:line) || (a:line !~ s:rxSep.s:rxSep && a:line =~ '^\s*'.s:rxSep.'.\+'.s:rxSep.'\s*$')
 endfunction "}}}
 
 function! s:is_separator(line) "{{{
-  return a:line =~ '^\s*\%('.s:rxEnds.'\|'.s:rxSep.'\)\s*--\%(-\|'.s:rxEnds.'\|'.s:rxSep.'\)\+'
+  return a:line =~ '^\s*'.s:rxSep.'\s*--\%(-\|'.s:rxSep.'\)\+'
+endfunction "}}}
+
+function! s:is_separator_tail(line) "{{{
+  return a:line =~ '^\{-1}\%(\s*\|-*\)\%('.s:rxSep.'-\+\)\+'.s:rxSep.'\s*$'
 endfunction "}}}
 
 function! s:is_last_column(lnum, cnum) "{{{
   let line = strpart(getline(a:lnum), a:cnum - 1)
-  "echomsg "DEBUG is_last_column> ".(line =~ s:rxEnds.'\s*$' && line !~ s:rxSep.'.*'.s:rxEnds.'\s*$')
-  return line =~ s:rxEnds.'\s*$' && line !~ s:rxSep.'.*'.s:rxEnds.'\s*$'
+  "echomsg "DEBUG is_last_column> ".(line =~ s:rxSep.'\s*$' && line !~ s:rxSep.'.*'.s:rxSep.'\s*$')
+  return line =~ s:rxSep.'\s*$'  && line !~ s:rxSep.'.*'.s:rxSep.'\s*$'
+ 
 endfunction "}}}
 
 function! s:is_first_column(lnum, cnum) "{{{
   let line = strpart(getline(a:lnum), 0, a:cnum - 1)
-  "echomsg "DEBUG is_first_column> ".(line =~ '^\s*'.s:rxEnds && line !~ '^\s*'.s:rxEnds.'.*'.s:rxSep)
-  return line =~ '^\s*$' || (line =~ '^\s*'.s:rxEnds && line !~ '^\s*'.s:rxEnds.'.*'.s:rxSep)
+  "echomsg "DEBUG is_first_column> ".(line =~ '^\s*'.s:rxSep && line !~ '^\s*'.s:rxSep.'.*'.s:rxSep)
+  return line =~ '^\s*$' || (line =~ '^\s*'.s:rxSep && line !~ '^\s*'.s:rxSep.'.*'.s:rxSep)
 endfunction "}}}
 
 function! s:count_separators_up(lnum) "{{{
@@ -93,29 +92,23 @@ function! s:count_separators_down(lnum) "{{{
 endfunction "}}}
 
 function! s:create_empty_row(cols) "{{{
-  let row = s:rxEnds
+  let row = s:rxSep
   let cell = "   ".s:rxSep
-  let last_cell = "   ".s:rxEnds
 
-  for c in range(a:cols - 1)
+  for c in range(a:cols)
     let row .= cell
   endfor
-
-  let row .= last_cell
 
   return row
 endfunction "}}}
 
 function! s:create_row_sep(cols) "{{{
-  let row = s:rxEnds
+  let row = s:rxSep
   let cell = "---".s:rxSep
-  let last_cell = "---".s:rxEnds
 
-  for c in range(a:cols - 1)
+  for c in range(a:cols)
     let row .= cell
   endfor
-
-  let row .= last_cell
 
   return row
 endfunction "}}}
@@ -227,13 +220,12 @@ function! s:cur_column() "{{{
     return -1
   endif
   " TODO: do we need conditional: if s:is_separator(line)
-  let sep = s:rxEnds.'\|'.s:rxSep
 
   let curs_pos = col('.')
-  let mpos = match(line, s:rxEnds, 0)
+  let mpos = match(line, s:rxSep, 0)
   let col = -1
   while mpos < curs_pos && mpos != -1
-    let mpos = match(line, sep, mpos+1)
+    let mpos = match(line, s:rxSep, mpos+1)
     if mpos != -1
       let col += 1
     endif
@@ -257,7 +249,7 @@ function! s:fmt_cell(cell, max_len) "{{{
 endfunction "}}}
 
 function! s:fmt_row(line, max_lens, col1, col2) "{{{
-  let new_line = s:rxEnds
+  let new_line = s:rxSep
   let cells = s:get_values(a:line)
   for idx in range(len(cells))
     if idx == a:col1
@@ -266,20 +258,12 @@ function! s:fmt_row(line, max_lens, col1, col2) "{{{
       let idx = a:col1
     endif
     let value = cells[idx]
-    if idx == len(a:max_lens)-1
-      let new_line .= s:fmt_cell(value, a:max_lens[idx]).s:rxEnds
-    else
-      let new_line .= s:fmt_cell(value, a:max_lens[idx]).s:rxSep
-    endif
+    let new_line .= s:fmt_cell(value, a:max_lens[idx]).s:rxSep
   endfor
 
   let idx = len(cells)
   while idx < len(a:max_lens)
-    if idx == len(a:max_lens)-1
-      let new_line .= s:fmt_cell('', a:max_lens[idx]).s:rxEnds
-    else
-      let new_line .= s:fmt_cell('', a:max_lens[idx]).s:rxSep
-    endif
+    let new_line .= s:fmt_cell('', a:max_lens[idx]).s:rxSep
     let idx += 1
   endwhile
   return new_line
@@ -294,18 +278,14 @@ function! s:fmt_cell_sep(max_len) "{{{
 endfunction "}}}
 
 function! s:fmt_sep(max_lens, col1, col2) "{{{
-  let new_line = s:rxEnds
+  let new_line = s:rxSep
   for idx in range(len(a:max_lens))
     if idx == a:col1
       let idx = a:col2
     elseif idx == a:col2
       let idx = a:col1
     endif
-    if idx == len(a:max_lens)-1
-      let new_line .= s:fmt_cell_sep(a:max_lens[idx]).s:rxEnds
-    else
-      let new_line .= s:fmt_cell_sep(a:max_lens[idx]).s:rxSep
-    endif
+    let new_line .= s:fmt_cell_sep(a:max_lens[idx]).s:rxSep
   endfor
   return new_line
 endfunction "}}}
@@ -317,10 +297,10 @@ function! s:kbd_create_new_row(cols, goto_first) "{{{
   let cmd .= "\<ESC>:call vimwiki#tbl#format(line('.'))\<CR>"
   let cmd .= "\<ESC>0"
   if a:goto_first
-    let cmd .= ":call search('\\(".s:rxEnds."\\|".s:rxSep."\\)\\zs', 'c', line('.'))\<CR>"
+    let cmd .= ":call search('\\(".s:rxSep."\\)\\zs', 'c', line('.'))\<CR>"
   else
     let cmd .= (col('.')-1)."l"
-    let cmd .= ":call search('\\(".s:rxEnds."\\|".s:rxSep."\\)\\zs', 'bc', line('.'))\<CR>"
+    let cmd .= ":call search('\\(".s:rxSep."\\)\\zs', 'bc', line('.'))\<CR>"
   endif
   let cmd .= "a"
   "
@@ -329,39 +309,39 @@ endfunction "}}}
 
 function! s:kbd_goto_next_row() "{{{
   let cmd = "\<ESC>j"
-  let cmd .= ":call search('.\\(".s:rxEnds."\\|".s:rxSep."\\)', 'c', line('.'))\<CR>"
-  let cmd .= ":call search('\\(".s:rxEnds."\\|".s:rxSep."\\)\\zs', 'bc', line('.'))\<CR>"
+  let cmd .= ":call search('.\\(".s:rxSep."\\)', 'c', line('.'))\<CR>"
+  let cmd .= ":call search('\\(".s:rxSep."\\)\\zs', 'bc', line('.'))\<CR>"
   let cmd .= "a"
   return cmd
 endfunction "}}}
 
 function! s:kbd_goto_prev_row() "{{{
   let cmd = "\<ESC>k"
-  let cmd .= ":call search('.\\(".s:rxEnds."\\|".s:rxSep."\\)', 'c', line('.'))\<CR>"
-  let cmd .= ":call search('\\(".s:rxEnds."\\|".s:rxSep."\\)\\zs', 'bc', line('.'))\<CR>"
+  let cmd .= ":call search('.\\(".s:rxSep."\\)', 'c', line('.'))\<CR>"
+  let cmd .= ":call search('\\(".s:rxSep."\\)\\zs', 'bc', line('.'))\<CR>"
   let cmd .= "a"
   return cmd
 endfunction "}}}
 
-function! s:kbd_goto_next_col(last) "{{{
+function! s:kbd_goto_next_col(jumpdown) "{{{
   let cmd = "\<ESC>"
-  if a:last
+  if a:jumpdown
     let seps = s:count_separators_down(line('.'))
     let cmd .= seps."j0"
   endif
-  let cmd .= ":call search('\\(".s:rxEnds."\\|".s:rxSep."\\)\\zs', '', line('.'))\<CR>a"
+  let cmd .= ":call search('\\(".s:rxSep."\\)\\zs', '', line('.'))\<CR>a"
   "echomsg "DEBUG kbd_goto_next_col> ".cmd
   return cmd
 endfunction "}}}
 
-function! s:kbd_goto_prev_col(first) "{{{
+function! s:kbd_goto_prev_col(jumpup) "{{{
   let cmd = "\<ESC>"
-  if a:first
+  if a:jumpup
     let seps = s:count_separators_up(line('.'))
     let cmd .= seps."k"
     let cmd .= "$"
   endif
-  let cmd .= ":call search('\\(".s:rxEnds."\\|".s:rxSep."\\)\\zs', 'b', line('.'))\<CR>"
+  let cmd .= ":call search('\\(".s:rxSep."\\)\\zs', 'b', line('.'))\<CR>"
   let cmd .= "a"
   "echomsg "DEBUG kbd_goto_prev_col> ".cmd
   return cmd
@@ -384,6 +364,15 @@ function! vimwiki#tbl#kbd_cr() "{{{
   endif
 endfunction "}}}
 
+"" call is_separator_tail(line) from kbd_[shift_]tab
+"" s:is_separator_tail(line)
+
+"  let line = getline(a:lnum)
+"  if s:is_separator(line)
+"    return 1
+"  endif
+
+
 function! vimwiki#tbl#kbd_tab() "{{{
   let lnum = line('.')
   if !s:is_table(getline(lnum))
@@ -391,12 +380,13 @@ function! vimwiki#tbl#kbd_tab() "{{{
   endif
 
   let last = s:is_last_column(lnum, col('.'))
-  "echomsg "DEBUG kbd_tab> ".last
-  if last && !s:is_table(getline(lnum+1))
+  let is_sep = s:is_separator_tail(getline(lnum))
+  "echomsg "DEBUG kbd_tab> last=".last.", is_sep=".is_sep
+  if (is_sep || last) && !s:is_table(getline(lnum+1))
     let cols = len(s:get_values(getline(lnum)))
     return s:kbd_create_new_row(cols, 1)
   endif
-  return s:kbd_goto_next_col(last)
+  return s:kbd_goto_next_col(is_sep || last)
 endfunction "}}}
 
 function! vimwiki#tbl#kbd_shift_tab() "{{{
@@ -406,11 +396,12 @@ function! vimwiki#tbl#kbd_shift_tab() "{{{
   endif
 
   let first = s:is_first_column(lnum, col('.'))
+  let is_sep = s:is_separator_tail(getline(lnum))
   "echomsg "DEBUG kbd_tab> ".first
-  if first && !s:is_table(getline(lnum-1))
+  if (is_sep || first) && !s:is_table(getline(lnum-1))
     return ""
   endif
-  return s:kbd_goto_prev_col(first)
+  return s:kbd_goto_prev_col(is_sep || first)
 endfunction "}}}
 
 function! vimwiki#tbl#format(lnum, ...) "{{{
@@ -511,7 +502,7 @@ function! vimwiki#tbl#move_column_left() "{{{
     call vimwiki#tbl#format(line('.'), cur_col-1, cur_col) 
     call cursor(line('.'), 1)
 
-    let sep = '\('.s:rxEnds.'\|'.s:rxSep.'\).\zs'
+    let sep = '\('.s:rxSep.'\).\zs'
     let mpos = -1
     let col = -1
     while col < cur_col-1
@@ -544,7 +535,7 @@ function! vimwiki#tbl#move_column_right() "{{{
     call vimwiki#tbl#format(line('.'), cur_col, cur_col+1) 
     call cursor(line('.'), 1)
 
-    let sep = '\('.s:rxEnds.'\|'.s:rxSep.'\).\zs'
+    let sep = '\('.s:rxSep.'\).\zs'
     let mpos = -1
     let col = -1
     while col < cur_col+1
