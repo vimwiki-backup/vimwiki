@@ -1046,14 +1046,14 @@ function! s:process_tag_table(line, table) "{{{
   let lines = []
   let processed = 0
 
-  if a:line =~ '^\s*|\(--\+|\)\+\s*$'
+  if vimwiki#tbl#is_separator(a:line)
     call extend(table, s:table_add_row(a:table, a:line))
     let processed = 1
-  elseif a:line =~ '^\s*|.\+|\s*$'
+  elseif vimwiki#tbl#is_table(a:line)
     call extend(table, s:table_add_row(a:table, a:line))
 
     let processed = 1
-    let cells = split(a:line, '\s*|\s*', 1)[1: -2]
+    let cells = split(a:line, vimwiki#tbl#cell_splitter(), 1)[1: -2]
     call map(cells, 's:table_empty_cell(v:val)')
     call extend(table[-1], cells)
   else

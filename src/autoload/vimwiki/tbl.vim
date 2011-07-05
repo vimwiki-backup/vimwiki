@@ -17,7 +17,7 @@ let g:loaded_vimwiki_tbl_auto = 1
 
 let s:textwidth = &tw
 let s:rxSep = g:vimwiki_rxTableSep
-let s:rxSplitter = '\s*'.s:rxSep.'\s*'
+
 
 " Misc functions {{{
 function! s:wide_len(str) "{{{
@@ -42,12 +42,20 @@ function! s:wide_len(str) "{{{
   return ret
 endfunction "}}}
 
+function! s:cell_splitter() "{{{
+  return '\s*'.s:rxSep.'\s*'
+endfunction "}}}
+
+function! s:sep_splitter() "{{{
+  return '-'.s:rxSep.'-'
+endfunction "}}}
+
 function! s:is_table(line) "{{{
   return s:is_separator(a:line) || (a:line !~ s:rxSep.s:rxSep && a:line =~ '^\s*'.s:rxSep.'.\+'.s:rxSep.'\s*$')
 endfunction "}}}
 
 function! s:is_separator(line) "{{{
-  return a:line =~ '^\s*'.s:rxSep.'\s*--\%(-\|'.s:rxSep.'\)\+'
+  return a:line =~ '^\s*'.s:rxSep.'\(--\+'.s:rxSep.'\)\+\s*$'
 endfunction "}}}
 
 function! s:is_separator_tail(line) "{{{
@@ -114,15 +122,15 @@ function! s:create_row_sep(cols) "{{{
 endfunction "}}}
 
 function! s:get_values(line) "{{{
-  return split(a:line, s:rxSplitter, 1)[1:-2]
+  return split(a:line, s:cell_splitter(), 1)[1:-2]
 endfunction "}}}
 
 function! s:col_count(lnum) "{{{
   let line = getline(a:lnum)
   if !s:is_separator(line)
-    return len(split(line, s:rxSplitter, 1)[1:-2])
+    return len(split(line, s:cell_splitter(), 1)[1:-2])
   else
-    return len(split(line, '-'.s:rxSep.'-', 1))
+    return len(split(line, s:sep_splitter(), 1))
   endif
 endfunction "}}}
 
@@ -553,6 +561,22 @@ endfunction "}}}
 
 function! vimwiki#tbl#get_rows(lnum) "{{{
   return s:get_rows(a:lnum)
+endfunction "}}}
+
+function! vimwiki#tbl#is_table(line) "{{{
+  return s:is_table(a:line)
+endfunction "}}}
+
+function! vimwiki#tbl#is_separator(line) "{{{
+  return s:is_separator(a:line)
+endfunction "}}}
+
+function! vimwiki#tbl#cell_splitter() "{{{
+  return s:cell_splitter()
+endfunction "}}}
+
+function! vimwiki#tbl#sep_splitter() "{{{
+  return s:sep_splitter()
 endfunction "}}}
 
 "}}}
