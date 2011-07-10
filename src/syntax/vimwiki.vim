@@ -147,9 +147,9 @@ execute 'syntax match VimwikiHeader6 /'.g:vimwiki_rxH6.'/ contains=VimwikiTodo,V
 
 " group names "{{{
 if &background == 'light'
-  hi def VimwikiUnderlined term=underline cterm=underline ctermfg=DarkBlue gui=underline guifg=DarkBlue
+  hi def VimwikiLink ctermfg=DarkBlue  guifg=DarkBlue   term=underline cterm=underline gui=underline
 else
-  hi def VimwikiUnderlined term=underline cterm=underline ctermfg=LightBlue gui=underline guifg=SteelBlue1
+  hi def VimwikiLink ctermfg=LightBlue guifg=SteelBlue1 term=underline cterm=underline gui=underline
 endif
 
 if g:vimwiki_hl_headers == 0
@@ -190,8 +190,6 @@ hi def link VimwikiItalicBold VimwikiBoldItalic
 hi def link VimwikiBoldItalicT VimwikiBoldItalic
 hi def link VimwikiItalicBoldT VimwikiBoldItalic
 
-hi def VimwikiUnderline gui=underline
-
 hi def link VimwikiCode PreProc
 hi def link VimwikiCodeT VimwikiCode
 
@@ -201,7 +199,6 @@ hi def link VimwikiPreT VimwikiPre
 hi def link VimwikiNoExistsLink SpellBad
 hi def link VimwikiNoExistsLinkT VimwikiNoExistsLink
 
-hi def link VimwikiLink VimwikiUnderlined
 hi def link VimwikiLinkT VimwikiLink
 
 hi def link VimwikiList Identifier
