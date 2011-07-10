@@ -1008,21 +1008,27 @@ endfunction "}}}
 function! vimwiki#base#AddHeaderLevel() "{{{
   let lnum = line('.')
   let line = getline(lnum)
-
+  let rxHdr = g:vimwiki_rxH
   if line =~ '^\s*$'
     return
   endif
 
-  if line =~ '^\s*\(=\+\).\+\1\s*$'
+  if line =~ g:vimwiki_rxHeader
     let level = vimwiki#base#count_first_sym(line)
     if level < 6
-      let line = substitute(line, '\(=\+\).\+\1', '=&=', '')
+      if g:vimwiki_symH
+        let line = substitute(line, '\('.rxHdr.'\+\).\+\1', rxHdr.'&'.rxHdr, '')
+      else
+        let line = substitute(line, '\('.rxHdr.'\+\).\+', rxHdr.'&', '')
+      endif
       call setline(lnum, line)
     endif
   else
-      let line = substitute(line, '^\s*', '&= ', '')
-      let line = substitute(line, '\s*$', ' =&', '')
-      call setline(lnum, line)
+    let line = substitute(line, '^\s*', '&'.rxHdr.' ', '') 
+    if g:vimwiki_symH
+      let line = substitute(line, '\s*$', ' '.rxHdr.'&', '')
+    endif
+    call setline(lnum, line)
   endif
 endfunction
 "}}}
@@ -1030,24 +1036,31 @@ endfunction
 function! vimwiki#base#RemoveHeaderLevel() "{{{
   let lnum = line('.')
   let line = getline(lnum)
-
+  let rxHdr = g:vimwiki_rxH
   if line =~ '^\s*$'
     return
   endif
 
-  if line =~ '^\s*\(=\+\).\+\1\s*$'
+  if line =~ g:vimwiki_rxHeader
     let level = vimwiki#base#count_first_sym(line)
-    let old = repeat('=', level)
-    let new = repeat('=', level - 1)
+    let old = repeat(rxHdr, level)
+    let new = repeat(rxHdr, level - 1)
 
-    let chomp = line =~ '=\s'
+    let chomp = line =~ rxHdr.'\s'
 
-    let line = substitute(line, old, new, 'g')
+    if g:vimwiki_symH
+      let line = substitute(line, old, new, 'g')
+    else
+      let line = substitute(line, old, new, '')
+    endif
 
     if level == 1 && chomp
       let line = substitute(line, '^\s', '', 'g')
       let line = substitute(line, '\s$', '', 'g')
     endif
+
+    let line = substitute(line, '\s*$', '', '')
+
     call setline(lnum, line)
   endif
 endfunction

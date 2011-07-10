@@ -55,18 +55,36 @@ let g:vimwiki_char_subscript = ',,'
 
 " Header levels, 1-6
 let g:vimwiki_rxH = '#'
-let g:vimwiki_rxH1 = '^\s*'.g:vimwiki_rxH.'\{1}[^'.g:vimwiki_rxH.']\+.*'
-let g:vimwiki_rxH2 = '^\s*'.g:vimwiki_rxH.'\{2}[^'.g:vimwiki_rxH.']\+.*'
-let g:vimwiki_rxH3 = '^\s*'.g:vimwiki_rxH.'\{3}[^'.g:vimwiki_rxH.']\+.*'
-let g:vimwiki_rxH4 = '^\s*'.g:vimwiki_rxH.'\{4}[^'.g:vimwiki_rxH.']\+.*'
-let g:vimwiki_rxH5 = '^\s*'.g:vimwiki_rxH.'\{5}[^'.g:vimwiki_rxH.']\+.*'
-let g:vimwiki_rxH6 = '^\s*'.g:vimwiki_rxH.'\{6}[^'.g:vimwiki_rxH.']\+.*'
-let g:vimwiki_rxHeader = '\%('.g:vimwiki_rxH1.'\)\|'.
-      \ '\%('.g:vimwiki_rxH2.'\)\|'.
-      \ '\%('.g:vimwiki_rxH3.'\)\|'.
-      \ '\%('.g:vimwiki_rxH4.'\)\|'.
-      \ '\%('.g:vimwiki_rxH5.'\)\|'.
-      \ '\%('.g:vimwiki_rxH6.'\)'
+let g:vimwiki_symH = 0
+if g:vimwiki_symH
+  "" Symm
+  let g:vimwiki_rxH1 = '^\s*'.g:vimwiki_rxH.'\{1}[^'.g:vimwiki_rxH.']\+.*[^'.g:vimwiki_rxH.']\+'.g:vimwiki_rxH.'\{1}\s*$'
+  let g:vimwiki_rxH2 = '^\s*'.g:vimwiki_rxH.'\{2}[^'.g:vimwiki_rxH.']\+.*[^'.g:vimwiki_rxH.']\+'.g:vimwiki_rxH.'\{2}\s*$'
+  let g:vimwiki_rxH3 = '^\s*'.g:vimwiki_rxH.'\{3}[^'.g:vimwiki_rxH.']\+.*[^'.g:vimwiki_rxH.']\+'.g:vimwiki_rxH.'\{3}\s*$'
+  let g:vimwiki_rxH4 = '^\s*'.g:vimwiki_rxH.'\{4}[^'.g:vimwiki_rxH.']\+.*[^'.g:vimwiki_rxH.']\+'.g:vimwiki_rxH.'\{4}\s*$'
+  let g:vimwiki_rxH5 = '^\s*'.g:vimwiki_rxH.'\{5}[^'.g:vimwiki_rxH.']\+.*[^'.g:vimwiki_rxH.']\+'.g:vimwiki_rxH.'\{5}\s*$'
+  let g:vimwiki_rxH6 = '^\s*'.g:vimwiki_rxH.'\{6}[^'.g:vimwiki_rxH.']\+.*[^'.g:vimwiki_rxH.']\+'.g:vimwiki_rxH.'\{6}\s*$'
+  let g:vimwiki_rxHeader = '\%('.g:vimwiki_rxH1.'\)\|'.
+        \ '\%('.g:vimwiki_rxH2.'\)\|'.
+        \ '\%('.g:vimwiki_rxH3.'\)\|'.
+        \ '\%('.g:vimwiki_rxH4.'\)\|'.
+        \ '\%('.g:vimwiki_rxH5.'\)\|'.
+        \ '\%('.g:vimwiki_rxH6.'\)'
+else
+  "" Asymm
+  let g:vimwiki_rxH1 = '^\s*'.g:vimwiki_rxH.'\{1}[^'.g:vimwiki_rxH.']\+.*'
+  let g:vimwiki_rxH2 = '^\s*'.g:vimwiki_rxH.'\{2}[^'.g:vimwiki_rxH.']\+.*'
+  let g:vimwiki_rxH3 = '^\s*'.g:vimwiki_rxH.'\{3}[^'.g:vimwiki_rxH.']\+.*'
+  let g:vimwiki_rxH4 = '^\s*'.g:vimwiki_rxH.'\{4}[^'.g:vimwiki_rxH.']\+.*'
+  let g:vimwiki_rxH5 = '^\s*'.g:vimwiki_rxH.'\{5}[^'.g:vimwiki_rxH.']\+.*'
+  let g:vimwiki_rxH6 = '^\s*'.g:vimwiki_rxH.'\{6}[^'.g:vimwiki_rxH.']\+.*'
+  let g:vimwiki_rxHeader = '\%('.g:vimwiki_rxH1.'\)\|'.
+        \ '\%('.g:vimwiki_rxH2.'\)\|'.            
+        \ '\%('.g:vimwiki_rxH3.'\)\|'.            
+        \ '\%('.g:vimwiki_rxH4.'\)\|'.            
+        \ '\%('.g:vimwiki_rxH5.'\)\|'.            
+        \ '\%('.g:vimwiki_rxH6.'\)'               
+endif
 
 let g:vimwiki_char_header = '\%(^\s*=\+\)\|\%(=\+\s*$\)'
 
