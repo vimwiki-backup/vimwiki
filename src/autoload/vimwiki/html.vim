@@ -935,18 +935,9 @@ function! s:process_tag_h(line, id) "{{{
   let h_level = 0
   let h_text = ''
   let h_id = ''
-  if a:line =~ g:vimwiki_rxH6
-    let h_level = 6
-  elseif a:line =~ g:vimwiki_rxH5
-    let h_level = 5
-  elseif a:line =~ g:vimwiki_rxH4
-    let h_level = 4
-  elseif a:line =~ g:vimwiki_rxH3
-    let h_level = 3
-  elseif a:line =~ g:vimwiki_rxH2
-    let h_level = 2
-  elseif a:line =~ g:vimwiki_rxH1
-    let h_level = 1
+
+  if a:line =~ g:vimwiki_rxHeader
+    let h_level = vimwiki#base#count_first_sym(a:line)
   endif
   if h_level > 0
     let a:id[h_level] += 1
@@ -959,8 +950,6 @@ function! s:process_tag_h(line, id) "{{{
     if a:line =~ '^\s\+'
       let centered = 1
     endif
-
-    let line = s:trim(line)
 
     let h_number = ''
     for l in range(1, h_level-1)
@@ -978,7 +967,8 @@ function! s:process_tag_h(line, id) "{{{
       let h_part .= '>'
     endif
 
-    let h_text = s:trim(strpart(line, h_level, len(line) - h_level * 2))
+    let h_text = s:trim(matchstr(line, g:vimwiki_rxHeader))
+
     if g:vimwiki_html_header_numbering
       let num = matchstr(h_number, 
             \ '^\(\d.\)\{'.(g:vimwiki_html_header_numbering-1).'}\zs.*')
