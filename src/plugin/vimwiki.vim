@@ -295,17 +295,22 @@ let nlo = upp.oth
 let any = upp.nup
 
 let wword = '\C\<['.upp.']['.nlo.']*['.low.']['.nup.']*['.upp.']['.any.']*\>'
+" 1. match WikiWords
 let g:vimwiki_rxWikiWord = '!\@<!'.wword
 let g:vimwiki_rxNoWikiWord = '!'.wword
 
+" 2. match a) [[URL]], or b) [[URL|DESCRIPTION]]
 let g:vimwiki_rxWikiLink1 = '\[\[[^\]]\+\]\]'
+" 3. match [[URL][DESCRIPTION]]
 let g:vimwiki_rxWikiLink2 = '\[\[[^\]]\+\]\[[^\]]\+\]\]'
+" ANY. match any WikiLink
 if g:vimwiki_camel_case
   let g:vimwiki_rxWikiLink = g:vimwiki_rxWikiWord.'\|'.
         \ g:vimwiki_rxWikiLink1.'\|'.g:vimwiki_rxWikiLink2
 else
   let g:vimwiki_rxWikiLink = g:vimwiki_rxWikiLink1.'\|'.g:vimwiki_rxWikiLink2
 endif
+" match a) URL, or b)"DESCRIPTION":URL, or c)"DESCRIPTION(MORE)":URL
 let g:vimwiki_rxWeblink = '\%("[^"(]\+\((\([^)]\+\))\)\?":\)\?'.
       \'\%('.
         \'\%('.
