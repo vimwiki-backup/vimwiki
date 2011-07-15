@@ -431,34 +431,48 @@ function! vimwiki#base#highlight_links() "{{{
   catch
   endtry
 
-  "" use max highlighting - could be quite slow if there are too many wikifiles
+  "
+  " use max highlighting - could be quite slow if there are too many wikifiles
   if VimwikiGet('maxhi')
-    " Every WikiWord is nonexistent
+    " Initially, all links are highlighted as nonexistent
     if g:vimwiki_camel_case
+      " WikiWordURL
       execute 'syntax match VimwikiNoExistsLink /'.g:vimwiki_rxWikiWord.'/ display'
       execute 'syntax match VimwikiNoExistsLinkT /'.g:vimwiki_rxWikiWord.'/ display contained'
     endif
+    " [[PathURL]] or [[PathURL|DESCRIPTION]] contains VimwikiLinkChar
     execute 'syntax match VimwikiNoExistsLink /'.g:vimwiki_rxWikiLink1.'/ display contains=VimwikiNoLinkChar'
+    " [[PathURL][DESCRIPTION]] contains VimwikiLinkChar
     execute 'syntax match VimwikiNoExistsLink /'.g:vimwiki_rxWikiLink2.'/ display contains=VimwikiNoLinkChar'
 
+    " [[PathURL]] or [[PathURL|DESCRIPTION]] contained
     execute 'syntax match VimwikiNoExistsLinkT /'.g:vimwiki_rxWikiLink1.'/ display contained'
+    " [[PathURL][DESCRIPTION]] contained
     execute 'syntax match VimwikiNoExistsLinkT /'.g:vimwiki_rxWikiLink2.'/ display contained'
 
-    " till we find them in vimwiki's path
+    " Subsequently, links verified on vimwiki's path are highlighted as existing
     call s:highlight_existed_links()
   else
-    " A WikiWord (unqualifiedWikiName)
-    execute 'syntax match VimwikiLink /\<'.g:vimwiki_rxWikiWord.'\>/'
-    " A [[bracketed wiki word]]
+    " All links are highlighted as existing
+    if g:vimwiki_camel_case
+      " WikiWordURL
+      execute 'syntax match VimwikiLink /'.g:vimwiki_rxWikiWord.'/'
+      execute 'syntax match VimwikiLinkT /'.g:vimwiki_rxWikiWord.'/ display contained'
+    endif
+    " [[PathURL]] or [[PathURL|DESCRIPTION]] contains VimwikiLinkChar
     execute 'syntax match VimwikiLink /'.g:vimwiki_rxWikiLink1.'/ display contains=VimwikiLinkChar'
+    " [[PathURL][DESCRIPTION]] contains VimwikiLinkChar
     execute 'syntax match VimwikiLink /'.g:vimwiki_rxWikiLink2.'/ display contains=VimwikiLinkChar'
 
-    execute 'syntax match VimwikiLinkT /\<'.g:vimwiki_rxWikiWord.'\>/ display contained'
+    " [[PathURL]] or [[PathURL|DESCRIPTION]] contained
     execute 'syntax match VimwikiLinkT /'.g:vimwiki_rxWikiLink1.'/ display contained'
+    " [[PathURL][DESCRIPTION]] contained
     execute 'syntax match VimwikiLinkT /'.g:vimwiki_rxWikiLink2.'/ display contained'
   endif
 
+  " a) WebURL, b)"DESCRIPTION":WebURL, or c)"DESCRIPTION(MORE)":WebURL
   execute 'syntax match VimwikiLink `'.g:vimwiki_rxWeblink.'` display contains=@NoSpell'
+
 endfunction "}}}
 
 function! s:highlight_existed_links() "{{{
@@ -473,21 +487,22 @@ function! s:highlight_existed_links() "{{{
   for link in links
     if g:vimwiki_camel_case &&
           \ link =~ g:vimwiki_rxWikiWord && !vimwiki#base#is_non_wiki_link(link)
+      " WikiWordURL
       execute 'syntax match VimwikiLink /!\@<!\<'.link.'\>/ display'
     endif
-    " [[URL]] or [[URL|DESCRIPTION]] contains VimwikiLinkChar
+    " [[PathURL]] or [[PathURL|DESCRIPTION]] contains VimwikiLinkChar
     execute 'syntax match VimwikiLink /\[\['.
           \ escape(vimwiki#base#unsafe_link(link), '~&$.*').
           \ '\%(|\+.\{-}\)\{-}\]\]/ display contains=VimwikiLinkChar'
-    " [[URL][DESCRIPTION]] contains VimwikiLinkChar
+    " [[PathURL][DESCRIPTION]] contains VimwikiLinkChar
     execute 'syntax match VimwikiLink /\[\['.
           \ escape(vimwiki#base#unsafe_link(link), '~&$.*').
           \ '\]\[.\{-1,}\]\]/ display contains=VimwikiLinkChar'
-    " [[URL]] or [[URL|DESCRIPTION]] contained
+    " [[PathURL]] or [[PathURL|DESCRIPTION]] contained
     execute 'syntax match VimwikiLinkT /\[\['.
           \ escape(vimwiki#base#unsafe_link(link), '~&$.*').
           \ '\%(|\+.\{-}\)\{-}\]\]/ display contained'
-    " [[URL][DESCRIPTION]] contained
+    " [[PathURL][DESCRIPTION]] contained
     execute 'syntax match VimwikiLinkT /\[\['.
           \ escape(vimwiki#base#unsafe_link(link), '~&$.*').
           \ '\]\[.\{-1,}\]\]/ display contained'
