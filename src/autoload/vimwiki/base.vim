@@ -921,7 +921,7 @@ function! vimwiki#base#TO_table_cell(inner, visual) "{{{
 endfunction "}}}
 
 function! vimwiki#base#TO_table_col(inner, visual) "{{{
-  let t_rows = vimwiki_tbl#get_rows(line('.'))
+  let t_rows = vimwiki#tbl#get_rows(line('.'))
   if empty(t_rows)
     return
   endif
