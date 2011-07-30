@@ -1274,7 +1274,6 @@ endfunction " }}}
 function! vimwiki#html#Wiki2HTML(path, wikifile) "{{{
 
   let starttime = reltime()  " start the clock
-  echo 'Generating HTML ... '
   if !s:syntax_supported()
     echomsg 'vimwiki: Only vimwiki_default syntax supported!!!'
     return
@@ -1385,7 +1384,10 @@ function! vimwiki#html#Wiki2HTML(path, wikifile) "{{{
 
   " measure the elapsed time and cut away miliseconds and smaller
   let elapsedtimestr = matchstr(reltimestr(reltime(starttime)),'\d\+\(\.\d\d\)\=')
-  echon "\r".htmlfile.' written (time: '.elapsedtimestr.'s)'
+  if g:vimwiki_debug
+    echon "\r".htmlfile.' written (time: '.elapsedtimestr.'s)'
+  endif
+
   return path.htmlfile
 endfunction "}}}
 
