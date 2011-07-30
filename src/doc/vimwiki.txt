@@ -327,9 +327,6 @@ INSERT MODE                                           *vimwiki-table-mappings*
 <Tab>                   Go to the next table cell, create a new row if on the
                         last cell.
 
-                        *vimwiki_i_<S-CR>*
-<S-CR>                  Insert <br /> and a newline.
-
 
 ------------------------------------------------------------------------------
 3.3. Text objects                                       *vimwiki-text-objects*
@@ -1793,7 +1790,10 @@ Vim plugins: http://www.vim.org/scripts/script.php?script_id=2226
 
 1.3 dev~
     * Small change in a table syntax. Row separator uses | instead of +.
+    * Insert mode mapping <S-CR> is removed.
     * Issue 202: Markdown Support.
+    * Issue 223: 2-leftmouse should be 2-leftmouse. Double click on non
+      wikilinks should visually select a word.
     * Issue 229: Turn off the HTML conversion message. |g:vimwiki_debug|
       option is added.
 

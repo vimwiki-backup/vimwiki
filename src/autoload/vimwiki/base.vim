@@ -631,7 +631,7 @@ function! vimwiki#base#find_prev_link() "{{{
 endfunction
 " }}}
 
-function! vimwiki#base#follow_link(split) "{{{
+function! vimwiki#base#follow_link(split, ...) "{{{
   if a:split == "split"
     let cmd = ":split "
   elseif a:split == "vsplit"
@@ -648,7 +648,11 @@ function! vimwiki#base#follow_link(split) "{{{
     if weblink != ""
       call VimwikiWeblinkHandler(escape(weblink, '#'))
     else
-      execute "normal! \n"
+      if a:0 > 0
+        execute "normal! ".a:1
+      else
+        execute "normal! \n"
+      endif
     endif
     return
   endif
