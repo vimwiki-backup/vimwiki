@@ -1509,18 +1509,6 @@ Default: 0
 
 
 ------------------------------------------------------------------------------
-*g:vimwiki_fold_trailing_empty_lines*
-
-Fold or do not fold empty lines between folded headers.
-
-Value           Description~
-0               Fold only one empty line. Leave the rest of the empty lines.
-1               Fold in all empty lines.
-
-Default: 0
-
-
-------------------------------------------------------------------------------
 *g:vimwiki_camel_case*
 
 If you do not want WikiWord to be a link, this setting is just for you.
@@ -1791,11 +1779,14 @@ Vim plugins: http://www.vim.org/scripts/script.php?script_id=2226
 1.3 dev~
     * Small change in a table syntax. Row separator uses | instead of +.
     * Insert mode mapping <S-CR> is removed.
+    * Option g:vimwiki_fold_trailing_empty_lines is removed.
     * Issue 202: Markdown Support.
     * Issue 223: 2-leftmouse should be 2-leftmouse. Double click on non
       wikilinks should visually select a word.
     * Issue 229: Turn off the HTML conversion message. |g:vimwiki_debug|
       option is added.
+    * Issue 233: Would like something to replicate VimOutliner 'body
+      text' in list outlines.
 
 1.2~
     * Issue 70: Table spanning cell support.
