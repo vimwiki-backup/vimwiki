@@ -68,12 +68,10 @@ function! VimwikiFoldLevel(lnum) "{{{
     return '>'.n
   endif
 
-  if g:vimwiki_fold_trailing_empty_lines == 0 && line =~ '^\s*$'
-    let nnline = getline(nextnonblank(a:lnum + 1))
-  else 
-    let nnline = getline(a:lnum + 1)
-  endif
-  if nnline =~ g:vimwiki_rxHeader
+  let nnlnum = a:lnum + 1
+  let nnline = getline(nnlnum)
+
+  if (nnline-a:lnum)<=1 && nnline =~ g:vimwiki_rxHeader
     let n = vimwiki#base#count_first_sym(nnline)
     return '<'.n
   endif
@@ -92,9 +90,12 @@ function! VimwikiFoldLevel(lnum) "{{{
       let level = s:get_li_level(a:lnum)
       let leveln = s:get_li_level(nnum)
       let adj = s:get_li_level(s:get_start_list(rx_list_item, a:lnum))
-      
+
       if leveln > level
         return ">".(base_level+leveln-adj)
+      elseif (nnum-a:lnum) > 1 " check if multilined list item
+            \ (nline =~ rx_list_item || nnline !~ '^\s*$')
+        return ">".(base_level+level+1-adj)
       else
         return (base_level+level-adj)
       endif
@@ -102,19 +103,10 @@ function! VimwikiFoldLevel(lnum) "{{{
       " process multilined list items
       let [pnum, pline] = s:find_backward(rx_list_item, a:lnum)
       if pline =~ rx_list_item
-        if indent(a:lnum) > indent(pnum)
+        if indent(a:lnum) >= indent(pnum) && line !~ '^\s*$'
           let level = s:get_li_level(pnum)
           let adj = s:get_li_level(s:get_start_list(rx_list_item, pnum))
-
-          let [nnum, nline] = s:find_forward(rx_list_item, a:lnum)
-          if nline =~ rx_list_item
-            let leveln = s:get_li_level(nnum)
-            if leveln > level
-              return (base_level+leveln-adj)
-            endif
-          endif
-
-          return (base_level+level-adj)
+          return (base_level+level+1-adj)
         endif
       endif
     endif
