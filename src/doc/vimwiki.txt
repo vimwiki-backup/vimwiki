@@ -1691,7 +1691,7 @@ Value           Description~
 etc.
 
 With 
-    let g:vimwiki_html_header_numbering = '.'
+    let g:vimwiki_html_header_numbering_sym = '.'
 headers would look like: >
     1. Header1
     1.1. Header2
