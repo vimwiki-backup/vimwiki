@@ -68,10 +68,9 @@ function! VimwikiFoldLevel(lnum) "{{{
     return '>'.n
   endif
 
-  let nnlnum = a:lnum + 1
-  let nnline = getline(nnlnum)
+  let nnline = getline(a:lnum + 1)
 
-  if (nnline-a:lnum)<=1 && nnline =~ g:vimwiki_rxHeader
+  if nnline =~ g:vimwiki_rxHeader
     let n = vimwiki#base#count_first_sym(nnline)
     return '<'.n
   endif
