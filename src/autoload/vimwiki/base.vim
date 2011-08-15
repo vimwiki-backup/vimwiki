@@ -156,6 +156,11 @@ function! vimwiki#base#goto(key) "{{{
           \ VimwikiGet('ext'))
 endfunction "}}}
 
+function! vimwiki#base#backlinks() "{{{
+    execute 'lvimgrep "\[\['.expand("%:t:r").'\]\]" '. 
+          \ escape(VimwikiGet('path').'**/*'.VimwikiGet('ext'), ' ')
+endfunction "}}}
+
 function! s:is_windows() "{{{
   return has("win32") || has("win64") || has("win95") || has("win16")
 endfunction "}}}
