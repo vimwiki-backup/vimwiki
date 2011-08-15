@@ -63,7 +63,8 @@ endfunction
 
 function! vimwiki#base#subdir(path, filename)"{{{
   let path = expand(a:path)
-  let filename = expand(a:filename)
+  " ensure that we are not fooled by a symbolic link
+  let filename = resolve(expand(a:filename))
   let idx = 0
   while path[idx] ==? filename[idx]
     let idx = idx + 1
