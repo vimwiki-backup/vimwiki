@@ -216,6 +216,9 @@ command! -buffer -range VimwikiToggleListItem call vimwiki#lst#ToggleListItem(<l
 
 command! -buffer VimwikiGenerateLinks call vimwiki#base#generate_links()
 
+command! -buffer -nargs=0 VimwikiBacklinks call vimwiki#base#backlinks()
+command! -buffer -nargs=0 VWB call vimwiki#base#backlinks()
+
 exe 'command! -buffer -nargs=* VimwikiSearch lvimgrep <args> '.
       \ escape(VimwikiGet('path').'**/*'.VimwikiGet('ext'), ' ')
 

@@ -424,6 +424,14 @@ ic                      An inner column in a table.
     To display next match use |:lnext| command.
     To display previous match use |:lprevious| command.
 
+*:VimwikiBacklinks*
+*:VWS*
+    Search for wikilinks to the [[current wiki page]] 
+    in all files of current wiki.
+    To display all matches use |:lopen| command.
+    To display next match use |:lnext| command.
+    To display previous match use |:lprevious| command.
+
 
 *:VimwikiTable*
     Create a table with 5 cols and 2 rows.
