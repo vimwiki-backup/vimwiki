@@ -38,11 +38,13 @@ function! s:path_common_pfx(path1, path2) "{{{
 endfunction "}}}
 
 function! s:find_wiki(path) "{{{
+  " ensure that we are not fooled by a symbolic link
+  let realpath = resolve(vimwiki#base#chomp_slash(a:path))
   let idx = 0
   while idx < len(g:vimwiki_list)
     let path = vimwiki#base#chomp_slash(expand(VimwikiGet('path', idx)))
     let path = vimwiki#base#path_norm(path)
-    if s:path_common_pfx(path, a:path) == path
+    if s:path_common_pfx(path, realpath) == path
       return idx
     endif
     let idx += 1
@@ -158,7 +160,7 @@ function! VimwikiGet(option, ...) "{{{
   if a:option == 'path' || a:option == 'path_html'
     let p = g:vimwiki_list[idx][a:option]
     " resolve doesn't work quite right with symlinks ended with / or \
-    let p = substitute(p, '[/\\]\+$', '', '')
+    let p = vimwiki#base#chomp_slash(p)
     let p = resolve(expand(p))
     let g:vimwiki_list[idx][a:option] = p.'/'
   endif
