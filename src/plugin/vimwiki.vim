@@ -274,6 +274,7 @@ else
         \ ])
 endif
 
+call s:default('customwiki2html', '')
 call s:default('use_calendar', 1)
 call s:default('table_auto_fmt', 1)
 call s:default('w32_dir_enc', '')
