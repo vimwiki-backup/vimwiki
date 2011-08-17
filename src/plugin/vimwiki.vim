@@ -230,6 +230,8 @@ let s:vimwiki_defaults.diary_link_fmt = '%Y-%m-%d'
 
 let s:vimwiki_defaults.diary_link_count = 4
 
+" custom_wiki2html
+let s:vimwiki_defaults.custom_wiki2html = ''
 "}}}
 
 " DEFAULT options {{{
@@ -274,7 +276,6 @@ else
         \ ])
 endif
 
-call s:default('customwiki2html', '')
 call s:default('use_calendar', 1)
 call s:default('table_auto_fmt', 1)
 call s:default('w32_dir_enc', '')

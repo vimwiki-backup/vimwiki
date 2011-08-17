@@ -1276,13 +1276,14 @@ function! s:parse_line(line, state) " {{{
 
 endfunction " }}}
 
-function! s:use_customwiki2html() "{{{
-  return !empty(g:vimwiki_customwiki2html) && s:file_exists(g:vimwiki_customwiki2html)
+function! s:use_custom_wiki2html() "{{{
+  let custom_wiki2html = VimwikiGet('custom_wiki2html')
+  return !empty(custom_wiki2html) && s:file_exists(custom_wiki2html)
 endfunction " }}}
 
 function! vimwiki#html#CustomWiki2HTML(path, wikifile, force) "{{{
   call vimwiki#base#mkdir(a:path)
-  execute '!'.g:vimwiki_customwiki2html. ' '
+  execute '!'.VimwikiGet('custom_wiki2html'). ' '
       \ a:force. ' '.
       \ VimwikiGet('syntax')
       \ strpart(VimwikiGet('ext'), 1). ' '.
@@ -1303,7 +1304,7 @@ function! vimwiki#html#Wiki2HTML(path, wikifile) "{{{
   let path = expand(a:path).subdir
   let htmlfile = fnamemodify(wikifile, ":t:r").'.html'
 
-  if s:use_customwiki2html()
+  if s:use_custom_wiki2html()
     let force = 1
     call vimwiki#html#CustomWiki2HTML(path, wikifile, force)
     let done = 1
@@ -1425,7 +1426,7 @@ endfunction "}}}
 
 
 function! vimwiki#html#WikiAll2HTML(path) "{{{
-  if !s:syntax_supported() && !s:use_customwiki2html()
+  if !s:syntax_supported() && !s:use_custom_wiki2html()
     echomsg 'vimwiki: conversion to HTML is not supported for this syntax!!!'
     return
   endif
