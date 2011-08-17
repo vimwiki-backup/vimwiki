@@ -425,7 +425,7 @@ ic                      An inner column in a table.
     To display previous match use |:lprevious| command.
 
 *:VimwikiBacklinks*
-*:VWS*
+*:VWB*
     Search for wikilinks to the [[current wiki page]] 
     in all files of current wiki.
     To display all matches use |:lopen| command.
