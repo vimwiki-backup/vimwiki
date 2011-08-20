@@ -285,7 +285,7 @@ call s:default('user_htmls', '')
 
 call s:default('html_header_numbering', 0)
 call s:default('html_header_numbering_sym', '')
-call s:default('conceallevel', 3)
+call s:default('conceallevel', 2)
 call s:default('debug', 0)
 
 call s:default('current_idx', 0)

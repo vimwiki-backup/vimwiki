@@ -1796,7 +1796,8 @@ Vim plugins: http://www.vim.org/scripts/script.php?script_id=2226
     * Issue 233: Would like something to replicate VimOutliner 'body
       text' in list outlines.
     * Issue 238: Filetype not recognized when using symbolic links.
-    * Issue 240: Added :VimwikiBacklinks and :VWB commands.
+    * Issue 240: Added |:VimwikiBacklinks| and |:VWB| commands.
+    * Issue 245: Conceal long weblinks.
 
 1.2~
     * Issue 70: Table spanning cell support.

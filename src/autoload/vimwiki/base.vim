@@ -477,7 +477,7 @@ function! vimwiki#base#highlight_links() "{{{
   endif
 
   " a) WebURL, b)"DESCRIPTION":WebURL, or c)"DESCRIPTION(MORE)":WebURL
-  execute 'syntax match VimwikiLink `'.g:vimwiki_rxWeblink.'` display contains=@NoSpell'
+  execute 'syntax match VimwikiLink `'.g:vimwiki_rxWeblink.'` display contains=@NoSpell,VimwikiLinkRest'
 
 endfunction "}}}
 
