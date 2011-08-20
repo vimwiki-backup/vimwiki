@@ -157,7 +157,9 @@ function! vimwiki#base#goto(key) "{{{
 endfunction "}}}
 
 function! vimwiki#base#backlinks() "{{{
-    execute 'lvimgrep "\[\['.expand("%:t:r").'\]\]" '. 
+    execute 'lvimgrep "\%(^\|[[:blank:][:punct:]]\)'.
+          \ expand("%:t:r").
+          \ '\([[:blank:][:punct:]]\|$\)" '. 
           \ escape(VimwikiGet('path').'**/*'.VimwikiGet('ext'), ' ')
 endfunction "}}}
 
