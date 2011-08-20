@@ -1745,7 +1745,7 @@ a new tab or window, it would be set to default value.
 Vimwiki sets |conceallevel| to g:vimwiki_conceallevel everytime vimwiki buffer
 is entered.
 
-Default: 3
+Default: 2
 
 
 ------------------------------------------------------------------------------
@@ -1789,6 +1789,9 @@ Vim plugins: http://www.vim.org/scripts/script.php?script_id=2226
     * Insert mode mapping <S-CR> is removed.
     * Option g:vimwiki_fold_trailing_empty_lines is removed.
     * Issue 202: Markdown Support.
+    * Issue 222: Some words were recognized as link unexpectedly. Now
+      CamelCased links has at least 4 letters so DaI is not a link but DaIa
+      is.
     * Issue 223: 2-leftmouse should be 2-leftmouse. Double click on non
       wikilinks should visually select a word.
     * Issue 229: Turn off the HTML conversion message. |g:vimwiki_debug|
