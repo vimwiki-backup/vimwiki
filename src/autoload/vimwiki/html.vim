@@ -59,9 +59,14 @@ function! s:find_autoload_file(name) " {{{
   return ''
 endfunction " }}}
 
-function! s:create_default_CSS(path) " {{{
+function! s:default_CSS_full_name(path) " {{{
   let path = expand(a:path)
   let css_full_name = path.VimwikiGet('css_name')
+  return css_full_name
+endfunction "}}}
+
+function! s:create_default_CSS(path) " {{{
+  let css_full_name = s:default_CSS_full_name(a:path)
   if glob(css_full_name) == ""
     call vimwiki#base#mkdir(fnamemodify(css_full_name, ':p:h'))
     let default_css = s:find_autoload_file('style.css')
@@ -1271,13 +1276,27 @@ function! s:parse_line(line, state) " {{{
 
 endfunction " }}}
 
+function! s:use_custom_wiki2html() "{{{
+  let custom_wiki2html = VimwikiGet('custom_wiki2html')
+  return !empty(custom_wiki2html) && s:file_exists(custom_wiki2html)
+endfunction " }}}
+
+function! vimwiki#html#CustomWiki2HTML(path, wikifile, force) "{{{
+  call vimwiki#base#mkdir(a:path)
+  execute '!'.VimwikiGet('custom_wiki2html'). ' '
+      \ a:force. ' '.
+      \ VimwikiGet('syntax')
+      \ strpart(VimwikiGet('ext'), 1). ' '.
+      \ a:path. ' '.
+      \ a:wikifile. ' '.
+      \ s:default_CSS_full_name(a:path)
+endfunction " }}}
+
 function! vimwiki#html#Wiki2HTML(path, wikifile) "{{{
 
   let starttime = reltime()  " start the clock
-  if !s:syntax_supported()
-    echomsg 'vimwiki: Only vimwiki_default syntax supported!!!'
-    return
-  endif
+
+  let done = 0
 
   let wikifile = fnamemodify(a:wikifile, ":p")
   let subdir = vimwiki#base#subdir(VimwikiGet('path'), wikifile)
@@ -1285,116 +1304,130 @@ function! vimwiki#html#Wiki2HTML(path, wikifile) "{{{
   let path = expand(a:path).subdir
   let htmlfile = fnamemodify(wikifile, ":t:r").'.html'
 
-  let lsource = readfile(wikifile)
-  let ldest = []
+  if s:use_custom_wiki2html()
+    let force = 1
+    call vimwiki#html#CustomWiki2HTML(path, wikifile, force)
+    let done = 1
+  endif
 
-  call vimwiki#base#mkdir(path)
+  if s:syntax_supported() && done == 0
+    let lsource = readfile(wikifile)
+    let ldest = []
 
-  " nohtml placeholder -- to skip html generation.
-  let nohtml = 0
+    call vimwiki#base#mkdir(path)
 
-  " template placeholder
-  let template_name = ''
+    " nohtml placeholder -- to skip html generation.
+    let nohtml = 0
 
-  " for table of contents placeholders.
-  let placeholders = []
+    " template placeholder
+    let template_name = ''
 
-  " current state of converter
-  let state = {}
-  let state.para = 0
-  let state.quote = 0
-  let state.pre = [0, 0] " [in_pre, indent_pre]
-  let state.table = []
-  let state.deflist = 0
-  let state.lists = []
-  let state.placeholder = []
-  let state.toc = []
-  let state.toc_id = {1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0 }
+    " for table of contents placeholders.
+    let placeholders = []
 
-  for line in lsource
-    let oldquote = state.quote
-    let [lines, state] = s:parse_line(line, state)
+    " current state of converter
+    let state = {}
+    let state.para = 0
+    let state.quote = 0
+    let state.pre = [0, 0] " [in_pre, indent_pre]
+    let state.table = []
+    let state.deflist = 0
+    let state.lists = []
+    let state.placeholder = []
+    let state.toc = []
+    let state.toc_id = {1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0 }
 
-    " Hack: There could be a lot of empty strings before s:process_tag_quote
-    " find out `quote` is over. So we should delete them all. Think of the way
-    " to refactor it out.
-    if oldquote != state.quote
-      call s:remove_blank_lines(ldest)
-    endif
+    for line in lsource
+      let oldquote = state.quote
+      let [lines, state] = s:parse_line(line, state)
 
-    if !empty(state.placeholder)
-      if state.placeholder[0] == 'nohtml'
-        let nohtml = 1
-        break
-      elseif state.placeholder[0] == 'template'
-        let template_name = state.placeholder[1]
-      else
-        call add(placeholders, [state.placeholder, len(ldest), len(placeholders)])
+      " Hack: There could be a lot of empty strings before s:process_tag_quote
+      " find out `quote` is over. So we should delete them all. Think of the way
+      " to refactor it out.
+      if oldquote != state.quote
+        call s:remove_blank_lines(ldest)
       endif
-      let state.placeholder = []
+
+      if !empty(state.placeholder)
+        if state.placeholder[0] == 'nohtml'
+          let nohtml = 1
+          break
+        elseif state.placeholder[0] == 'template'
+          let template_name = state.placeholder[1]
+        else
+          call add(placeholders, [state.placeholder, len(ldest), len(placeholders)])
+        endif
+        let state.placeholder = []
+      endif
+
+      call extend(ldest, lines)
+    endfor
+
+
+    if nohtml
+      echon "\r"."%nohtml placeholder found"
+      return
     endif
 
+    let toc = s:get_html_toc(state.toc)
+    call s:process_toc(ldest, placeholders, toc)
+    call s:remove_blank_lines(ldest)
+
+    "" process end of file
+    "" close opened tags if any
+    let lines = []
+    call s:close_tag_quote(state.quote, lines)
+    call s:close_tag_para(state.para, lines)
+    call s:close_tag_pre(state.pre, lines)
+    call s:close_tag_list(state.lists, lines)
+    call s:close_tag_def_list(state.deflist, lines)
+    call s:close_tag_table(state.table, lines)
     call extend(ldest, lines)
-  endfor
 
+    let title = s:process_title(placeholders, fnamemodify(a:wikifile, ":t:r"))
 
-  if nohtml
-    echon "\r"."%nohtml placeholder found"
+    let html_lines = s:get_html_template(a:wikifile, template_name)
+
+    " processing template variables (refactor to a function)
+    call map(html_lines, 'substitute(v:val, "%title%", "'. title .'", "g")')
+    call map(html_lines, 'substitute(v:val, "%root_path%", "'.
+          \ s:root_path(subdir) .'", "g")')
+
+    let css_name = expand(VimwikiGet('css_name'))
+    let css_name = substitute(css_name, '\', '/', 'g')
+    call map(html_lines, 'substitute(v:val, "%css%", "'. css_name .'", "g")')
+
+    let enc = &fileencoding
+    if enc == ''
+      let enc = &encoding
+    endif
+    call map(html_lines, 'substitute(v:val, "%encoding%", "'. enc .'", "g")')
+
+    let html_lines = s:html_insert_contents(html_lines, ldest) " %contents%
+    
+    "" make html file.
+    call writefile(html_lines, path.htmlfile)
+    let done = 1
+
+  endif
+
+  if done == 0
+    echomsg 'vimwiki: conversion to HTML is not supported for this syntax!!!'
     return
   endif
-
-  let toc = s:get_html_toc(state.toc)
-  call s:process_toc(ldest, placeholders, toc)
-  call s:remove_blank_lines(ldest)
-
-  "" process end of file
-  "" close opened tags if any
-  let lines = []
-  call s:close_tag_quote(state.quote, lines)
-  call s:close_tag_para(state.para, lines)
-  call s:close_tag_pre(state.pre, lines)
-  call s:close_tag_list(state.lists, lines)
-  call s:close_tag_def_list(state.deflist, lines)
-  call s:close_tag_table(state.table, lines)
-  call extend(ldest, lines)
-
-  let title = s:process_title(placeholders, fnamemodify(a:wikifile, ":t:r"))
-
-  let html_lines = s:get_html_template(a:wikifile, template_name)
-
-  " processing template variables (refactor to a function)
-  call map(html_lines, 'substitute(v:val, "%title%", "'. title .'", "g")')
-  call map(html_lines, 'substitute(v:val, "%root_path%", "'.
-        \ s:root_path(subdir) .'", "g")')
-
-  let css_name = expand(VimwikiGet('css_name'))
-  let css_name = substitute(css_name, '\', '/', 'g')
-  call map(html_lines, 'substitute(v:val, "%css%", "'. css_name .'", "g")')
-
-  let enc = &fileencoding
-  if enc == ''
-    let enc = &encoding
-  endif
-  call map(html_lines, 'substitute(v:val, "%encoding%", "'. enc .'", "g")')
-
-  let html_lines = s:html_insert_contents(html_lines, ldest) " %contents%
-  
-  "" make html file.
-  call writefile(html_lines, path.htmlfile)
 
   " measure the elapsed time and cut away miliseconds and smaller
   let elapsedtimestr = matchstr(reltimestr(reltime(starttime)),'\d\+\(\.\d\d\)\=')
   if g:vimwiki_debug
     echon "\r".htmlfile.' written (time: '.elapsedtimestr.'s)'
   endif
-
   return path.htmlfile
 endfunction "}}}
 
 
 function! vimwiki#html#WikiAll2HTML(path) "{{{
-  if !s:syntax_supported()
-    echomsg 'vimwiki: Only vimwiki_default syntax supported!!!'
+  if !s:syntax_supported() && !s:use_custom_wiki2html()
+    echomsg 'vimwiki: conversion to HTML is not supported for this syntax!!!'
     return
   endif
 
@@ -1430,4 +1463,9 @@ function! vimwiki#html#WikiAll2HTML(path) "{{{
 
   let &more = setting_more
 endfunction "}}}
+
+function! s:file_exists(fname) "{{{
+  return !empty(getftype(a:fname))
+endfunction "}}}
+
 "}}}
