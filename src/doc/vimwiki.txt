@@ -1772,7 +1772,7 @@ a new tab or window, it would be set to default value.
 Vimwiki sets |conceallevel| to g:vimwiki_conceallevel everytime vimwiki buffer
 is entered.
 
-Default: 3
+Default: 2
 
 
 ------------------------------------------------------------------------------
@@ -1812,17 +1812,22 @@ Vim plugins: http://www.vim.org/scripts/script.php?script_id=2226
 14. Changelog                                              *vimwiki-changelog*
 
 1.3 dev~
-    * Issue 240: Added :VimwikiBacklinks and :VWB commands.
     * Small change in a table syntax. Row separator uses | instead of +.
     * Insert mode mapping <S-CR> is removed.
     * Option g:vimwiki_fold_trailing_empty_lines is removed.
     * Issue 202: Markdown Support.
+    * Issue 222: Some words were recognized as link unexpectedly. Now
+      CamelCased links has at least 4 letters so DaI is not a link but DaIa
+      is.
     * Issue 223: 2-leftmouse should be 2-leftmouse. Double click on non
       wikilinks should visually select a word.
     * Issue 229: Turn off the HTML conversion message. |g:vimwiki_debug|
       option is added.
     * Issue 233: Would like something to replicate VimOutliner 'body
       text' in list outlines.
+    * Issue 238: Filetype not recognized when using symbolic links.
+    * Issue 240: Added |:VimwikiBacklinks| and |:VWB| commands.
+    * Issue 245: Conceal long weblinks.
 
 1.2~
     * Issue 70: Table spanning cell support.

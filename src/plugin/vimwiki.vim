@@ -243,7 +243,6 @@ else
   call s:default('upper', 'A-Z')
   call s:default('lower', 'a-z')
 endif
-call s:default('other', '0-9')
 call s:default('stripsym', '_')
 call s:default('badsyms', '')
 call s:default('auto_checkbox', 1)
@@ -287,19 +286,12 @@ call s:default('user_htmls', '')
 
 call s:default('html_header_numbering', 0)
 call s:default('html_header_numbering_sym', '')
-call s:default('conceallevel', 3)
+call s:default('conceallevel', 2)
 call s:default('debug', 0)
 
 call s:default('current_idx', 0)
 
-let upp = g:vimwiki_upper
-let low = g:vimwiki_lower
-let oth = g:vimwiki_other
-let nup = low.oth
-let nlo = upp.oth
-let any = upp.nup
-
-let wword = '\C\<['.upp.']['.nlo.']*['.low.']['.nup.']*['.upp.']['.any.']*\>'
+let wword = '\C\<\%(['.g:vimwiki_upper.']['.g:vimwiki_lower.']\+\)\{2,}\>'
 " 1. match WikiWordURLs
 let g:vimwiki_rxWikiWord = '!\@<!'.wword
 let g:vimwiki_rxNoWikiWord = '!'.wword
