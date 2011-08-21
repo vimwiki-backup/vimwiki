@@ -230,6 +230,8 @@ let s:vimwiki_defaults.diary_link_fmt = '%Y-%m-%d'
 
 let s:vimwiki_defaults.diary_link_count = 4
 
+" custom_wiki2html
+let s:vimwiki_defaults.custom_wiki2html = ''
 "}}}
 
 " DEFAULT options {{{
