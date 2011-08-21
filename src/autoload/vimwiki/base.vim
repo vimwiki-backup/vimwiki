@@ -157,7 +157,9 @@ function! vimwiki#base#goto(key) "{{{
 endfunction "}}}
 
 function! vimwiki#base#backlinks() "{{{
-    execute 'lvimgrep "\[\['.expand("%:t:r").'\]\]" '. 
+    execute 'lvimgrep "\%(^\|[[:blank:][:punct:]]\)'.
+          \ expand("%:t:r").
+          \ '\([[:blank:][:punct:]]\|$\)" '. 
           \ escape(VimwikiGet('path').'**/*'.VimwikiGet('ext'), ' ')
 endfunction "}}}
 
@@ -477,7 +479,7 @@ function! vimwiki#base#highlight_links() "{{{
   endif
 
   " a) WebURL, b)"DESCRIPTION":WebURL, or c)"DESCRIPTION(MORE)":WebURL
-  execute 'syntax match VimwikiLink `'.g:vimwiki_rxWeblink.'` display contains=@NoSpell'
+  execute 'syntax match VimwikiLink `'.g:vimwiki_rxWeblink.'` display contains=@NoSpell,VimwikiLinkRest'
 
 endfunction "}}}
 

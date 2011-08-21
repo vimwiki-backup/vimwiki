@@ -51,6 +51,8 @@ syn match VimwikiLinkChar contained /\]\]/
 syn match VimwikiLinkChar contained /\[\[[^\[\]\|]\{-}|\ze.\{-}]]/
 syn match VimwikiLinkChar contained /\[\[[^\[\]\|]\{-}]\[\ze.\{-}]]/
 
+syn match VimwikiLinkRest contained `\(//.\{-}/\)\@<=\S*` conceal cchar=~
+
 syn match VimwikiNoLinkChar contained /\[\[/
 syn match VimwikiNoLinkChar contained /\]\]/
 syn match VimwikiNoLinkChar contained /\[\[[^\[\]\|]\{-}|\ze.*]]/
@@ -253,6 +255,7 @@ hi def link VimwikiSuperScriptChar VimwikiMarkers
 hi def link VimwikiSubScriptChar VimwikiMarkers
 hi def link VimwikiCodeChar VimwikiMarkers
 hi def link VimwikiHeaderChar VimwikiMarkers
+hi def link VimwikiLinkRest VimwikiLink
 hi def link VimwikiLinkChar VimwikiLink
 hi def link VimwikiNoLinkChar VimwikiNoExistsLink
 
