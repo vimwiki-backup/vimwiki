@@ -1352,12 +1352,13 @@ custom_wiki2html  ''
 
 Description~
 The full path to an user-provided script that converts a wiki page to HTML.
-Vimwiki calls the provided |custom_wiki2html| script from the command-line, using '!'
-invocation.  
+Vimwiki calls the provided |vimwiki-option-custom_wiki2html| script from the
+command-line, using '!' invocation.  
 
-The following arguments, in this order, are passed to the |custom_wiki2html| script:
+The following arguments, in this order, are passed to the
+|vimwiki-option-custom_wiki2html| script:
 
-1. force : [0/1] should |custom_wiki2html| overwrite an existing file
+1. force : [0/1] overwrite an existing file
 2. syntax : the syntax chosen for this wiki
 3. extension : the file extension for this wiki
 4. output_dir : the full path of the output directory, i.e. 'path_html'
@@ -1827,6 +1828,8 @@ Vim plugins: http://www.vim.org/scripts/script.php?script_id=2226
       text' in list outlines.
     * Issue 238: Filetype not recognized when using symbolic links.
     * Issue 240: Added |:VimwikiBacklinks| and |:VWB| commands.
+    * Issue 241: Custom wiki to HTML converters. See
+      |vimwiki-option-custom_wiki2html| for details.
     * Issue 245: Conceal long weblinks.
 
 1.2~
