@@ -36,7 +36,7 @@ function! s:is_web_link(lnk) "{{{
 endfunction "}}}
 
 function! s:is_img_link(lnk) "{{{
-  if a:lnk =~ '\.\%(png\|jpg\|gif\|jpeg\)$'
+  if tolower(a:lnk) =~ '\.\%(png\|jpg\|gif\|jpeg\)$'
     return 1
   endif
   return 0
