@@ -1778,6 +1778,28 @@ Default: 2
 
 
 ------------------------------------------------------------------------------
+*g:vimwiki_url_mingain*
+
+The minimum number of characters that should be gained by concealing URLs. If
+the length of the concealed part of the URL would be less than
+|g:vimwiki_url_mingain|, the URL is not concealed at all.
+
+Default: 12
+
+
+------------------------------------------------------------------------------
+*g:vimwiki_url_maxsave*
+
+The maximum number of characters that is retained at the end after concealing
+URLs. At most there will be |g:vimwiki_url_maxsave| characters left at the end of the URL.
+However, it will be less when one of /,=,#,? can be found at the end.
+In that case the URL will be concealed right before the last occurance of one
+of these characters.
+
+Default: 12
+
+
+------------------------------------------------------------------------------
 *g:vimwiki_debug*
 
 In vim73 |conceallevel| is local to window, thus if you open viwmiki buffer in
@@ -1833,7 +1855,7 @@ Vim plugins: http://www.vim.org/scripts/script.php?script_id=2226
     * Issue 240: Added |:VimwikiBacklinks| and |:VWB| commands.
     * Issue 241: Custom wiki to HTML converters. See
       |vimwiki-option-custom_wiki2html| for details.
-    * Issue 245: Conceal long weblinks.
+    * Issue 245: Conceal long weblinks. See |g:vimwiki_url_mingain|.
 
 1.2~
     * Issue 70: Table spanning cell support.
