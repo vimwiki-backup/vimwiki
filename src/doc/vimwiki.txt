@@ -1783,6 +1783,7 @@ Default: 2
 The minimum number of characters that should be gained by concealing URLs. If
 the length of the concealed part of the URL would be less than
 |g:vimwiki_url_mingain|, the URL is not concealed at all.
+The conceal feature works only with vim >= 7.3.
 
 Default: 12
 
@@ -1795,6 +1796,7 @@ URLs. At most there will be |g:vimwiki_url_maxsave| characters left at the end o
 However, it will be less when one of /,=,#,? can be found at the end.
 In that case the URL will be concealed right before the last occurance of one
 of these characters.
+The conceal feature works only with vim >= 7.3.
 
 Default: 12
 
