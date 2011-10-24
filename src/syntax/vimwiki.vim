@@ -51,9 +51,11 @@ syn match VimwikiLinkChar contained /\]\]/
 syn match VimwikiLinkChar contained /\[\[[^\[\]\|]\{-}|\ze.\{-}]]/
 syn match VimwikiLinkChar contained /\[\[[^\[\]\|]\{-}]\[\ze.\{-}]]/
 
-execute 'syn match VimwikiLinkRest contained `\(//.\{-}/\)\@<=\S\{'
-      \.g:vimwiki_url_mingain.',}\([/=#?].\|.\{'
-      \.g:vimwiki_url_maxsave.'}\)\@=` conceal cchar=~'
+if exists("+conceallevel")
+  execute 'syn match VimwikiLinkRest contained `\(//.\{-}/\)\@<=\S\{'
+        \.g:vimwiki_url_mingain.',}\([/=#?].\|.\{'
+        \.g:vimwiki_url_maxsave.'}\)\@=` conceal cchar=~'
+endif
 
 syn match VimwikiNoLinkChar contained /\[\[/
 syn match VimwikiNoLinkChar contained /\]\]/
