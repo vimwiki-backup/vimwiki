@@ -31,9 +31,10 @@ CONTENTS                                                    *vimwiki-contents*
         5.5. Lists                   |vimwiki-syntax-lists|
         5.6. Tables                  |vimwiki-syntax-tables|
         5.7. Preformatted text       |vimwiki-syntax-preformatted|
-        5.8. Blockquotes             |vimwiki-syntax-blockquotes|
-        5.9. Comments                |vimwiki-syntax-comments|
-        5.10. Horizontal line        |vimwiki-syntax-hr|
+        5.8. Mathematical formulae   |vimwiki-syntax-math|
+        5.9. Blockquotes             |vimwiki-syntax-blockquotes|
+        5.10. Comments               |vimwiki-syntax-comments|
+        5.11. Horizontal line        |vimwiki-syntax-hr|
     6. Folding/Outline               |vimwiki-folding|
     7. Placeholders                  |vimwiki-placeholders|
     8. Todo lists                    |vimwiki-todo-lists|
@@ -778,7 +779,47 @@ See |vimwiki-option-nested_syntaxes|
 
 
 ------------------------------------------------------------------------------
-5.8. Blockquotes                                  *vimwiki-syntax-blockquotes*
+5.8. Mathematical formulae                              *vimwiki-syntax-math*
+
+Mathematical formulae are highlighted, and can be rendered in HTML using the
+powerful open source display engine MathJax (http://www.mathjax.org/).
+
+There are three supported syntaxes, which are inline, block display and
+block environment.
+
+Inline math is for short formulae within text. It is enclosed by single
+dollar signs, e.g.:
+ $ \sum_i a_i^2 = 1 $
+
+Block display creates a centered formula with some spacing before and after
+it. It must start with a line including only {{$, then an arbitrary number
+of mathematical text are allowed, and it must end with a line including only
+}}$.
+E.g.:
+ {{$
+ \sum_i a_i^2
+ =
+ 1
+ }}$
+
+Note: no matter how many lines are used in the text file, the HTML will
+compress it to *one* line only.
+
+Block environment is similar to block display, but is able to use specific
+LaTeX environments, such as 'align'. The syntax is the same as for block
+display, except for the first line which is {{$%environment%.
+E.g.:
+ {{$%align%
+ \sum_i a_i^2 &= 1 + 1 \\
+ &= 2.
+ }}$
+
+Similar compression rules for the HTML page hold (as MathJax interprets the
+LaTeX code).
+
+
+------------------------------------------------------------------------------
+5.9. Blockquotes                                  *vimwiki-syntax-blockquotes*
 
 Text started with 4 or more spaces is a blockquote.
 
@@ -788,7 +829,7 @@ Text started with 4 or more spaces is a blockquote.
 
 
 ------------------------------------------------------------------------------
-5.9. Comments                                        *vimwiki-syntax-comments*
+5.10. Comments                                        *vimwiki-syntax-comments*
 
 Text line started with %% is a comment.
 E.g.: >
@@ -797,7 +838,7 @@ E.g.: >
 
 
 ------------------------------------------------------------------------------
-5.10. Horizontal line                                      *vimwiki-syntax-hr*
+5.11. Horizontal line                                      *vimwiki-syntax-hr*
 
 4 or more dashes at the start of the line is a 'horizontal line' (<hr />): >
  ----
