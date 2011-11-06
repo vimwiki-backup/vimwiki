@@ -817,6 +817,31 @@ E.g.:
 Similar compression rules for the HTML page hold (as MathJax interprets the
 LaTeX code).
 
+Note: the highlighting in VIM is automatic. For the rendering in HTML, you
+have two *alternative* options:
+
+1. using the MathJax server for rendering (needs an internet connection).
+Add to your HTML header template the following line:
+
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script> 
+
+2. installing MathJax locally (faster, no internet required). Choose a
+folder on your hard drive and save MathJax in it. Then add to your HTML
+header the following line:
+
+<script type="text/javascript" src="<mathjax_folder>/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+where <mathjax_folder> is the folder on your HD, as a relative path to the
+template folder. For instance, a sensible folder structure could be:
+
+- wiki
+  - text
+  - html
+  - templates
+  - mathjax
+
+In this case, <mathjax_folder> would be "../mathjax" (without quotes).
+
 
 ------------------------------------------------------------------------------
 5.9. Blockquotes                                  *vimwiki-syntax-blockquotes*
