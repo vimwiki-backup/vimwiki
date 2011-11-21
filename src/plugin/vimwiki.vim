@@ -269,8 +269,11 @@ else
   call s:default('browsers',
         \ [
         \  'chromium-browser',
+        \  'google-chrome',
         \  'opera',
         \  'firefox',
+        \  'iceweasel',
+        \  'epiphany',
         \  'konqueror',
         \ ])
 endif
