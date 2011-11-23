@@ -294,7 +294,17 @@ call s:default('url_mingain', 12)
 call s:default('url_maxsave', 12)
 call s:default('debug', 0)
 
+call s:default('diary_months', 
+      \ {
+      \ 1: 'January', 2: 'February', 3: 'March', 
+      \ 4: 'April', 5: 'May', 6: 'June',
+      \ 7: 'July', 8: 'August', 9: 'September',
+      \ 10: 'October', 11: 'November', 12: 'December'
+      \ })
+
+
 call s:default('current_idx', 0)
+
 
 let wword = '\C\<\%(['.g:vimwiki_upper.']['.g:vimwiki_lower.']\+\)\{2,}\>'
 " 1. match WikiWordURLs

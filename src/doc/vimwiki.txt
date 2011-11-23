@@ -9,7 +9,7 @@
               |___|  |___| |_|   |_||__| |__||___| |___| |_||___|            ~
 
 
-                               Version: 1.2
+                               Version: 1.3 dev
 
 ==============================================================================
 CONTENTS                                                    *vimwiki-contents*
@@ -1879,6 +1879,30 @@ Value           Description~
 
 Default: 0
 
+
+------------------------------------------------------------------------------
+*g:vimwiki_diary_months*
+
+It is a |Dictionary| with the numbers of months and corresponding names. Diary
+uses it.
+
+Redefine it in your .vimrc to get localized months in your diary:
+let g:vimwiki_diary_months = {
+      \ 1: 'Январь', 2: 'Февраль', 3: 'Март', 
+      \ 4: 'Апрель', 5: 'Май', 6: 'Июнь',
+      \ 7: 'Июль', 8: 'Август', 9: 'Сентябрь',
+      \ 10: 'Октябрь', 11: 'Ноябрь', 12: 'Декабрь'
+      \ }
+
+Default: 
+let g:vimwiki_diary_months = {
+      \ 1: 'January', 2: 'February', 3: 'March', 
+      \ 4: 'April', 5: 'May', 6: 'June',
+      \ 7: 'July', 8: 'August', 9: 'September',
+      \ 10: 'October', 11: 'November', 12: 'December'
+      \ }
+
+
 ==============================================================================
 12. Help                                                        *vimwiki-help*
 
@@ -1925,6 +1949,7 @@ Vim plugins: http://www.vim.org/scripts/script.php?script_id=2226
       |vimwiki-option-custom_wiki2html| for details.
     * Issue 245: Conceal long weblinks. See |g:vimwiki_url_mingain|.
     * Issue 204: patch for use with jsMath. See |vimwiki-syntax-math|
+    * Issue 250: Rework Diary Page. Partly done.
 
 1.2~
     * Issue 70: Table spanning cell support.
