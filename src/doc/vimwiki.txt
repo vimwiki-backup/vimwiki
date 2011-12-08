@@ -1063,31 +1063,42 @@ new daily note with name based on current date. The link to this newly created
 file is added to a diary wiki file.
 
 Usage example with default settings: >
-  Consider today is 2010-01-27.
+  Consider today is 2011-12-08.
 
   Hit \w\w .
   ~/vimwiki/diary.wiki is created.
 
-  2 following lines are added to ~/vimwiki/diary/diary.wiki :
-  = Diary =
-  | [[2010-01-27]] |
+  Following lines are added to ~/vimwiki/diary/diary.wiki :
+    = Diary =
 
-  ~/vimwiki/diary/2010-01-27.wiki is created.
+    == 2011 ==
+
+    === December ===
+        * [[2011-12-08]]
+
+
+  ~/vimwiki/diary/2011-12-08.wiki is created.
   You are ready to add your information there.
   -------------------------------------------
 
   On the next day.
   Hit \w\w .
 
-  The first line after = Diary = is changed in ~/vimwiki/diary/diary.wiki :
-  = Diary =
-  | [[2010-01-28]] | [[2010-01-27]] |
+    = Diary =
 
-  ~/vimwiki/diary/2010-01-28.wiki is created.
+    == 2011 ==
+
+    === December ===
+        * [[2011-12-09]]
+        * [[2011-12-08]]
+
+
+  ~/vimwiki/diary/2011-12-09.wiki is created.
   You are ready to add your information there.
 >
+See |g:vimwiki_diary_months| if you would like to rename months.
 
-By default there are 4 links on the line. All links are sorted by their dates.
+
 
 Calendar integration                                        *vimwiki-calendar*
 ------------------------------------------------------------------------------
@@ -1949,7 +1960,7 @@ Vim plugins: http://www.vim.org/scripts/script.php?script_id=2226
       |vimwiki-option-custom_wiki2html| for details.
     * Issue 245: Conceal long weblinks. See |g:vimwiki_url_mingain|.
     * Issue 204: patch for use with jsMath. See |vimwiki-syntax-math|
-    * Issue 250: Rework Diary Page. Partly done.
+    * Issue 250: Rework Diary Page. See |vimwiki-diary|
 
 1.2~
     * Issue 70: Table spanning cell support.
