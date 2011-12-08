@@ -74,7 +74,7 @@ fun! s:read_captions(files) "{{{
       for line in readfile(fl, '', 5)
         " TODO: Header regexp should be used here...
         if line =~ '^\s*=.*=\s*' && !has_key(result, fl_key)
-          let result[fl_key] = matchstr(line, '=\s*\zs.*\ze\s*=\s*')
+          let result[fl_key] = matchstr(line, '=\s*\zs.\{-}\ze\s*=\s*')
         endif
       endfor
     endif
@@ -154,23 +154,67 @@ fun! s:format_diary(...) "{{{
 
     endfor
   endfor
+  call add(result, '')
 
   return result
 endfun "}}}
 
-function! s:add_link(diaryfile, newlink) "{{{
-  let bufnr = bufnr(expand(a:diaryfile))
+function! s:get_file_contents(fname) "{{{
+  " read contents of diary index into buffer
+  let fname = expand(a:fname)
+  let lines = []
+  if bufnr(fname) == -1
+    let lines = readfile(fname)
+  else
+    let lines = getbufline(bufnr(fname), 1, '$')
+  endif
+  return lines
+endfunction "}}}
 
-  if bufnr != -1
-    exe 'buffer '.bufnr
+function! s:set_file_contents(fname, lines) "{{{
+  " save contents of diary index with lines
+  let fname = expand(a:fname)
+  if bufnr(fname) == -1
+    call writefile(a:lines, fname)
+  else
+    exe 'buffer '.bufnr(fname)
     if !&readonly
       1,$delete _
-      call append(1, s:format_diary(a:newlink))
+      call append(1, a:lines)
       1,1delete _
     endif
-  else
-    call writefile(s:format_diary(a:newlink), expand(a:diaryfile))
   endif
+endfunction "}}}
+
+function! s:set_diary_section(lines, diary_lines) "{{{
+  " remove diary section
+  let lines = a:lines
+  let ln_start = match(lines, '=\s*'.VimwikiGet('diary_header').'\s*=')
+  let ln_end = match(lines, '=[^=].*[^=]=\s*$', ln_start+1)
+
+  if ln_end < 0
+    let ln_end = len(lines)
+  endif
+
+  if ln_start > -1
+    call remove(lines, ln_start, ln_end-1)
+  endif
+
+  if ln_start < 0
+    let ln_start = 0
+  endif
+
+  call extend(lines, a:diary_lines, ln_start)
+
+endfunction "}}}
+
+function! s:add_link(diaryfile, newlink) "{{{
+  let fname = expand(a:diaryfile)
+  let lines = s:get_file_contents(fname)
+
+  call s:set_diary_section(lines, s:format_diary(a:newlink))
+
+  call s:set_file_contents(fname, lines)
 endfunction "}}}
 
 function! s:make_date_link(...) "{{{

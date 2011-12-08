@@ -228,8 +228,6 @@ let s:vimwiki_defaults.diary_header = 'Diary'
 " Do not change this! Will wait till vim become more datetime awareable.
 let s:vimwiki_defaults.diary_link_fmt = '%Y-%m-%d'
 
-let s:vimwiki_defaults.diary_link_count = 4
-
 " custom_wiki2html
 let s:vimwiki_defaults.custom_wiki2html = ''
 "}}}
