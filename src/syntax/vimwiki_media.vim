@@ -4,6 +4,13 @@
 " Author: Maxim Kim <habamax@gmail.com>
 " Home: http://code.google.com/p/vimwiki/
 
+" placeholder for math environments
+let b:vimwiki_mathEnv = ""
+
+" text: $ equation_inline $
+let g:vimwiki_rxEqIn = '\$[^$`]\+\$'
+let g:vimwiki_char_eqin = '\$'
+
 " text: '''strong'''
 let g:vimwiki_rxBold = "'''[^']\\+'''"
 let g:vimwiki_char_bold = "'''"
@@ -54,5 +61,9 @@ let g:vimwiki_rxListDefine = '^\%(;\|:\)\s'
 " Preformatted text
 let g:vimwiki_rxPreStart = '<pre>'
 let g:vimwiki_rxPreEnd = '<\/pre>'
+
+" Math block
+let g:vimwiki_rxMathStart = '{{\$'
+let g:vimwiki_rxMathEnd = '}}\$'
 
 let g:vimwiki_rxComment = '^\s*%%.*$'
