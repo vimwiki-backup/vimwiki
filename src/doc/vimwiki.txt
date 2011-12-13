@@ -1959,7 +1959,7 @@ Vim plugins: http://www.vim.org/scripts/script.php?script_id=2226
     * Issue 241: Custom wiki to HTML converters. See
       |vimwiki-option-custom_wiki2html| for details.
     * Issue 245: Conceal long weblinks. See |g:vimwiki_url_mingain|.
-    * Issue 204: patch for use with jsMath. See |vimwiki-syntax-math|
+    * Issue 204: patch for use with MathJax. See |vimwiki-syntax-math|
     * Issue 250: Rework Diary Page. See |vimwiki-diary|
 
 1.2~
