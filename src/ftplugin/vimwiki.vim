@@ -42,6 +42,8 @@ else
   setl comments=n:*,n:#
 endif
 setlocal formatoptions=tnro
+" setlocal formatoptions+=tnro
+" setlocal formatoptions-=c
 
 if !empty(&langmap)
   " Valid only if langmap is a comma separated pairs of chars
