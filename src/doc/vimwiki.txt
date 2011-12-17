@@ -1661,20 +1661,11 @@ Default: 1
 
 
 ------------------------------------------------------------------------------
-*g:vimwiki_browsers* *VimwikiWeblinkHandler*
+*VimwikiWeblinkHandler*
 
-You can open external weblinks in a webbrowser. Webbrowsers are listed in
-|g:vimwiki_browsers|.
+Vimwiki tries to open external weblinks in a default browser.
 
-For win32 it is: chrome, opera, firefox and explorer.
-For other OSes it is: opera, firefox and konqueror.
-
-The first available browser from the list is used to open the weblink.
-If you have opera and firefox and want weblinks to be opened in the latter,
-just specify: >
- let g:vimwiki_browsers=['C:\Program Files\Firefox\firefox.exe']
-
-or redefine VimwikiWeblinkHandler function: >
+You can redefine VimwikiWeblinkHandler function to do something else: >
   function! VimwikiWeblinkHandler(weblink) 
     let browser = 'C:\Program Files\Firefox\firefox.exe'
     execute '!start "'.browser.'" ' . a:weblink
@@ -1945,6 +1936,7 @@ Vim plugins: http://www.vim.org/scripts/script.php?script_id=2226
     * Insert mode mapping <S-CR> is removed.
     * Option g:vimwiki_fold_trailing_empty_lines is removed.
     * Issue 202: Markdown Support.
+    * Issue 204: patch for use with MathJax. See |vimwiki-syntax-math|
     * Issue 222: Some words were recognized as link unexpectedly. Now
       CamelCased links has at least 4 letters so DaI is not a link but DaIa
       is.
@@ -1959,8 +1951,8 @@ Vim plugins: http://www.vim.org/scripts/script.php?script_id=2226
     * Issue 241: Custom wiki to HTML converters. See
       |vimwiki-option-custom_wiki2html| for details.
     * Issue 245: Conceal long weblinks. See |g:vimwiki_url_mingain|.
-    * Issue 204: patch for use with MathJax. See |vimwiki-syntax-math|
     * Issue 250: Rework Diary Page. See |vimwiki-diary|
+    * Issue 262: Vimwiki opens wrong browser.
 
 1.2~
     * Issue 70: Table spanning cell support.
