@@ -186,16 +186,13 @@ endfunction "}}}
 " User can redefine it.
 if !exists("*VimwikiWeblinkHandler") "{{{
   function VimwikiWeblinkHandler(weblink)
-    for browser in g:vimwiki_browsers
-      if executable(browser)
-        if has("win32")
-          execute '!start "'.browser.'" "' . a:weblink . '"'
-        else
-          execute '!'.browser.' "' . a:weblink . '"'
-        endif
-        return
-      endif
-    endfor
+    if has("win32")
+      execute '!start "' . a:weblink . '"'
+    elseif has("macunix")
+      execute '!open "' . a:weblink . '"'
+    else
+      execute '!xdg-open "' . a:weblink . '"'
+    endif
   endfunction
 endif "}}}
 " CALLBACK }}}
@@ -255,27 +252,6 @@ call s:default('hl_cb_checked', 0)
 call s:default('camel_case', 1)
 call s:default('list_ignore_newline', 1)
 call s:default('listsyms', ' .oOX')
-if has("win32")
-  call s:default('browsers',
-        \ [
-        \  expand('~').'\Local Settings\Application Data\Google\Chrome\Application\chrome.exe',
-        \  'C:\Program Files\Opera\opera.exe',
-        \  'C:\Program Files\Mozilla Firefox\firefox.exe',
-        \  'C:\Program Files\Internet Explorer\iexplore.exe',
-        \ ])
-else
-  call s:default('browsers',
-        \ [
-        \  'chromium-browser',
-        \  'google-chrome',
-        \  'opera',
-        \  'firefox',
-        \  'iceweasel',
-        \  'epiphany',
-        \  'konqueror',
-        \ ])
-endif
-
 call s:default('use_calendar', 1)
 call s:default('table_auto_fmt', 1)
 call s:default('w32_dir_enc', '')
