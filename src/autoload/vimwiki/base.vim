@@ -699,6 +699,8 @@ function! vimwiki#base#delete_link() "{{{
     echomsg 'vimwiki: Cannot delete "'.expand('%:t:r').'"!'
     return
   endtry
+
+  call vimwiki#base#go_back_link()
   execute "bdelete! ".escape(fname, " ")
 
   " reread buffer => deleted WikiWord should appear as non-existent

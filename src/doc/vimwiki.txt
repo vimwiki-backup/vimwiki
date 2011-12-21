@@ -1953,6 +1953,7 @@ Vim plugins: http://www.vim.org/scripts/script.php?script_id=2226
     * Issue 245: Conceal long weblinks. See |g:vimwiki_url_mingain|.
     * Issue 250: Rework Diary Page. See |vimwiki-diary|
     * Issue 262: Vimwiki opens wrong browser.
+    * Issue 264: \wd command to delete a wiki page in another tab closes it.
 
 1.2~
     * Issue 70: Table spanning cell support.
