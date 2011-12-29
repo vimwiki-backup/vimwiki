@@ -1954,6 +1954,8 @@ Vim plugins: http://www.vim.org/scripts/script.php?script_id=2226
     * Issue 250: Rework Diary Page. See |vimwiki-diary|
     * Issue 262: Vimwiki opens wrong browser.
     * Issue 264: \wd command to delete a wiki page in another tab closes it.
+    * Issue 266: Altering g:vimwiki_listsyms to '✗○◐●✓' doesn't work as
+      expected
 
 1.2~
     * Issue 70: Table spanning cell support.

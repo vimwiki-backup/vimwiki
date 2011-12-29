@@ -14,6 +14,15 @@ let g:loaded_vimwiki_html_auto = 1
 "}}}
 
 " UTILITY "{{{
+function s:get_completion_index(sym) "{{{
+  for idx in range(1, 5)
+    if match(g:vimwiki_listsyms, '\C\%'.idx.'v'.a:sym) != -1
+      return (idx-1)
+    endif
+  endfor
+  return 0
+endfunction "}}}
+
 function! s:root_path(subdir) "{{{
   return repeat('../', len(split(a:subdir, '[/\\]')))
 endfunction "}}}
@@ -861,7 +870,8 @@ function! s:process_tag_list(line, lists) "{{{
         if chk[1] =~ '[.*\\^$~]'
           let chk[1] ='\'.chk[1]
         endif
-        let completion = match(g:vimwiki_listsyms, '\C' . chk[1])
+        " let completion = match(g:vimwiki_listsyms, '\C' . chk[1])
+        let completion = s:get_completion_index(chk[1])
         if completion >= 0 && completion <=4 
           let st_tag = '<li class="done'.completion.'">'
         endif

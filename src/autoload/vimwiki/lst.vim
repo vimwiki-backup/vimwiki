@@ -15,22 +15,34 @@ let s:rx_li_box = '\[.\?\]'
 
 " Script functions {{{
 
+" Get unicode string symbol at index
+function! s:str_idx(str, idx) "{{{
+  " Unfortunatly vimscript cannot get symbol at index in unicode string such as
+  " '✗○◐●✓'
+  return matchstr(a:str, '\%'.a:idx.'v.')
+endfunction "}}}
+
 " Get checkbox regexp
 function! s:rx_li_symbol(rate) "{{{
   let result = ''
   if a:rate == 100
-    let result = g:vimwiki_listsyms[4]
+    let result = s:str_idx(g:vimwiki_listsyms, 5)
   elseif a:rate == 0
-    let result = g:vimwiki_listsyms[0]
+    let result = s:str_idx(g:vimwiki_listsyms, 1)
   elseif a:rate >= 67
-    let result = g:vimwiki_listsyms[3]
+    let result = s:str_idx(g:vimwiki_listsyms, 4)
   elseif a:rate >= 34
-    let result = g:vimwiki_listsyms[2]
+    let result = s:str_idx(g:vimwiki_listsyms, 3)
   else
-    let result = g:vimwiki_listsyms[1]
+    let result = s:str_idx(g:vimwiki_listsyms, 2)
   endif
 
   return '\['.result.'\]'
+endfunction "}}}
+
+" Get blank checkbox
+function! s:blank_checkbox() "{{{
+  return '['.s:str_idx(g:vimwiki_listsyms, 1).'] '
 endfunction "}}}
 
 " Get regexp of the list item.
@@ -320,7 +332,7 @@ function! vimwiki#lst#kbd_cr() "{{{
   " This function is heavily relies on proper 'set comments' option.
   let cr = "\<CR>"
   if getline('.') =~ s:rx_cb_list_item()
-    let cr .= '[ ] '
+    let cr .= s:blank_checkbox()
   endif
   return cr
 endfunction "}}}
@@ -341,11 +353,10 @@ function! vimwiki#lst#kbd_oO(cmd) "{{{
       let lnum = line('.')
     endif
 
-      " let line = substitute(m, '\s*$', ' ', '').'[ ] '.li_content
     let m = matchstr(line, s:rx_list_item())
     let res = ''
     if line =~ s:rx_cb_list_item()
-      let res = substitute(m, '\s*$', ' ', '').'[ ] '
+      let res = substitute(m, '\s*$', ' ', '').s:blank_checkbox()
     elseif line =~ s:rx_list_item()
       let res = substitute(m, '\s*$', ' ', '')
     elseif &autoindent || &smartindent
