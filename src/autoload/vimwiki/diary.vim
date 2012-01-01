@@ -125,6 +125,14 @@ fun! s:group_links(links) "{{{
   return result
 endfun "}}}
 
+fun! s:sort(lst) "{{{
+  if VimwikiGet("diary_sort") == 'desc'
+    return reverse(sort(a:lst))
+  else
+    return sort(a:lst)
+  endif
+endfun "}}}
+
 fun! s:format_diary(...) "{{{
   let result = []
 
@@ -136,15 +144,18 @@ fun! s:format_diary(...) "{{{
     let g_files = s:group_links(s:get_diary_links())
   endif
 
-  for year in reverse(sort(keys(g_files)))
+  " for year in s:rev(sort(keys(g_files)))
+  for year in s:sort(keys(g_files))
     call add(result, '')
     call add(result, '== '.year.' ==')
 
-    for month in reverse(sort(keys(g_files[year])))
+    " for month in s:rev(sort(keys(g_files[year])))
+    for month in s:sort(keys(g_files[year]))
       call add(result, '')
       call add(result, '=== '.s:get_month_name(month).' ===')
 
-      for [fl, cap] in reverse(sort(items(g_files[year][month])))
+      " for [fl, cap] in s:rev(sort(items(g_files[year][month])))
+      for [fl, cap] in s:sort(items(g_files[year][month]))
         if empty(cap)
           call add(result, repeat(' ', &sw).'* [['.fl.']]')
         else
