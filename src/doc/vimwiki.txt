@@ -1410,17 +1410,14 @@ Name of the header in |vimwiki-option-diary_index| where links to dated
 wiki-files are located.
 
 
-*vimwiki-option-diary_link_count*
+*vimwiki-option-diary_sort*
 ------------------------------------------------------------------------------
-Key               Default value~
-diary_link_count  4
+Key             Default value   Values~
+diary_sort      desc            desc, asc
 
 Description~
-Number of maximum dated links placed on one line.
-Ex:
-= Diary =
-| [[2010-01-30]] | [[2010-01-29]] | [[2010-01-28]] | [[2010-01-27]] |
-| [[2010-01-26]] | [[2010-01-25]] |
+Sort links in a diary index page.
+
 
 
 *vimwiki-option-custom_wiki2html*
