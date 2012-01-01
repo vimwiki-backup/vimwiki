@@ -234,7 +234,7 @@ function! s:create_cb_list_item(lnum) "{{{
   let m = matchstr(line, s:rx_list_item())
   if m != ''
     let li_content = substitute(strpart(line, len(m)), '^\s*', '', '')
-    let line = substitute(m, '\s*$', ' ', '').'[ ] '.li_content
+    let line = substitute(m, '\s*$', ' ', '').s:blank_checkbox().li_content
     call setline(a:lnum, line)
   endif
 endfunction "}}}
