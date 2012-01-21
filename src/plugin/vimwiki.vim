@@ -187,11 +187,11 @@ endfunction "}}}
 if !exists("*VimwikiWeblinkHandler") "{{{
   function VimwikiWeblinkHandler(weblink)
     if has("win32")
-      execute '!start "' . a:weblink . '"'
+      execute '!start ' . shellescape(a:weblink, 1)
     elseif has("macunix")
-      execute '!open "' . a:weblink . '"'
+      execute '!open ' . shellescape(a:weblink, 1)
     else
-      execute '!xdg-open "' . a:weblink . '"'
+      execute '!xdg-open ' . shellescape(a:weblink, 1)
     endif
   endfunction
 endif "}}}
