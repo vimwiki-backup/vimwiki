@@ -399,6 +399,8 @@ vnoremap <silent><buffer> ic :<C-U>call vimwiki#base#TO_table_col(1, 1)<CR>
 
 nnoremap <silent><buffer> = :call vimwiki#base#AddHeaderLevel()<CR>
 nnoremap <silent><buffer> - :call vimwiki#base#RemoveHeaderLevel()<CR>
+nnoremap <silent><buffer> + :call vimwiki#base#NormalizeUrlSyntax(0)<CR>
+vnoremap <silent><buffer> + :<C-U>call vimwiki#base#NormalizeUrlSyntax(1)<CR>
 
 " }}}
 
