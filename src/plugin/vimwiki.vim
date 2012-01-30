@@ -298,16 +298,19 @@ else
   let g:vimwiki_rxWikiLink = g:vimwiki_rxWikiLink1.'\|'.g:vimwiki_rxWikiLink2
 endif
 " match a) WebURL, or b)"DESCRIPTION":WebURL, or c)"DESCRIPTION(MORE)":WebURL
-let g:vimwiki_rxWeblink = '\%("[^"(]\+\((\([^)]\+\))\)\?":\)\?'.
+" XXX b),c) huh?     Undocumented.  " XXX  ms-help ???  
+" TODO http://en.wikipedia.org/wiki/URI_scheme  http://tools.ietf.org/html/rfc3986
+let g:vimwiki_rxWeblink = '\%("[^"()]\+\%((\%([^()]\+\))\)\?":\)\?'.
       \'\%('.
         \'\%('.
-          \'\%(https\?\|ftp\|gopher\|telnet\|file\|notes\|ms-help\):'.
+          \'\%(https\?\|file\|ftp\|gopher\|telnet\|nntp\|ldap\|rsync\|imap\|pop\|ircs\?\|cvs\|svn\|svn+ssh\|git\|ssh\|fish\|sftp\|notes\|ms-help\):'.
           \'\%(\%(//\)\|\%(\\\\\)\)'.
         \'\)'.
-        \'\|\%(mailto:\)'.
+        \'\|\%(mailto\|news\|xmpp\|sips\?\|doi\|urn\|tel\):'.
       \'\)'.
-      \'\+\S\+'.
-      \'[().,?\]]\@<!'
+      \'\S\S\{-}\%(([^ \t()]*)\)\=\ze[),;.!?]\=\%([ \t\]]\|$\)'
+" works correctly in search, but not in syntax hightlighting (where trailing
+" punctuation is not excluded)
 "}}}
 
 " AUTOCOMMANDS for all known wiki extensions {{{
