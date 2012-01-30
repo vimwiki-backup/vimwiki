@@ -1108,6 +1108,10 @@ function! vimwiki#base#RemoveHeaderLevel() "{{{
     call setline(lnum, line)
   endif
 endfunction
+
+function! vimwiki#base#NormalizeUrlSyntax(is_visual_mode) "{{{
+endfunction "}}}
+
 " }}}
 
 " }}}
