@@ -453,7 +453,7 @@ endfunction "}}}
 
 function! s:tag_wikiword_link(value) "{{{
   " Make <a href="WikiWord">WikiWord</a> from WikiWord
-  if a:value[0] == '!'
+  if a:value[0] =~ g:vimwiki_wikiword_escape_prefix
     return a:value[1:]
   elseif g:vimwiki_camel_case
     let line = '<a href="'.a:value.'.html">'.a:value.'</a>'
@@ -476,7 +476,7 @@ function! s:tag_barebone_link(value) "{{{
 endfunction "}}}
 
 function! s:tag_no_wikiword_link(value) "{{{
-  if a:value[0] == '!'
+  if a:value[0] =~ g:vimwiki_wikiword_escape_prefix
     return a:value[1:]
   else
     return a:value
