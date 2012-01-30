@@ -64,6 +64,10 @@ let g:vimwiki_char_subscript = ',,'
 let g:vimwiki_rxH = '='
 let g:vimwiki_symH = 1
 
+" default wikilink template
+let g:vimwiki_WikilinkTemplate = '[[__LinkUrl__|__LinkDescription__]]'
+" default weblink template
+let g:vimwiki_WeblinkTemplate = '"__LinkDescription__":__LinkUrl__'
 
 " <hr>, horizontal rule
 let g:vimwiki_rxHR = '^----.*$'
