@@ -521,6 +521,9 @@ them: >
 
 Or disable it completely with |g:vimwiki_camel_case|.
 
+The string prefix used to prevent linking of WikiWords ("!" in the example
+above) is customizable using |g:vimwiki_wikiword_escape_prefix|.
+
 Link with spaces in it: >
   [[This is a link]]
 or: >
@@ -537,6 +540,13 @@ Plain link: >
 Link with description: >
  [http://habamax.ru/blog habamax home page]
  [mailto:habamax@gmail.com Drop a line to Maxim Kim]
+
+Textile-style link: >
+ "habamax home page (optional title attribute)":http://habamax.ru/blog
+
+Markdown-style link: >
+ [habamax home page](http://habamax.ru/blog)
+
 
 Images and image links~
 An image link is a link to a file with a jpg, jpeg, png or gif extension.
@@ -1878,6 +1888,12 @@ Value           Description~
 
 Default: 0
 
+------------------------------------------------------------------------------
+*g:vimwiki_wikiword_escape_prefix*
+
+String prefix that prevents activation and highlighting of WikiWords.
+
+Default: '!'
 
 ------------------------------------------------------------------------------
 *g:vimwiki_diary_months*
