@@ -1380,6 +1380,7 @@ function! vimwiki#html#Wiki2HTML(path, wikifile) "{{{
   let done = 0
 
   let wikifile = fnamemodify(a:wikifile, ":p")
+  " shouldn't we be using a:path passed as an argument !?
   let subdir = vimwiki#base#subdir(VimwikiGet('path'), wikifile)
 
   let path = expand(a:path).subdir
@@ -1394,6 +1395,10 @@ function! vimwiki#html#Wiki2HTML(path, wikifile) "{{{
   if s:syntax_supported() && done == 0
     let lsource = readfile(wikifile)
     let ldest = []
+
+    if g:vimwiki_debug
+      echo 'Generating HTML ... '
+    endif
 
     call vimwiki#base#mkdir(path)
 
@@ -1503,6 +1508,8 @@ function! vimwiki#html#Wiki2HTML(path, wikifile) "{{{
   let elapsedtimestr = matchstr(reltimestr(reltime(starttime)),'\d\+\(\.\d\d\)\=')
   if g:vimwiki_debug
     echon "\r".htmlfile.' written (time: '.elapsedtimestr.'s)'
+  else
+    echo 'HTML conversion is done.'
   endif
   return path.htmlfile
 endfunction "}}}
