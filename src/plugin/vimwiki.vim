@@ -64,14 +64,14 @@ function! s:setup_buffer_leave()"{{{
 endfunction"}}}
 
 function! s:setup_filetype() "{{{
-    " Find what wiki current buffer belongs to.
-    let path = expand('%:p:h')
-    let ext = '.'.expand('%:e')
-    let idx = s:find_wiki(path)
+  " Find what wiki current buffer belongs to.
+  let path = expand('%:p:h')
+  let ext = '.'.expand('%:e')
+  let idx = s:find_wiki(path)
 
-    if idx == -1 && g:vimwiki_global_ext == 0
-      return
-    endif
+  if idx == -1 && g:vimwiki_global_ext == 0
+    return
+  endif
 
   set filetype=vimwiki
 endfunction "}}}
@@ -362,16 +362,22 @@ let g:vimwiki_rxWikiLinkMatchDescr = g:vimwiki_rxWikiLinkMatchDescr3.'\|'.
 "
 " WebLinks
 " match URL
+" TODO http://en.wikipedia.org/wiki/URI_scheme  http://tools.ietf.org/html/rfc3986
 let g:vimwiki_rxWeblinkUrl = ''.
       \'\%('.
         \'\%('.
-          \'\%(https\?\|ftp\|gopher\|telnet\|file\|notes\|ms-help\):'.
+          \'\%(https\?\|file\|ftp\|gopher\|telnet\|nntp\|ldap\|rsync\|imap\|pop\|ircs\?\|cvs\|svn\|svn+ssh\|git\|ssh\|fish\|sftp\|notes\|ms-help\):'.
           \'\%(\%(//\)\|\%(\\\\\)\)'.
         \'\)'.
-        \'\|\%(mailto:\)'.
+        \'\|'.
+        \'\%(mailto\|news\|xmpp\|sips\?\|doi\|urn\|tel\):'.
       \'\)'.
-      \'\+\S\+'.
-      \'[().,?\]]\@<!'
+      \'\%('.
+        \'\%('. '\S\S\{-}'. '([^ \t()]*)'. '\)'.
+        \'\|'.
+        \'\%('. '\S\+'. '[.,;!?\]]\@<!'. '\)'.
+      \'\)'
+
 "
 "
 " 0. URL
@@ -381,7 +387,7 @@ let g:vimwiki_rxWeblinkMatchUrl0 = g:vimwiki_rxWeblinkUrl
 let g:vimwiki_rxWeblinkMatchDescr0 = ''
 "
 " 1. "DESCRIPTION(OPTIONAL)":URL
-let g:vimwiki_rxWeblinkPrefix1 = '\%("[^"(]\+\((\([^)]\+\))\)\?":\)'
+let g:vimwiki_rxWeblinkPrefix1 = '\%("[^"()]\+\%((\%([^()]\+\))\)\?":\)'
 let g:vimwiki_rxWeblinkSuffix1 = ''
 " 1a) match "DESCRIPTION(OPTIONAL)":URL
 let g:vimwiki_rxWeblink1 = g:vimwiki_rxWeblinkPrefix1.
@@ -390,7 +396,7 @@ let g:vimwiki_rxWeblink1 = g:vimwiki_rxWeblinkPrefix1.
 let g:vimwiki_rxWeblinkMatchUrl1 = g:vimwiki_rxWeblinkPrefix1.
       \ '\zs'. g:vimwiki_rxWeblinkUrl. '\ze'. g:vimwiki_rxWeblinkSuffix1
 " 1c) match DESCRIPTION(OPTIONAL) within "DESCRIPTION(OPTIONAL)":URL
-let g:vimwiki_rxWeblinkMatchDescr1 = '\%("\zs[^"(]\+\((\([^)]\+\))\)\?\ze":\)'.
+let g:vimwiki_rxWeblinkMatchDescr1 = '\%("\zs[^"()]\+\%((\%([^()]\+\))\)\?\ze":\)'.
       \ g:vimwiki_rxWeblinkUrl. g:vimwiki_rxWeblinkSuffix1
 "
 " 2. [DESCRIPTION](URL)   N.b. the [] do not indicate an optional component
@@ -406,17 +412,33 @@ let g:vimwiki_rxWeblinkMatchUrl2 = g:vimwiki_rxWeblinkPrefix2.
 let g:vimwiki_rxWeblinkMatchDescr2 = '\%(\[\zs[^\[\]]\+\ze\]\) *('.
       \ g:vimwiki_rxWeblinkUrl. g:vimwiki_rxWeblinkSuffix2
 "
+" 3. [URL DESCRIPTION]
+let g:vimwiki_rxWeblinkPrefix3 = '\['
+let g:vimwiki_rxWeblinkSuffix3 = ' *\%([^\[\]]\+\)\]'
+" 3a) match [URL DESCRIPTION]
+let g:vimwiki_rxWeblink3 = g:vimwiki_rxWeblinkPrefix3.
+      \ g:vimwiki_rxWeblinkUrl. g:vimwiki_rxWeblinkSuffix3
+" 3b) match URL within [URL DESCRIPTION]
+let g:vimwiki_rxWeblinkMatchUrl3 = g:vimwiki_rxWeblinkPrefix3.
+      \ '\zs'. g:vimwiki_rxWeblinkUrl. '\ze'. g:vimwiki_rxWeblinkSuffix3
+" 3c) match DESCRIPTION within [URL DESCRIPTION]
+let g:vimwiki_rxWeblinkMatchDescr3 = g:vimwiki_rxWeblinkPrefix3.
+      \ g:vimwiki_rxWeblinkUrl. ' *\%(\zs[^\[\]]\+\ze\)\]'
+"
 "
 " *. ANY weblink
 " *a) match ANY weblink
-let g:vimwiki_rxWeblink = g:vimwiki_rxWeblink2.'\|'.
-        \ g:vimwiki_rxWeblink1.'\|'.g:vimwiki_rxWeblink0
+let g:vimwiki_rxWeblink = g:vimwiki_rxWeblink3.'\|'.
+        \ g:vimwiki_rxWeblink2.'\|'. g:vimwiki_rxWeblink1.'\|'.
+        \ g:vimwiki_rxWeblink0
 " *b) match URL within ANY weblink
-let g:vimwiki_rxWeblinkMatchUrl = g:vimwiki_rxWeblinkMatchUrl2.'\|'.
-        \ g:vimwiki_rxWeblinkMatchUrl1.'\|'. g:vimwiki_rxWeblinkMatchUrl0
+let g:vimwiki_rxWeblinkMatchUrl = g:vimwiki_rxWeblinkMatchUrl3.'\|'.
+        \ g:vimwiki_rxWeblinkMatchUrl2.'\|'. g:vimwiki_rxWeblinkMatchUrl1.'\|'.
+        \ g:vimwiki_rxWeblinkMatchUrl0
 " *b) match DESCRIPTION within ANY weblink
-let g:vimwiki_rxWeblinkMatchDescr = g:vimwiki_rxWeblinkMatchDescr2.'\|'.
-        \ g:vimwiki_rxWeblinkMatchDescr1.'\|'. g:vimwiki_rxWeblinkMatchDescr0
+let g:vimwiki_rxWeblinkMatchDescr = g:vimwiki_rxWeblinkMatchDescr3.'\|'.
+        \ g:vimwiki_rxWeblinkMatchDescr2.'\|'. g:vimwiki_rxWeblinkMatchDescr1.'\|'.
+        \ g:vimwiki_rxWeblinkMatchDescr0
 "}}}
 
 " AUTOCOMMANDS for all known wiki extensions {{{
