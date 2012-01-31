@@ -466,7 +466,7 @@ endfunction "}}}
 
 function! s:tag_wikiword_link(value) "{{{
   " Make <a href="WikiWord">WikiWord</a> from WikiWord
-  if a:value[0] == '!'
+  if a:value[0] =~ g:vimwiki_wikiword_escape_prefix
     return a:value[1:]
   elseif g:vimwiki_camel_case
     let line = '<a href="'.a:value.'.html">'.a:value.'</a>'
@@ -489,7 +489,7 @@ function! s:tag_barebone_link(value) "{{{
 endfunction "}}}
 
 function! s:tag_no_wikiword_link(value) "{{{
-  if a:value[0] == '!'
+  if a:value[0] =~ g:vimwiki_wikiword_escape_prefix
     return a:value[1:]
   else
     return a:value
@@ -1402,6 +1402,7 @@ function! vimwiki#html#Wiki2HTML(path, wikifile) "{{{
   let done = 0
 
   let wikifile = fnamemodify(a:wikifile, ":p")
+  " shouldn't we be using a:path passed as an argument !?
   let subdir = vimwiki#base#subdir(VimwikiGet('path'), wikifile)
 
   let path = expand(a:path).subdir
