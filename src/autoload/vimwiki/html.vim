@@ -129,18 +129,30 @@ function! s:get_html_template(wikifile, template) "{{{
   return lines
 endfunction "}}}
 
+function! s:safe_html_tags(line) "{{{
+  let line = substitute(a:line,'<','\&lt;', 'g')
+  let line = substitute(line,'>','\&gt;', 'g')
+  return line
+endfunction "}}}
+
 function! s:safe_html(line) "{{{
+  " escape & < > when producing HTML text
+  " uses variables s:lt_pattern, s:gt_pattern that are
+  " set in vimwiki#html#Wiki2HTML() according to  g:vimwiki_valid_html_tags
   "" htmlize symbols: < > &
 
   let line = substitute(a:line, '&', '\&amp;', 'g')
+  " the following depends on g:vimwiki_valid_html_tags
+  let line = substitute(line,s:lt_pattern,'\&lt;', 'g')
+  let line = substitute(line,s:gt_pattern,'\&gt;', 'g')
 
-  let tags = join(split(g:vimwiki_valid_html_tags, '\s*,\s*'), '\|')
-  let line = substitute(line,'<\%(/\?\%('
-        \.tags.'\)\%(\s\{-1}\S\{-}\)\{-}/\?>\)\@!', 
-        \'\&lt;', 'g')
-  let line = substitute(line,'\%(</\?\%('
-        \.tags.'\)\%(\s\{-1}\S\{-}\)\{-}/\?\)\@<!>',
-        \'\&gt;', 'g')
+  "let tags = join(split(g:vimwiki_valid_html_tags, '\s*,\s*'), '\|')
+  "let line = substitute(line,'<\%(/\?\%('
+  "      \.tags.'\)\%(\s\{-1}\S\{-}\)\{-}/\?>\)\@!', 
+  "      \'\&lt;', 'g')
+  "let line = substitute(line,'\%(</\?\%('
+  "      \.tags.'\)\%(\s\{-1}\S\{-}\)\{-}/\?\)\@<!>',
+  "      \'\&gt;', 'g')
   return line
 endfunction "}}}
 
@@ -343,16 +355,17 @@ function! s:tag_sub(value) "{{{
 endfunction "}}}
 
 function! s:tag_code(value) "{{{
-  return '<code>'.s:mid(a:value, 1).'</code>'
+  return '<code>'.s:safe_html_tags(s:mid(a:value, 1)).'</code>'
 endfunction "}}}
 
-function! s:tag_pre(value) "{{{
-  return '<code>'.s:mid(a:value, 3).'</code>'
-endfunction "}}}
+"function! s:tag_pre(value) "{{{
+"  return '<code>'.s:mid(a:value, 3).'</code>'
+"endfunction "}}}
 
-function! s:tag_math(value) "{{{
-  return '\['.s:mid(a:value, 3).'\]'
-endfunction "}}}
+"FIXME dead code?
+"function! s:tag_math(value) "{{{
+"  return '\['.s:mid(a:value, 3).'\]'
+"endfunction "}}}
 
 function! s:tag_internal_link(value) "{{{
   " Make <a href="This is a link">This is a link</a>
@@ -531,13 +544,15 @@ endfunction "}}}
 function! s:make_tag(line, regexp, func) "{{{
   " Make tags for a given matched regexp.
   " Exclude preformatted text and href links.
-
+  " FIXME 
   let patt_splitter = '\(`[^`]\+`\)\|'.
                     \ '\('.g:vimwiki_rxPreStart.'.\+'.g:vimwiki_rxPreEnd.'\)\|'.
                     \ '\(<a href.\{-}</a>\)\|'.
                     \ '\(<img src.\{-}/>\)\|'.
       	            \ '\('.g:vimwiki_rxEqIn.'\)'
 
+  "FIXME FIXME !!! these can easily occur on the same line!
+  "XXX  {{{ }}} ??? obsolete
   if '`[^`]\+`' == a:regexp || '{{{.\+}}}' == a:regexp || g:vimwiki_rxEqIn == a:regexp
     let res_line = s:subst_func(a:line, a:regexp, a:func)
   else
@@ -781,11 +796,15 @@ endfunction! "}}}
 
 function! s:process_tag_pre(line, pre) "{{{
   " pre is the list of [is_in_pre, indent_of_pre]
+  "XXX always outputs a single line or empty list!
   let lines = []
   let pre = a:pre
   let processed = 0
-  if !pre[0] && a:line =~ '^\s*{{{[^\(}}}\)]*\s*$'
+  "XXX huh?
+  "if !pre[0] && a:line =~ '^\s*{{{[^\(}}}\)]*\s*$'
+  if !pre[0] && a:line =~ '^\s*{{{'
     let class = matchstr(a:line, '{{{\zs.*$')
+    "FIXME class cannot contain arbitrary strings
     let class = substitute(class, '\s\+$', '', 'g')
     if class != ""
       call add(lines, "<pre ".class.">")
@@ -800,7 +819,9 @@ function! s:process_tag_pre(line, pre) "{{{
     let processed = 1
   elseif pre[0]
     let processed = 1
-    call add(lines, substitute(a:line, '^\s\{'.pre[1].'}', '', ''))
+    "XXX destroys indent in general!
+    "call add(lines, substitute(a:line, '^\s\{'.pre[1].'}', '', ''))
+    call add(lines, s:safe_html_tags(a:line))
   endif
   return [processed, lines, pre]
 endfunction "}}}
@@ -812,6 +833,7 @@ function! s:process_tag_math(line, math) "{{{
   let processed = 0
   if !math[0] && a:line =~ '^\s*{{\$[^\(}}$\)]*\s*$'
     let class = matchstr(a:line, '{{$\zs.*$')
+    "FIXME class cannot be any string!
     let class = substitute(class, '\s\+$', '', 'g')
     " Check the math placeholder (default: displaymath)
     let b:vimwiki_mathEnv = matchstr(class, '^%\zs\S\+\ze%')
@@ -1423,6 +1445,15 @@ function! vimwiki#html#Wiki2HTML(path, wikifile) "{{{
     let state.placeholder = []
     let state.toc = []
     let state.toc_id = {1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0 }
+
+    " prepare constants for s:safe_html()
+    let s:lt_pattern = '<'
+    let s:gt_pattern = '>'
+    if g:vimwiki_valid_html_tags != ''
+      let tags = join(split(g:vimwiki_valid_html_tags, '\s*,\s*'), '\|')
+      let s:lt_pattern = '<\%(/\?\%('.tags.'\)\%(\s\{-1}\S\{-}\)\{-}/\?>\)\@!' 
+      let s:gt_pattern = '\%(</\?\%('.tags.'\)\%(\s\{-1}\S\{-}\)\{-}/\?\)\@<!>'
+    endif
 
     for line in lsource
       let oldquote = state.quote
