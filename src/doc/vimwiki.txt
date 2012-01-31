@@ -277,6 +277,14 @@ NORMAL MODE                                           *vimwiki-local-mappings*
                         *vimwiki_-*
 -                       Remove header level.
 
+                        *vimwiki_+*
++                       Converts wikilinks and weblinks from any recognized
+                        format into a preferred format that is specified in
+                        your syntax file.  See |vimwiki-option-syntax|.
+                        "+" can be activated in normal mode with the cursor
+                        over a link, or in visual mode with a text-selection
+                        over a link.  See the NormalizeLinkSyntax wiki page
+                        on the web for details and examples.
 
                         *vimwiki_gqq*  *vimwiki_gww*
 gqq                     Format table. If you made some changes to a table
