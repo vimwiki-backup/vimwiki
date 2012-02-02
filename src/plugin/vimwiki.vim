@@ -187,11 +187,13 @@ endfunction "}}}
 if !exists("*VimwikiWeblinkHandler") "{{{
   function VimwikiWeblinkHandler(weblink)
     if has("win32")
-      execute '!start ' . shellescape(a:weblink, 1)
+      "execute '!start ' . shellescape(a:weblink, 1)
+      "http://vim.wikia.com/wiki/Opening_current_Vim_file_in_your_Windows_browser
+      execute 'silent ! start "Title" /B ' . shellescape(a:weblink, 1)
     elseif has("macunix")
       execute '!open ' . shellescape(a:weblink, 1)
     else
-      execute '!xdg-open ' . shellescape(a:weblink, 1)
+      execute 'silent !xdg-open ' . shellescape(a:weblink, 1)
     endif
   endfunction
 endif "}}}
