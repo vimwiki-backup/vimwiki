@@ -14,7 +14,9 @@ set runtimepath=../src,$VIMRUNTIME
 
 " Use directories within 'test' for storing wiki and html.
 let wiki = {}
-"let wiki.path = getcwd().'/wiki-tiny'
 let wiki.path = getcwd().'/wiki'
 let wiki.path_html = getcwd().'/html'
+let wiki.template_path = getcwd().'/'
+let wiki.template_default = 'empty'
+let wiki.template_ext = '.tpl'
 let g:vimwiki_list = [wiki]
