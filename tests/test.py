@@ -29,7 +29,7 @@ def test_all():
     failed_tests = []
 
     # Compare actual HTML with expected one.
-    tests = [get_testname(fname) for fname in glob('wiki/*.wiki')]
+    tests = [get_testname(fname) for fname in glob('wiki-tiny/*.wiki')]
     for test in tests:
         expected_name = os.path.join('expected_html', test+'.html')
         actual_name = os.path.join('html', test+'.html')
