@@ -33,7 +33,7 @@ syntax: glob
 *.depend
 .RData
 .Rhistory
-
+*.db
 
 #
 syntax: regexp
