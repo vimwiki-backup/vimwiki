@@ -209,9 +209,9 @@ let s:vimwiki_defaults.ext = '.wiki'
 let s:vimwiki_defaults.maxhi = 1
 let s:vimwiki_defaults.syntax = 'default'
 
-let s:vimwiki_defaults.template_path = '~/vimwiki/templates/'
-let s:vimwiki_defaults.template_default = 'default'
-let s:vimwiki_defaults.template_ext = '.html'
+let s:vimwiki_defaults.template_path = ''
+let s:vimwiki_defaults.template_default = ''
+let s:vimwiki_defaults.template_ext = ''
 
 let s:vimwiki_defaults.nested_syntaxes = {}
 let s:vimwiki_defaults.auto_export = 0

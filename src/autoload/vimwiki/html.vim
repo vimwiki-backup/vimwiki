@@ -95,8 +95,8 @@ function! s:template_full_name(name) "{{{
   endif
 
   let fname = expand(VimwikiGet('template_path').
-        \name.
-        \VimwikiGet('template_ext'))
+        \ name.
+        \ VimwikiGet('template_ext'))
 
   if filereadable(fname)
     return fname
@@ -109,8 +109,8 @@ function! s:get_html_template(wikifile, template) "{{{
   " TODO: refactor it!!!
   let lines=[]
 
-  let template_name = s:template_full_name(a:template)
-  if template_name != ''
+  if a:template != ''
+    let template_name = s:template_full_name(a:template)
     try
       let lines = readfile(template_name)
       return lines
@@ -120,12 +120,13 @@ function! s:get_html_template(wikifile, template) "{{{
     endtry
   endif
 
-  " if no VimwikiGet('html_template') set up or error while reading template
-  " file -- use default one.
-  let default_tpl = s:find_autoload_file('default.tpl')
-  if default_tpl != ''
-    let lines = readfile(default_tpl)
+  let default_tpl = s:template_full_name('')
+
+  if default_tpl == ''
+    let default_tpl = s:find_autoload_file('default.tpl')
   endif
+
+  let lines = readfile(default_tpl)
   return lines
 endfunction "}}}
 
