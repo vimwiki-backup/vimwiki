@@ -67,7 +67,7 @@ let g:vimwiki_symH = 1
 " default wikilink template
 let g:vimwiki_WikilinkTemplate = '[[__LinkUrl__|__LinkDescription__]]'
 " default weblink template
-let g:vimwiki_WeblinkTemplate = '"__LinkDescription__":__LinkUrl__'
+let g:vimwiki_WeblinkTemplate = '[__LinkUrl__ __LinkDescription__]'
 
 " <hr>, horizontal rule
 let g:vimwiki_rxHR = '^----.*$'
