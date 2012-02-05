@@ -194,6 +194,11 @@ execute 'syntax match VimwikiHeader6 /'.g:vimwiki_rxH6.'/ contains=VimwikiTodo,V
 " group names "{{{
 
 if g:vimwiki_hl_headers == 0
+  " Strangely in default colorscheme Title group is not set to bold for cterm...
+  if !exists("g:colors_name")
+    hi Title cterm=bold
+  endif
+
   hi link VimwikiHeader1 Title
   hi link VimwikiHeader2 Title
   hi link VimwikiHeader3 Title
