@@ -45,6 +45,8 @@ let g:vimwiki_char_subscript = ',,'
 let g:vimwiki_rxH = '='
 let g:vimwiki_symH = 1
 
+" default imagelink template
+let g:vimwiki_ImageTemplate = '[[__LinkUrl__|__LinkDescription__|__LinkStyle__]]'
 " default wikilink template
 let g:vimwiki_WikilinkTemplate = '[[__LinkUrl__|__LinkDescription__]]'
 " default weblink template
