@@ -108,7 +108,7 @@ There are global and local mappings in vimwiki.
         3<Leader>ww opens the third wiki from |g:vimwiki_list|.
         etc.
         To remap: >
-        :map <Leader>w <Plug>VimwikiIndex
+        :nmap <Leader>w <Plug>VimwikiIndex
 <
 See also |:VimwikiIndex|
 
@@ -122,7 +122,7 @@ See also |:VimwikiIndex|
         3<Leader>wt tabopens the third wiki from |g:vimwiki_list|.
         etc.
         To remap: >
-        :map <Leader>t <Plug>VimwikiTabIndex
+        :nmap <Leader>t <Plug>VimwikiTabIndex
 <
 See also |:VimwikiTabIndex|
 
@@ -130,7 +130,7 @@ See also |:VimwikiTabIndex|
 <Leader>ws or <Plug>VimwikiUISelect
         List and select available wikies.
         To remap: >
-        :map <Leader>wq <Plug>VimwikiUISelect
+        :nmap <Leader>wq <Plug>VimwikiUISelect
 <
 See also |:VimwikiUISelect|
 
@@ -145,7 +145,7 @@ See also |:VimwikiUISelect|
         |g:vimwiki_list|.
         etc.
         To remap: >
-        :map <Leader>i <Plug>VimwikiDiaryIndex
+        :nmap <Leader>i <Plug>VimwikiDiaryIndex
 
 See also |:VimwikiDiaryIndex|
 
@@ -163,7 +163,7 @@ See also |:VimwikiDiaryIndex|
         from |g:vimwiki_list|.
         etc.
         To remap: >
-        :map <Leader>d <Plug>VimwikiMakeDiaryNote
+        :nmap <Leader>d <Plug>VimwikiMakeDiaryNote
 <
 See also |:VimwikiMakeDiaryNote|
 
@@ -181,7 +181,7 @@ See also |:VimwikiMakeDiaryNote|
         wiki from |g:vimwiki_list|.
         etc.
         To remap: >
-        :map <Leader>dt <Plug>VimwikiTabMakeDiaryNote
+        :nmap <Leader>dt <Plug>VimwikiTabMakeDiaryNote
 <
 See also |:VimwikiTabMakeDiaryNote|
 
@@ -194,27 +194,27 @@ NORMAL MODE                                           *vimwiki-local-mappings*
 <Leader>wh              Convert current wiki page to HTML.
                         Maps to |:Vimwiki2HTML|
                         To remap: >
-                        :map <Leader>wc <Plug>Vimwiki2HTML
+                        :nmap <Leader>wc <Plug>Vimwiki2HTML
 <
                         *vimwiki_<Leader>whh*
 <Leader>whh             Convert current wiki page to HTML and open it in
                         webbrowser.
                         Maps to |:Vimwiki2HTML|
                         To remap: >
-                        :map <Leader>wcc <Plug>Vimwiki2HTMLBrowse
+                        :nmap <Leader>wcc <Plug>Vimwiki2HTMLBrowse
 <
                         *vimwiki_<CR>*
 <CR>                    Follow wiki link (create target wiki page if needed).
                         Maps to |:VimwikiFollowLink|.
                         To remap: >
-                        :map <Leader>wf <Plug>VimwikiFollowLink
+                        :nmap <Leader>wf <Plug>VimwikiFollowLink
 <
                         *vimwiki_<S-CR>*
 <S-CR>                  Split and follow (create target wiki page if needed).
                         May not work in some terminals. Remapping could help.
                         Maps to |:VimwikiSplitLink|.
                         To remap: >
-                        :map <Leader>we <Plug>VimwikiSplitLink
+                        :nmap <Leader>we <Plug>VimwikiSplitLink
 <
                         *vimwiki_<C-CR>*
 <C-CR>                  Vertical split and follow (create target wiki page if
@@ -222,7 +222,7 @@ NORMAL MODE                                           *vimwiki-local-mappings*
                         May not work in some terminals. Remapping could help.
                         Maps to |:VimwikiVSplitLink|.
                         To remap: >
-                        :map <Leader>wq <Plug>VimwikiVSplitLink
+                        :nmap <Leader>wq <Plug>VimwikiVSplitLink
 <
                         *vimwiki_<C-S-CR>*    *vimwiki_<D-CR>*
 <C-S-CR>, <D-CR>        Follow wiki link (create target wiki page if needed),
@@ -230,52 +230,56 @@ NORMAL MODE                                           *vimwiki-local-mappings*
                         May not work in some terminals. Remapping could help.
                         Maps to |:VimwikiTabnewLink|.
                         To remap: >
-                        :map <Leader>wt <Plug>VimwikiTabnewLink
+                        :nmap <Leader>wt <Plug>VimwikiTabnewLink
 <
                         *vimwiki_<Backspace>*
 <Backspace>             Go back to previous wiki page. 
                         Maps to |:VimwikiGoBackLink|.
                         To remap: >
-                        :map <Leader>wb <Plug>VimwikiGoBackLink
+                        :nmap <Leader>wb <Plug>VimwikiGoBackLink
 <
                         *vimwiki_<Tab>*
 <Tab>                   Find next link on the current page.
                         Maps to |:VimwikiNextLink|.
                         To remap: >
-                        :map <Leader>wn <Plug>VimwikiNextLink
+                        :nmap <Leader>wn <Plug>VimwikiNextLink
 <
                         *vimwiki_<S-Tab>*
 <S-Tab>                 Find previous link on the current page.
                         Maps to |:VimwikiPrevLink|.
                         To remap: >
-                        :map <Leader>wp <Plug>VimwikiPrevLink
+                        :nmap <Leader>wp <Plug>VimwikiPrevLink
 <
                         *vimwiki_<Leader>wd*
 <Leader>wd              Delete wiki page you are in.
                         Maps to |:VimwikiDeleteLink|.
                         To remap: >
-                        :map <Leader>dd <Plug>VimwikiDeleteLink
+                        :nmap <Leader>dd <Plug>VimwikiDeleteLink
 <
                         *vimwiki_<Leader>wr*
 <Leader>wr              Rename wiki page you are in.
                         Maps to |:VimwikiRenameLink|.
                         To remap: >
-                        :map <Leader>rr <Plug>VimwikiRenameLink
+                        :nmap <Leader>rr <Plug>VimwikiRenameLink
 <
                         *vimwiki_<C-Space>*
 <C-Space>               Toggle list item on/off (checked/unchecked)
                         Maps to |:VimwikiToggleListItem|.
                         To remap: >
-                        :map <leader>tt <Plug>VimwikiToggleListItem
+                        :nmap <leader>tt <Plug>VimwikiToggleListItem
 <                       See |vimwiki-todo-lists|.
 
                         *vimwiki_=*
 =                       Add header level. Create if needed.
                         There is nothing to indent with '==' command in
                         vimwiki, so it should be ok to use '=' here.
+                        To remap: >
+                        :nmap == <Plug>VimwikiAddHeaderLevel
 
                         *vimwiki_-*
 -                       Remove header level.
+                        To remap: >
+                        :nmap -- <Plug>VimwikiRemoveHeaderLevel
 
                         *vimwiki_+*
 +                       Converts wikilinks and weblinks from any recognized
@@ -295,13 +299,13 @@ gww                     will reformat it.
 <A-Left>                Move current table column to the left.
                         See |:VimwikiTableMoveColumnLeft|
                         To remap: >
-                        :map <Leader>wtl <Plug>VimwikiTableMoveColumnLeft
+                        :nmap <Leader>wtl <Plug>VimwikiTableMoveColumnLeft
 <
                         *vimwiki_<A-Right>*
 <A-Right>               Move current table column to the right.
                         See |:VimwikiTableMoveColumnRight|
                         To remap: >
-                        :map <Leader>wtr <Plug>VimwikiTableMoveColumnRight
+                        :nmap <Leader>wtr <Plug>VimwikiTableMoveColumnRight
 <
                         *vimwiki_<C-Up>*
 <C-Up>                  Open the previous day's diary link if available.
@@ -1976,6 +1980,7 @@ Vim plugins: http://www.vim.org/scripts/script.php?script_id=2226
       |vimwiki-option-custom_wiki2html| for details.
     * Issue 245: Conceal long weblinks. See |g:vimwiki_url_mingain|.
     * Issue 250: Rework Diary Page. See |vimwiki-diary|
+    * Issue 260: Add a <Plug> for -?
     * Issue 262: Vimwiki opens wrong browser.
     * Issue 264: \wd command to delete a wiki page in another tab closes it.
     * Issue 266: Altering g:vimwiki_listsyms to '✗○◐●✓' doesn't work as

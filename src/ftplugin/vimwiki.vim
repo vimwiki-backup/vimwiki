@@ -398,8 +398,18 @@ vnoremap <silent><buffer> ac :<C-U>call vimwiki#base#TO_table_col(0, 1)<CR>
 onoremap <silent><buffer> ic :<C-U>call vimwiki#base#TO_table_col(1, 0)<CR>
 vnoremap <silent><buffer> ic :<C-U>call vimwiki#base#TO_table_col(1, 1)<CR>
 
-nnoremap <silent><buffer> = :call vimwiki#base#AddHeaderLevel()<CR>
-nnoremap <silent><buffer> - :call vimwiki#base#RemoveHeaderLevel()<CR>
+if !hasmapto('<Plug>VimwikiAddHeaderLevel')
+  nmap <silent><buffer> = <Plug>VimwikiAddHeaderLevel
+endif
+nnoremap <silent><buffer> <Plug>VimwikiAddHeaderLevel :
+      \<C-U>call vimwiki#base#AddHeaderLevel()<CR>
+
+if !hasmapto('<Plug>VimwikiRemoveHeaderLevel')
+  nmap <silent><buffer> - <Plug>VimwikiRemoveHeaderLevel
+endif
+nnoremap <silent><buffer> <Plug>VimwikiRemoveHeaderLevel :
+      \<C-U>call vimwiki#base#RemoveHeaderLevel()<CR>
+
 nnoremap <silent><buffer> + :call vimwiki#base#NormalizeLinkSyntax(0)<CR>
 vnoremap <silent><buffer> + :<C-U>call vimwiki#base#NormalizeLinkSyntax(1)<CR>
 
