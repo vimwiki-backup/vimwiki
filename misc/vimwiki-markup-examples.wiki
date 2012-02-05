@@ -1,7 +1,6 @@
- 
-Make: `mkdir misc_html; cp -f sandbox/html/style.css misc_html/; vim -n -u sandbox/vimrc -c "normal \wh" misc/vimwiki-markup-examples.wiki`
 
-Generates: `misc_html/vimwiki-markup-examples.html`
+Make: `vim -n -u misc/vimrc -c "execute ':%s/VIMWIKIHOME/\=getcwd()/g | normal \wh | u | :w'" misc/vimwiki-markup-examples.wiki`
+Generates: `misc/html/vimwiki-markup-examples.html`
 
 = Testing With Default Syntax =
  
@@ -251,8 +250,8 @@ There are a variety of links recognized by Vimwiki.
  # http://code.google.com/p/vimwiki
  # mailto:habamax@gmail.com
  # ftp://vim.org
- # [http://habamax.ru/blog habamax home page] <-- !? TODO: fix me (high priority) ...  Tomas, any chance you can look at this (revision bf27a347ae5d)!?
- # [mailto:habamax@gmail.com Drop a line to Maxim Kim] <-- !? TODO: fix me (high priority) ...  Tomas, any chance you can look at this (revision bf27a347ae5d)!?
+ # [http://habamax.ru/blog habamax home page]
+ # [mailto:habamax@gmail.com Drop a line to Maxim Kim]
  # "habamax home page (optional)":http://habamax.ru/blog
  # [habamax home page](http://habamax.ru/blog)
 
@@ -273,11 +272,11 @@ There are a variety of links recognized by Vimwiki.
 ==== More Weblink Examples ====
 
  # http://github.com
- # [http://github.com GitHub] <-- !? TODO: fix me (high priority) ...  Tomas, any chance you can look at this (revision bf27a347ae5d)!?
+ # [http://github.com GitHub]
  # [GitHub](http://github.com)
  # "GitHub":http://github.com
  # [This is Github](http://github.com)
- # [http://github.com This is Github] <-- !? TODO: fix me (high priority) ... Tomas, any chance you can look at this (revision bf27a347ae5d)!!
+ # [http://github.com This is Github]
  # "This is Github":http://github.com
  # [](http://github.com) <-- !? TODO: fix me (high priority) - something is stripping away the [] before the call to s:process_tags_links() !?
  # [http://github.com]
@@ -320,13 +319,13 @@ There are a variety of links recognized by Vimwiki.
 
  # [www.cs.princeton.edu ~blei](http://www.cs.princeton.edu/~blei)
  # http://www.cs.princeton.edu/~blei
- # [https://en.wikipedia.org/wiki/John_Smith_(mathematician) John Smith] <-- !? TODO: fix me (high priority) ...  Tomas, any chance you can look at this (revision bf27a347ae5d)!?
+ # [https://en.wikipedia.org/wiki/John_Smith_(mathematician) John Smith]
  # https://en.wikipedia.org/wiki/John_Smith_(mathematician)
  # [goodreader: vimwikiqrc.pdf](gropen://Documents//WebDownloads/vimwikiqrc.pdf) <-- !? TODO: configurable URI schemes (low priority) !!
  # [http://code.google.com/p/support/wiki/WikiSyntax](http://code.google.com/p/support/wiki/WikiSyntax)
  # [http://VimWiki.googlecode.com/](http://VimWiki.googlecode.com/)
  # [http://www.mediawiki.org/wiki/Markup_spec](http://www.mediawiki.org/wiki/Markup_spec)
- # [http://en.wikipedia.org/wiki/Lightweight_markup_language Lightweight markup language] <-- !? TODO: fix me (high priority) ...  Tomas, any chance you can look at this (revision bf27a347ae5d)!?
+ # [http://en.wikipedia.org/wiki/Lightweight_markup_language Lightweight markup language]
  # [http://www.dokuwiki.org/plugin:s5:example](http://www.dokuwiki.org/plugin:s5:example)
 
 
@@ -375,11 +374,11 @@ There are a variety of links recognized by Vimwiki.
    * !! This syntax has been DEPRECATED, in favor of double [[-bracketed wikilinks, for local resources
    * !! No conversion is performed
    * !! This is different from v1.2, in which the an image was generated
-     * Markup: `[../images/vimwiki_logo.png]`
+     * Markup: `[../../images/vimwiki_logo.png]`
      * Expected Description: n/a
      * Expected Target: n/a
-     * Expected Output: `[../images/vimwiki_logo.png]`
-     * Example: [../images/vimwiki_logo.png]
+     * Expected Output: `[../../images/vimwiki_logo.png]`
+     * Example: [../../images/vimwiki_logo.png]
  # Single bracketed link to a complete image url
    * !! This converts to an image, which is also hyperlinked to the image source.
    * !! This is different from v1.2, in which the image appeared and was not a hyperlink.
@@ -406,11 +405,11 @@ There are a variety of links recognized by Vimwiki.
 === [[- Image Links ===
 
  # Double bracketed link to a local image; path to image is relative to `vimwiki-option-path_html`
-   * Markup: `[[../images/vimwiki_logo.png]]`
+   * Markup: `[[../../images/vimwiki_logo.png]]`
    * Expected Alternate: n/a
    * Expected Style: n/a
-   * Expected Target: `<img src="../images/vimwiki_logo.png" />`
-   * Example: [[../images/vimwiki_logo.png]]
+   * Expected Target: `<img src="../../images/vimwiki_logo.png" />`
+   * Example: [[../../images/vimwiki_logo.png]]
  # Double bracketed link to an image
    * Markup: `[[http://vimwiki.googlecode.com/hg/images/vimwiki_logo.png]]`
    * Expected Alternate: n/a
@@ -449,12 +448,12 @@ There are a variety of links recognized by Vimwiki.
    * !! This syntax has been DEPRECATED, in favor of double [[-bracketed wikilinks, for local resources
    * !! No conversion is performed
    * !! This is different from v1.2, in which the an image was generated
-     * Markup: `[../images/vimwiki_logo.png]`
+     * Markup: `[../../images/vimwiki_logo.png]`
      * Expected Description: n/a !?
      * Expected Alternate: n/a !?
      * Expected Style: n/a !?
-     * Expected Target: `[../images/vimwiki_logo.png]` !?
-     * Example: [../images/vimwiki_logo.png]
+     * Expected Target: `[../../images/vimwiki_logo.png]` !?
+     * Example: [../../images/vimwiki_logo.png]
  # Single bracketed link to a complete image url
    * !! This converts to an image, which is also hyperlinked to the image source.
    * !! This is different from v1.2, in which the image appeared and was not a hyperlink.
@@ -472,7 +471,7 @@ There are a variety of links recognized by Vimwiki.
      * Expected Description: `|Vimwiki|` !?
      * Expected Alternate: n/a !?
      * Expected Style: n/a !?
-     * Expected Target: `<a href="http://vimwiki.googlecode.com/hg/images/vimwiki_logo.png>|Vimwiki|</a>` <-- !? TODO: fix expected target (high priority) !?
+     * Expected Target: `<a href="http://vimwiki.googlecode.com/hg/images/vimwiki_logo.png>|Vimwiki|</a>`
      * Example: [http://vimwiki.googlecode.com/hg/images/vimwiki_logo.png|Vimwiki|]
  # Single bracketed link to an image with alternate text and some style
    * !! Vimwiki v1.2 *may* have converted this to an image !? <-- TODO: confirm
@@ -492,7 +491,7 @@ There are a variety of links recognized by Vimwiki.
      * Expected Description: `||width:150px; height: 120px;` !?
      * Expected Alternate: n/a !?
      * Expected Style: n/a !?
-     * Expected Target: `<a href="http://vimwiki.googlecode.com/hg/images/vimwiki_logo.png>||width:150px; height: 120px;</a>` <-- !? TODO: fix expected target (high priority) !?
+     * Expected Target: `<a href="http://vimwiki.googlecode.com/hg/images/vimwiki_logo.png>||width:150px;">height: 120px;</a>` !!
      * Example: [http://vimwiki.googlecode.com/hg/images/vimwiki_logo.png||width:150px; height: 120px;]
  # Double bracketed link to an image with description text 
    * !! The current implementation generates an _IMAGE_, not a _HYPERLINK_ as was the case in v1.2
@@ -509,16 +508,16 @@ There are a variety of links recognized by Vimwiki.
 === Weblink Thumbnails ===
 
  # Weblinks with links to images as their descriptions
-   * Markup (a): `[http://vimwiki.googlecode.com/hg/screenshots/tn_vimwiki1.png](http://www.wikimedia.org)`
-     * Example: [http://vimwiki.googlecode.com/hg/screenshots/tn_vimwiki1.png](http://www.wikimedia.org)
-   * Markup (b): `[http://www.wikimedia.org http://vimwiki.googlecode.com/hg/screenshots/tn_vimwiki1.png]`
-     * Example: [http://www.wikimedia.org http://vimwiki.googlecode.com/hg/screenshots/tn_vimwiki1.png] <-- !? TODO: fix me (high priority) ...  Tomas, any chance you can look at this (revision bf27a347ae5d)!?
-   * Markup (c): `"http://vimwiki.googlecode.com/hg/screenshots/tn_vimwiki1.png":http://www.wikimedia.org`
-     * Example: "http://vimwiki.googlecode.com/hg/screenshots/tn_vimwiki1.png":http://www.wikimedia.org
+   * Markup (a): `[http://vimwiki.googlecode.com/hg/screenshots/tn_vimwiki1.png](http://code.google.com/p/vimwiki/)`
+     * Example: [http://vimwiki.googlecode.com/hg/screenshots/tn_vimwiki1.png](http://code.google.com/p/vimwiki/)
+   * Markup (b): `[http://code.google.com/p/vimwiki/ http://vimwiki.googlecode.com/hg/screenshots/tn_vimwiki1.png]`
+     * Example: [http://code.google.com/p/vimwiki/ http://vimwiki.googlecode.com/hg/screenshots/tn_vimwiki1.png]
+   * Markup (c): `"http://vimwiki.googlecode.com/hg/screenshots/tn_vimwiki1.png":http://code.google.com/p/vimwiki/`
+     * Example: "http://vimwiki.googlecode.com/hg/screenshots/tn_vimwiki1.png":http://code.google.com/p/vimwiki/
    * Expected Description: _the image_
    * Expected Alternate: n/a
    * Expected Style: n/a
-   * Expected Target: `<a href="http://www.wikimedia.org"><img src="http://vimwiki.googlecode.com/hg/screenshots/tn_vimwiki1.png" /></a>`
+   * Expected Target: `<a href="http://code.google.com/p/vimwiki/"><img src="http://vimwiki.googlecode.com/hg/screenshots/tn_vimwiki1.png" /></a>`
 
 
 === Wikilinks Thumbnails ===
@@ -584,47 +583,16 @@ There are a variety of links recognized by Vimwiki.
 
 
 == Example Images ==
-=== `.png` Extensions ===
 
  # Local Image 
-   [[../images/vimwiki_logo.png]]
-
+   [[../../images/vimwiki_logo.png]]
  # Vimwiki Thumbnail
    [[http://vimwiki.googlecode.com/hg/images/vimwiki_logo.png|Vimwiki thumbnail]]
-
  # Vimwiki Screenshot
    [[http://vimwiki.googlecode.com/hg/screenshots/vimwiki1.png|Vimwiki screenshot]]
-
  # Vimwiki Screenshot Thumbnail
    [[http://vimwiki.googlecode.com/hg/screenshots/tn_vimwiki1.png|Vimiki screenshot thumbnail]]
-
-
-=== `.jpg` Extensions ===
-
- * testing vim syntax highlighting
- * !? `.jpg` works better than `.JPG`
-
-[[http://upload.wikimedia.org/wikipedia/commons/thumb/7/77/Puffer_Fish_DSC01257.JPG/1197px-Puffer_Fish_DSC01257.jpg|1197px-Puffer_Fish]]
-
-[[http://upload.wikimedia.org/wikipedia/commons/thumb/7/77/Puffer_Fish_DSC01257.JPG/281px-Puffer_Fish_DSC01257.jpg|281px-Puffer_Fish]]
-
-[[http://upload.wikimedia.org/wikipedia/commons/thumb/7/77/Puffer_Fish_DSC01257.JPG/561px-Puffer_Fish_DSC01257.jpg|561px-Puffer_Fish]]
-
-[[http://upload.wikimedia.org/wikipedia/commons/thumb/7/77/Puffer_Fish_DSC01257.JPG/897px-Puffer_Fish_DSC01257.jpg|897px-Puffer_Fish]]
-
-[[http://upload.wikimedia.org/wikipedia/commons/7/77/Puffer_Fish_DSC01257.jpg|Puffer_Fish]]  <-- !? original image does not have lower-case extension
-
-=== `.JPG` Extensions ===
-
-[[http://upload.wikimedia.org/wikipedia/commons/thumb/7/77/Puffer_Fish_DSC01257.JPG/1197px-Puffer_Fish_DSC01257.JPG|1197px-Puffer_Fish]]
-
-[[http://upload.wikimedia.org/wikipedia/commons/thumb/7/77/Puffer_Fish_DSC01257.JPG/281px-Puffer_Fish_DSC01257.JPG|281px-Puffer_Fish]]
-
-[[http://upload.wikimedia.org/wikipedia/commons/thumb/7/77/Puffer_Fish_DSC01257.JPG/561px-Puffer_Fish_DSC01257.JPG|561px-Puffer_Fish]]
-
-[[http://upload.wikimedia.org/wikipedia/commons/thumb/7/77/Puffer_Fish_DSC01257.JPG/897px-Puffer_Fish_DSC01257.JPG|897px-Puffer_Fish]]
-
-[[http://upload.wikimedia.org/wikipedia/commons/7/77/Puffer_Fish_DSC01257.JPG|Puffer_Fish]]
+ # [[http://upload.wikimedia.org/wikipedia/commons/thumb/7/77/Puffer_Fish_DSC01257.JPG/281px-Puffer_Fish_DSC01257.jpg|281px-Puffer_Fish]]
 
 
 
