@@ -22,7 +22,7 @@ Test both plain and marked-up links.
 </p>
 <ol>
 <li>
-(<a href="http://www.abc.com/koko#lili">http://www.abc.com/koko#lili</a>)
+(<a href="http://www.abc.com/koko#lili">http://www.abc.com/koko#lili</a>) We should address this. It is not highlighted, but ok in html.
 
 <li>
 <a href="https://en.wikipedia.org/wiki/John_Smith_(mathematician)">https://en.wikipedia.org/wiki/John_Smith_(mathematician)</a>
@@ -70,7 +70,7 @@ www.example.com/koko#lili not enough!
 <a href="http://www.abc.com/koko#lili(here">http://www.abc.com/koko#lili(here</a> space is really needed!)
 
 <li>
-hjkl<a href="http://www.abc.com/koko#lili">http://www.abc.com/koko#lili</a>   ? accepted?
+hjklhttp://www.abc.com/koko#lili   ? accepted? I think, whitespace or a punctuation mark should be at the beginning of a weblink.
 
 </ol>
 
@@ -185,25 +185,25 @@ hjkl<a href="http://www.abc.com/koko#lili">http://www.abc.com/koko#lili</a>   ? 
 <a href="http://en.wikipedia.org/wiki/Vim">http://en.wikipedia.org/wiki/Vim</a>
 
 <li>
-<a href="http://en.wikipedia.org/wiki/Vim">http://en.wikipedia.org/wiki/Vim</a>[<a href="doi:10.1000/182">doi:10.1000/182</a> This Document]
+<a href="http://en.wikipedia.org/wiki/Vim">http://en.wikipedia.org/wiki/Vim</a><a href="doi:10.1000/182">This Document</a>
 
 <li>
-<a href="http://en.wikipedia.org/wiki/Vim_(text_editor)">http://what?</a> <a href="http://en.wikipedia.org/wiki/Vim">http://en.wikipedia.org/wiki/Vim</a>[<a href="doi:10.1000/182">doi:10.1000/182</a> This Document]
+<a href="http://en.wikipedia.org/wiki/Vim_(text_editor)">http://what?</a> <a href="http://en.wikipedia.org/wiki/Vim">http://en.wikipedia.org/wiki/Vim</a><a href="doi:10.1000/182">This Document</a>
 
 <li>
-[<a href="doi:10.1000/182">doi:10.1000/182</a> This Document]
+<a href="doi:10.1000/182">This Document</a>
 
 <li>
-[<a href="telnet://192.0.2.16:80/">telnet://192.0.2.16:80/</a>  local server]
+<a href="telnet://192.0.2.16:80/">local server</a>
 
 <li>
-[<a href="git://github.com/gitster/git.git">git://github.com/gitster/git.git</a>  Gitster]
+<a href="git://github.com/gitster/git.git">Gitster</a>
 
 <li>
-[<a href="urn:oasis:names:specification:docbook:dtd:xml:4.1.2">urn:oasis:names:specification:docbook:dtd:xml:4.1.2</a>  abstract]
+<a href="urn:oasis:names:specification:docbook:dtd:xml:4.1.2">abstract</a>
 
 <li>
-<a href="[ldap://[2001:db8::7]">[ldap://[2001:db8::7]</a>/c=GB?objectClass?one      <em>Not going through? Hardly worth fixing.</em>]
+<a href="[ldap://[2001:db8::7]/c=GB?objectClass?one]">_Not going through? Hardly worth fixing._</a>
 
 </ol>
 
@@ -235,49 +235,49 @@ hjkl<a href="http://www.abc.com/koko#lili">http://www.abc.com/koko#lili</a>   ? 
 <a href="http://code.google.com/p/vimwiki/wiki/NormalizeLinkSyntax">http://code.google.com/p/vimwiki/wiki/NormalizeLinkSyntax</a>
 
 <li>
-<a href="[github.com](http://github.com)">[github.com](http://github.com)</a>
+<a href="http://github.com">github.com</a>
 
 <li>
-<a href="[github.com](http://github.com)">[github.com](http://github.com)</a>(what to do here?)
+<a href="http://github.com">github.com</a>(what to do here?)
 
 <li>
-(and this link <a href="[github.com](http://github.com)">[github.com](http://github.com)</a>)
+(and this link <a href="http://github.com">github.com</a>)
 
 <li>
-[and other links like <a href="[github.com](http://github.com)">[github.com](http://github.com)</a>] what to do here?
+[and other links like <a href="http://github.com">github.com</a>] what to do here?
 
 <li>
-<a href="[Vim (text_editor)](http://en.wikipedia.org/wiki/Vim_(text_editor))">[Vim (text_editor)](http://en.wikipedia.org/wiki/Vim_(text_editor))</a>
+<a href="http://en.wikipedia.org/wiki/Vim_(text_editor)">[Vim (text_editor)]</a>
 
 <li>
-(and this link <a href="[Vim (text_editor)](http://en.wikipedia.org/wiki/Vim_(text_editor))">[Vim (text_editor)](http://en.wikipedia.org/wiki/Vim_(text_editor))</a>)
+(and this link <a href="http://en.wikipedia.org/wiki/Vim_(text_editor)">Vim (text_editor)</a>)
 
 <li>
-<a href=""The main.py function":http://fitzgen.github.com/pycco/">"The main.py function":http://fitzgen.github.com/pycco/</a>
+<a href="http://fitzgen.github.com/pycco/">The main.py function</a>
 
 <li>
-(and also <a href=""The main.py function":http://fitzgen.github.com/pycco/">"The main.py function":http://fitzgen.github.com/pycco/</a>)
+(and also <a href="The main.py function">http://fitzgen.github.com/pycco/</a>)
 
 <li>
-"The main() function":<a href="https://github.com/AAAA/code/tree/master/Sing.java#main">https://github.com/AAAA/code/tree/master/Sing.java#main</a>
+<a href="https://github.com/AAAA/code/tree/master/Sing.java#main">The main() function</a>
 
 <li>
-"(a text_editor)":<a href="http://en.wikipedia.org/wiki/Vim_(text_editor)">http://en.wikipedia.org/wiki/Vim_(text_editor)</a>)
+<a href="http://en.wikipedia.org/wiki/Vim_(text_editor)">(a text_editor)</a>)
 
 <li>
-"(a text_editor)":<a href="http://en.wikipedia.org/wiki/Vim_(text_editor)">http://en.wikipedia.org/wiki/Vim_(text_editor)</a>;
+<a href="http://en.wikipedia.org/wiki/Vim_(text_editor)">(a text_editor)</a>;
 
 <li>
-(in <a href=""?(a text_editor)":http://en.wikipedia.org/wiki/Vim_(text_editor)">"?(a text_editor)":http://en.wikipedia.org/wiki/Vim_(text_editor)</a>)
+(in <a href="http://en.wikipedia.org/wiki/Vim_(text_editor)">"?(a text_editor)"</a>)
 
 <li>
-<a href=""Vim (a text_editor)":http://en.wikipedia.org/wiki/Vim_(text_editor)">"Vim (a text_editor)":http://en.wikipedia.org/wiki/Vim_(text_editor)</a>.
+<a href="http://en.wikipedia.org/wiki/Vim_(text_editor)">Vim (a text_editor)</a>.
 
 <li>
-(<a href=""Vim (a text_editor)":http://en.wikipedia.org/wiki/Vim_(text_editor)">"Vim (a text_editor)":http://en.wikipedia.org/wiki/Vim_(text_editor)</a>)
+(<a href="http://en.wikipedia.org/wiki/Vim_(text_editor)">Vim (a text_editor)</a>)
 
 <li>
-<a href="[github.com](http://github.com)">[github.com](http://github.com)</a>(what to do here?)<a href=""Vim (a text_editor)":http://en.wikipedia.org/wiki/Vim_(text_editor))">"Vim (a text_editor)":http://en.wikipedia.org/wiki/Vim_(text_editor))</a>;
+<a href="http://github.com">github.com</a>(what to do here?)"Vim (a text_editor)"(<a href="http://en.wikipedia.org/wiki/Vim_(text_editor)">http://en.wikipedia.org/wiki/Vim_(text_editor)</a>);
 
 </ol>
 

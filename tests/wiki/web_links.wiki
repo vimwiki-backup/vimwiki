@@ -3,7 +3,7 @@
 Test both plain and marked-up links.
 === With punctuation ===
 `(text URL)` or `URL,` or `URL?`
-# (http://www.abc.com/koko#lili)
+# (http://www.abc.com/koko#lili) We should address this. It is not highlighted, but ok in html.
 # https://en.wikipedia.org/wiki/John_Smith_(mathematician)
 # `https://en.wikipedia.org/wiki/John_Smith_(mathematician)`
 # (this link https://en.wikipedia.org/wiki/John_Smith_(mathematician))
@@ -16,10 +16,10 @@ Test both plain and marked-up links.
 # http://en.wikipedia.org/wiki/Vim_(text_editor)! 
 # http://en.wikipedia.org/wiki/Vim_(text_editor)?
 # http://en.wikipedia.org/wiki/Vim_(text_editor)_again?
-# (http://www.novell.com/linux/releasenotes/x86_64/SUSE-SLES/11/#rnotes-deprecated)
+# (http://www.novell.com/linux/releasenotes/x86_64/SUSE-SLES/11/#rnotes-deprecated) it is not highlihted in vimwiki, but is converted to a link...
 # www.example.com/koko#lili not enough!
 # http://www.abc.com/koko#lili(here space is really needed!)
-# hjklhttp://www.abc.com/koko#lili   ? accepted?
+# hjklhttp://www.abc.com/koko#lili   ? accepted? I think, whitespace or a punctuation mark should be at the beginning of a weblink.
 
 === Several on a line ===
 # http://en.wikipedia.org/wiki/Vim_(text_editor), http://en.wikipedia.org/wiki/Vim_(text_editor); http://en.wikipedia.org/wiki/Vim_(text_editor). http://en.wikipedia.org/wiki/Vim_(text_editor)! http://en.wikipedia.org/wiki/Vim_(text_editor)?
