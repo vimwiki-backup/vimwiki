@@ -2,7 +2,7 @@
 " Vimwiki autoload plugin file
 " Desc: Tables
 " | Easily | manageable | text  | tables | !       |
-" |--------+------------+-------+--------+---------|
+" |--------|------------|-------|--------|---------|
 " | Have   | fun!       | Drink | tea    | Period. |
 "
 " Author: Maxim Kim <habamax@gmail.com>
@@ -163,7 +163,7 @@ function! s:get_rows(lnum) "{{{
   let lower_rows = []
 
   let lnum = a:lnum - 1
-  while lnum > 1
+  while lnum >= 1
     let line = getline(lnum)
     if s:is_table(line)
       call add(upper_rows, [lnum, line])
