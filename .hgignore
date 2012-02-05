@@ -41,6 +41,7 @@ syntax: regexp
 \.netrw.*
 ^sandbox/wiki$
 ^sandbox/html$
+^misc/html$
 ^src/doc/tags$
 ^tests/html$
 
