@@ -380,11 +380,13 @@ let g:vimwiki_rxWeblinkUrl = g:vimwiki_rxWebProtocols .
     \  '\S\{-1,}\%(([^ \t()]*)\)\=' . '\%([),:;.!?]\=\%([ \t]\|$\)\)\@='
 " free-standing links: keep URL UR(L) strip trailing punct: URL; URL) UR(L)) 
 let g:vimwiki_rxWeblinkUrl3 = g:vimwiki_rxWebProtocols .
-    \  '[^ \]]*' . ' *]\@='
+    \  '[^ \]]\+' . '\%( *\|]\)\@='
 " ending with <SP> or ] : [URL descr] or [URL] or [URL ]
 let g:vimwiki_rxWeblinkUrl2 = g:vimwiki_rxWebProtocols .
     \  '\S\{-1,}\%(([^ \t()]*)\)\=' . ' *)\@='
 " ending with ) : (URL) or (URL ) or (UR(L)) or (UR(L) )
+
+
 " " Url Character Set
 " let g:vimwiki_rxWebUrlChar = '[^| \t]'
 " let g:vimwiki_rxWeblinkUrl = ....
