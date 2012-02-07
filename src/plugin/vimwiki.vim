@@ -260,6 +260,9 @@ let s:vimwiki_defaults.diary_sort = 'desc'
 " Do not change this! Will wait till vim become more datetime awareable.
 let s:vimwiki_defaults.diary_link_fmt = '%Y-%m-%d'
 
+let s:vimwiki_defaults.interwiki_prefix = ''
+let s:vimwiki_defaults.interwiki_domain = ''
+
 " custom_wiki2html
 let s:vimwiki_defaults.custom_wiki2html = ''
 "}}}
@@ -374,6 +377,13 @@ let g:vimwiki_rxWikiLinkMatchUrl3 = g:vimwiki_rxWikiLinkPrefix.
 let g:vimwiki_rxWikiLinkMatchDescr3 = g:vimwiki_rxWikiLinkPrefix.
       \ g:vimwiki_rxWikiLinkUrl. g:vimwiki_rxWikiLinkSeparator3.
       \ '\zs'. g:vimwiki_rxWikiLinkDescr. '\ze'. g:vimwiki_rxWikiLinkSuffix
+"
+" TODO: define / implement interwiki links
+" match interwiki PFX within PFX:URL
+let g:vimwiki_rxWikiLinkUrlMatchInterwikiPrefix = '[^:]\+\ze:'
+" match interwiki URL within PFX:URL
+let g:vimwiki_rxWikiLinkUrlMatchInterwikiLink = '[^:]\+:\zs.*'
+
 "
 " *. ANY wikilink
 if g:vimwiki_camel_case

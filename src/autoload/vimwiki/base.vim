@@ -632,6 +632,20 @@ function! vimwiki#base#find_prev_link() "{{{
 endfunction
 " }}}
 
+function! vimwiki#base#find_interwiki(prefix) "{{{
+  if a:prefix == ""
+    return -1
+  endif
+  let idx = 0
+  while idx < len(g:vimwiki_list)
+    if a:prefix == VimwikiGet('interwiki_prefix', idx)
+      return idx
+    endif
+    let idx += 1
+  endwhile
+  return -1
+endfunction "}}}
+
 function! vimwiki#base#follow_link(split, ...) "{{{
   if a:split == "split"
     let cmd = ":split "
@@ -643,31 +657,52 @@ function! vimwiki#base#follow_link(split, ...) "{{{
     let cmd = ":e "
   endif
 
-  let link = s:strip_word(s:get_word_at_cursor(g:vimwiki_rxWikiLink))
-  if link == ""
-    let weblink = s:strip_word(s:get_word_at_cursor(g:vimwiki_rxWeblink))
-    if weblink != ""
-      call VimwikiWeblinkHandler(escape(weblink, '#'))
-    else
-      if a:0 > 0
-        execute "normal! ".a:1
-      else
-        execute "normal! \n"
-      endif
-    endif
+  " nonzero wnum selects an alternate wiki to open link
+  " let wnum = a:wnum
+  let wnum = 0
+
+  " try Weblink
+  let weblink = matchstr(s:get_word_at_cursor(g:vimwiki_rxWeblink), g:vimwiki_rxWeblinkMatchUrl)
+  if weblink != ""
+    call VimwikiWeblinkHandler(escape(weblink, '#'))
     return
   endif
 
-  " FIX ME: ... not quite working yet
-  let img = s:strip_word(s:get_word_at_cursor(g:vimwiki_rxImageUrl))
-  if img != ""
-    let imglink = s:strip_word(s:get_word_at_cursor(g:vimwiki_rxImageUrl))
+  " try Image
+  let imglink = matchstr(s:get_word_at_cursor(g:vimwiki_rxImage), g:vimwiki_rxImageMatchUrl)
+  if imglink != ""
+    echomsg 'Follow_link escape(imglink) = '. escape(imglink, '#')
     call VimwikiWeblinkHandler(escape(imglink, '#'))
     return
   endif
 
-  let subdir = vimwiki#base#current_subdir()
-  call vimwiki#base#open_link(cmd, subdir.link)
+  " try WikiLink
+  let link = matchstr(s:get_word_at_cursor(g:vimwiki_rxWikiLink), g:vimwiki_rxWikiLinkMatchUrl)
+  if link != ""
+    " try interwiki
+    " {{{ NOT RELIABLE - only tested on links without interwiki-prefixes
+    " TODO: IMPLEMENT PROPOSED INTERWIKI SCHEME
+    if wnum == 0
+      let wnum = vimwiki#base#find_interwiki(matchstr(link, g:vimwiki_rxWikiLinkUrlMatchInterwikiPrefix)) + 1
+      if wnum > 0
+        let link = matchstr(link, g:vimwiki_rxWikiLinkUrlMatchInterwikiLink)
+      endif
+    endif
+    " force absolute paths when switching wikis
+    if wnum != 0 && wnum != g:vimwiki_current_idx + 1
+      let subdir = ""
+    else
+      let subdir = vimwiki#base#current_subdir()
+    endif
+    " }}} (NOT RELIABLE)
+
+    " try wikilink
+    let link = vimwiki#base#safe_link(link)
+    call vimwiki#base#open_link(cmd, subdir.link, wnum)
+    return
+  endif
+
+  execute "normal! \n"
 
 endfunction " }}}
 
