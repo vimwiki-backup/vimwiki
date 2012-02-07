@@ -5,3 +5,7 @@ http://example.com/image.gif
 http://example.com/image.tif
 http://example.com/image.bmp
 http://example.com/image.ico
+
+# [[http://upload.wikimedia.org/wikipedia/commons/thumb/7/77/Puffer_Fish_DSC01257.JPG/1197px-Puffer_Fish_DSC01257.JPG|1197px-Puffer_Fish]] image with uppercase extension
+# [[http://upload.wikimedia.org/wikipedia/commons/thumb/7/77/Puffer_Fish_DSC01257.JPG/1197px-Puffer_Fish_DSC01257.jpg|1197px-Puffer_Fish]] image with lowercase extension
+
