@@ -1,18 +1,18 @@
 
 <div class="toc">
 <ul>
-<li><a href="#toc_0.1">Web links</a>
+<li><a href="#toc_0.1">Weblinks</a>
 <ul>
 <li><a href="#toc_0.1.1">With punctuation</a>
 <li><a href="#toc_0.1.2">Several on a line</a>
 <li><a href="#toc_0.1.3">Examples of URIs</a>
 </ul>
-<li><a href="#toc_0.2">Bracketed web links</a>
-<li><a href="#toc_0.3">"Normalize" kind</a>
+<li><a href="#toc_0.2">Bracketed Weblinks</a>
+<li><a href="#toc_0.3">Markdown and Textile Weblinks</a>
 </ul>
 </ul>
 </div>
-<h2 id="toc_0.1">Web links</h2>
+<h2 id="toc_0.1">Weblinks</h2>
 <p>
 Test both plain and marked-up links.
 </p>
@@ -22,7 +22,7 @@ Test both plain and marked-up links.
 </p>
 <ol>
 <li>
-(<a href="http://www.abc.com/koko#lili">http://www.abc.com/koko#lili</a>) We should address this. It is not highlighted, but ok in html.
+(http://www.abc.com/koko#lili) <span class="todo">TODO:</span> (high priority) We should address this. It is not highlighted, but ok in html.
 
 <li>
 <a href="https://en.wikipedia.org/wiki/John_Smith_(mathematician)">https://en.wikipedia.org/wiki/John_Smith_(mathematician)</a>
@@ -61,7 +61,7 @@ Test both plain and marked-up links.
 <a href="http://en.wikipedia.org/wiki/Vim_(text_editor)_again">http://en.wikipedia.org/wiki/Vim_(text_editor)_again</a>?
 
 <li>
-(<a href="http://www.novell.com/linux/releasenotes/x86_64/SUSE-SLES/11/#rnotes-deprecated">http://www.novell.com/linux/releasenotes/x86_64/SUSE-SLES/11/#rnotes-deprecated</a>)
+(http://www.novell.com/linux/releasenotes/x86_64/SUSE-SLES/11/#rnotes-deprecated) <span class="todo">TODO:</span> (high priority) it is not highlihted in vimwiki, but is converted to a link...
 
 <li>
 www.example.com/koko#lili not enough!
@@ -70,7 +70,7 @@ www.example.com/koko#lili not enough!
 <a href="http://www.abc.com/koko#lili(here">http://www.abc.com/koko#lili(here</a> space is really needed!)
 
 <li>
-hjklhttp://www.abc.com/koko#lili   ? accepted? I think, whitespace or a punctuation mark should be at the beginning of a weblink.
+hjkl<a href="http://www.abc.com/koko#lili">http://www.abc.com/koko#lili</a>   ? accepted? <span class="todo">TODO:</span> (high priority) I think, whitespace or a punctuation mark should be at the beginning of a weblink.
 
 </ol>
 
@@ -141,7 +141,7 @@ hjklhttp://www.abc.com/koko#lili   ? accepted? I think, whitespace or a punctuat
 </ol>
 
 
-<h2 id="toc_0.2">Bracketed web links</h2>
+<h2 id="toc_0.2">Bracketed Weblinks</h2>
 <p>
 <code>[URL DESCRIPTION]</code> or <code>[URL ]</code>?
 </p>
@@ -203,12 +203,12 @@ hjklhttp://www.abc.com/koko#lili   ? accepted? I think, whitespace or a punctuat
 <a href="urn:oasis:names:specification:docbook:dtd:xml:4.1.2">abstract</a>
 
 <li>
-<a href="[ldap://[2001:db8::7]/c=GB?objectClass?one]">_Not going through? Hardly worth fixing._</a>
+<a href="ldap://[2001:db8::7">ldap://[2001:db8::7</a>/c=GB?objectClass?one      <em>Not going through? Hardly worth fixing.</em>]
 
 </ol>
 
 
-<h2 id="toc_0.3">"Normalize" kind</h2>
+<h2 id="toc_0.3">Markdown and Textile Weblinks</h2>
 <p>
 <code>[DESCRIPTION](URL)</code> and <code>"DESCRIPTION(OPTIONAL)":URL</code>
 </p>
@@ -247,7 +247,7 @@ hjklhttp://www.abc.com/koko#lili   ? accepted? I think, whitespace or a punctuat
 [and other links like <a href="http://github.com">github.com</a>] what to do here?
 
 <li>
-<a href="http://en.wikipedia.org/wiki/Vim_(text_editor)">[Vim (text_editor)]</a>
+<a href="http://en.wikipedia.org/wiki/Vim_(text_editor)">Vim (text_editor)</a>
 
 <li>
 (and this link <a href="http://en.wikipedia.org/wiki/Vim_(text_editor)">Vim (text_editor)</a>)
@@ -256,19 +256,19 @@ hjklhttp://www.abc.com/koko#lili   ? accepted? I think, whitespace or a punctuat
 <a href="http://fitzgen.github.com/pycco/">The main.py function</a>
 
 <li>
-(and also <a href="The main.py function">http://fitzgen.github.com/pycco/</a>)
+(and also <a href="http://fitzgen.github.com/pycco/">The main.py function</a>)
 
 <li>
-<a href="https://github.com/AAAA/code/tree/master/Sing.java#main">The main() function</a>
+"The main() function":<a href="https://github.com/AAAA/code/tree/master/Sing.java#main">https://github.com/AAAA/code/tree/master/Sing.java#main</a> <span class="todo">TODO:</span> (low priority) we should probably remove textile definitions ...
 
 <li>
-<a href="http://en.wikipedia.org/wiki/Vim_(text_editor)">(a text_editor)</a>)
+"(a text_editor)":<a href="http://en.wikipedia.org/wiki/Vim_(text_editor)">http://en.wikipedia.org/wiki/Vim_(text_editor)</a>) <span class="todo">TODO:</span> (low priority)  ... or, at least remove the "(more description)" component
 
 <li>
-<a href="http://en.wikipedia.org/wiki/Vim_(text_editor)">(a text_editor)</a>;
+"(a text_editor)":<a href="http://en.wikipedia.org/wiki/Vim_(text_editor)">http://en.wikipedia.org/wiki/Vim_(text_editor)</a>; <span class="todo">TODO:</span> (low priority) ...
 
 <li>
-(in <a href="http://en.wikipedia.org/wiki/Vim_(text_editor)">"?(a text_editor)"</a>)
+(in <a href="http://en.wikipedia.org/wiki/Vim_(text_editor)">?(a text_editor)</a>)
 
 <li>
 <a href="http://en.wikipedia.org/wiki/Vim_(text_editor)">Vim (a text_editor)</a>.
@@ -277,7 +277,7 @@ hjklhttp://www.abc.com/koko#lili   ? accepted? I think, whitespace or a punctuat
 (<a href="http://en.wikipedia.org/wiki/Vim_(text_editor)">Vim (a text_editor)</a>)
 
 <li>
-<a href="http://github.com">github.com</a>(what to do here?)"Vim (a text_editor)"(<a href="http://en.wikipedia.org/wiki/Vim_(text_editor)">http://en.wikipedia.org/wiki/Vim_(text_editor)</a>);
+<a href="http://github.com">github.com</a>(what to do here?)<a href="http://en.wikipedia.org/wiki/Vim_(text_editor)">Vim (a text_editor)</a>;
 
 </ol>
 

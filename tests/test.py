@@ -68,7 +68,8 @@ def main():
     failed_tests = test_all()
     for expected, actual in failed_tests:
         question = "Would you like to vimdiff failed test named '{}'? (y/n) "
-        answer = input(question.format(get_testname(expected)))
+        print 'vim -d "%s" "%s"' % (expected, actual)
+        answer = raw_input(question.format(get_testname(expected)))
         if answer == 'y':
             command = 'vim -d "%s" "%s"' % (expected, actual)
             os.system(command)

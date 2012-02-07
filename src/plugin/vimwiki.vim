@@ -333,6 +333,7 @@ let g:vimwiki_rxWikiLinkPrefix = '\[\['
 let g:vimwiki_rxWikiLinkSuffix = '\]\]'
 "
 " 1. [[URL]]
+let g:vimwiki_WikilinkTemplate1 = '[[__LinkUrl__]]'
 " 1a) match [[URL]]
 let g:vimwiki_rxWikiLink1 = g:vimwiki_rxWikiLinkPrefix.
       \ g:vimwiki_rxWikiLinkUrl. g:vimwiki_rxWikiLinkSuffix
@@ -343,6 +344,7 @@ let g:vimwiki_rxWikiLinkMatchUrl1 = g:vimwiki_rxWikiLinkPrefix.
 let g:vimwiki_rxWikiLinkMatchDescr1 = ''
 "
 " 2. [[URL][DESCRIPTION]]
+let g:vimwiki_WikilinkTemplate2 = '[[__LinkUrl__][__LinkDescription__]]'
 let g:vimwiki_rxWikiLinkSeparator2 = '\]\['
 " 2a) match [[URL][DESCRIPTION]]
 let g:vimwiki_rxWikiLink2 = g:vimwiki_rxWikiLinkPrefix.
@@ -358,6 +360,7 @@ let g:vimwiki_rxWikiLinkMatchDescr2 = g:vimwiki_rxWikiLinkPrefix.
       \ '\zs'. g:vimwiki_rxWikiLinkDescr. '\ze'. g:vimwiki_rxWikiLinkSuffix
 "
 " 3. [[URL|DESCRIPTION]]
+let g:vimwiki_WikilinkTemplate3 = '[[__LinkUrl__|__LinkDescription__]]'
 let g:vimwiki_rxWikiLinkSeparator3 = '|'
 " 3a) match [[URL|DESCRIPTION]]
 let g:vimwiki_rxWikiLink3 = g:vimwiki_rxWikiLinkPrefix.

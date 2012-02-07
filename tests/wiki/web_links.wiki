@@ -1,9 +1,9 @@
 %toc
-== Web links ==
+== Weblinks ==
 Test both plain and marked-up links.
 === With punctuation ===
 `(text URL)` or `URL,` or `URL?`
-# (http://www.abc.com/koko#lili) We should address this. It is not highlighted, but ok in html.
+# (http://www.abc.com/koko#lili) TODO: (high priority) We should address this. It is not highlighted, but ok in html.
 # https://en.wikipedia.org/wiki/John_Smith_(mathematician)
 # `https://en.wikipedia.org/wiki/John_Smith_(mathematician)`
 # (this link https://en.wikipedia.org/wiki/John_Smith_(mathematician))
@@ -16,10 +16,10 @@ Test both plain and marked-up links.
 # http://en.wikipedia.org/wiki/Vim_(text_editor)! 
 # http://en.wikipedia.org/wiki/Vim_(text_editor)?
 # http://en.wikipedia.org/wiki/Vim_(text_editor)_again?
-# (http://www.novell.com/linux/releasenotes/x86_64/SUSE-SLES/11/#rnotes-deprecated) it is not highlihted in vimwiki, but is converted to a link...
+# (http://www.novell.com/linux/releasenotes/x86_64/SUSE-SLES/11/#rnotes-deprecated) TODO: (high priority) it is not highlihted in vimwiki, but is converted to a link...
 # www.example.com/koko#lili not enough!
 # http://www.abc.com/koko#lili(here space is really needed!)
-# hjklhttp://www.abc.com/koko#lili   ? accepted? I think, whitespace or a punctuation mark should be at the beginning of a weblink.
+# hjklhttp://www.abc.com/koko#lili   ? accepted? TODO: (high priority) I think, whitespace or a punctuation mark should be at the beginning of a weblink.
 
 === Several on a line ===
 # http://en.wikipedia.org/wiki/Vim_(text_editor), http://en.wikipedia.org/wiki/Vim_(text_editor); http://en.wikipedia.org/wiki/Vim_(text_editor). http://en.wikipedia.org/wiki/Vim_(text_editor)! http://en.wikipedia.org/wiki/Vim_(text_editor)?
@@ -54,7 +54,7 @@ Test both plain and marked-up links.
 #    ldap://[2001:db8::7]/c=GB?objectClass?one      _Not going through? Hardly worth fixing._
 
 
-== Bracketed web links ==
+== Bracketed Weblinks ==
 `[URL DESCRIPTION]` or `[URL ]`?
 {{{
 # [http://en.wikipedia.org/wiki/Vim_(text_editor) Vim]
@@ -89,7 +89,7 @@ Test both plain and marked-up links.
 # [ldap://[2001:db8::7]/c=GB?objectClass?one      _Not going through? Hardly worth fixing._]
 
 
-== "Normalize" kind ==
+== Markdown and Textile Weblinks ==
 `[DESCRIPTION](URL)` and `"DESCRIPTION(OPTIONAL)":URL`
 {{{
 # http://code.google.com/p/vimwiki/wiki/NormalizeLinkSyntax
@@ -118,9 +118,9 @@ Test both plain and marked-up links.
 # (and this link [Vim (text_editor)](http://en.wikipedia.org/wiki/Vim_(text_editor)))
 # "The main.py function":http://fitzgen.github.com/pycco/
 # (and also "The main.py function":http://fitzgen.github.com/pycco/)
-# "The main() function":https://github.com/AAAA/code/tree/master/Sing.java#main
-# "(a text_editor)":http://en.wikipedia.org/wiki/Vim_(text_editor))
-# "(a text_editor)":http://en.wikipedia.org/wiki/Vim_(text_editor);
+# "The main() function":https://github.com/AAAA/code/tree/master/Sing.java#main TODO: (low priority) we should probably remove textile definitions ...
+# "(a text_editor)":http://en.wikipedia.org/wiki/Vim_(text_editor)) TODO: (low priority)  ... or, at least remove the "(more description)" component
+# "(a text_editor)":http://en.wikipedia.org/wiki/Vim_(text_editor); TODO: (low priority) ...
 # (in "?(a text_editor)":http://en.wikipedia.org/wiki/Vim_(text_editor))
 # "Vim (a text_editor)":http://en.wikipedia.org/wiki/Vim_(text_editor).
 # ("Vim (a text_editor)":http://en.wikipedia.org/wiki/Vim_(text_editor))
