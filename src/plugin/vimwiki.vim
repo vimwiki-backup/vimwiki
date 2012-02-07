@@ -186,15 +186,47 @@ endfunction "}}}
 " User can redefine it.
 if !exists("*VimwikiWeblinkHandler") "{{{
   function VimwikiWeblinkHandler(weblink)
-    if has("win32")
+    " handlers
+    function! s:win32_handler(weblink)
       "execute '!start ' . shellescape(a:weblink, 1)
       "http://vim.wikia.com/wiki/Opening_current_Vim_file_in_your_Windows_browser
       execute 'silent ! start "Title" /B ' . shellescape(a:weblink, 1)
-    elseif has("macunix")
+    endfunction
+    function! s:macunix_handler(weblink)
       execute '!open ' . shellescape(a:weblink, 1)
-    else
+    endfunction
+    function! s:linux_handler(weblink)
       execute 'silent !xdg-open ' . shellescape(a:weblink, 1)
-    endif
+    endfunction
+    let success = 0
+    " check win32/macunix/? 
+    try 
+      if has("win32")
+        call s:win32_handler(a:weblink)
+        return
+      endif
+      if has("macunix")
+        call s:macunix_handler(a:weblink)
+        return
+      endif
+    endtry
+    " check executable
+    try
+      if executable('start')
+        call s:win32_handler(a:weblink)
+        return
+      endif
+      if executable('open')
+        call s:macunix_handler(a:weblink)
+        return
+      endif
+      if executable('xdg-open')
+        call s:linux_handler(a:weblink)
+        return
+      endif
+    endtry
+
+    echomsg 'Default Vimwiki Weblink Handler was unable to open the HTML file!'
   endfunction
 endif "}}}
 " CALLBACK }}}
