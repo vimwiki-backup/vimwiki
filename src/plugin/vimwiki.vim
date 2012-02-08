@@ -392,34 +392,34 @@ if g:vimwiki_camel_case
         \ g:vimwiki_rxWikiLink3.'\|'.
         \ g:vimwiki_rxWikiLink2.'\|'.
         \ g:vimwiki_rxWikiLink1.'\|'.
-        \ g:vimwiki_rxWikiWord.'\|'
+        \ g:vimwiki_rxWikiWord.'\|'.
         \ '' 
   " *b) match URL within ANY wikilink
   let g:vimwiki_rxWikiLinkMatchUrl = ''.
         \ g:vimwiki_rxWikiLinkMatchUrl3.'\|'.
         \ g:vimwiki_rxWikiLinkMatchUrl2.'\|'.
         \ g:vimwiki_rxWikiLinkMatchUrl1.'\|'.
-        \ g:vimwiki_rxWikiWord.'\|'
+        \ g:vimwiki_rxWikiWord.'\|'.
         \ ''
 else
   " *a) match ANY wikilink
   let g:vimwiki_rxWikiLink = ''.
         \ g:vimwiki_rxWikiLink3.'\|'.
         \ g:vimwiki_rxWikiLink2.'\|'.
-        \ g:vimwiki_rxWikiLink1.'\|'
+        \ g:vimwiki_rxWikiLink1.'\|'.
         \ ''
   " *b) match URL within ANY wikilink
   let g:vimwiki_rxWikiLinkMatchUrl = ''.
         \ g:vimwiki_rxWikiLinkMatchUrl3.'\|'.
         \ g:vimwiki_rxWikiLinkMatchUrl2.'\|'.
-        \ g:vimwiki_rxWikiLinkMatchUrl1.'\|'
+        \ g:vimwiki_rxWikiLinkMatchUrl1.'\|'.
         \ ''
 endif
 " *c) match DESCRIPTION within ANY wikilink
 let g:vimwiki_rxWikiLinkMatchDescr = ''.
       \ g:vimwiki_rxWikiLinkMatchDescr3.'\|'.
       \ g:vimwiki_rxWikiLinkMatchDescr2.'\|'.
-      \ g:vimwiki_rxWikiLinkMatchDescr1.'\|'
+      \ g:vimwiki_rxWikiLinkMatchDescr1.'\|'.
         \ ''
 "}}}
 
@@ -520,7 +520,7 @@ let g:vimwiki_rxWeblinkMatchDescr3 = g:vimwiki_rxWeblinkPrefix3.
 let g:vimwiki_rxWeblink = ''.
       \ g:vimwiki_rxWeblink2.'\|'.
       \ g:vimwiki_rxWeblink3.'\|'. 
-      \ g:vimwiki_rxWeblink0.'\|'
+      \ g:vimwiki_rxWeblink0.'\|'.
       \ ''
 "      \ g:vimwiki_rxWeblink1.'\|'.
 "
@@ -528,7 +528,7 @@ let g:vimwiki_rxWeblink = ''.
 let g:vimwiki_rxWeblinkMatchUrl = ''.
       \ g:vimwiki_rxWeblinkMatchUrl2.'\|'.
       \ g:vimwiki_rxWeblinkMatchUrl3.'\|'. 
-      \ g:vimwiki_rxWeblinkMatchUrl0.'\|'
+      \ g:vimwiki_rxWeblinkMatchUrl0.'\|'.
       \ ''
 "      \ g:vimwiki_rxWeblinkMatchUrl1.'\|'.
 "
@@ -536,7 +536,7 @@ let g:vimwiki_rxWeblinkMatchUrl = ''.
 let g:vimwiki_rxWeblinkMatchDescr = ''.
       \ g:vimwiki_rxWeblinkMatchDescr2.'\|'.
       \ g:vimwiki_rxWeblinkMatchDescr3.'\|'.
-      \ g:vimwiki_rxWeblinkMatchDescr0.'\|'
+      \ g:vimwiki_rxWeblinkMatchDescr0.'\|'.
       \ ''
 "      \ g:vimwiki_rxWeblinkMatchDescr1.'\|'.
 "
@@ -641,25 +641,25 @@ let g:vimwiki_rxImageMatchStyle3 = g:vimwiki_rxImagePrefix.
 " *a) match ANY Image
 let g:vimwiki_rxImage = ''.
       \ g:vimwiki_rxImage3.'\|'.
-      \ g:vimwiki_rxImage2.'\|'
+      \ g:vimwiki_rxImage2.'\|'.
       \ ''
 "      \ .g:vimwiki_rxImage0
 " *b) match IMGURL within ANY Image
 let g:vimwiki_rxImageMatchUrl = ''.
       \ g:vimwiki_rxImageMatchUrl3.'\|'.
-      \ g:vimwiki_rxImageMatchUrl2.'\|'
+      \ g:vimwiki_rxImageMatchUrl2.'\|'.
       \ '' 
 "      \ .g:vimwiki_rxImageMatchUrl0
 " *c) match DESCRIPTION within ANY Image
 let g:vimwiki_rxImageMatchDescr = ''.
       \ g:vimwiki_rxImageMatchDescr3.'\|'.
-      \ g:vimwiki_rxImageMatchDescr2.'\|'
+      \ g:vimwiki_rxImageMatchDescr2.'\|'.
       \ ''
 "      \ .g:vimwiki_rxImageMatchDescr0
 " *d) match STYLE within ANY Image
 let g:vimwiki_rxImageMatchStyle = ''.
       \ g:vimwiki_rxImageMatchStyle3.'\|'.
-      \ g:vimwiki_rxImageMatchStyle2.'\|'
+      \ g:vimwiki_rxImageMatchStyle2.'\|'.
       \ '' 
 "      \ .g:vimwiki_rxImageMatchStyle0
 "}}}
