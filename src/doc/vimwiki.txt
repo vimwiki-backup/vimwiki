@@ -524,6 +524,9 @@ text should be decorated: >
 5.2. Links                                              *vimwiki-syntax-links*
 
 Internal links~
+
+As of version 1.3 CamelCased links are off by default.
+
 WikiWords: >
   CapitalizedWordsConnected
 
@@ -1650,7 +1653,7 @@ Value           Description~
 0               Do not make links from CamelCased words.
 1               Make links from CamelCased words.
 
-Default: 1
+Default: 0
 
 
 ------------------------------------------------------------------------------
@@ -1955,6 +1958,9 @@ Vim plugins: http://www.vim.org/scripts/script.php?script_id=2226
 14. Changelog                                              *vimwiki-changelog*
 
 1.3 dev~
+    CameCased links are off by default! Check |g:vimwiki_camel_case| to turn
+    it on.
+
     * Issue 225: handling of HTML tags in code and block code
     * Issue 275 and 96: web links with parentheses or near parentheses or
       punctuation convert correctly; syntax highlighting not as good.
