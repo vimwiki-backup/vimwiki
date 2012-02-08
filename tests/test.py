@@ -7,6 +7,11 @@
 import os.path
 from glob import glob
 
+# There is no raw_input in python 3 
+try:
+    myinput = raw_input
+except:
+    myinput = input
 
 def get_testname(filename):
     return os.path.splitext(os.path.basename(filename))[0]
@@ -68,8 +73,8 @@ def main():
     failed_tests = test_all()
     for expected, actual in failed_tests:
         question = "Would you like to vimdiff failed test named '{}'? (y/n) "
-        print 'vim -d "%s" "%s"' % (expected, actual)
-        answer = raw_input(question.format(get_testname(expected)))
+        print ('vim -d "%s" "%s"' % (expected, actual))
+        answer = myinput(question.format(get_testname(expected)))
         if answer == 'y':
             command = 'vim -d "%s" "%s"' % (expected, actual)
             os.system(command)
