@@ -39,7 +39,7 @@ endif
 
 
 
-" Concealed chars
+" Concealed chars " {{{
 if exists("+conceallevel")
   syntax conceal on
 endif
@@ -74,8 +74,9 @@ execute 'syn match VimwikiSubScript contained /'.g:vimwiki_char_subscript.'/'
 if exists("+conceallevel")
   syntax conceal off
 endif
+" }}}
 
-" Non concealed chars
+" Non concealed chars " {{{
 syn match VimwikiHeaderChar contained /\%(^\s*=\+\)\|\%(=\+\s*$\)/
 execute 'syn match VimwikiEqInCharT contained /'.g:vimwiki_char_eqin.'/'
 execute 'syn match VimwikiBoldCharT contained /'.g:vimwiki_char_bold.'/'
@@ -191,6 +192,8 @@ execute 'syntax match VimwikiHeader4 /'.g:vimwiki_rxH4.'/ contains=VimwikiTodo,V
 execute 'syntax match VimwikiHeader5 /'.g:vimwiki_rxH5.'/ contains=VimwikiTodo,VimwikiHeaderChar,VimwikiNoExistsLink,VimwikiLink,@Spell'
 execute 'syntax match VimwikiHeader6 /'.g:vimwiki_rxH6.'/ contains=VimwikiTodo,VimwikiHeaderChar,VimwikiNoExistsLink,VimwikiLink,@Spell'
 
+
+" }}}
 " group names "{{{
 
 if g:vimwiki_hl_headers == 0
@@ -222,6 +225,11 @@ else
     hi def VimwikiHeader6 guibg=bg guifg=#f0f0f0 gui=bold ctermfg=White     term=bold cterm=bold 
   endif
 endif
+
+"}}}
+
+
+" Group Links "{{{ 
 
 hi def link VimwikiMarkers Normal
 
