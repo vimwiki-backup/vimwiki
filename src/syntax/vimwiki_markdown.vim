@@ -78,7 +78,7 @@ let g:vimwiki_rxHR = '^----.*$'
 let g:vimwiki_rxTableSep = '|'
 
 " List items start with optional whitespace(s) then '* ' or '1. ', '2. ', etc.
-let g:vimwiki_rxListBullet = '^\s*\%(\*\|-\)\s'
+let g:vimwiki_rxListBullet = '^\s*\%(\*\|-\|+\)\s'
 let g:vimwiki_rxListNumber = '^\s*[0-9]\+\.\s'
 
 let g:vimwiki_rxListDefine = '::\(\s\|$\)'
