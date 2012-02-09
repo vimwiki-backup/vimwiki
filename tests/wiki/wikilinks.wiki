@@ -1,0 +1,41 @@
+%toc
+= Wikilinks =
+
+ # PageTwo 
+ # [[PageTwo]] 
+ # [[PageTwo][PageTwo]]
+ # [[PageTwo|PageTwo]]
+ # [[PageThree|PageThree]] 
+
+= Wikilinks To Local Resources =
+
+ # [[headers]] : Highlighted as found relative to `path_html`
+ # [[blockquote]] : Highlighted as found relative to `path_html`
+ # [[missing]] : Highlighted as missing relative to `path_html`
+ # [[diary/]]  : Highlighted as missing directory, but generates correct html
+ # [[../wiki/]] : An existing directory specified with a relative path is highlighted as missing, but generates correct html !! TODO: (medium priority)!!
+
+= Wikilinks To Non-Wiki Local Resources =
+
+ # [[Path/To/Nowhere.txt]] : A non-existent resource with a recognized file extension is highlighted as found as per issue 103: "non-wiki resources should be highlighted" , but generates correct html!! TODO: (low priority)
+ # [[/Absolute/Path/To/Nowhere.txt]] : Decide whether or not to support absolute paths? (Html link is currently correct) !! TODO: (high priority)
+
+= Wikilinks To Urls =
+
+ # [[http://github.com]]
+   * This is highlighted as OFF (non-existent / "missing" wiki resource)
+ # [[file:///Users/stu/Downloads/2011-11-22-FlashReport_11_22_11.fin.pdf]] 
+   * This is highlighted as per issue 103: "non-wiki resources should be highlighted" 
+   * ERROR : follow_link() is treating this as a relative link!! TODO: (high priority) !!
+   * Decide whether or not to support wikilinks to "U"-universal resources? TODO: (high priority)
+     * Answer 1) `[["U"-link]]` IS NOT a valid wikilink syntax?
+       * Expected behavior: Do nothing, ... 
+       * Expected highlighting: None
+     * Answer 2) `[["U"-link]]` IS a valid wikilink syntax?
+       * Expected behavior: go to U-url
+       * Expected highlighting: ON, as per issue 103: "non-wiki resources should be highlighted" 
+
+
+
+
+
