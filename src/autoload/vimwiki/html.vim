@@ -1727,4 +1727,18 @@ function! s:file_exists(fname) "{{{
   return !empty(getftype(a:fname))
 endfunction "}}}
 
+" uses VimwikiGet('path')
+function! s:get_wikifile_url(wikifile) "{{{
+  return VimwikiGet("path_html").
+    \ vimwiki#base#subdir(VimwikiGet('path'), a:wikifile).
+    \ fnamemodify(a:wikifile, ":t:r").'.html'
+endfunction "}}}
+
+function! vimwiki#html#PasteUrl(wikifile) "{{{
+  execute 'r !echo file://'.s:get_wikifile_url(a:wikifile)
+endfunction "}}}
+
+function! vimwiki#html#CatUrl(wikifile) "{{{
+  execute '!echo file://'.s:get_wikifile_url(a:wikifile)
+endfunction "}}}
 "}}}
