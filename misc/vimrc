@@ -16,3 +16,14 @@ let g:vimwiki_list = [
 \    'css_name': getcwd().'/src/autoload/vimwiki/style.css'}
 \]
 
+
+" Replace VIMWIKIHOME and generate html
+function! VimwikiMisc2Html() "{{{
+  execute '%s/VIMWIKIHOME/\=getcwd()/g'
+  execute 'normal \wh'
+  execute 'normal u'
+  execute 'wq'
+endfunction "}}}
+command -nargs=0 VimwikiMisc2Html call VimwikiMisc2Html()
+
+
