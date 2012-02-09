@@ -426,3 +426,9 @@ if VimwikiGet('auto_export')
 endif
 
 " AUTOCOMMANDS }}}
+
+" PASTE, CAT URL {{{
+" html commands
+command! -buffer VimwikiPasteUrl call vimwiki#html#PasteUrl(expand('%'))
+command! -buffer VimwikiCatUrl call vimwiki#html#CatUrl(expand('%'))
+" }}}
