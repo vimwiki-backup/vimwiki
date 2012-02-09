@@ -1,5 +1,5 @@
 
-Make: `vim -n -u misc/vimrc -c "execute ':%s/VIMWIKIHOME/\=getcwd()/g | normal \wh | u | :w'" misc/vimwiki-markup-examples.wiki`
+Make: `vim -n -u misc/vimrc -c "VimwikiMisc2Html" misc/vimwiki-markup-examples.wiki`
 Generates: `misc/html/vimwiki-markup-examples.html`
 
 = Testing With Default Syntax =
