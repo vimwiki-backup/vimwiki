@@ -194,8 +194,8 @@ command! -buffer Vimwiki2HTML
       \ silent w <bar> 
       \ call vimwiki#html#Wiki2HTML(expand(VimwikiGet('path_html')),
       \                             expand('%'))
-" <bar>
-" \ echo 'HTML conversion is done.'
+      \<bar>
+      \ echo 'HTML conversion is done.'
 command! -buffer Vimwiki2HTMLBrowse
       \ silent w <bar> 
       \ call VimwikiWeblinkHandler(vimwiki#html#Wiki2HTML(

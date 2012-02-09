@@ -1677,8 +1677,6 @@ function! vimwiki#html#Wiki2HTML(path, wikifile) "{{{
   let elapsedtimestr = matchstr(reltimestr(reltime(starttime)),'\d\+\(\.\d\d\)\=')
   if g:vimwiki_debug
     echon "\r".htmlfile.' written (time: '.elapsedtimestr.'s)'
-  else
-    echo 'HTML conversion is done.'
   endif
   return path.htmlfile
 endfunction "}}}
