@@ -698,7 +698,8 @@ function! vimwiki#base#follow_link(split, ...) "{{{
 
     " try wikilink
     let link = vimwiki#base#safe_link(link)
-    call vimwiki#base#open_link(cmd, subdir.link, wnum)
+    " call vimwiki#base#open_link(cmd, subdir.link, wnum)
+    call vimwiki#base#open_link(cmd, subdir.link)
     return
   endif
 
