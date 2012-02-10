@@ -339,6 +339,7 @@ INSERT MODE                                           *vimwiki-table-mappings*
                         *vimwiki_i_<Tab>*
 <Tab>                   Go to the next table cell, create a new row if on the
                         last cell.
+See |g:vimwiki_table_mappings| to turn them off.
 
 
 ------------------------------------------------------------------------------
@@ -1695,13 +1696,25 @@ You can redefine VimwikiWeblinkHandler function to do something else: >
 
 
 ------------------------------------------------------------------------------
-*g:vimwiki_table_auto_fmt*
+*g:vimwiki_table_mappings*
 
-Turn on/off table auto-formatting.
+Enable/disable table mappings for INSERT mode.
 
 Value           Description~
-0               Do not auto-format tables.
-1               Auto-format tables.
+0               Disable table mappings.
+1               Enable table mappings.
+
+Default: 1
+
+
+------------------------------------------------------------------------------
+*g:vimwiki_table_auto_fmt*
+
+Enable/disable table auto formatting after leaving INSERT mode.
+
+Value           Description~
+0               Disable table auto formatting.
+1               Enable table auto formatting.
 
 Default: 1
 
@@ -1992,6 +2005,9 @@ Vim plugins: http://www.vim.org/scripts/script.php?script_id=2226
     * Issue 266: Altering g:vimwiki_listsyms to '✗○◐●✓' doesn't work as
       expected
     * Issue 274: Weblinks using percent encoding do not work
+    * Issue 282: Is it possible to disable table cell switch in insert mode?
+      See |g:vimwiki_table_mappings|. Option |g:vimwiki_table_auto_fmt| was
+      used before to switch table mappings. 
 
 1.2~
     * Issue 70: Table spanning cell support.

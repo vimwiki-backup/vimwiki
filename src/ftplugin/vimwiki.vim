@@ -345,7 +345,7 @@ nnoremap <silent><script><buffer>
 
 function! s:CR() "{{{
   let res = vimwiki#lst#kbd_cr()
-  if res == "\<CR>" && g:vimwiki_table_auto_fmt
+  if res == "\<CR>" && g:vimwiki_table_mappings
     let res = vimwiki#tbl#kbd_cr()
   endif
   return res
@@ -359,7 +359,7 @@ nnoremap <buffer> o :<C-U>call vimwiki#lst#kbd_oO('o')<CR>
 nnoremap <buffer> O :<C-U>call vimwiki#lst#kbd_oO('O')<CR>
 
 " Table mappings
-if g:vimwiki_table_auto_fmt
+if g:vimwiki_table_mappings
   inoremap <expr> <buffer> <Tab> vimwiki#tbl#kbd_tab()
   inoremap <expr> <buffer> <S-Tab> vimwiki#tbl#kbd_shift_tab()
 endif
