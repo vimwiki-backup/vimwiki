@@ -57,10 +57,10 @@ if exists("+conceallevel")
         \.g:vimwiki_url_maxsave.'}\)\@=` conceal cchar=~'
 endif
 
-syn match VimwikiNoLinkChar contained /\[\[/
-syn match VimwikiNoLinkChar contained /\]\]/
-syn match VimwikiNoLinkChar contained /\[\[[^\[\]\|]\{-}|\ze.*]]/
-syn match VimwikiNoLinkChar contained /\[\[[^\[\]\|]\{-}]\[\ze.*]]/
+syn match VimwikiNoExistsLinkChar contained /\[\[/
+syn match VimwikiNoExistsLinkChar contained /\]\]/
+syn match VimwikiNoExistsLinkChar contained /\[\[[^\[\]\|]\{-}|\ze.*]]/
+syn match VimwikiNoExistsLinkChar contained /\[\[[^\[\]\|]\{-}]\[\ze.*]]/
 
 execute 'syn match VimwikiEqInChar contained /'.g:vimwiki_char_eqin.'/'
 execute 'syn match VimwikiBoldChar contained /'.g:vimwiki_char_bold.'/'
@@ -298,7 +298,7 @@ hi def link VimwikiCodeChar VimwikiMarkers
 hi def link VimwikiHeaderChar VimwikiMarkers
 hi def link VimwikiLinkRest VimwikiLink
 hi def link VimwikiLinkChar VimwikiLink
-hi def link VimwikiNoLinkChar VimwikiNoExistsLink
+hi def link VimwikiNoExistsLinkChar VimwikiNoExistsLink
 
 hi def link VimwikiEqInCharT VimwikiMarkers
 hi def link VimwikiBoldCharT VimwikiMarkers
@@ -311,7 +311,7 @@ hi def link VimwikiSubScriptCharT VimwikiMarkers
 hi def link VimwikiCodeCharT VimwikiMarkers
 hi def link VimwikiHeaderCharT VimwikiMarkers
 hi def link VimwikiLinkCharT VimwikiLinkT
-hi def link VimwikiNoLinkCharT VimwikiNoExistsLinkT
+hi def link VimwikiNoExistsLinkCharT VimwikiNoExistsLinkT
 "}}}
 
 let b:current_syntax="vimwiki"
