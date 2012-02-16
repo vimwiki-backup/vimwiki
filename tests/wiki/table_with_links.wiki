@@ -1,0 +1,12 @@
+
+| Markup                      | Description                   | URL                                |
+|-----------------------------|-------------------------------|------------------------------------|
+| http://github.com           | `http://github.com`           | `http://github.com`                |
+| [[http://github.com]]       | `http://github.com`           | `html///github.com.html`           |
+| [[Github]]                  | `http://github.com`           | `http://github.com`                |
+| GitHub                      | `http://github.com`           | `html///github.com.html`           |
+| "GitHub":http://github.com  | `"GitHub":http://github.com`  | `html/index.html`                  |
+| [GitHub](http://github.com) | `[GitHub](http://github.com)` | `html/[GitHub](http://github.com)` |
+| [http://github.com GitHub]  | `GitHub`                      | `http://github.com`                |
+
+
