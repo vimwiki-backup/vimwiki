@@ -418,6 +418,48 @@ if g:vimwiki_camel_case
 endif
 "}}}
 
+
+"
+" LINKS: WikiIncl {{{
+"
+" TODO: put these in 'syntax/vimwiki_xxx.vim'
+let g:vimwiki_rxWikiInclPrefix = '{{'
+let g:vimwiki_rxWikiInclSuffix = '}}'
+let g:vimwiki_rxWikiInclSeparator = '}{'
+"
+" '{{__LinkUrl__}}'
+let g:vimwiki_WikiInclTemplate1 = g:vimwiki_rxWikiInclPrefix . '__LinkUrl__'. 
+      \ g:vimwiki_rxWikiInclSuffix
+" '{{__LinkUrl____LinkDescription__}}'
+let g:vimwiki_WikiInclTemplate2 = g:vimwiki_rxWikiInclPrefix . '__LinkUrl__'. 
+      \ '__LinkDescription__'.
+      \ g:vimwiki_rxWikiInclSuffix
+"
+let magic_chars = '.*[]\^$'
+let exclude_chars = g:vimwiki_rxWikiInclPrefix. g:vimwiki_rxWikiInclSeparator.
+      \ g:vimwiki_rxWikiInclSuffix
+let valid_chars = '[^'.escape(exclude_chars, magic_chars).']'
+"
+let g:vimwiki_rxWikiInclPrefix = escape(g:vimwiki_rxWikiInclPrefix, magic_chars)
+let g:vimwiki_rxWikiInclSuffix = escape(g:vimwiki_rxWikiInclSuffix, magic_chars)
+let g:vimwiki_rxWikiInclSeparator = escape(g:vimwiki_rxWikiInclSeparator, magic_chars)
+let g:vimwiki_rxWikiInclUrl = valid_chars.'\+'
+let g:vimwiki_rxWikiInclArgs = 
+      \ '\%('. g:vimwiki_rxWikiInclSeparator. valid_chars.'*'. '\)*'
+"
+"
+" *. {{URL}[{...}]}  - i.e.  {{URL}}, {{URL}{ARG1}}, {{URL}{ARG1}{ARG2}}, etc.
+" *a) match {{URL}[{...}]}
+let g:vimwiki_rxWikiIncl = g:vimwiki_rxWikiInclPrefix.
+      \ g:vimwiki_rxWikiInclUrl. 
+      \ g:vimwiki_rxWikiInclArgs. g:vimwiki_rxWikiInclSuffix
+" *b) match URL within {{URL}[{...}]}
+let g:vimwiki_rxWikiInclMatchUrl = g:vimwiki_rxWikiInclPrefix.
+      \ '\zs'. g:vimwiki_rxWikiInclUrl. '\ze'.
+      \ g:vimwiki_rxWikiInclArgs. g:vimwiki_rxWikiInclSuffix
+"}}}
+
+
 "
 " LINKS: WebLinks {{{
 " match URL for common protocols;  XXX ms-help ??
