@@ -55,6 +55,9 @@ if exists("+conceallevel")
   execute 'syn match VimwikiLinkRest contained `\(//.\{-}/\)\@<=\S\{'
         \.g:vimwiki_url_mingain.',}\([/=#?].\|.\{'
         \.g:vimwiki_url_maxsave.'}\)\@=` conceal cchar=~'
+  execute 'syn match VimwikiNoExistsLinkRest contained `\(//.\{-}/\)\@<=\S\{'
+        \.g:vimwiki_url_mingain.',}\([/=#?].\|.\{'
+        \.g:vimwiki_url_maxsave.'}\)\@=` conceal cchar=~'
 endif
 
 syn match VimwikiNoExistsLinkChar contained /\[\[/
@@ -298,6 +301,7 @@ hi def link VimwikiCodeChar VimwikiMarkers
 hi def link VimwikiHeaderChar VimwikiMarkers
 hi def link VimwikiLinkRest VimwikiLink
 hi def link VimwikiLinkChar VimwikiLink
+hi def link VimwikiNoExistsLinkRest VimwikiNoExistsLink
 hi def link VimwikiNoExistsLinkChar VimwikiNoExistsLink
 
 hi def link VimwikiEqInCharT VimwikiMarkers
