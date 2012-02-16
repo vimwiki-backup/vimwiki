@@ -265,6 +265,17 @@ let s:vimwiki_defaults.interwiki_domain = ''
 
 " custom_wiki2html
 let s:vimwiki_defaults.custom_wiki2html = ''
+
+" weblink_template
+let s:vimwiki_defaults.weblink_template = '[__LinkUrl__ __LinkDescription__]'
+"let s:vimwiki_defaults.weblink_template = '[__LinkDescription__](__LinkUrl__)'
+
+" image_template
+let s:vimwiki_defaults.image_template = '{__LinkUrl__|__LinkDescription__|__LinkStyle__}'
+"let s:vimwiki_defaults.image_template = '![__LinkDescription__](__LinkUrl__)'
+" TODO: Move template definitions to 'syntax/vimwiki_xxx.vim', and figure out
+" how to read that file here !!
+"let t_Image = g:vimwiki_ImageTemplate
 "}}}
 
 " DEFAULT options {{{
