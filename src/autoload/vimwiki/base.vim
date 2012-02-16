@@ -515,15 +515,11 @@ function! s:highlight_existent_links() "{{{
     endif
     " 1a) match [[URL]]
     let target = vimwiki#base#apply_template(safe_link,
-          \ g:vimwiki_rxWikiLinkDescr, escape(g:vimwiki_WikilinkTemplate1, '[]'))
+          \ g:vimwiki_rxWikiLinkDescr, escape(g:vimwiki_WikiLinkTemplate1, '[]'))
     call s:add_target_syntax_ON1(target)
     " 2a) match [[URL][DESCRIPTION]]
     let target = vimwiki#base#apply_template(safe_link,
-          \ g:vimwiki_rxWikiLinkDescr, escape(g:vimwiki_WikilinkTemplate2, '[]'))
-    call s:add_target_syntax_ON1(target)
-    " 3a) match [[URL|DESCRIPTION]]
-    let target = vimwiki#base#apply_template(safe_link,
-          \ g:vimwiki_rxWikiLinkDescr, escape(g:vimwiki_WikilinkTemplate3, '[]'))
+          \ g:vimwiki_rxWikiLinkDescr, escape(g:vimwiki_WikiLinkTemplate2, '[]'))
     call s:add_target_syntax_ON1(target)
   endfor
 
@@ -532,15 +528,11 @@ function! s:highlight_existent_links() "{{{
   let non_wiki_link = g:vimwiki_rxWikiLinkUrl. '\.\%('. join(split(g:vimwiki_file_exts, '\s*,\s*'), '\|'). '\)'
   " 1a) match [[nonwiki-URL]]
   let target = vimwiki#base#apply_template(non_wiki_link,
-        \ g:vimwiki_rxWikiLinkDescr, escape(g:vimwiki_WikilinkTemplate1, '[]'))
+        \ g:vimwiki_rxWikiLinkDescr, escape(g:vimwiki_WikiLinkTemplate1, '[]'))
   call s:add_target_syntax_ON1(target)
   " 2a) match [[nonwiki-URL][DESCRIPTION]]
   let target = vimwiki#base#apply_template(non_wiki_link,
-        \ g:vimwiki_rxWikiLinkDescr, escape(g:vimwiki_WikilinkTemplate2, '[]'))
-  call s:add_target_syntax_ON1(target)
-  " 3a) match [[nonwiki-URL|DESCRIPTION]]
-  let target = vimwiki#base#apply_template(non_wiki_link,
-        \ g:vimwiki_rxWikiLinkDescr, escape(g:vimwiki_WikilinkTemplate3, '[]'))
+        \ g:vimwiki_rxWikiLinkDescr, escape(g:vimwiki_WikiLinkTemplate2, '[]'))
   call s:add_target_syntax_ON1(target)
 
 
@@ -555,15 +547,11 @@ function! s:highlight_existent_links() "{{{
     " Wikilink
     " 1a) match [[DIRURL]]
     let target = vimwiki#base#apply_template(safe_link,
-          \ g:vimwiki_rxWikiLinkDescr, escape(g:vimwiki_WikilinkTemplate1, '[]'))
+          \ g:vimwiki_rxWikiLinkDescr, escape(g:vimwiki_WikiLinkTemplate1, '[]'))
     call s:add_target_syntax_ON1(target)
     " 2a) match [[DIRURL][DESCRIPTION]]
     let target = vimwiki#base#apply_template(safe_link,
-          \ g:vimwiki_rxWikiLinkDescr, escape(g:vimwiki_WikilinkTemplate2, '[]'))
-    call s:add_target_syntax_ON1(target)
-    " 3a) match [[DIRURL|DESCRIPTION]]
-    let target = vimwiki#base#apply_template(safe_link,
-          \ g:vimwiki_rxWikiLinkDescr, escape(g:vimwiki_WikilinkTemplate3, '[]'))
+          \ g:vimwiki_rxWikiLinkDescr, escape(g:vimwiki_WikiLinkTemplate2, '[]'))
     call s:add_target_syntax_ON1(target)
   endfor
 
@@ -1265,7 +1253,7 @@ function! s:normalize_link_syntax_n(weblink_at_cursor, wikilink_at_cursor,
     " try WikiLink
     let sub = s:normalize_wikilink(a:wikilink_at_cursor,
           \ g:vimwiki_rxWikiLinkMatchUrl, g:vimwiki_rxWikiLinkMatchDescr,
-          \ g:vimwiki_WikilinkTemplate)
+          \ g:vimwiki_WikiLinkTemplate)
     call s:replace_text(lnum, g:vimwiki_rxWikiLink, sub)
     if g:vimwiki_debug > 1
       echomsg "N: WikiLink: ".a:wikilink_at_cursor." Sub: ".sub
@@ -1313,7 +1301,7 @@ function! s:normalize_link_syntax_v(weblink_at_cursor, wikilink_at_cursor,
       " try WikiLink - substituting link_at_cursor, not buffer @"
       call setreg('"', s:normalize_wikilink(a:wikilink_at_cursor,
             \ g:vimwiki_rxWikiLinkMatchUrl, g:vimwiki_rxWikiLinkMatchDescr,
-            \ g:vimwiki_WikilinkTemplate), 'v')
+            \ g:vimwiki_WikiLinkTemplate), 'v')
       if g:vimwiki_debug > 1
         echomsg 'WikiLink: '.visual_selection.' Sub: '.@"
       endif
@@ -1321,7 +1309,7 @@ function! s:normalize_link_syntax_v(weblink_at_cursor, wikilink_at_cursor,
     let done = empty(a:wikilink_at_cursor) ? done : 1
     if !done && visual_selection =~ g:vimwiki_rxWikiLinkUrl
       call setreg('"', s:normalize_wikilink(@", g:vimwiki_rxWikiLinkUrl,
-            \ '', g:vimwiki_WikilinkTemplate), 'v')
+            \ '', g:vimwiki_WikiLinkTemplate), 'v')
       if g:vimwiki_debug > 1
         echomsg 'WikiLinkUrl: '.visual_selection.' Sub: '.@"
       endif
