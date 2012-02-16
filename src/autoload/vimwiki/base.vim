@@ -513,13 +513,13 @@ function! s:highlight_existent_links() "{{{
       " 0a) match WikiWord
       call s:add_target_syntax_ON1('!\@<!\<'. link. '\>')
     endif
-    " 1a) match [[URL]]
-    let target = vimwiki#base#apply_template(safe_link,
-          \ g:vimwiki_rxWikiLinkDescr, escape(g:vimwiki_WikiLinkTemplate1, '[]'))
+    " a) match [[URL]]
+    let target = vimwiki#base#apply_template(g:vimwiki_WikiLinkTemplate1,
+          \ safe_link, g:vimwiki_rxWikiLinkDescr, '')
     call s:add_target_syntax_ON1(target)
-    " 2a) match [[URL][DESCRIPTION]]
-    let target = vimwiki#base#apply_template(safe_link,
-          \ g:vimwiki_rxWikiLinkDescr, escape(g:vimwiki_WikiLinkTemplate2, '[]'))
+    " a) match [[URL][DESCRIPTION]]
+    let target = vimwiki#base#apply_template(g:vimwiki_WikiLinkTemplate2,
+          \ safe_link, g:vimwiki_rxWikiLinkDescr, '')
     call s:add_target_syntax_ON1(target)
   endfor
 
@@ -527,12 +527,12 @@ function! s:highlight_existent_links() "{{{
   " Issue 103: Always highlight links to non-wiki files as existed.
   let non_wiki_link = g:vimwiki_rxWikiLinkUrl. '\.\%('. join(split(g:vimwiki_file_exts, '\s*,\s*'), '\|'). '\)'
   " 1a) match [[nonwiki-URL]]
-  let target = vimwiki#base#apply_template(non_wiki_link,
-        \ g:vimwiki_rxWikiLinkDescr, escape(g:vimwiki_WikiLinkTemplate1, '[]'))
+  let target = vimwiki#base#apply_template(g:vimwiki_WikiLinkTemplate1,
+        \ non_wiki_link, g:vimwiki_rxWikiLinkDescr, '')
   call s:add_target_syntax_ON1(target)
   " 2a) match [[nonwiki-URL][DESCRIPTION]]
-  let target = vimwiki#base#apply_template(non_wiki_link,
-        \ g:vimwiki_rxWikiLinkDescr, escape(g:vimwiki_WikiLinkTemplate2, '[]'))
+  let target = vimwiki#base#apply_template(g:vimwiki_WikiLinkTemplate2,
+        \ non_wiki_link, g:vimwiki_rxWikiLinkDescr, '')
   call s:add_target_syntax_ON1(target)
 
 
@@ -546,12 +546,12 @@ function! s:highlight_existent_links() "{{{
 
     " Wikilink
     " 1a) match [[DIRURL]]
-    let target = vimwiki#base#apply_template(safe_link,
-          \ g:vimwiki_rxWikiLinkDescr, escape(g:vimwiki_WikiLinkTemplate1, '[]'))
+    let target = vimwiki#base#apply_template(g:vimwiki_WikiLinkTemplate1,
+          \ safe_link, g:vimwiki_rxWikiLinkDescr, '')
     call s:add_target_syntax_ON1(target)
     " 2a) match [[DIRURL][DESCRIPTION]]
-    let target = vimwiki#base#apply_template(safe_link,
-          \ g:vimwiki_rxWikiLinkDescr, escape(g:vimwiki_WikiLinkTemplate2, '[]'))
+    let target = vimwiki#base#apply_template(g:vimwiki_WikiLinkTemplate2,
+          \ safe_link, g:vimwiki_rxWikiLinkDescr, '')
     call s:add_target_syntax_ON1(target)
   endfor
 
@@ -1156,16 +1156,21 @@ function! s:replace_text(lnum, str, sub) " {{{
   call setline(a:lnum, substitute(getline(a:lnum), a:str.'\V', a:sub, ''))
 endfunction " }}}
 
-function! vimwiki#base#apply_template(rxUrl, rxDesc, template) "{{{
+function! vimwiki#base#apply_template(template, rxUrl, rxDesc, rxStyle) "{{{
+  let magic_chars = '.*[]\^$'
+  let lnk = escape(a:template, magic_chars)
   let escape_chars = '\'
-  let url = escape( a:rxUrl, escape_chars)
-  let descr = escape( a:rxDesc, escape_chars)
-  let lnk = a:template
+  let url = escape(a:rxUrl, escape_chars)
+  let descr = escape(a:rxDesc, escape_chars)
+  let style = escape(a:rxStyle, escape_chars)
   if a:rxUrl != ""
     let lnk = substitute(lnk, '__LinkUrl__', url, '') 
   endif
   if a:rxDesc != ""
     let lnk = substitute(lnk, '__LinkDescription__', descr, '')
+  endif
+  if a:rxStyle != ""
+    let lnk = substitute(lnk, '__LinkStyle__', style, '')
   endif
   return lnk
 endfunction
