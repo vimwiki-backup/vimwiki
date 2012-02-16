@@ -322,7 +322,34 @@ call s:default('diary_months',
 call s:default('current_idx', 0)
 "}}}
 
+"
+" LINKS: Schemes and Interwikis {{{
+let g:vimwiki_web_schemes1 = 'http,https,file,ftp,gopher,telnet,nntp,ldap'.','.
+      \ 'rsync,imap,pop,irc,ircs,cvs,svn,svn+ssh,git,ssh,fish,sftp,notes'.','. 
+      \ 'ms-help'
+let g:vimwiki_web_schemes2 = 'mailto,news,xmpp,sip,sips,doi,urn,tel'
 
+let g:vimwiki_wiki_schemes = 'wiki'.','.
+      \ 'wiki0,wiki1,wiki2,wiki3,wiki4,wiki5,wiki6,wiki7,wiki8,wiki9'
+let g:vimwiki_diary_schemes = 'diary'.','.
+      \ 'diary0,diary1,diary2,diary3,diary4,diary5,diary6,diary7,diary8,diary9'
+let g:vimwiki_local_schemes = 'local'.','.
+      \ 'local0,local1,local2,local3,local4,local5,local6,local7,local8,local9'
+
+let rxSchemes = '\%('. 
+      \ join(split(g:vimwiki_wiki_schemes, '\s*,\s*'), '\|').'\|'.
+      \ join(split(g:vimwiki_diary_schemes, '\s*,\s*'), '\|').'\|'.
+      \ join(split(g:vimwiki_local_schemes, '\s*,\s*'), '\|').'\|'.
+      \ join(split(g:vimwiki_web_schemes1, '\s*,\s*'), '\|').'\|'. 
+      \ join(split(g:vimwiki_web_schemes2, '\s*,\s*'), '\|').
+      \ '\)'
+
+let g:vimwiki_rxSchemeUrl = rxSchemes.':.*'
+let g:vimwiki_rxSchemeUrlMatchScheme = '\zs'.rxSchemes.'\ze:.*'
+let g:vimwiki_rxSchemeUrlMatchUrl = rxSchemes.':\zs.*\ze'
+" }}}
+
+"
 " LINKS: WikiLinks  {{{
 let wword = '\C\<\%(['.g:vimwiki_upper.']['.g:vimwiki_lower.']\+\)\{2,}\>'
 
@@ -330,7 +357,6 @@ let wword = '\C\<\%(['.g:vimwiki_upper.']['.g:vimwiki_lower.']\+\)\{2,}\>'
 " 0a) match WikiWordURLs
 let g:vimwiki_rxWikiWord = g:vimwiki_wikiword_escape_prefix.'\@<!'.wword
 let g:vimwiki_rxNoWikiWord = g:vimwiki_wikiword_escape_prefix.wword
-
 "
 let g:vimwiki_rxWikiLinkUrl = '[^|\]]\+'
 let g:vimwiki_rxWikiLinkDescr = '[^\]]\+'
@@ -432,11 +458,11 @@ let g:vimwiki_rxWikiLinkMatchDescr = ''.
 let g:vimwiki_rxWebProtocols = ''.
     \  '\%('.
       \  '\%('.
-        \  '\%(https\?\|file\|ftp\|gopher\|telnet\|nntp\|ldap\|rsync\|imap\|pop\|ircs\?\|cvs\|svn\|svn+ssh\|git\|ssh\|fish\|sftp\|notes\|ms-help\):'.
+        \  '\%('.join(split(g:vimwiki_web_schemes1, '\s*,\s*'), '\|').'\):'.
         \  '\%(\%(//\)\|\%(\\\\\)\)'.
       \  '\)'.
       \  '\|'.
-      \  '\%(mailto\|news\|xmpp\|sips\?\|doi\|urn\|tel\):'.
+      \  '\%('.join(split(g:vimwiki_web_schemes2, '\s*,\s*'), '\|').'\):'.
     \  '\)'
 let g:vimwiki_rxWeblinkUrl = g:vimwiki_rxWebProtocols .
     \  '\S\{-1,}\%(([^ \t()]*)\)\=' . '\%([),:;.!?]\=\%([ \t]\|$\)\)\@='
@@ -551,20 +577,20 @@ let g:vimwiki_rxImageUrlChar = '\%([^| \t\[]\|\]\@<!\[\)'
 " LINKS: Images {{{
 " match URL
 let g:vimwiki_rxImageUrl = ''.
-      \'\%('.
-        \'\%(https\?\|file\|ftp\|gopher\|telnet\|nntp\|ldap\|rsync\|imap\|pop\|ircs\?\|cvs\|svn\|svn+ssh\|git\|ssh\|fish\|sftp\|notes\|ms-help\):'.
-        \'\%(\%(//\)\|\%(\\\\\)\)'.
-      \'\)\?'.
-      \'\%('.
-        \'\%('. g:vimwiki_rxImageUrlChar.'\{-1,}'. '([^ \t()]*)'. '\)'.
-        \'\|'.
-        \'\%('. g:vimwiki_rxImageUrlChar.'\+'. '[,;!?\]()]\@<!'. '\)'.
-      \'\)'.
-      \'\%('.
-        \'\%(jpg\|jpeg\|png\|gif\)'.
-        \'\|'.
-        \'\%(JPG\|JPEG\|PNG\|GIF\)'.
-      \'\)'
+      \ '\%('.
+        \ '\%('.join(split(g:vimwiki_web_schemes1, '\s*,\s*'), '\|'). '\):'.
+        \ '\%(\%(//\)\|\%(\\\\\)\)'.
+      \ '\)\?'.
+      \ '\%('.
+        \ '\%('. g:vimwiki_rxImageUrlChar.'\{-1,}'. '([^ \t()]*)'. '\)'.
+        \ '\|'.
+        \ '\%('. g:vimwiki_rxImageUrlChar.'\+'. '[,;!?\]()]\@<!'. '\)'.
+      \ '\)'.
+      \ '\%('.
+        \ '\%(jpg\|jpeg\|png\|gif\)'.
+        \ '\|'.
+        \ '\%(JPG\|JPEG\|PNG\|GIF\)'.
+      \ '\)'
 
 "
 let g:vimwiki_rxImagePrefix = '\[\['
