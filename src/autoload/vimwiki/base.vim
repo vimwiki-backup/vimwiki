@@ -481,7 +481,7 @@ function! vimwiki#base#highlight_links() "{{{
     " Wikilink
     call s:add_target_syntax_OFF(g:vimwiki_rxWikiLink)
     " Subsequently, links verified on vimwiki's path are highlighted as existing
-    call s:highlight_existed_links()
+    call s:highlight_existent_links()
   else
     " Wikilink
     call s:add_target_syntax_ON1(g:vimwiki_rxWikiLink)
@@ -495,7 +495,7 @@ function! vimwiki#base#highlight_links() "{{{
 
 endfunction "}}}
 
-function! s:highlight_existed_links() "{{{
+function! s:highlight_existent_links() "{{{
   let links = s:get_links('*'.VimwikiGet('ext'))
 
   " Links with subdirs should be highlighted for linux and windows separators
