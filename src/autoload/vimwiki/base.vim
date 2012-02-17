@@ -83,35 +83,96 @@ function! vimwiki#base#current_subdir()"{{{
 endfunction"}}}
 
 function! vimwiki#base#open_link(cmd, link, ...) "{{{
-  if vimwiki#base#is_non_wiki_link(a:link)
-    if s:is_path_absolute(a:link)
-      call vimwiki#base#edit_file(a:cmd, a:link)
-    else
-      call vimwiki#base#edit_file(a:cmd, VimwikiGet('path').a:link)
-    endif
+  " nonzero wnum = a:1 selects an alternate wiki to open link: let idx = a:1 - 1
+  " let idx = a:wnum - 1
+
+  let scheme = matchstr(a:link, g:vimwiki_rxSchemeUrlMatchScheme)
+  let lnk = matchstr(a:link, g:vimwiki_rxSchemeUrlMatchUrl)
+
+  let update_prev_link = 0
+  let numbered_scheme = 0
+  let wiki_path = 0
+  let diary_rel_path = 0
+  let wiki_subdirectory = 0
+  let make_link_safe = 0
+  let wiki_extension = 0
+  let wiki_directory = 0
+  let keep_scheme = 0
+  let use_weblink_handler = 1
+
+  if scheme =~ 'wiki*'
+    let update_prev_link = 1
+    let numbered_scheme = 1
+    let wiki_path = 1
+    let wiki_subdirectory = 1
+    let make_link_safe = 1
+    let wiki_extension = 1
+    let wiki_directory = 1
+  elseif scheme =~ 'diary*'
+    let update_prev_link = 1
+    let numbered_scheme = 1
+    let wiki_path = 1
+    let diary_rel_path = 1
+    let wiki_extension = 1
+  elseif scheme =~ 'local*'
+    let numbered_scheme = 1
+    let wiki_path = 1
+    let wiki_subdirectory = 1
   else
+    let keep_scheme = 1
+    let use_weblink_handler = 1
+  endif
+
+  " update previous link for wiki pages
+  if update_prev_link
     if a:0
       let vimwiki_prev_link = [a:1, []]
     elseif &ft == 'vimwiki'
       let vimwiki_prev_link = [expand('%:p'), getpos('.')]
     endif
-
-    if vimwiki#base#is_link_to_dir(a:link)
-      if g:vimwiki_dir_link == ''
-        call vimwiki#base#edit_file(a:cmd, VimwikiGet('path').a:link)
-      else
-        call vimwiki#base#edit_file(a:cmd, 
-              \ VimwikiGet('path').a:link.
-              \ g:vimwiki_dir_link.
-              \ VimwikiGet('ext'))
-      endif
-    else
-      call vimwiki#base#edit_file(a:cmd, VimwikiGet('path').a:link.VimwikiGet('ext'))
+  endif
+  " numbered scheme
+  if numbered_scheme && scheme =~ '\D\+\d\+'
+    let idx = eval(matchstr(scheme, '\D\+\zs\d\+\ze'))
+  else
+    let idx = g:vimwiki_current_idx
+  endif
+  " path
+  let path = (wiki_path ? VimwikiGet('path', idx) : '')
+  " relative path for diary
+  let path = path. (diary_rel_path ? VimwikiGet('diary_rel_path', idx) : '')
+  " subdir
+  if wiki_subdirectory && idx == g:vimwiki_current_idx
+    let subdir = vimwiki#base#current_subdir()
+  else
+    let subdir = ''
+  endif
+  " special chars
+  let lnk = (make_link_safe ? vimwiki#base#safe_link(lnk) : lnk)
+  " extension
+  if wiki_extension
+    let ext = VimwikiGet('ext', idx)
+    " default link for directories
+    if wiki_directory && vimwiki#base#is_link_to_dir(lnk)
+      let ext = (g:vimwiki_dir_link != '' ? g:vimwiki_dir_link. ext : '')
     endif
-    
-    if exists('vimwiki_prev_link')
-      let b:vimwiki_prev_link = vimwiki_prev_link
-    endif
+  else
+    let ext = ''
+  endif
+  " keep scheme
+  let path = (keep_scheme ? scheme.':'.path : path)
+  " open/edit
+  if g:vimwiki_debug
+    echom scheme.' '.path.subdir.lnk.ext
+  endif
+  if use_weblink_handler
+    call VimwikiWeblinkHandler(escape(path.subdir.lnk.ext, '#'))
+  else
+    call vimwiki#base#edit_file(a:cmd, path.subdir.lnk.ext)
+  endif
+  " save previous link
+  if update_prev_link && exists('vimwiki_prev_link')
+    let b:vimwiki_prev_link = vimwiki_prev_link
   endif
 endfunction
 " }}}
@@ -239,7 +300,7 @@ endfunction
 function! s:search_word(wikiRx, cmd) "{{{
   let match_line = search(a:wikiRx, 's'.a:cmd)
   if match_line == 0
-    echomsg "vimwiki: Wiki link not found."
+    echomsg 'vimwiki: Wiki link not found.'
   endif
 endfunction
 " }}}
@@ -347,6 +408,7 @@ function! s:update_wiki_links_dir(dir, old_fname, new_fname) " {{{
   let old_fname_r = old_fname
   let new_fname_r = new_fname
 
+" TODO:
   if !s:is_wiki_word(new_fname) && s:is_wiki_word(old_fname)
     let new_fname_r = '[['.new_fname.']]'
   endif
@@ -620,12 +682,12 @@ endfunction "}}}
 
 " WIKI functions {{{
 function! vimwiki#base#find_next_link() "{{{
-  call s:search_word(g:vimwiki_rxWikiLink.'\|'.g:vimwiki_rxImage.'\|'.g:vimwiki_rxWeblink, '')
+  call s:search_word(g:vimwiki_rxWikiLink.'\|'.g:vimwiki_rxWikiIncl.'\|'.g:vimwiki_rxWeblink.'\|'.g:vimwiki_rxImage, '')
 endfunction
 " }}}
 
 function! vimwiki#base#find_prev_link() "{{{
-  call s:search_word(g:vimwiki_rxWikiLink.'\|'.g:vimwiki_rxImage.'\|'.g:vimwiki_rxWeblink, 'b')
+  call s:search_word(g:vimwiki_rxWikiLink.'\|'.g:vimwiki_rxWikiIncl.'\|'.g:vimwiki_rxWeblink.'\|'.g:vimwiki_rxImage, 'b')
 endfunction
 " }}}
 
@@ -657,49 +719,38 @@ function! vimwiki#base#follow_link(split, ...) "{{{
   " nonzero wnum selects an alternate wiki to open link
   " let wnum = a:wnum
   let wnum = 0
-  " try Weblink
-  let weblink = matchstr(s:get_word_at_cursor(g:vimwiki_rxWeblink),
-        \ g:vimwiki_rxWeblinkMatchUrl)
-  if weblink != ""
-    call VimwikiWeblinkHandler(escape(weblink, '#'))
-    return
-  endif
-
-  " try Image
-  let imglink = matchstr(s:get_word_at_cursor(g:vimwiki_rxImage),
-        \ g:vimwiki_rxImageMatchUrl)
-  if imglink != ""
-    echomsg 'Follow_link escape(imglink) = '. escape(imglink, '#')
-    call VimwikiWeblinkHandler(escape(imglink, '#'))
-    return
-  endif
-
   " try WikiLink
-  let link = matchstr(s:get_word_at_cursor(g:vimwiki_rxWikiLink),
+  let lnk = matchstr(s:get_word_at_cursor(g:vimwiki_rxWikiLink),
         \ g:vimwiki_rxWikiLinkMatchUrl)
-  if link != ""
-    " try Interwiki - relative-path resolution for interwiki prefixes
-    " {{{ NOT RELIABLE - limited testing
-    " TODO: IMPLEMENT PROPOSED INTERWIKI SCHEME
-    if wnum == 0
-      let wnum = vimwiki#base#find_interwiki(matchstr(link,
-            \ g:vimwiki_rxWikiLinkUrlMatchInterwikiPrefix)) + 1
-      if wnum > 0
-        let link = matchstr(link, g:vimwiki_rxWikiLinkUrlMatchInterwikiLink)
-      endif
+  if lnk != ""
+    if lnk !~ g:vimwiki_rxSchemeUrl
+      let lnk = 'wiki:'.lnk
     endif
-    " force absolute paths when switching wikis
-    if wnum != 0 && wnum != g:vimwiki_current_idx + 1
-      let subdir = ""
-    else
-      let subdir = vimwiki#base#current_subdir()
+    call vimwiki#base#open_link(cmd, lnk)
+    return
+  endif
+  " try WikiIncl
+  let lnk = matchstr(s:get_word_at_cursor(g:vimwiki_rxWikiIncl),
+        \ g:vimwiki_rxWikiInclMatchUrl)
+  if lnk != ""
+    if lnk !~ g:vimwiki_rxSchemeUrl
+      let lnk = 'wiki:'.lnk
     endif
-    " }}} (NOT RELIABLE)
-
-    " try wikilink
-    let link = vimwiki#base#safe_link(link)
-    " custom open_link: call vimwiki#base#open_link(cmd, subdir.link, wnum)
-    call vimwiki#base#open_link(cmd, subdir.link)
+    call vimwiki#base#open_link(cmd, lnk)
+    return
+  endif
+  " try Weblink
+  let lnk = matchstr(s:get_word_at_cursor(g:vimwiki_rxWeblink),
+        \ g:vimwiki_rxWeblinkMatchUrl)
+  if lnk != ""
+    call VimwikiWeblinkHandler(escape(lnk, '#'))
+    return
+  endif
+  " try Imagelink
+  let lnk = matchstr(s:get_word_at_cursor(g:vimwiki_rxImage),
+        \ g:vimwiki_rxImageMatchUrl)
+  if lnk != ""
+    call VimwikiWeblinkHandler(escape(lnk, '#'))
     return
   endif
 
@@ -1236,11 +1287,11 @@ function! s:normalize_link_syntax_n(weblink_at_cursor, wikilink_at_cursor,
       \ imagelink_at_cursor) " {{{
   let lnum = line('.')
 
+  " try Weblink
   if !empty(a:weblink_at_cursor)
-    " try Weblink
     let sub = s:normalize_weblink(a:weblink_at_cursor,
           \ g:vimwiki_rxWeblinkMatchUrl, g:vimwiki_rxWeblinkMatchDescr,
-          \ g:vimwiki_WeblinkTemplate)
+          \ VimwikiGet('weblink_template'))
     call s:replace_text(lnum, g:vimwiki_rxWeblink, sub)
     if g:vimwiki_debug > 1
       echomsg "N: WebLink: ".a:weblink_at_cursor." Sub: ".sub
@@ -1249,7 +1300,7 @@ function! s:normalize_link_syntax_n(weblink_at_cursor, wikilink_at_cursor,
     " try Image
     let sub = s:normalize_imagelink(a:imagelink_at_cursor,
           \ g:vimwiki_rxImageMatchUrl, g:vimwiki_rxImageMatchDescr,
-          \ g:vimwiki_rxImageMatchStyle, g:vimwiki_ImageTemplate)
+          \ g:vimwiki_rxImageMatchStyle, VimwikiGet('image_template'))
     call s:replace_text(lnum, g:vimwiki_rxImage, sub)
     if g:vimwiki_debug > 1
       echomsg "N: ImageLink: ".a:wikilink_at_cursor." Sub: ".sub
@@ -1258,7 +1309,7 @@ function! s:normalize_link_syntax_n(weblink_at_cursor, wikilink_at_cursor,
     " try WikiLink
     let sub = s:normalize_wikilink(a:wikilink_at_cursor,
           \ g:vimwiki_rxWikiLinkMatchUrl, g:vimwiki_rxWikiLinkMatchDescr,
-          \ g:vimwiki_WikiLinkTemplate)
+          \ g:vimwiki_WikiLinkTemplate2)
     call s:replace_text(lnum, g:vimwiki_rxWikiLink, sub)
     if g:vimwiki_debug > 1
       echomsg "N: WikiLink: ".a:wikilink_at_cursor." Sub: ".sub
@@ -1282,9 +1333,9 @@ function! s:normalize_link_syntax_v(weblink_at_cursor, wikilink_at_cursor,
 
     if visual_selection =~ g:vimwiki_rxWeblink
       " try Weblink - substituting link_at_cursor, not buffer @"
-      call setreg('"', s:normalize_weblink(a:weblink_at_cursor, g:vimwiki_rxWeblinkMatchUrl,
-            \ g:vimwiki_rxWeblinkMatchDescr, g:vimwiki_WeblinkTemplate), 'v') "
-            \ g:vimwiki_WeblinkTemplate
+      call setreg('"', s:normalize_weblink(a:weblink_at_cursor, 
+            \ g:vimwiki_rxWeblinkMatchUrl, g:vimwiki_rxWeblinkMatchDescr, 
+            \ VimwikiGet('weblink_template')), 'v')
       let done = 1
       if g:vimwiki_debug > 1
         echomsg 'Weblink: '.visual_selection.' Sub: '.@"
@@ -1293,9 +1344,9 @@ function! s:normalize_link_syntax_v(weblink_at_cursor, wikilink_at_cursor,
     let done = empty(a:weblink_at_cursor) ? done : 1
     if !done && visual_selection =~ g:vimwiki_rxImage
       " try Image - substituting link_at_cursor, not buffer @"
-      call setreg('"', s:normalize_imagelink(a:imagelink_at_cursor, g:vimwiki_rxImageMatchUrl,
-            \ g:vimwiki_rxImageMatchDescr, g:vimwiki_rxImageMatchStyle), 'v')
-            \ g:vimwiki_ImageTemplate), 'v')
+      call setreg('"', s:normalize_imagelink(a:imagelink_at_cursor,
+            \ g:vimwiki_rxImageMatchUrl, g:vimwiki_rxImageMatchDescr, 
+            \ g:vimwiki_rxImageMatchStyle, VimwikiGet('image_template')), 'v')
       let done = 1
       if g:vimwiki_debug > 1
         echomsg 'Image: '.visual_selection.' Sub: '.@"
@@ -1306,7 +1357,7 @@ function! s:normalize_link_syntax_v(weblink_at_cursor, wikilink_at_cursor,
       " try WikiLink - substituting link_at_cursor, not buffer @"
       call setreg('"', s:normalize_wikilink(a:wikilink_at_cursor,
             \ g:vimwiki_rxWikiLinkMatchUrl, g:vimwiki_rxWikiLinkMatchDescr,
-            \ g:vimwiki_WikiLinkTemplate), 'v')
+            \ g:vimwiki_WikiLinkTemplate2), 'v')
       if g:vimwiki_debug > 1
         echomsg 'WikiLink: '.visual_selection.' Sub: '.@"
       endif
@@ -1314,7 +1365,7 @@ function! s:normalize_link_syntax_v(weblink_at_cursor, wikilink_at_cursor,
     let done = empty(a:wikilink_at_cursor) ? done : 1
     if !done && visual_selection =~ g:vimwiki_rxWikiLinkUrl
       call setreg('"', s:normalize_wikilink(@", g:vimwiki_rxWikiLinkUrl,
-            \ '', g:vimwiki_WikiLinkTemplate), 'v')
+            \ '', g:vimwiki_WikiLinkTemplate2), 'v')
       if g:vimwiki_debug > 1
         echomsg 'WikiLinkUrl: '.visual_selection.' Sub: '.@"
       endif

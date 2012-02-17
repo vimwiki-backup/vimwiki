@@ -64,12 +64,7 @@ let g:vimwiki_char_subscript = ',,'
 let g:vimwiki_rxH = '='
 let g:vimwiki_symH = 1
 
-" default imagelink template
-let g:vimwiki_ImageTemplate = '[[__LinkUrl__|__LinkDescription__|__LinkStyle__]]'
-" default wikilink template
-let g:vimwiki_WikilinkTemplate = '[[__LinkUrl__|__LinkDescription__]]'
-" default weblink template
-let g:vimwiki_WeblinkTemplate = '[__LinkUrl__ __LinkDescription__]'
+" Link templates are currently initialized together with per-wiki options
 
 " <hr>, horizontal rule
 let g:vimwiki_rxHR = '^----.*$'

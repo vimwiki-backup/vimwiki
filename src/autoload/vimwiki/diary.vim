@@ -235,16 +235,16 @@ function! s:make_date_link(...) "{{{
     let newlink = s:diary_date_link()
   endif
   call s:add_link(s:diary_index(), newlink)
-  return VimwikiGet('diary_rel_path').newlink
+  return newlink
 endfunction "}}}
 
 function! vimwiki#diary#make_note(index, ...) "{{{
   call vimwiki#base#select(a:index)
   call vimwiki#base#mkdir(VimwikiGet('path').VimwikiGet('diary_rel_path'))
   if a:0
-    let link = s:make_date_link(a:1)
+    let link = 'diary:'.s:make_date_link(a:1)
   else
-    let link = s:make_date_link()
+    let link = 'diary:'.s:make_date_link()
   endif
   call vimwiki#base#open_link(':e ', link, s:diary_index())
 endfunction "}}}
@@ -295,10 +295,10 @@ function! vimwiki#diary#goto_next_day() "{{{
   endif
 
   if idx != -1 && idx < len(links) - 1
-    let link = VimwikiGet('diary_rel_path').links[idx+1]
+    let link = 'diary:'.links[idx+1]
   else
     " goto today
-    let link = VimwikiGet('diary_rel_path').s:diary_date_link()
+    let link = 'diary:'.s:diary_date_link()
   endif
 
   if len(link)
@@ -315,10 +315,10 @@ function! vimwiki#diary#goto_prev_day() "{{{
   endif
 
   if idx > 0
-    let link = VimwikiGet('diary_rel_path').links[idx-1]
+    let link = 'diary:'.links[idx-1]
   else
     " goto today
-    let link = VimwikiGet('diary_rel_path').s:diary_date_link()
+    let link = 'diary:'.s:diary_date_link()
   endif
 
   if len(link)
