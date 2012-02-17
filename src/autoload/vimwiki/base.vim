@@ -492,24 +492,12 @@ endfunction " }}}
 " }}}
 
 " SYNTAX highlight {{{
-function! s:add_target_syntax_ON1(target) " {{{
+function! s:add_target_syntax_ON(target) " {{{
   if g:vimwiki_debug > 1
     echom '[vimwiki_debug] syntax target > '.a:target
   endif
   let prefix0 = 'syntax match VimwikiLink `'
-  let suffix0 = '` display contains=VimwikiLinkChar'
-  let prefix1 = 'syntax match VimwikiLinkT `'
-  let suffix1 = '` display contained'
-  execute prefix0. a:target. suffix0
-  execute prefix1. a:target. suffix1
-endfunction "}}}
-
-function! s:add_target_syntax_ON2(target) " {{{
-  if g:vimwiki_debug > 1
-    echom '[vimwiki_debug] syntax target > '.a:target
-  endif
-  let prefix0 = 'syntax match VimwikiLink `'
-  let suffix0 = '` display contains=@NoSpell,VimwikiLinkRest' " '` display contains=VimwikiLinkChar'
+  let suffix0 = '` display contains=@NoSpell,VimwikiLinkRest,VimwikiLinkChar'
   let prefix1 = 'syntax match VimwikiLinkT `'
   let suffix1 = '` display contained'
   execute prefix0. a:target. suffix0
@@ -540,65 +528,70 @@ function! vimwiki#base#highlight_links() "{{{
 
   " use max highlighting - could be quite slow if there are too many wikifiles
   if VimwikiGet('maxhi')
-    " Wikilink
+    " WikiLink
     call s:add_target_syntax_OFF(g:vimwiki_rxWikiLink)
+    " WikiIncl
+    call s:add_target_syntax_OFF(g:vimwiki_rxWikiIncl)
+
     " Subsequently, links verified on vimwiki's path are highlighted as existing
     call s:highlight_existent_links()
   else
     " Wikilink
-    call s:add_target_syntax_ON1(g:vimwiki_rxWikiLink)
+    call s:add_target_syntax_ON(g:vimwiki_rxWikiLink)
   endif
 
-  " a) WebURL, b)"DESCRIPTION":WebURL, or c)"DESCRIPTION(MORE)":WebURL
-  call s:add_target_syntax_ON2(g:vimwiki_rxWeblink)
+  " Weblink
+  call s:add_target_syntax_ON(g:vimwiki_rxWeblink)
 
-  " a) [[ImageURL]], b)[[ImageUrl][Description][Style]], or c)[[ImageUrl|Description|Style]
-  call s:add_target_syntax_ON2(g:vimwiki_rxImage)
+  " Image
+  call s:add_target_syntax_ON(g:vimwiki_rxImage)
 
 endfunction "}}}
 
 function! s:highlight_existent_links() "{{{
-  let links = s:get_links('*'.VimwikiGet('ext'))
-
   " Links with subdirs should be highlighted for linux and windows separators
   " Change \ or / to [/\\]
   let os_p = '[/\\]'
   let os_p2 = escape(os_p, '\')
+
+  " Wikilink
+  " Conditional highlighting that depends on the existence of a wiki file or
+  " directory is only available for 'wiki#:' links
+  let links = s:get_links('*'.VimwikiGet('ext'))
   call map(links, 'substitute(v:val, os_p, os_p2, "g")')
+  let rxScheme = '\%(\%(wiki\|wiki'.g:vimwiki_current_idx.'\):\)\?'
   for link in links
     let safe_link = vimwiki#base#unsafe_link(link)
     let safe_link = escape(safe_link , '~&$.*')
 
-    " Wikilink
+    " a) match WikiWord
     if g:vimwiki_camel_case &&
           \ link =~ g:vimwiki_rxWikiWord && !vimwiki#base#is_non_wiki_link(link)
-      " 0a) match WikiWord
-      call s:add_target_syntax_ON1('!\@<!\<'. link. '\>')
+      call s:add_target_syntax_ON('!\@<!\<'. link. '\>')
     endif
-    " a) match [[URL]]
+    " b) match [[URL]]
     let target = vimwiki#base#apply_template(g:vimwiki_WikiLinkTemplate1,
-          \ safe_link, g:vimwiki_rxWikiLinkDescr, '')
-    call s:add_target_syntax_ON1(target)
-    " a) match [[URL][DESCRIPTION]]
+          \ rxScheme.safe_link, g:vimwiki_rxWikiLinkDescr, '')
+    call s:add_target_syntax_ON(target)
+    " c) match [[URL][DESCRIPTION]]
     let target = vimwiki#base#apply_template(g:vimwiki_WikiLinkTemplate2,
-          \ safe_link, g:vimwiki_rxWikiLinkDescr, '')
-    call s:add_target_syntax_ON1(target)
+          \ rxScheme.safe_link, g:vimwiki_rxWikiLinkDescr, '')
+    call s:add_target_syntax_ON(target)
+
+    " a) match {{URL}}
+    let target = vimwiki#base#apply_template(g:vimwiki_WikiInclTemplate1,
+          \ rxScheme.safe_link, g:vimwiki_rxWikiInclArgs, '')
+    call s:add_target_syntax_ON(target)
+    " b) match {{URL}[{...}]}
+    let target = vimwiki#base#apply_template(g:vimwiki_WikiInclTemplate2,
+          \ rxScheme.safe_link, g:vimwiki_rxWikiInclArgs, '')
+    call s:add_target_syntax_ON(target)
+
   endfor
 
-
-  " Issue 103: Always highlight links to non-wiki files as existed.
-  let non_wiki_link = g:vimwiki_rxWikiLinkUrl. '\.\%('. join(split(g:vimwiki_file_exts, '\s*,\s*'), '\|'). '\)'
-  " 1a) match [[nonwiki-URL]]
-  let target = vimwiki#base#apply_template(g:vimwiki_WikiLinkTemplate1,
-        \ non_wiki_link, g:vimwiki_rxWikiLinkDescr, '')
-  call s:add_target_syntax_ON1(target)
-  " 2a) match [[nonwiki-URL][DESCRIPTION]]
-  let target = vimwiki#base#apply_template(g:vimwiki_WikiLinkTemplate2,
-        \ non_wiki_link, g:vimwiki_rxWikiLinkDescr, '')
-  call s:add_target_syntax_ON1(target)
-
-
-  " highlight dirs
+  " Wikilink Dirs
+  " Conditional highlighting that depends on the existence of a wiki file or
+  " directory is only available for 'wiki#:' links
   let dirs = s:get_links('*/')
   call map(dirs, 'substitute(v:val, os_p, os_p2, "g")')
   for dir in dirs
@@ -606,16 +599,51 @@ function! s:highlight_existent_links() "{{{
     let safe_link = escape(safe_link , '~&$.*')
     let safe_link = safe_link.'[/\\]'
 
-    " Wikilink
     " 1a) match [[DIRURL]]
     let target = vimwiki#base#apply_template(g:vimwiki_WikiLinkTemplate1,
-          \ safe_link, g:vimwiki_rxWikiLinkDescr, '')
-    call s:add_target_syntax_ON1(target)
+          \ rxScheme.safe_link, g:vimwiki_rxWikiLinkDescr, '')
+    call s:add_target_syntax_ON(target)
     " 2a) match [[DIRURL][DESCRIPTION]]
     let target = vimwiki#base#apply_template(g:vimwiki_WikiLinkTemplate2,
-          \ safe_link, g:vimwiki_rxWikiLinkDescr, '')
-    call s:add_target_syntax_ON1(target)
+          \ rxScheme.safe_link, g:vimwiki_rxWikiLinkDescr, '')
+    call s:add_target_syntax_ON(target)
   endfor
+
+  " Deprecated
+  " " Issue 103: Always highlight links to non-wiki files as existed.
+  " let rxFileExt = '\%('.join(split(tolower(g:vimwiki_file_exts).','.
+  "       \ toupper(g:vimwiki_file_exts), '\s*,\s*'), '\|').'\)'
+  " let non_wiki_link = g:vimwiki_rxWikiLinkUrl. '\.'. rxFileExt
+
+  
+  " WikiLink
+  " All remaining schemes except wiki: and wiki<idx>: where idx is index of
+  " current wiki are highlighted automatically
+  let other_wiki_schemes = filter(split(g:vimwiki_wiki_schemes, '\s*,\s*'), 
+            \ 'v:val !~ "\\%(wiki\\>\\|wiki'.g:vimwiki_current_idx.'\\>\\)"')
+  let rxScheme = '\%('.
+        \ join(other_wiki_schemes, '\|'). '\|'.
+        \ join(split(g:vimwiki_diary_schemes, '\s*,\s*'), '\|'). '\|'.
+        \ join(split(g:vimwiki_local_schemes, '\s*,\s*'), '\|'). '\|'.
+        \ join(split(g:vimwiki_web_schemes1, '\s*,\s*'), '\|').
+        \ '\):'
+  " a) match [[nonwiki-URL]]
+  let target = vimwiki#base#apply_template(g:vimwiki_WikiLinkTemplate1,
+        \ rxScheme.g:vimwiki_rxWikiLinkUrl, g:vimwiki_rxWikiLinkDescr, '')
+  call s:add_target_syntax_ON(target)
+  " b) match [[nonwiki-URL][DESCRIPTION]]
+  let target = vimwiki#base#apply_template(g:vimwiki_WikiLinkTemplate2,
+        \ rxScheme.g:vimwiki_rxWikiLinkUrl, g:vimwiki_rxWikiLinkDescr, '')
+  call s:add_target_syntax_ON(target)
+
+  " a) match {{URL}}
+  let target = vimwiki#base#apply_template(g:vimwiki_WikiInclTemplate1,
+        \ rxScheme.g:vimwiki_rxWikiInclUrl, g:vimwiki_rxWikiInclArgs, '')
+  call s:add_target_syntax_ON(target)
+  " b) match {{URL}[{...}]}
+  let target = vimwiki#base#apply_template(g:vimwiki_WikiInclTemplate2,
+        \ rxScheme.g:vimwiki_rxWikiInclUrl, g:vimwiki_rxWikiInclArgs, '')
+  call s:add_target_syntax_ON(target)
 
 endfunction "}}}
 
