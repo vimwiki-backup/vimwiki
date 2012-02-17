@@ -51,6 +51,12 @@ syn match VimwikiLinkChar contained /\]\]/
 syn match VimwikiLinkChar contained /\[\[[^\[\]\|]\{-}|\ze.\{-}]]/
 syn match VimwikiLinkChar contained /\[\[[^\[\]\|]\{-}]\[\ze.\{-}]]/
 
+syn match VimwikiLinkChar contained /{{/
+syn match VimwikiLinkChar contained /}}/
+syn match VimwikiLinkChar contained /}{/ conceal cchar=~
+syn match VimwikiLinkChar contained /{{[^{}]\{-}}{\ze.\{-}}}/
+" syn match VimwikiLinkChar contained /{{[^\{\}\n]\{-}}{[^\{\}\n]\{-}\zs}{.*\ze}}/ TODO: trouble getting '\zs' working !?!
+
 if exists("+conceallevel")
   execute 'syn match VimwikiLinkRest contained `\(//.\{-}/\)\@<=\S\{'
         \.g:vimwiki_url_mingain.',}\([/=#?].\|.\{'
@@ -64,6 +70,12 @@ syn match VimwikiNoExistsLinkChar contained /\[\[/
 syn match VimwikiNoExistsLinkChar contained /\]\]/
 syn match VimwikiNoExistsLinkChar contained /\[\[[^\[\]\|]\{-}|\ze.*]]/
 syn match VimwikiNoExistsLinkChar contained /\[\[[^\[\]\|]\{-}]\[\ze.*]]/
+
+syn match VimwikiNoExistsLinkChar contained /{{/
+syn match VimwikiNoExistsLinkChar contained /}}/
+syn match VimwikiNoExistsLinkChar contained /}{/ conceal cchar=~
+syn match VimwikiNoExistsLinkChar contained /{{[^{}]\{-}}{\ze.\{-}}}/
+" syn match VimwikiNoExistsLinkChar contained /{{[^\{\}\n]\{-}}{[^\{\}\n]\{-}\zs}{.*\ze}}/ TODO: trouble getting '\zs' working !?!
 
 execute 'syn match VimwikiEqInChar contained /'.g:vimwiki_char_eqin.'/'
 execute 'syn match VimwikiBoldChar contained /'.g:vimwiki_char_bold.'/'
