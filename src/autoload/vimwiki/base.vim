@@ -1255,58 +1255,49 @@ function! vimwiki#base#apply_template(template, rxUrl, rxDesc, rxStyle) "{{{
 endfunction
 " }}}
 
+function! s:clean_url(url) " {{{
+  let url = split(a:url, '/\|=\|-\|&\|?\|\.')
+  let url = filter(url, 'v:val != ""')
+  let url = filter(url, 'v:val != "www"')
+  let url = filter(url, 'v:val != "com"')
+  let url = filter(url, 'v:val != "org"')
+  let url = filter(url, 'v:val != "net"')
+  let url = filter(url, 'v:val != "edu"')
+  let url = filter(url, 'v:val != "http\:"')
+  let url = filter(url, 'v:val != "https\:"')
+  let url = filter(url, 'v:val != "file\:"')
+  let url = filter(url, 'v:val != "xml\:"')
+  let url = join(url, " ")
+  return url
+endfunction " }}}
 
-function! s:normalize_weblink(str, rxUrl, rxDesc, template) " {{{
+function! s:normalize_link(str, rxUrl, rxDesc, template) " {{{
   let str = escape(a:str, "~")
   let url = matchstr(str, a:rxUrl)
   let descr = matchstr(str, a:rxDesc)
   let template = a:template
-
   if descr == ""
-    let descrL = split(url, '/\|=\|-\|&\|?\|\.')
-    let descrL = filter(descrL, 'v:val != ""')
-    let descrL = filter(descrL, 'v:val != "www"')
-    let descrL = filter(descrL, 'v:val != "com"')
-    let descrL = filter(descrL, 'v:val != "org"')
-    let descrL = filter(descrL, 'v:val != "net"')
-    let descrL = filter(descrL, 'v:val != "edu"')
-    let descrL = filter(descrL, 'v:val != "http\:"')
-    let descrL = filter(descrL, 'v:val != "https\:"')
-    let descrL = filter(descrL, 'v:val != "file\:"')
-    let descrL = filter(descrL, 'v:val != "xml\:"')
-    let descr = join(descrL, " ")
+    let descr = s:clean_url(url)
   endif
   let lnk = substitute(template, '__LinkDescription__', descr, '')
   let lnk = substitute(lnk, '__LinkUrl__', url, '')
+endfunction " }}}
+
+function! s:normalize_weblink(str, rxUrl, rxDesc, template) " {{{
+  let lnk = s:normalize_link(a:str, a:rxUrl, a:rxDesc, a:template)
   return escape(lnk, "&")
 endfunction " }}}
 
 function! s:normalize_wikilink(str, rxUrl, rxDesc, template) "{{{
-  let str = escape(a:str, "~")
-  let url = matchstr(str, a:rxUrl)
-  let descr = matchstr(str, a:rxDesc)
-  let template = a:template
-  if descr == ""
-    let descr = url
-  endif
-  let lnk = substitute(template, '__LinkDescription__', descr, '')
-  let lnk = substitute(lnk, '__LinkUrl__', url, '')
+  let lnk = s:normalize_link(a:str, a:rxUrl, a:rxDesc, a:template)
   return escape(lnk, "&")
 endfunction
 " }}}
 
 function! s:normalize_imagelink(str, rxUrl, rxDesc, rxStyle, template) "{{{
-  let str = escape(a:str, "~")
-  let url = matchstr(str, a:rxUrl)
-  let descr = matchstr(str, a:rxDesc)
+  let lnk = s:normalize_link(a:str, a:rxUrl, a:rxDesc, a:template)
   let style = matchstr(str, a:rxStyle)
-  let template = a:template " g:vimwiki_ImageTemplate
-  if descr == ""
-    let descr = url
-  endif
-  let lnk = substitute(template, '__LinkDescription__', descr, '')
   let lnk = substitute(lnk, '__LinkStyle__', style, '')
-  let lnk = substitute(lnk, '__LinkUrl__', url, '')
   return escape(lnk, "&")
 endfunction
 " }}}
@@ -1324,8 +1315,10 @@ function! s:normalize_link_syntax_n(weblink_at_cursor, wikilink_at_cursor,
     if g:vimwiki_debug > 1
       echomsg "N: WebLink: ".a:weblink_at_cursor." Sub: ".sub
     endif
-  elseif !empty(a:imagelink_at_cursor)
-    " try Image
+    return
+  endif
+  " try Image
+  if !empty(a:imagelink_at_cursor)
     let sub = s:normalize_imagelink(a:imagelink_at_cursor,
           \ g:vimwiki_rxImageMatchUrl, g:vimwiki_rxImageMatchDescr,
           \ g:vimwiki_rxImageMatchStyle, VimwikiGet('image_template'))
@@ -1333,8 +1326,10 @@ function! s:normalize_link_syntax_n(weblink_at_cursor, wikilink_at_cursor,
     if g:vimwiki_debug > 1
       echomsg "N: ImageLink: ".a:wikilink_at_cursor." Sub: ".sub
     endif
-  elseif !empty(a:wikilink_at_cursor)
-    " try WikiLink
+    return
+  endif
+  " try WikiLink
+  if !empty(a:wikilink_at_cursor)
     let sub = s:normalize_wikilink(a:wikilink_at_cursor,
           \ g:vimwiki_rxWikiLinkMatchUrl, g:vimwiki_rxWikiLinkMatchDescr,
           \ g:vimwiki_WikiLinkTemplate2)
@@ -1342,6 +1337,7 @@ function! s:normalize_link_syntax_n(weblink_at_cursor, wikilink_at_cursor,
     if g:vimwiki_debug > 1
       echomsg "N: WikiLink: ".a:wikilink_at_cursor." Sub: ".sub
     endif
+    return
   endif
 
 endfunction " }}}
@@ -1392,6 +1388,7 @@ function! s:normalize_link_syntax_v(weblink_at_cursor, wikilink_at_cursor,
     endif
     let done = empty(a:wikilink_at_cursor) ? done : 1
     if !done && visual_selection =~ g:vimwiki_rxWikiLinkUrl
+      " try WikiWord - substituting link_at_cursor, not buffer @"
       call setreg('"', s:normalize_wikilink(@", g:vimwiki_rxWikiLinkUrl,
             \ '', g:vimwiki_WikiLinkTemplate2), 'v')
       if g:vimwiki_debug > 1
