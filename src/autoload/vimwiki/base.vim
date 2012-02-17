@@ -98,7 +98,7 @@ function! vimwiki#base#open_link(cmd, link, ...) "{{{
   let wiki_extension = 0
   let wiki_directory = 0
   let keep_scheme = 0
-  let use_weblink_handler = 1
+  let use_weblink_handler = 0
 
   if scheme =~ 'wiki*'
     let update_prev_link = 1
@@ -118,6 +118,8 @@ function! vimwiki#base#open_link(cmd, link, ...) "{{{
     let numbered_scheme = 1
     let wiki_path = 1
     let wiki_subdirectory = 1
+  elseif scheme =~ 'file'
+    let keep_scheme = 0
   else
     let keep_scheme = 1
     let use_weblink_handler = 1
@@ -134,6 +136,10 @@ function! vimwiki#base#open_link(cmd, link, ...) "{{{
   " numbered scheme
   if numbered_scheme && scheme =~ '\D\+\d\+'
     let idx = eval(matchstr(scheme, '\D\+\zs\d\+\ze'))
+    if idx < 0 || idx >= len(g:vimwiki_list)
+      echom 'Vimwiki Error: Numbered scheme refers to a non-existent wiki!'
+      return
+    endif
   else
     let idx = g:vimwiki_current_idx
   endif
@@ -161,6 +167,7 @@ function! vimwiki#base#open_link(cmd, link, ...) "{{{
   endif
   " keep scheme
   let path = (keep_scheme ? scheme.':'.path : path)
+  let lnk = (!keep_scheme ? substitute(lnk, '^///', '/', '') : lnk)
   " open/edit
   if g:vimwiki_debug
     echom scheme.' '.path.subdir.lnk.ext
