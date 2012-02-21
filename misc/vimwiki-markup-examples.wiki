@@ -27,7 +27,8 @@ Several link syntaxes are recognized by Vimwiki
 
 == URLs & Schemes ==
 
-URLs for links are specified via relative or absolute paths and connect resources that are:
+URLs for links are specified via relative or absolute paths and connect
+resources that are:
  # wiki, or other (non-wiki)
  # local, or remote
  # files, directories, images, etc.
@@ -35,12 +36,13 @@ URLs for links are specified via relative or absolute paths and connect resource
 Vimwiki uses URL schemes to simplify the creation links.  URL schemes are short
 prefixes of a URL that end with a colon `:`
 
-In addition to standard web schemes (e.g. `http:`, `https:`, `ftp:`, etc.) the following
-special schemes are supported:
+In addition to standard web schemes (e.g. `http:`, `https:`, `ftp:`, etc.) the
+following special schemes are supported:
  # `wiki:` URLs to wiki pages specified without '.wiki' extension relative to the
    current page
  # `diary:` URLs to diary pages specified without '.wiki' extension
- # `local:` URLs to local resources specified with extension relative to the current page
+ # `local:` URLs to local resources specified with extension relative to the
+   current page
  # `wiki#:`, `diary#:`, and `local#:` same as above except that URLs are specified
    relative to the root of the #-identified wiki
  # `file:` URLs to local resources specified with extension via absolute paths
@@ -53,19 +55,25 @@ absolute paths e.g. file:///abs_path_to_htmlJ/relpath/wikiname.html
 
 == Advanced Syntax Options ==
 
-Some users may wish to customize the separators for wiki-links and wiki-includes, respectively `']['` and `'}{'` above.  These are customizable via per-wiki options:
+Some users may wish to customize the separators for wiki-links and
+wiki-includes, respectively `']['` and `'}{'` above.  These are customizable
+via per-wiki options:
  
  * `link_separator = ']['`
  * `incl_separator = '}{'`
 
-Setting identical separators is not recommended; for best results, their characters-sets should not overlap.  The prefix and suffix pairs `'[['`, `']]'` and, `'{{'`, `'}}'` are not currently customizable.
+Setting identical separators is not recommended; for best results, their
+characters-sets should not overlap.  The prefix and suffix pairs `'[['`, `']]'`
+and, `'{{'`, `'}}'` are not currently customizable.
 
-Templates may be used to customize Vimwiki's web- and image- links; e.g. Markdown compatibility is met with the following:
+Templates may be used to customize Vimwiki's web- and image- links; e.g.
+Markdown compatibility is met with the following:
 
  * Web Link Template: `[__LinkDescription__](__LinkUrl__)`
  * Image Link Template: `![__LinkDescription__](__LinkUrl__ __LinkStyle__)`
 
-For backwards compatibility with Vimwiki V1.2, the default web_template and image_template are set accordingly:
+For backwards compatibility with Vimwiki V1.2, the default web_template and
+image_template are set accordingly:
 
  * Web Link Template: `[__LinkUrl__ __LinkDescription__]`
  * Image Link Template: `{__LinkUrl__|__LinkDescription__|__LinkStyle__}`
@@ -138,7 +146,8 @@ Note *3*: Only works wiki page exists
  # [[EgMissingPage][This page is missing]] (*2*)(*4*)
    * vim syntax if missing: concealed link and delimiters, dotted-red underline
  # [[EgFoundPage][This page was found]] (*2*)(*4*)
-   * vim syntax if found: concealed link and delimiters, blue highlight, blue underline
+   * vim syntax if found: concealed link and delimiters, blue highlight, blue
+     underline
  # [[EgPage2][|This| is page 2]]
 
 Note *4*: Only works if vimwiki-option `link_separator == ']['`
@@ -156,9 +165,11 @@ Note *4*: Only works if vimwiki-option `link_separator == ']['`
  # [[EgMissingPage|This page is missing]] (*2*)(*5*)
    * vim syntax if missing: concealed link and delimiters, dotted-red underline
  # [[EgFoundPage|This page was found]] (*3*)(*5*)
-   * vim syntax if found: concealed link and delimiters, blue highlight, blue underline
+   * vim syntax if found: concealed link and delimiters, blue highlight, blue
+     underline
  # [[EgPage2|This is page 2|Still page 2]] (*3*)(*5*)
-   * vim syntax if found: concealed link and delimiters, blue highlight, blue underline
+   * vim syntax if found: concealed link and delimiters, blue highlight, blue
+     underline
 
 Note *5*: Only works if vimwiki-option `link_separator == '|'`
 
@@ -174,13 +185,16 @@ Note *5*: Only works if vimwiki-option `link_separator == '|'`
 
 Local resources are specified relative current wiki page
 
- # Vimwiki adds an extension to most [[-wiki Links, even the names of directories
+ # Vimwiki adds an extension to most [[-wiki Links, even the names of
+   directories
    * [[../src][vimwiki src/]] (*4*)
  # Which can be deactivated with a trailing slash
    * [[../src/][vimwiki src/]] (*4*)
- # Directory names can be made to redirect to `DIR/homepage.html` by setting `g:vimwiki_dir_link = 'homepage'`
+ # Directory names can be made to redirect to `DIR/homepage.html` by setting
+   `g:vimwiki_dir_link = 'homepage'`
    * [[../src/][vimwiki src/]] (*4*)(*6*)
- # Use the "local:" scheme to link to a directory without using the trailing slash and without appending `/homepage.html`
+ # Use the "local:" scheme to link to a directory without using the trailing
+   slash and without appending `/homepage.html`
    * [[local:../src][vimwiki src/]] (*4*)
  # Extensions are not modified with the "local:" scheme
    * [[local:vimwikiqrc.pdf]] 
@@ -274,20 +288,22 @@ Note *8*: Only works if vimwiki-option `incl_separator == '|'`
 
 === d) {{-Wiki-Include Links To Local URLs ===
 
- # Schemeless URLs, or those with the "wiki:" scheme, appends an `.html` extension
+ # Schemeless URLs, or those with the "wiki:" scheme, appends an `.html`
+   extension
    * In other words, don't try this: `{{../images/vimwiki_logo.png}}` (*4*)
- # URLs with the `local:` scheme specify resources with paths relative current wiki page.  Extensions are not modified with the "local:" scheme.
+ # URLs with the `local:` scheme specify resources with paths relative current
+   wiki page.  Extensions are not modified with the "local:" scheme.
    * {{local:../images/vimwiki_logo.png}} (*4*)
  # URLs with the `file:` scheme specifiy resource via absolute paths.
-   * {{file:///Users/stu/Research/Tools/VimPlugins/vimwiki-custom/images/vimwiki_logo.png}} (*4*)
+   * {{file:///VIMWIKIHOME/images/vimwiki_logo.png}} (*4*)
 
 *Markup & Expected Results*
 
-| Link | Markup                                                          | URL                                           |
-|------|-----------------------------------------------------------------|-----------------------------------------------|
-| 1.   | `{{../images/vimwiki_logo.png}}`                                | `../images/vimwiki_logo.png.html`             |
-| 2.   | `{{local:../images/vimwiki_logo.png}}`                          | `../images/vimwiki_logo.png`                  |
-| 3.   | `{{file:///Users/stu/Research/Tools/VimPlugins/vimwiki-custom/images/vimwiki_logo.png}}`               | `file:///Users/stu/Research/Tools/VimPlugins/vimwiki-custom/images/vimwiki_logo.png` |
+| Link | Markup                                            | URL                                           |
+|------|---------------------------------------------------|-----------------------------------------------|
+| 1.   | `{{../images/vimwiki_logo.png}}`                  | `../images/vimwiki_logo.png.html`             |
+| 2.   | `{{local:../images/vimwiki_logo.png}}`            | `../images/vimwiki_logo.png`                  |
+| 3.   | `{{file:///VIMWIKIHOME/images/vimwiki_logo.png}}` | `file:///VIMWIKIHOME/images/vimwiki_logo.png` |
 
 
 == Thumbnail Links ==
@@ -340,10 +356,12 @@ Note *10*: Only works if vimwiki-option `weblink_template == '[__LinkDescription
  # [http://github.com GitHub] (*9*)
  # [http://github.com This is Github] (*9*)
  # [http://github.com ] (*9*)
- # [http://github.com] (*9*) <-- !? TODO: fix me (high priority) - remove requirement of trailing space
+ # [http://github.com] (*9*) <-- !? TODO: fix me (high priority) - remove
+   requirement of trailing space
  # [GitHub](http://github.com) (*10*)
  # [This is Github](http://github.com) (*10*)
- # [](http://github.com) (*10*) <-- !? TODO: fix me (high priority) - something is stripping away the [] before the call to s:process_tags_links() !?
+ # [](http://github.com) (*10*) <-- !? TODO: fix me (high priority) - something
+   is stripping away the [] before the call to s:process_tags_links() !?
 
 *Markup & Expected Results*
 
@@ -362,18 +380,18 @@ Note *10*: Only works if vimwiki-option `weblink_template == '[__LinkDescription
 
 === c) Weblinks To Local Files & Directories ===
 
- # file:///Users/stu/Research/Tools/VimPlugins/vimwiki-custom/images/vimwiki_logo.png
- # [file:///Users/stu/Research/Tools/VimPlugins/vimwiki-custom/images Users/stu/Research/Tools/VimPlugins/vimwiki-custom/images] (*9*)
- # [vimwiki_logo](file:///Users/stu/Research/Tools/VimPlugins/vimwiki-custom/images/vimwiki_logo.png) (*10*)
+ # file:///VIMWIKIHOME/images/vimwiki_logo.png
+ # [file:///VIMWIKIHOME/images VIMWIKIHOME/images] (*9*)
+ # [vimwiki_logo](file:///VIMWIKIHOME/images/vimwiki_logo.png) (*10*)
 
 
 *Markup & Expected Results*
 
 | Link | Markup                                                        | Description                                   | URL                                           |
 |------|---------------------------------------------------------------|-----------------------------------------------|-----------------------------------------------|
-| 1.   | `file:///Users/stu/Research/Tools/VimPlugins/vimwiki-custom/images/vimwiki_logo.png`                 | `file:///Users/stu/Research/Tools/VimPlugins/vimwiki-custom/images/vimwiki_logo.png` | `file:///Users/stu/Research/Tools/VimPlugins/vimwiki-custom/images/vimwiki_logo.png` |
-| 2.   | `[file:///Users/stu/Research/Tools/VimPlugins/vimwiki-custom/images Users/stu/Research/Tools/VimPlugins/vimwiki-custom/images]`             | `Users/stu/Research/Tools/VimPlugins/vimwiki-custom/images`                          | `file:///Users/stu/Research/Tools/VimPlugins/vimwiki-custom/images/`                 |
-| 3.   | `[vimwiki logo](file:///Users/stu/Research/Tools/VimPlugins/vimwiki-custom/images/vimwiki_logo.png)` | `vimwiki logo`                                | `file:///Users/stu/Research/Tools/VimPlugins/vimwiki-custom/images/vimwiki_logo.png` |
+| 1.   | `file:///VIMWIKIHOME/images/vimwiki_logo.png`                 | `file:///VIMWIKIHOME/images/vimwiki_logo.png` | `file:///VIMWIKIHOME/images/vimwiki_logo.png` |
+| 2.   | `[file:///VIMWIKIHOME/images VIMWIKIHOME/images]`             | `VIMWIKIHOME/images`                          | `file:///VIMWIKIHOME/images/`                 |
+| 3.   | `[vimwiki logo](file:///VIMWIKIHOME/images/vimwiki_logo.png)` | `vimwiki logo`                                | `file:///VIMWIKIHOME/images/vimwiki_logo.png` |
 
 
 === d) Weblinks To External Urls ===
@@ -389,7 +407,8 @@ Note *10*: Only works if vimwiki-option `weblink_template == '[__LinkDescription
  # [http://www.dokuwiki.org/plugin:s5:example](http://www.dokuwiki.org/plugin:s5:example) (*10*)
  # [goodreader: vimwikiqrc.pdf](gropen://Documents//WebDownloads/vimwikiqrc.pdf) (*10*) (*11*)
 
-Note *11*: Only works if "gropen" is added to the list of web_schemes (currently hard-coded in `src/plugin/vimwiki.vim`)
+Note *11*: Only works if "gropen" is added to the list of web_schemes
+(currently hard-coded in `src/plugin/vimwiki.vim`)
 
 *Markup & Expected Results*
 
