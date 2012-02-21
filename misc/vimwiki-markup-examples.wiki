@@ -2,16 +2,475 @@
 Make: `vim -n -u misc/vimrc -c "VimwikiMisc2Html" misc/vimwiki-markup-examples.wiki`
 Generates: `misc/html/vimwiki-markup-examples.html`
 
-= Testing With Default Syntax =
+%toc
+
+= Vimwiki Links =
+
+== Standard Syntaxes ==
+
+Several link syntaxes are recognized by Vimwiki
+
+ * Raw URLs
+   # `URL`
+ * Wiki Links
+   # `WikiWord`
+   # `[[URL]]`
+   # `[[URL][DESCR]]`
+ * Wiki-Include Links (Initially, for images only)
+   # `{{IMGURL}}`
+   # `{{IMGURL}{DESCR}}`
+   # `{{IMGURL}{DESCR}{STYLE}}`
+ * Thumbnail Links
+   # `[[URL][{{IMGURL}}]]`
+   # `[[URL][{{IMGURL}{STYLE}}]]`
+   # `[[URL][{{IMGURL}{DESCR}{STYLE}}]]`
+
+== URLs & Schemes ==
+
+URLs for links are specified via relative or absolute paths and connect resources that are:
+ # wiki, or other (non-wiki)
+ # local, or remote
+ # files, directories, images, etc.
+
+Vimwiki uses URL schemes to simplify the creation links.  URL schemes are short
+prefixes of a URL that end with a colon `:`
+
+In addition to standard web schemes (e.g. `http:`, `https:`, `ftp:`, etc.) the following
+special schemes are supported:
+ # `wiki:` URLs to wiki pages specified without '.wiki' extension relative to the
+   current page
+ # `diary:` URLs to diary pages specified without '.wiki' extension
+ # `local:` URLs to local resources specified with extension relative to the current page
+ # `wiki#:`, `diary#:`, and `local#:` same as above except that URLs are specified
+   relative to the root of the #-identified wiki
+ # `file:` URLs to local resources specified with extension via absolute paths
  
+Schemeless URLs are equivalent to wiki:URLs except when converted to Html.  For
+Html, schemeless links translate to plain relative path links (nearly verbatim
+"relpath/wikifile.html"), while `wiki#:`, `local#:`, and `diary#:` prepend
+absolute paths e.g. file:///abs_path_to_htmlJ/relpath/wikiname.html
+
+
+== Advanced Syntax Options ==
+
+Some users may wish to customize the separators for wiki-links and wiki-includes, respectively `']['` and `'}{'` above.  These are customizable via per-wiki options:
+ 
+ * `link_separator = ']['`
+ * `incl_separator = '}{'`
+
+Setting identical separators is not recommended; for best results, their characters-sets should not overlap.  The prefix and suffix pairs `'[['`, `']]'` and, `'{{'`, `'}}'` are not currently customizable.
+
+Templates may be used to customize Vimwiki's web- and image- links; e.g. Markdown compatibility is met with the following:
+
+ * Web Link Template: `[__LinkDescription__](__LinkUrl__)`
+ * Image Link Template: `![__LinkDescription__](__LinkUrl__ __LinkStyle__)`
+
+For backwards compatibility with Vimwiki V1.2, the default web_template and image_template are set accordingly:
+
+ * Web Link Template: `[__LinkUrl__ __LinkDescription__]`
+ * Image Link Template: `{__LinkUrl__|__LinkDescription__|__LinkStyle__}`
+
+In your `.vimrc` these are configured as follows:
+
+{{{
+  let wiki.link_separator   = ']['
+  let wiki.incl_separator   = '}{'
+  let wiki.web_template     = '[__LinkDescription__](__LinkUrl__)'
+  let wiki.image_template   = '![__LinkDescription__](__LinkUrl__ __LinkStyle__)'
+}}}
+
+
+= Examples of Links =
+
+== Wiki Links ==
+=== a) Wikiwords ===
+
+Wikiwords are connected capitalized words.
+
+ # EgMissingPage (*1*)(*2*)
+   * vim syntax: dotted-red underline
+ # EgFoundPage (*1*)(*3*)
+   * vim syntax: blue highlight, blue underline
+
+Note *1*: Only works if `g:vimwiki_camel_case == 1`
+
+Note *2*: Only works wiki page is missing (i.e. it does not yet exist)
+
+Note *3*: Only works wiki page exists
+
+*Markup & Expected Results*
+
+| Link | Markup        | Description   | URL                     |
+|------|---------------|---------------|-------------------------|
+| 1.   | `EgMissingPage` | `EgMissingPage` | `EgMissingPage.html` |
+| 2.   | `EgFoundPage`   | `EgFoundPage`   | `EgFoundPage.html`   |
+
+=== b) Escaped Wikiword ===
+
+ # !EgMissingPage
+   * vim syntax: none
+ # !EgFoundPage
+   * vim syntax: none
+
+*Markup & Expected Results*
+
+| Link | Markup         | Description   | URL |
+|------|----------------|---------------|-----|
+| 1.   | `!EgMissingPage` | `EgMissingPage` | n/a |
+| 2.   | `!EgFoundPage`   | `EgFoundPage`   | n/a |
+
+=== c) [[-Wiki Links ===
+
+ # [[EgMissingPage]] (*2*)
+   * vim syntax: concealed delimiters, dotted-red underline
+ # [[EgFoundPage]] (*3*)
+   * vim syntax: concealed delimiters, blue highlight, blue underline
+
+*Markup & Expected Results*
+
+| Link | Markup            | Description   | URL                     |
+|------|-------------------|---------------|-------------------------|
+| 1.   | `[[EgMissingPage]]` | `EgMissingPage` | `EgMissingPage.html` |
+| 2.   | `[[EgFoundPage]]`   | `EgFoundPage`   | `EgFoundPage.html`   |
+
+=== d) [[-Wiki Link With ][-Separator ===
+
+ # [[EgMissingPage][This page is missing]] (*2*)(*4*)
+   * vim syntax if missing: concealed link and delimiters, dotted-red underline
+ # [[EgFoundPage][This page was found]] (*2*)(*4*)
+   * vim syntax if found: concealed link and delimiters, blue highlight, blue underline
+ # [[EgPage2][|This| is page 2]]
+
+Note *4*: Only works if vimwiki-option `link_separator == ']['`
+
+*Markup & Expected Results*
+
+| Link | Markup (#==pipe)                        | Description (#==pipe)  | URL                     |
+|------|-----------------------------------------|------------------------|-------------------------|
+| 1.   | `[[EgMissingPage][This page is missing]]` | `This page is missing` | `EgMissingPage.html` |
+| 2.   | `[[EgFoundPage][This page was found]]`    | `This page was found`  | `EgFoundPage.html`   |
+| 3.   | `[[EgPage2][#This# is page 2]]`           | `#This# is page 2`     | `EgPage2.html`       |
+
+=== e) [[-Wiki Link With |-Separator ===
+
+ # [[EgMissingPage|This page is missing]] (*2*)(*5*)
+   * vim syntax if missing: concealed link and delimiters, dotted-red underline
+ # [[EgFoundPage|This page was found]] (*3*)(*5*)
+   * vim syntax if found: concealed link and delimiters, blue highlight, blue underline
+ # [[EgPage2|This is page 2|Still page 2]] (*3*)(*5*)
+   * vim syntax if found: concealed link and delimiters, blue highlight, blue underline
+
+Note *5*: Only works if vimwiki-option `link_separator == '|'`
+
+*Markup & Expected Results*
+
+| Link | Markup  (#==pipe)                       | Description  (#==pipe)        | URL                     |
+|------|-----------------------------------------|-------------------------------|-------------------------|
+| 1.   | `[[EgMissingPage#This page is missing]]`  | `This page is missing`        | `EgMissingPage.html` |
+| 2.   | `[[EgFoundPage#This page was found]]`     | `This page was found`         | `EgFoundPage.html`   |
+| 3.   | `[[EgPage2#This is page 2#Still page 2]]` | `This is page 2#Still page 2` | `EgPage2.html`       |
+
+=== f) [[-Wiki Links To Local Files & Directories ===
+
+Local resources are specified relative current wiki page
+
+ # Vimwiki adds an extension to most [[-wiki Links, even the names of directories
+   * [[../src][vimwiki src/]] (*4*)
+ # Which can be deactivated with a trailing slash
+   * [[../src/][vimwiki src/]] (*4*)
+ # Directory names can be made to redirect to `DIR/homepage.html` by setting `g:vimwiki_dir_link = 'homepage'`
+   * [[../src/][vimwiki src/]] (*4*)(*6*)
+ # Use the "local:" scheme to link to a directory without using the trailing slash and without appending `/homepage.html`
+   * [[local:../src][vimwiki src/]] (*4*)
+ # Extensions are not modified with the "local:" scheme
+   * [[local:vimwikiqrc.pdf]] 
+
+Note *6*: Only works if `g:vimwiki_dir_link = 'homepage'`
+
+*Markup & Expected Results*
+
+| Link | Markup                           | Description            | URL                    |
+|------|----------------------------------|------------------------|------------------------|
+| 1.   | `[[../src][vimwiki src/]]`       | `vimwiki src/`         | `../src.html`               |
+| 2.   | `[[../src/][vimwiki src/]]`      | `vimwiki src/`         | `../src`               |
+| 3.   | `[[../src/][vimwiki src/]]`      | `vimwiki src/`         | `../src/homepage.html` |
+| 4.   | `[[local:../src][vimwiki src/]]` | `vimwiki src/`         | `../src`          |
+| 5.   | `[[local:vimwikiqrc.pdf]]`       | `local:vimwikiqrc.pdf` | `vimwikiqrc.pdf`  |
+
+
+=== g) [[-Wiki Links To Universal URLs ===
+
+ # [[http://www.github.com]] (*4*)
+ # [[http://www.github.com][Github]] (*4*)
+
+*Markup & Expected Results*
+
+| Link | Markup                              | Description             | URL                     |
+|------|-------------------------------------|-------------------------|-------------------------|
+| 1.   | `[[http://www.github.com]]`         | `http://www.github.com` | `http://www.github.com` |
+| 1.   | `[[http://www.github.com][Github]]` | `Github`                | `http://www.github.com` |
+
+
+
+
+== Wiki-Include Links ==
+
+Includes the contents of URL in the Html output.
+
+=== a) {{-Wiki-Include Links ===
+
+ # Link to an image
+   * Markup: `{{http://vimwiki.googlecode.com/hg/images/vimwiki_logo.png}}`
+   * Expected Alternate: n/a
+   * Expected Style: n/a
+   * Expected Target: `<img src="http://vimwiki.googlecode.com/hg/images/vimwiki_logo.png" />`
+   * Example: {{http://vimwiki.googlecode.com/hg/images/vimwiki_logo.png}} (*7*)
+
+=== b) {{-Wiki-Include Links With }{-Separator ===
+
+ # Link to an image with alternate text
+   * Markup: `{{http://vimwiki.googlecode.com/hg/images/vimwiki_logo.png}{Vimwiki}}`
+   * Expected Alternate: `Vimwiki`
+   * Expected Style: n/a
+   * Expected Target: `<img src="http://vimwiki.googlecode.com/hg/images/vimwiki_logo.png" alt="Vimwiki"/>`
+   * Example: {{http://vimwiki.googlecode.com/hg/images/vimwiki_logo.png}{Vimwiki}} (*7*)
+ # Link to an image with alternate text and some style
+   * Markup: `{{http://vimwiki.googlecode.com/hg/images/vimwiki_logo.png}{cool stuff}{width:150px; height: 120px;}}`
+   * Expected Alternate: `cool stuff~width:150px; height: 120px;`
+   * Expected Style: `width:150px; height:120px`
+   * Expected Target: `<img src="http://vimwiki.googlecode.com/hg/images/vimwiki_logo.png" alt="cool stuff" style="width:150px; height:120px"/>`
+   * Markup: {{http://vimwiki.googlecode.com/hg/images/vimwiki_logo.png}{cool stuff}{width:150px; height: 120px;}} (*7*)
+ # Link to an image without alternate text and some style
+   * Markup: `{{http://vimwiki.googlecode.com/hg/images/vimwiki_logo.png}{}{width:150px; height: 120px;}}`
+   * Expected Alternate: `~width:150px; height: 120px;`
+   * Expected Style: `width:150px; height:120px`
+   * Expected Target: `<img src="http://vimwiki.googlecode.com/hg/images/vimwiki_logo.png" style="width:150px; height:120px"/>`
+   * Example: {{http://vimwiki.googlecode.com/hg/images/vimwiki_logo.png}{}{width:150px; height: 120px;}} (*7*)
+
+Note *7*: Only works if vimwiki-option `incl_separator == '}{'`
+
+=== c) {{-Wiki-Include Links With |-Separator ===
+
+ # Link to an image with alternate text
+   * Markup: `{{http://vimwiki.googlecode.com/hg/images/vimwiki_logo.png|Vimwiki}}`
+   * Expected Alternate: `Vimwiki`
+   * Expected Style: n/a
+   * Expected Target: `<img src="http://vimwiki.googlecode.com/hg/images/vimwiki_logo.png" alt="Vimwiki"/>`
+   * Example: {{http://vimwiki.googlecode.com/hg/images/vimwiki_logo.png|Vimwiki}} (*8*)
+ # Link to an image with alternate text and some style
+   * Markup: `{{http://vimwiki.googlecode.com/hg/images/vimwiki_logo.png|cool stuff|width:150px; height: 120px;}}`
+   * Expected Alternate: `cool stuff~width:150px; height: 120px;`
+   * Expected Style: `width:150px; height:120px`
+   * Expected Target: `<img src="http://vimwiki.googlecode.com/hg/images/vimwiki_logo.png" alt="cool stuff" style="width:150px; height:120px"/>`
+   * Markup: {{http://vimwiki.googlecode.com/hg/images/vimwiki_logo.png|cool stuff|width:150px; height: 120px;}} (*8*)
+ # Link to an image without alternate text and some style
+   * Markup: `{{http://vimwiki.googlecode.com/hg/images/vimwiki_logo.png||width:150px; height: 120px;}}`
+   * Expected Alternate: `~width:150px; height: 120px;`
+   * Expected Style: `width:150px; height:120px`
+   * Expected Target: `<img src="http://vimwiki.googlecode.com/hg/images/vimwiki_logo.png" style="width:150px; height:120px"/>`
+   * Example: {{http://vimwiki.googlecode.com/hg/images/vimwiki_logo.png||width:150px; height: 120px;}} (*8*)
+
+Note *8*: Only works if vimwiki-option `incl_separator == '|'`
+
+=== d) {{-Wiki-Include Links To Local URLs ===
+
+ # Schemeless URLs, or those with the "wiki:" scheme, appends an `.html` extension
+   * In other words, don't try this: `{{../images/vimwiki_logo.png}}` (*4*)
+ # URLs with the `local:` scheme specify resources with paths relative current wiki page.  Extensions are not modified with the "local:" scheme.
+   * {{local:../images/vimwiki_logo.png}} (*4*)
+ # URLs with the `file:` scheme specifiy resource via absolute paths.
+   * {{file:///Users/stu/Research/Tools/VimPlugins/vimwiki-custom/images/vimwiki_logo.png}} (*4*)
+
+*Markup & Expected Results*
+
+| Link | Markup                                                          | URL                                           |
+|------|-----------------------------------------------------------------|-----------------------------------------------|
+| 1.   | `{{../images/vimwiki_logo.png}}`                                | `../images/vimwiki_logo.png.html`             |
+| 2.   | `{{local:../images/vimwiki_logo.png}}`                          | `../images/vimwiki_logo.png`                  |
+| 3.   | `{{file:///Users/stu/Research/Tools/VimPlugins/vimwiki-custom/images/vimwiki_logo.png}}`               | `file:///Users/stu/Research/Tools/VimPlugins/vimwiki-custom/images/vimwiki_logo.png` |
+
+
+== Thumbnail Links ==
+
+=== Example ===
+
+ # Wikilinks with links to images as their descriptions
+   * Markup (a): `[[EgFoundPage][{{http://vimwiki.googlecode.com/hg/screenshots/tn_vimwiki1.png}{}{width:50px; height: 50px;}}]]`
+     * Example: [[EgFoundPage][{{http://vimwiki.googlecode.com/hg/screenshots/tn_vimwiki1.png}{}{width:50px; height: 50px;}}]] (*4*)
+   * Markup (b): `[[EgFoundPage|{{http://vimwiki.googlecode.com/hg/screenshots/tn_vimwiki1.png}{}{width:50px; height: 50px;}}]]`
+     * Example: [[EgFoundPage|{{http://vimwiki.googlecode.com/hg/screenshots/tn_vimwiki1.png}{}{width:50px; height: 50px;}}]] (*5*)
+   * Expected Description: _the image_
+   * Expected Alternate: n/a
+   * Expected Style: n/a
+   * Expected Target: `<a href="EgFoundPage.html"><img src="http://vimwiki.googlecode.com/hg/screenshots/tn_vimwiki1.png" style="width:150px; height:120px" /></a>`
+
+
+
+== Templated Weblinks ==
+=== a) Weblinks Overview ===
+ 
+ # http://code.google.com/p/vimwiki
+ # mailto:habamax@gmail.com
+ # ftp://vim.org
+ # [http://habamax.ru/blog habamax home page]
+ # [mailto:habamax@gmail.com Drop a line to Maxim Kim] (*9*)
+ # [habamax home page](http://habamax.ru/blog) (*10*)
+
+Note *9*: Only works if vimwiki-option `weblink_template == '[__LinkUrl__ __LinkDescription__]'`
+
+Note *10*: Only works if vimwiki-option `weblink_template == '[__LinkDescription__](__LinkUrl__)'`
+
+*Markup & Expected Results*
+
+| Link | Markup                                                  | Description                        | URL                                |
+|------|---------------------------------------------------------|------------------------------------|------------------------------------|
+| 1.   | `http://code.google.com/p/vimwiki`                      | `http://code.google.com/p/vimwiki` | `http://code.google.com/p/vimwiki` |
+| 2.   | `mailto:habamax@gmail.com`                              | `mailto:habamax@gmail.com`         | `mailto:habamax@gmail.com`         |
+| 3.   | `ftp://vim.org`                                         | `ftp://vim.org`                    | `ftp://vim.org`                    |
+| 4.   | `[http://habamax.ru/blog habamax home page]`            | `habamax home page`                | `http://habamax.ru/blog`           |
+| 5.   | `[mailto:habamax@gmail.com Drop a line to Maxim Kim]`   | `Drop a line to Maxim Kim`         | `mailto:habamax@gmail.com`         |
+| 6.   | `"habamax home page (optional)":http://habamax.ru/blog` | `habamax home page (optional)`     | `http://habamax.ru/blog`           |
+| 7.   | `[habamax home page](http://habamax.ru/blog)`           | `habamax home page`                | `http://habamax.ru/blog`           |
+
+
+
+=== b) More Examples ===
+
+ # http://github.com
+ # [http://github.com GitHub] (*9*)
+ # [http://github.com This is Github] (*9*)
+ # [http://github.com ] (*9*)
+ # [http://github.com] (*9*) <-- !? TODO: fix me (high priority) - remove requirement of trailing space
+ # [GitHub](http://github.com) (*10*)
+ # [This is Github](http://github.com) (*10*)
+ # [](http://github.com) (*10*) <-- !? TODO: fix me (high priority) - something is stripping away the [] before the call to s:process_tags_links() !?
+
+*Markup & Expected Results*
+
+| Link | Markup                                | Description         | URL                 |
+|------|---------------------------------------|---------------------|---------------------|
+| 1.   | `http://github.com`                   | `http://github.com` | `http://github.com` |
+| 2.   | `[http://github.com GitHub]`          | `GitHub`            | `http://github.com` |
+| 3.   | `[http://github.com This is Github]`  | `This is Github`    | `http://github.com` |
+| 4.   | `[http://github.com ]`                | `http://github.com` | `http://github.com` |
+| 5.   | `[http://github.com]`                 | `http://github.com` | `http://github.com` |
+| 6.   | `[GitHub](http://github.com)`         | `GitHub`            | `http://github.com` |
+| 7.   | `[This is Github](http://github.com)` | `This is Github`    | `http://github.com` |
+| 8.   | `[](http://github.com)`               | `http://github.com` | `http://github.com` |
+
+
+
+=== c) Weblinks To Local Files & Directories ===
+
+ # file:///Users/stu/Research/Tools/VimPlugins/vimwiki-custom/images/vimwiki_logo.png
+ # [file:///Users/stu/Research/Tools/VimPlugins/vimwiki-custom/images Users/stu/Research/Tools/VimPlugins/vimwiki-custom/images] (*9*)
+ # [vimwiki_logo](file:///Users/stu/Research/Tools/VimPlugins/vimwiki-custom/images/vimwiki_logo.png) (*10*)
+
+
+*Markup & Expected Results*
+
+| Link | Markup                                                        | Description                                   | URL                                           |
+|------|---------------------------------------------------------------|-----------------------------------------------|-----------------------------------------------|
+| 1.   | `file:///Users/stu/Research/Tools/VimPlugins/vimwiki-custom/images/vimwiki_logo.png`                 | `file:///Users/stu/Research/Tools/VimPlugins/vimwiki-custom/images/vimwiki_logo.png` | `file:///Users/stu/Research/Tools/VimPlugins/vimwiki-custom/images/vimwiki_logo.png` |
+| 2.   | `[file:///Users/stu/Research/Tools/VimPlugins/vimwiki-custom/images Users/stu/Research/Tools/VimPlugins/vimwiki-custom/images]`             | `Users/stu/Research/Tools/VimPlugins/vimwiki-custom/images`                          | `file:///Users/stu/Research/Tools/VimPlugins/vimwiki-custom/images/`                 |
+| 3.   | `[vimwiki logo](file:///Users/stu/Research/Tools/VimPlugins/vimwiki-custom/images/vimwiki_logo.png)` | `vimwiki logo`                                | `file:///Users/stu/Research/Tools/VimPlugins/vimwiki-custom/images/vimwiki_logo.png` |
+
+
+=== d) Weblinks To External Urls ===
+
+ # http://www.cs.princeton.edu/~blei
+ # [https://en.wikipedia.org/wiki/John_Smith_(mathematician) John Smith] (*9*)
+ # https://en.wikipedia.org/wiki/John_Smith_(mathematician)
+ # [http://en.wikipedia.org/wiki/Lightweight_markup_language Lightweight markup language] (*9*)
+ # [www.cs.princeton.edu ~blei](http://www.cs.princeton.edu/~blei) (*10*)
+ # [http://code.google.com/p/support/wiki/WikiSyntax](http://code.google.com/p/support/wiki/WikiSyntax) (*10*)
+ # [http://VimWiki.googlecode.com/](http://VimWiki.googlecode.com/) (*10*)
+ # [http://www.mediawiki.org/wiki/Markup_spec](http://www.mediawiki.org/wiki/Markup_spec) (*10*)
+ # [http://www.dokuwiki.org/plugin:s5:example](http://www.dokuwiki.org/plugin:s5:example) (*10*)
+ # [goodreader: vimwikiqrc.pdf](gropen://Documents//WebDownloads/vimwikiqrc.pdf) (*10*) (*11*)
+
+Note *11*: Only works if "gropen" is added to the list of web_schemes (currently hard-coded in `src/plugin/vimwiki.vim`)
+
+*Markup & Expected Results*
+
+| Link | Markup                                                                                                 | Description                                                | URL                                                        |
+|------|--------------------------------------------------------------------------------------------------------|------------------------------------------------------------|------------------------------------------------------------|
+| 1.   | `http://www.cs.princeton.edu/~blei`                                                                    | `http://www.cs.princeton.edu/~blei`                        | `http://www.cs.princeton.edu/~blei`                        |
+| 2.   | `[https://en.wikipedia.org/wiki/John_Smith_(mathematician) John Smith]`                                | `John Smith`                                               | `https://en.wikipedia.org/wiki/John_Smith_(mathematician)` |
+| 3.   | `https://en.wikipedia.org/wiki/John_Smith_(mathematician)`                                             | `https://en.wikipedia.org/wiki/John_Smith_(mathematician)` | `https://en.wikipedia.org/wiki/John_Smith_(mathematician)` |
+| 4.   | `[http://en.wikipedia.org/wiki/Lightweight_markup_language Lightweight markup language]`               | `Lightweight markup language`                              | `http://en.wikipedia.org/wiki/Lightweight_markup_language` |
+| 5.   | `[www.cs.princeton.edu ~blei](http://www.cs.princeton.edu/~blei)`                                      | `www.cs.princeton.edu ~blei`                               | `http://www.cs.princeton.edu/~blei`                        |
+| 6.   | `[http://code.google.com/p/support/wiki/WikiSyntax](http://code.google.com/p/support/wiki/WikiSyntax)` | `http://code.google.com/p/support/wiki/WikiSyntax`         | `http://code.google.com/p/support/wiki/WikiSyntax`         |
+| 7.   | `[http://VimWiki.googlecode.com/](http://VimWiki.googlecode.com/)`                                     | `http://VimWiki.googlecode.com/`                           | `http://VimWiki.googlecode.com/`                           |
+| 8.   | `[http://www.mediawiki.org/wiki/Markup_spec](http://www.mediawiki.org/wiki/Markup_spec)`               | `http://www.mediawiki.org/wiki/Markup_spec`                | `http://www.mediawiki.org/wiki/Markup_spec`                |
+| 9.   | `[http://www.dokuwiki.org/plugin:s5:example](http://www.dokuwiki.org/plugin:s5:example)`               | `http://www.dokuwiki.org/plugin:s5:example`                | `http://www.dokuwiki.org/plugin:s5:example`                |
+| 10.  | `[gropen: vimwikiqrc.pdf](gropen://Documents//WebDownloads/vimwikiqrc.pdf)`                            | `goodreader: vimwikiqrc.pdf`                               | `gropen://Documents//WebDownloads/vimwikiqrc.pdf`          |
+
+
+
+== Templated Images Links ==
+
+=== Examples ===
+
+ # Link to an image
+   * Markup (a): `{http://vimwiki.googlecode.com/hg/images/vimwiki_logo.png||}`
+     * Example: {http://vimwiki.googlecode.com/hg/images/vimwiki_logo.png||} (*10*)
+   * Markup (b): `![](http://vimwiki.googlecode.com/hg/images/vimwiki_logo.png)`
+     * Example: ![](http://vimwiki.googlecode.com/hg/images/vimwiki_logo.png) (*11*)
+   * Expected Alternate: n/a
+   * Expected Style: n/a
+   * Expected Target: `<img src="http://vimwiki.googlecode.com/hg/images/vimwiki_logo.png" />`
+ # Link to an image with alternate text
+   * Markup (a): `{http://vimwiki.googlecode.com/hg/images/vimwiki_logo.png|Vimwiki|}`
+     * Example: {http://vimwiki.googlecode.com/hg/images/vimwiki_logo.png|Vimwiki|} (*10*)
+   * Markup (b): `[Vimwiki](http://vimwiki.googlecode.com/hg/images/vimwiki_logo.png)`
+     * Example: ![Vimwiki](http://vimwiki.googlecode.com/hg/images/vimwiki_logo.png) (*11*)
+   * Expected Alternate: `Vimwiki`
+   * Expected Style: n/a
+   * Expected Target: `<img src="http://vimwiki.googlecode.com/hg/images/vimwiki_logo.png" alt="Vimwiki"/>`
+ # Link to an image with alternate text and some style
+   * Markup (a): `{http://vimwiki.googlecode.com/hg/images/vimwiki_logo.png|cool stuff|width:150px; height: 120px;}`
+     * Example: {http://vimwiki.googlecode.com/hg/images/vimwiki_logo.png|cool stuff|width:150px; height: 120px;} (*10*)
+   * Markup (b): `![cool stuff](http://vimwiki.googlecode.com/hg/images/vimwiki_logo.png width:150px; height: 120px;)`
+     * Example: ![cool stuff](http://vimwiki.googlecode.com/hg/images/vimwiki_logo.png width:150px; height: 120px;) (*11*)
+   * Expected Alternate: `cool stuff`
+   * Expected Style: `width:150px; height:120px`
+   * Expected Target: `<img src="http://vimwiki.googlecode.com/hg/images/vimwiki_logo.png" alt="cool stuff" style="width:150px; height:120px"/>`
+ # Link to an image without alternate text and some style
+   * Markup (a): `{http://vimwiki.googlecode.com/hg/images/vimwiki_logo.png||width:150px; height: 120px;}`
+     * Example: {http://vimwiki.googlecode.com/hg/images/vimwiki_logo.png||width:150px; height: 120px;} (*10*)
+   * Markup (b): `![](http://vimwiki.googlecode.com/hg/images/vimwiki_logo.png width:150px; height: 120px;)`
+     * Example: ![](http://vimwiki.googlecode.com/hg/images/vimwiki_logo.png width:150px; height: 120px;) (*11*)
+   * Expected Alternate: n/a
+   * Expected Style: `width:150px; height:120px`
+   * Expected Target: `<img src="http://vimwiki.googlecode.com/hg/images/vimwiki_logo.png" style="width:150px; height:120px"/>`
+
+Note *10*: Only works if vimwiki-option `image_template == '{__LinkUrl__|__LinkDescription__|__LinkStyle__}'`
+
+Note *11*: Only works if vimwiki-option `image_template == '![__LinkDescription__](__LinkUrl__ __LinkStyle__)'`
+
+
+== Example Images ==
+
+ # Local Image 
+   {{local:../images/vimwiki_logo.png}}
+ # Vimwiki Thumbnail
+   {{http://vimwiki.googlecode.com/hg/images/vimwiki_logo.png}{Vimwiki thumbnail}}
+ # Vimwiki Screenshot
+   {{http://vimwiki.googlecode.com/hg/screenshots/vimwiki1.png}{Vimwiki screenshot}}
+ # Vimwiki Screenshot Thumbnail
+   {{http://vimwiki.googlecode.com/hg/screenshots/tn_vimwiki1.png}{Vimiki screenshot thumbnail}}
+ # 281px-Puffer_Fish
+   {{http://upload.wikimedia.org/wikipedia/commons/thumb/7/77/Puffer_Fish_DSC01257.JPG/281px-Puffer_Fish_DSC01257.jpg}{281px-Puffer_Fish}}
+
+
+
 = Headers =
 == Heading 1 == 
 === Heading 1.1 === 
-=== Heading 1.2 === 
 == Heading 2 == 
 === Heading 2.1 === 
 === Heading 2.2 === 
-== Heading 3 == 
 
 = Lists =
 == List 1 ==
@@ -19,19 +478,11 @@ Generates: `misc/html/vimwiki-markup-examples.html`
  * list items
  * list items
 
-== List 2 ==
-
- # list items
- # list items
-
 == List 3 ==
 
 - [o] item 1
   - [ ] item 2
-  - [X] item 3
   - [X] item 4
-  - [ ] item 5
-  - [ ] item 6
 - [ ] item 7
 
 
@@ -49,550 +500,5 @@ Generates: `misc/html/vimwiki-markup-examples.html`
   |---|---|---|---|
   | i | 8 | 8 | b |
   | j | 8 | 8 | j |
-
-== Table 3 ==
-
-| a |   |   |   |
-|---|---|---|---|
-| b |   |   | d |
-
-
-
-= Links =
-
-There are a variety of links recognized by Vimwiki. 
-
- * Wikilinks
-   # `WikiWord`
-   # `[[URL]]`
-   # `[[URL][DESCR]]`
-   # `[[URL|DESCR]]`
- * Weblinks
-   # `URL`
-   # `[URL DESCR]`
-   # `"DESCR":URL`
-   # `[DESCR](URL)`
- * Image Links
-   # `IMGURL`
-   # `[[IMGURL]]`
-   # `[[IMGURL][DESCR]]`
-   # `[[IMGURL][DESCR][STYLE]]`
-   # `[[IMGURL|DESCR]]`
-   # `[[IMGURL|DESCR|STYLE]]`
- * Thumbnail Links
-   # `[IMGURL](URL)`
-   # `[URL IMGURL]`
-   # `"IMGURL":URL`
-   # `[[URL][IMGURL]]`
-   # `[[URL|IMGURL]]`
-
-
- * Wikilink syntaxes accept paths to local resources (files and directories that are not wiki pages).  Paths are interpreted relative to `vimwiki-option-path_html`.
- * Vimwiki does not support wikilinks containing complete URLs i.e. starting with `http://` or `file:///`.  Use weblinks for these.
- * URLs for weblinks must contain one of the acceptable URI prefixes.
- * URLs for image links may be paths to local resources, as with wikilinks, or URLs complete with an acceptable URI prefix
- * Note that image links are similar to wikilinks.  Internally, Vimwiki distinguishes image links by the presence of a suitable image format extension.
-
-
-== Wikilinks ==
-=== Wikilinks Overview ===
-==== Examples of Wikiwords - Connected Capitalized Words ====
-
- # MissingPage 
-   * vim syntax if missing: dotted-red underline
- # FoundPage
-   * vim syntax if found: blue highlight, blue underline
-
- * Only works if `g:vimwiki_camel_case == 1`
-
-==== Markup & Expected Results ====
-
-| Link | Markup        | Description   | URL                     |
-|------|---------------|---------------|-------------------------|
-| 1.   | `MissingPage` | `MissingPage` | `HTML/MissingPage.html` |
-| 2.   | `FoundPage`   | `FoundPage`   | `HTML/FoundPage.html`   |
-
-==== Examples of Escaped Wikiword - Connected Capitalized Words ====
-
- # !MissingPage
-   * vim syntax if missing: none
- # !FoundPage
-   * vim syntax if found: none
-
-==== Markup & Expected Results ====
-
-| Link | Markup         | Description   | URL |
-|------|----------------|---------------|-----|
-| 1.   | `!MissingPage` | `MissingPage` | n/a |
-| 2.   | `!FoundPage`   | `FoundPage`   | n/a |
-
-==== Examples of Wikilinks ====
-
- # [[MissingPage]]
-   * vim syntax if missing: concealed delimiters, dotted-red underline
- # [[FoundPage]]
-   * vim syntax if found: concealed delimiters, blue highlight, blue underline
-
-==== Markup & Expected Results ====
-
-| Link | Markup            | Description   | URL                     |
-|------|-------------------|---------------|-------------------------|
-| 1.   | `[[MissingPage]]` | `MissingPage` | `HTML/MissingPage.html` |
-| 2.   | `[[FoundPage]]`   | `FoundPage`   | `HTML/FoundPage.html`   |
-
-==== Examples of Wikilinks With Description Separated by Pipe-`|` ====
-
- # [[MissingPage|This page is missing]]
-   * vim syntax if missing: !? none !? <-- !? fix me (medium priority) !!
- # [[FoundPage|This page was found]]
-   * vim syntax if found: concealed link and delimiters, blue highlight, blue underline
-
-==== Markup & Expected Results ====
-
-| Link | Markup  (#==pipe)                      | Description  (#==pipe) | URL                     |
-|------|----------------------------------------|------------------------|-------------------------|
-| 1.   | `[[MissingPage#This page is missing]]` | `This page is missing` | `HTML/MissingPage.html` |
-| 2.   | `[[FoundPage#This page was found]]`    | `This page was found`  | `HTML/FoundPage.html`   |
-
-==== Examples of Wikilink With Description Separated by `][` ====
-
- # [[MissingPage][This page is missing]]
-   * vim syntax if missing: concealed link and delimiters, dotted-red underline
- # [[FoundPage][This page was found]]
-   * vim syntax if found: concealed link and delimiters, blue highlight, blue underline
-
-==== Markup & Expected Results ====
-
-| Link | Markup                                  | Description            | URL                     |
-|------|-----------------------------------------|------------------------|-------------------------|
-| 1.   | `[[MissingPage][This page is missing]]` | `This page is missing` | `HTML/MissingPage.html` |
-| 2.   | `[[FoundPage][This page was found]]`    | `This page was found`  | `HTML/FoundPage.html`   |
-
-==== More Wikilink Examples ====
-
- # PageTwo
- # [[PageTwo]]
- # [[Page2]]
- # [[Page2][This is page 2]]
- # !PageTwo
-
-==== Markup & Expected Results ====
-
-| Link | Markup                           | Description                     | URL                 |
-|------|----------------------------------|---------------------------------|---------------------|
-| 1.   | `PageTwo`                        | `PageTwo`                       | `HTML/PageTwo.html` |
-| 2.   | `[[PageTwo]]`                    | `PageTwo`                       | `HTML/PageTwo.html` |
-| 3.   | `[[Page2]]`                      | `Page2`                         | `HTML/Page2.html`   |
-| 4.   | `[[Page2][This is page 2]]`      | `This is page 2`                | `HTML/Page2.html`   |
-| 5.   | `!PageTwo`                       | `PageTwo`                       | n/a                 |
-
-
-==== Wikilinks Examples Containing Pipes `|` ====
-
- # [[Page2|This is page 2]]
- # [[Page2|This is page 2|Still page 2]]
- # [[Page2][|This| is page 2]]
-
-==== Markup & Expected Results ====
-
-| Link | Markup (#==pipe)                        | Description (#==pipe)         | URL               |
-|------|-----------------------------------------|-------------------------------|-------------------|
-| 1.   | `[[Page2#This is page 2]]`              | `This is page 2`              | `HTML/Page2.html` |
-| 2.   | `[[Page2#This is page 2#Still page 2]]` | `This is page 2#Still page 2` | `HTML/Page2.html` |
-| 3.   | `[[Page2][#This# is page 2]]`           | `#This# is page 2`            | `HTML/Page2.html` |
-
-
-==== Wikilinks To Local Files & Directories Examples ====
-
- * Paths are specified relative `vimwiki-option-path_html`
-
- # Extensions from `g:vimwiki_file_exts` are ok
-   * [[../../misc/vimwikiqrc.pdf]] 
- # ... otherwise, an html extension is added
-   * [[../../misc/vimwikiqrc.xet]] 
- # Vimwiki adds an html extension to directory names
-   * [[../../Downloads][Downloads]] 
- # ... unless a slash is appended
-   * [[../../Downloads/][Downloads]] 
- # A trailing slash can also be converted to `/homepage.html` by setting `g:vimwiki_dir_link = 'homepage'`
-   * [[../../Downloads/][Downloads]] 
-
-==== Markup & Expected Results ====
-
-| Link | Markup                          | Description                 | URL                                   |
-|------|---------------------------------|-----------------------------|---------------------------------------|
-| 1.   | `[[../../misc/vimwikiqrc.pdf]]` | `../../misc/vimwikiqrc.pdf` | `HTML/../../misc/vimwikiqrc.pdf`      |
-| 2.   | `[[../../misc/vimwikiqrc.xet]]` | `../../misc/vimwikiqrc.xet` | `HTML/../../misc/vimwikiqrc.xet.html` |
-| 3.   | `[[../../Downloads]]`           | `Downloads`                 | `HTML/../../Downloads.html`           |
-| 4.   | `[[../../Downloads/]]`          | `Downloads`                 | `HTML/../../Downloads/`               |
-| 5.   | `[[../../Downloads/]]`          | `Downloads`                 | `HTML/../../Downloads/homepage.html`  |
-
-
-==== Questionable Wikilinks Examples ====
-
- # ![[Page2][This is not page 2]]   <--- Escaping of wikilinks and weblinks <-- !? TODO: (medium priority) !!
- # [[file:///Users/stu]]   <--- !! Complete urls inside [[-wikilinks <-- XXX: deprecated ??
- # [[http://github.com][github]]   <--- !! Complete urls inside [[-wikilinks <-- XXX: deprecated ??
-
-==== Markup & Expected Results ====
-
-| Link | Markup                           | Description                     | URL                              |
-|------|----------------------------------|---------------------------------|----------------------------------|
-| 1.   | `![[Page2][This is not page 2]]` | `[[Page2][This is not page 2]]` | n/a                              |
-| 2.   | `[[file:///Users/stu]]`          | `file:///Users/stu`             | `HTML/file_///Users/stu.html` !! |
-| 3.   | `[[http://github.com][github]]`  | `github`                        | `HTML/http_//github.com.html` !! |
-
-
-== Weblinks ==
-=== Weblinks Overview ===
-==== Examples ====
- 
- # http://code.google.com/p/vimwiki
- # mailto:habamax@gmail.com
- # ftp://vim.org
- # [http://habamax.ru/blog habamax home page]
- # [mailto:habamax@gmail.com Drop a line to Maxim Kim]
- # "habamax home page (optional)":http://habamax.ru/blog
- # [habamax home page](http://habamax.ru/blog)
-
-==== Markup & Expected Results ====
-
-| Link | Markup                                                  | Description                        | URL                                |
-|------|---------------------------------------------------------|------------------------------------|------------------------------------|
-| 1.   | `http://code.google.com/p/vimwiki`                      | `http://code.google.com/p/vimwiki` | `http://code.google.com/p/vimwiki` |
-| 2.   | `mailto:habamax@gmail.com`                              | `mailto:habamax@gmail.com`         | `mailto:habamax@gmail.com`         |
-| 3.   | `ftp://vim.org`                                         | `ftp://vim.org`                    | `ftp://vim.org`                    |
-| 4.   | `[http://habamax.ru/blog habamax home page]`            | `habamax home page`                | `http://habamax.ru/blog`           |
-| 5.   | `[mailto:habamax@gmail.com Drop a line to Maxim Kim]`   | `Drop a line to Maxim Kim`         | `mailto:habamax@gmail.com`         |
-| 6.   | `"habamax home page (optional)":http://habamax.ru/blog` | `habamax home page (optional)`     | `http://habamax.ru/blog`           |
-| 7.   | `[habamax home page](http://habamax.ru/blog)`           | `habamax home page`                | `http://habamax.ru/blog`           |
-
-
-
-==== More Weblink Examples ====
-
- # http://github.com
- # [http://github.com GitHub]
- # [GitHub](http://github.com)
- # "GitHub":http://github.com
- # [This is Github](http://github.com)
- # [http://github.com This is Github]
- # "This is Github":http://github.com
- # [](http://github.com) <-- !? TODO: fix me (high priority) - something is stripping away the [] before the call to s:process_tags_links() !?
- # [http://github.com]
- # "":http://github.com
-
-==== Markup & Expected Results ====
-
-| Link | Markup                                | Description         | URL                 |
-|------|---------------------------------------|---------------------|---------------------|
-| 1.   | `http://github.com`                   | `http://github.com` | `http://github.com` |
-| 2.   | `[http://github.com GitHub]`          | `GitHub`            | `http://github.com` |
-| 3.   | `[GitHub](http://github.com)`         | `GitHub`            | `http://github.com` |
-| 4.   | `"GitHub":http://github.com`          | `GitHub`            | `http://github.com` |
-| 5.   | `[This is Github](http://github.com)` | `This is Github`    | `http://github.com` |
-| 6.   | `[http://github.com This is Github]`  | `This is Github`    | `http://github.com` |
-| 7.   | `"This is Github":http://github.com`  | `This is Github`    | `http://github.com` |
-| 8.   | `[](http://github.com)`               | `http://github.com` | `http://github.com` |
-| 9.   | `[http://github.com]`                 | `http://github.com` | `http://github.com` |
-| 10.  | `"":http://github.com`                | `http://github.com` | `http://github.com` |
-
-
-
-==== Weblinks To Local Files & Directories Examples ====
-
- # file:///VIMWIKIHOME/images/vimwiki_logo.png
- # "VIMWIKIHOME/images":file:///VIMWIKIHOME/images
- # [vimwiki_logo](file:///VIMWIKIHOME/images/vimwiki_logo.png)
-
-
-==== Markup & Expected Results ====
-
-| Link | Markup                                                        | Description                     | URL                                           |
-|------|---------------------------------------------------------------|---------------------------------|-----------------------------------------------|
-| 1.   | `file:///VIMWIKIHOME/images/vimwiki_logo.png`                 | _the image, hyperlinked to src_ | `file:///VIMWIKIHOME/images/vimwiki_logo.png` |
-| 2.   | `"VIMWIKIHOME/images":file:///VIMWIKIHOME/images/`            | `VIMWIKIHOME/images`            | `file:///VIMWIKIHOME/images/`                 |
-| 3.   | `[vimwiki logo](file:///VIMWIKIHOME/images/vimwiki_logo.png)` | `vimwiki logo`                  | `file:///VIMWIKIHOME/images/vimwiki_logo.png` |
-
-
-==== Weblinks To External Urls Examples ====
-
- # [www.cs.princeton.edu ~blei](http://www.cs.princeton.edu/~blei)
- # http://www.cs.princeton.edu/~blei
- # [https://en.wikipedia.org/wiki/John_Smith_(mathematician) John Smith]
- # https://en.wikipedia.org/wiki/John_Smith_(mathematician)
- # [goodreader: vimwikiqrc.pdf](gropen://Documents//WebDownloads/vimwikiqrc.pdf) <-- !? TODO: configurable URI schemes (low priority) !!
- # [http://code.google.com/p/support/wiki/WikiSyntax](http://code.google.com/p/support/wiki/WikiSyntax)
- # [http://VimWiki.googlecode.com/](http://VimWiki.googlecode.com/)
- # [http://www.mediawiki.org/wiki/Markup_spec](http://www.mediawiki.org/wiki/Markup_spec)
- # [http://en.wikipedia.org/wiki/Lightweight_markup_language Lightweight markup language]
- # [http://www.dokuwiki.org/plugin:s5:example](http://www.dokuwiki.org/plugin:s5:example)
-
-
-==== Markup & Expected Results ====
-
-| Link | Markup                                                                                                 | Description                                                | URL                                                        |
-|------|--------------------------------------------------------------------------------------------------------|------------------------------------------------------------|------------------------------------------------------------|
-| 1.   | `[www.cs.princeton.edu ~blei](http://www.cs.princeton.edu/~blei)`                                      | `www.cs.princeton.edu ~blei`                               | `http://www.cs.princeton.edu/~blei`                        |
-| 2.   | `http://www.cs.princeton.edu/~blei`                                                                    | `http://www.cs.princeton.edu/~blei`                        | `http://www.cs.princeton.edu/~blei`                        |
-| 3.   | `[https://en.wikipedia.org/wiki/John_Smith_(mathematician) John Smith]`                                | `John Smith`                                               | `https://en.wikipedia.org/wiki/John_Smith_(mathematician)` |
-| 4.   | `https://en.wikipedia.org/wiki/John_Smith_(mathematician)`                                             | `https://en.wikipedia.org/wiki/John_Smith_(mathematician)` | `https://en.wikipedia.org/wiki/John_Smith_(mathematician)` |
-| 7.   | `[gropen: vimwikiqrc.pdf](gropen://Documents//WebDownloads/vimwikiqrc.pdf)`                            | `goodreader: vimwikiqrc.pdf`                               | `gropen://Documents//WebDownloads/vimwikiqrc.pdf`          |
-| 8.   | `[http://code.google.com/p/support/wiki/WikiSyntax](http://code.google.com/p/support/wiki/WikiSyntax)` | `http://code.google.com/p/support/wiki/WikiSyntax`         | `http://code.google.com/p/support/wiki/WikiSyntax`         |
-| 9.   | `[http://VimWiki.googlecode.com/](http://VimWiki.googlecode.com/)`                                     | `http://VimWiki.googlecode.com/`                           | `http://VimWiki.googlecode.com/`                           |
-| 10.  | `[http://www.mediawiki.org/wiki/Markup_spec](http://www.mediawiki.org/wiki/Markup_spec)`               | `http://www.mediawiki.org/wiki/Markup_spec`                | `http://www.mediawiki.org/wiki/Markup_spec`                |
-| 11.  | `[http://en.wikipedia.org/wiki/Lightweight_markup_language Lightweight markup language]`               | `Lightweight markup language`                              | `http://en.wikipedia.org/wiki/Lightweight_markup_language` |
-| 12.  | `[http://www.dokuwiki.org/plugin:s5:example](http://www.dokuwiki.org/plugin:s5:example)`               | `http://www.dokuwiki.org/plugin:s5:example`                | `http://www.dokuwiki.org/plugin:s5:example`                |
-
-
-
-==== Questionable Weblinks ====
-
- # Malformed Url's
-   * !! Check for malformed Url's? <-- !? TODO: fix me (low priority)
-     * Markup: `http://http://github.com`
-     * Expected Description: n/a, or `http://http://github.com`
-     * Expected Target: n/a, or `http://http://github.com`
-     * Example: http://http://github.com
- # A image url with a jpg, jpeg, png or gif extension.
-   * !! This is converted to an image that is hyperlinked to its source url
-   * !! This is different from v1.2 in which an image was generated without the hyperlink
-     * Markup: `http://vimwiki.googlecode.com/hg/screenshots/vimwiki1.png`
-     * Expected Description: `http://vimwiki.googlecode.com/hg/screenshots/vimwiki1.png`
-     * Expected Target: `<a href="http://vimwiki.googlecode.com/hg/screenshots/vimwiki1.png"><img src="http://vimwiki.googlecode.com/hg/screenshots/vimwiki1.png" /></a>`
-     * Example: http://vimwiki.googlecode.com/hg/screenshots/vimwiki1.png
- # Single bracketed link to a local non-wiki file
-   * !! This syntax has been DEPRECATED, in favor of double [[-bracketed wikilinks, for local resources
-   * !! No conversion is performed
-   * !! This is different from v1.2, in which the a hyperlink to the image was generated
-     * Markup: `[../../misc/vimwikiqrc.pdf]`
-     * Expected Description: n/a
-     * Expected Target: n/a
-     * Expected Output: `[../../misc/vimwikiqrc.pdf]`
-     * Example: [../../misc/vimwikiqrc.pdf]
- # Single bracketed link to a local image
-   * !! This syntax has been DEPRECATED, in favor of double [[-bracketed wikilinks, for local resources
-   * !! No conversion is performed
-   * !! This is different from v1.2, in which the an image was generated
-     * Markup: `[../../images/vimwiki_logo.png]`
-     * Expected Description: n/a
-     * Expected Target: n/a
-     * Expected Output: `[../../images/vimwiki_logo.png]`
-     * Example: [../../images/vimwiki_logo.png]
- # Single bracketed link to a complete image url
-   * !! This converts to an image, which is also hyperlinked to the image source.
-   * !! This is different from v1.2, in which the image appeared and was not a hyperlink.
-     * Markup: `[http://vimwiki.googlecode.com/hg/screenshots/vimwiki1.png]`
-     * Expected Description: `http://vimwiki.googlecode.com/hg/screenshots/vimwiki1.png`
-     * Expected Target: `<a href="http://vimwiki.googlecode.com/hg/screenshots/vimwiki1.png>http://vimwiki.googlecode.com/hg/screenshots/vimwiki1.png</a>` !?
-     * Example: [http://vimwiki.googlecode.com/hg/screenshots/vimwiki1.png]
-
-
-= Images =
-== Images Links ==
-=== Raw-Text Image Links ===
-
- # An image link is a link to a file with a jpg, jpeg, png or gif extension.  Uppercase extensions are also recognized.
-   * !! This converts to an image, which is also hyperlinked to the image source.
-   * !! This is different from v1.2, in which the image appeared and was not a hyperlink.
-     * Markup: `http://vimwiki.googlecode.com/hg/screenshots/vimwiki1.png`
-     * Expected Description: _the image_
-     * Expected Alternate: n/a
-     * Expected Style: n/a
-     * Expected Target: `<a href="http://vimwiki.googlecode.com/hg/screenshots/vimwiki1.png"><img src="http://vimwiki.googlecode.com/hg/screenshots/vimwiki1.png" /></a>`
-     * Example: http://vimwiki.googlecode.com/hg/screenshots/vimwiki1.png
-
-=== [[- Image Links ===
-
- # Double bracketed link to a local image; path to image is relative to `vimwiki-option-path_html`
-   * Markup: `[[../../images/vimwiki_logo.png]]`
-   * Expected Alternate: n/a
-   * Expected Style: n/a
-   * Expected Target: `<img src="../../images/vimwiki_logo.png" />`
-   * Example: [[../../images/vimwiki_logo.png]]
- # Double bracketed link to an image
-   * Markup: `[[http://vimwiki.googlecode.com/hg/images/vimwiki_logo.png]]`
-   * Expected Alternate: n/a
-   * Expected Style: n/a
-   * Expected Target: `<img src="http://vimwiki.googlecode.com/hg/images/vimwiki_logo.png" />`
-   * Example: [[http://vimwiki.googlecode.com/hg/images/vimwiki_logo.png]]
- # Double bracketed link to an image with alternate text
-   * Markup (a): `[[http://vimwiki.googlecode.com/hg/images/vimwiki_logo.png|Vimwiki]]`
-     * Example: [[http://vimwiki.googlecode.com/hg/images/vimwiki_logo.png|Vimwiki]]
-   * Markup (b): `[[http://vimwiki.googlecode.com/hg/images/vimwiki_logo.png][Vimwiki]]`
-     * Example: [[http://vimwiki.googlecode.com/hg/images/vimwiki_logo.png|Vimwiki]]
-   * Expected Alternate: `Vimwiki`
-   * Expected Style: n/a
-   * Expected Target: `<img src="http://vimwiki.googlecode.com/hg/images/vimwiki_logo.png" alt="Vimwiki"/>`
- # Double bracketed link to an image with alternate text and some style
-   * Markup (a): `[[http://vimwiki.googlecode.com/hg/images/vimwiki_logo.png|cool stuff|width:150px; height: 120px;]]`
-     * Example: [[http://vimwiki.googlecode.com/hg/images/vimwiki_logo.png|cool stuff|width:150px; height: 120px;]]
-   * Markup (b): `[[http://vimwiki.googlecode.com/hg/images/vimwiki_logo.png][cool stuff][width:150px; height: 120px;]]`
-     * Example: [[http://vimwiki.googlecode.com/hg/images/vimwiki_logo.png][cool stuff][width:150px; height: 120px;]]
-   * Expected Alternate: `cool stuff`
-   * Expected Style: `width:150px; height:120px`
-   * Expected Target: `<img src="http://vimwiki.googlecode.com/hg/images/vimwiki_logo.png" alt="cool stuff" style="width:150px; height:120px"/>`
- # Double bracketed link to an image without alternate text and some style
-   * Markup (a): `[[http://vimwiki.googlecode.com/hg/images/vimwiki_logo.png||width:150px; height: 120px;]]`
-     * Example: [[http://vimwiki.googlecode.com/hg/images/vimwiki_logo.png||width:150px; height: 120px;]]
-   * Markup (b): `[[http://vimwiki.googlecode.com/hg/images/vimwiki_logo.png][][width:150px; height: 120px;]]`
-     * Example: [[http://vimwiki.googlecode.com/hg/images/vimwiki_logo.png][][width:150px; height: 120px;]]
-   * Expected Alternate: n/a
-   * Expected Style: `width:150px; height:120px`
-   * Expected Target: `<img src="http://vimwiki.googlecode.com/hg/images/vimwiki_logo.png" style="width:150px; height:120px"/>`
-
-
-=== Questionable Image Links ===
-
- # Single bracketed link to a local image
-   * !! This syntax has been DEPRECATED, in favor of double [[-bracketed wikilinks, for local resources
-   * !! No conversion is performed
-   * !! This is different from v1.2, in which the an image was generated
-     * Markup: `[../../images/vimwiki_logo.png]`
-     * Expected Description: n/a !?
-     * Expected Alternate: n/a !?
-     * Expected Style: n/a !?
-     * Expected Target: `[../../images/vimwiki_logo.png]` !?
-     * Example: [../../images/vimwiki_logo.png]
- # Single bracketed link to a complete image url
-   * !! This converts to an image, which is also hyperlinked to the image source.
-   * !! This is different from v1.2, in which the image appeared and was not a hyperlink.
-     * Markup: `[http://vimwiki.googlecode.com/hg/images/vimwiki_logo.png]`
-     * Expected Description: `http://vimwiki.googlecode.com/hg/images/vimwiki_logo.png` !?
-     * Expected Alternate: n/a !?
-     * Expected Style: n/a !?
-     * Expected Target: `<a href="http://vimwiki.googlecode.com/hg/images/vimwiki_logo.png>http://vimwiki.googlecode.com/hg/screenshots/vimwiki1.png</a>` !?
-     * Example: [http://vimwiki.googlecode.com/hg/images/vimwiki_logo.png]
- # Single bracketed link to an image with alternate text
-   * !! Vimwiki v1.2 *may* have converted this to an image !? <-- TODO: confirm
-   * !! v1.2 behaviour is DEPRECATED to maintain consistency with the `[url|descr]` wikilink syntax
-   * !! Vimwiki generates a link to the image with a description given by the caption
-     * Markup: `[http://vimwiki.googlecode.com/hg/images/vimwiki_logo.png|Vimwiki|]`
-     * Expected Description: `|Vimwiki|` !?
-     * Expected Alternate: n/a !?
-     * Expected Style: n/a !?
-     * Expected Target: `<a href="http://vimwiki.googlecode.com/hg/images/vimwiki_logo.png>|Vimwiki|</a>`
-     * Example: [http://vimwiki.googlecode.com/hg/images/vimwiki_logo.png|Vimwiki|]
- # Single bracketed link to an image with alternate text and some style
-   * !! Vimwiki v1.2 *may* have converted this to an image !? <-- TODO: confirm
-   * !! v1.2 behaviour is DEPRECATED to maintain consistency with the `[url|descr]` wikilink syntax
-   * !! Vimwiki generates a link to the image with a Description given by the caption and style strings
-     * Markup: `[http://vimwiki.googlecode.com/hg/images/vimwiki_logo.png|cool stuff|width:150px; height: 120px;]`
-     * Expected Description: `|cool stuff|width:150px; height: 120px;` !?
-     * Expected Alternate: n/a !?
-     * Expected Style: n/a !?
-     * Expected Target: `<a href="http://vimwiki.googlecode.com/hg/images/vimwiki_logo.png>|cool stuff|width:150px; height: 120px;</a>` <-- !? TODO: fix expected target (high priority) !?
-     * Example: [http://vimwiki.googlecode.com/hg/images/vimwiki_logo.png|cool stuff|width:150px; height: 120px;]
- # Single bracketed link to an image without alternate text and some style
-   * !! Vimwiki v1.2 *may* have converted this to an image !? <-- TODO: confirm
-   * !! v1.2 behaviour is DEPRECATED to maintain consistency with the `[url|descr]` wikilink syntax 
-   * !! Vimwiki generates a link to the image with a Description given by the style string
-     * Markup: `[http://vimwiki.googlecode.com/hg/images/vimwiki_logo.png||width:150px; height: 120px;]`
-     * Expected Description: `||width:150px; height: 120px;` !?
-     * Expected Alternate: n/a !?
-     * Expected Style: n/a !?
-     * Expected Target: `<a href="http://vimwiki.googlecode.com/hg/images/vimwiki_logo.png>||width:150px;">height: 120px;</a>` !!
-     * Example: [http://vimwiki.googlecode.com/hg/images/vimwiki_logo.png||width:150px; height: 120px;]
- # Double bracketed link to an image with description text 
-   * !! The current implementation generates an _IMAGE_, not a _HYPERLINK_ as was the case in v1.2
-   * !! v1.2 behaviour is DEPRECATED.  Use any of the weblink formats to hyperlink to an image `[Url Descr]`, `[Descr](Url)`, `"Descr":Url`
-     * Markup: `[[http://vimwiki.googlecode.com/hg/images/vimwiki_logo.png|Vimwiki]]`
-     * Expected Description: `Vimwiki`
-     * Expected Alternate: n/a
-     * Expected Style: n/a
-     * Expected Target: `<img src="http://vimwiki.googlecode.com/hg/images/vimwiki_logo.png" />`
-     * Example: [[http://vimwiki.googlecode.com/hg/images/vimwiki_logo.png|Vimwiki]]
-
-
-== Thumbnails Links ==
-=== Weblink Thumbnails ===
-
- # Weblinks with links to images as their descriptions
-   * Markup (a): `[http://vimwiki.googlecode.com/hg/screenshots/tn_vimwiki1.png](http://code.google.com/p/vimwiki/)`
-     * Example: [http://vimwiki.googlecode.com/hg/screenshots/tn_vimwiki1.png](http://code.google.com/p/vimwiki/)
-   * Markup (b): `[http://code.google.com/p/vimwiki/ http://vimwiki.googlecode.com/hg/screenshots/tn_vimwiki1.png]`
-     * Example: [http://code.google.com/p/vimwiki/ http://vimwiki.googlecode.com/hg/screenshots/tn_vimwiki1.png]
-   * Markup (c): `"http://vimwiki.googlecode.com/hg/screenshots/tn_vimwiki1.png":http://code.google.com/p/vimwiki/`
-     * Example: "http://vimwiki.googlecode.com/hg/screenshots/tn_vimwiki1.png":http://code.google.com/p/vimwiki/
-   * Expected Description: _the image_
-   * Expected Alternate: n/a
-   * Expected Style: n/a
-   * Expected Target: `<a href="http://code.google.com/p/vimwiki/"><img src="http://vimwiki.googlecode.com/hg/screenshots/tn_vimwiki1.png" /></a>`
-
-
-=== Wikilinks Thumbnails ===
-
- # Wikilinks with links to images as their descriptions
-   * Markup (a): `[[FoundPage][http://vimwiki.googlecode.com/hg/screenshots/tn_vimwiki1.png]]`
-     * Example: [[FoundPage][http://vimwiki.googlecode.com/hg/screenshots/tn_vimwiki1.png]]
-   * Markup (b): `[[FoundPage|http://vimwiki.googlecode.com/hg/screenshots/tn_vimwiki1.png]]`
-     * Example: [[FoundPage|http://vimwiki.googlecode.com/hg/screenshots/tn_vimwiki1.png]]
-   * Expected Description: _the image_
-   * Expected Alternate: n/a
-   * Expected Style: n/a
-   * Expected Target: `<a href="FoundPage.html"><img src="http://vimwiki.googlecode.com/hg/screenshots/tn_vimwiki1.png" /></a>`
-
-
-=== Questionable Thumbnails ===
-
- # Wikilinks with links to images as their descriptions, where images have alternate text
-   * !! Allow alternate text to be defined for thumbnail links <-- !? TODO: fix me (low priority) !!
-     * Markup (a): `[[FoundPage][http://vimwiki.googlecode.com/hg/screenshots/tn_vimwiki1.png][This page was found]]`
-       * Example: [[FoundPage][http://vimwiki.googlecode.com/hg/screenshots/tn_vimwiki1.png][This page was found]] <-- !? TODO: fix me (low priority) !!
-     * Markup (b): `[[FoundPage|http://vimwiki.googlecode.com/hg/screenshots/tn_vimwiki1.png|This page was found]]`
-       * Example: [[FoundPage|http://vimwiki.googlecode.com/hg/screenshots/tn_vimwiki1.png|This page was found]] <-- !? TODO: fix me (low priority) !!
-     * Expected Description: _the image_
-     * Expected Alternate: This page was found
-     * Expected Style: n/a
-     * Expected Target: `<a href="FoundPage.html"><img src="http://vimwiki.googlecode.com/hg/screenshots/tn_vimwiki1.png" alt="This page was found"/></a>`
- # Wikilinks with links to images as their descriptions, where images have style
-   * !? Allow styles to be defined for thumbnail links <-- !? TODO: fix me (low priority) !!
-     * Markup (a): `[[FoundPage][http://vimwiki.googlecode.com/hg/screenshots/tn_vimwiki1.png][][width:150px; height:120px]]`
-       * Example: [[FoundPage][http://vimwiki.googlecode.com/hg/screenshots/tn_vimwiki1.png][][width:150px; height:120px]] <-- !? TODO: fix me (low priority) !!
-     * Markup (b): `[[FoundPage|http://vimwiki.googlecode.com/hg/screenshots/tn_vimwiki1.png||width:150px; height:120px]]`
-       * Example: [[FoundPage|http://vimwiki.googlecode.com/hg/screenshots/tn_vimwiki1.png||width:150px; height:120px]] <-- !? TODO: fix me (low priority) !!
-     * Expected Description: _the image_
-     * Expected Alternate: n/a
-     * Expected Style: `width:150px; height:120px`
-     * Expected Target: `<a href="FoundPage.html"><img src="http://vimwiki.googlecode.com/hg/screenshots/tn_vimwiki1.png" style="width:150px; height:120px"/></a>`
- # Thumbnail link using [[- syntax
-   * !! This syntax has been DEPRECATED, due to conflicts with v1.3 handling of links
-   * !! In v1.2, this syntax created a thumbnail link. Use weblink thumbnails to accomplish the same thing `[Url Descr]`, `[Descr](Url)`, `"Descr":Url`
-     * Markup (a): `[[http://vimwiki.googlecode.com/hg/screenshots/vimwiki1.png|http://vimwiki.googlecode.com/hg/screenshots/tn_vimwiki1.png]]`
-       * Example: [[http://vimwiki.googlecode.com/hg/screenshots/vimwiki1.png|http://vimwiki.googlecode.com/hg/screenshots/tn_vimwiki1.png]] <-- !? XXX: deprecated !!
-     * Markup (b): `[[http://vimwiki.googlecode.com/hg/screenshots/vimwiki1.png][http://vimwiki.googlecode.com/hg/screenshots/tn_vimwiki1.png]]`
-       * Example: [[http://vimwiki.googlecode.com/hg/screenshots/vimwiki1.png][http://vimwiki.googlecode.com/hg/screenshots/tn_vimwiki1.png]] <-- !? XXX: deprecated !!
-     * v1.2 Expected Description: _the image_
-     * v1.2 Expected Target: `<a href="http://vimwiki.googlecode.com/hg/screenshots/vimwiki1.png"> <img src="http://vimwiki.googlecode.com/hg/screenshots/tn_vimwiki1.png" /></a>`
-     * v1.3 Expected Alternate: `http://vimwiki.googlecode.com/hg/screenshots/tn_vimwiki1.png`
-     * v1.3 Expected Style: n/a
-     * v1.3 Expected Target: `<img src="http://vimwiki.googlecode.com/hg/screenshots/vimwiki1.png" alt="http://vimwiki.googlecode.com/hg/screenshots/tn_vimwiki1.png" />`
- # Thumbnail link using [[- syntax
-   * !! This syntax has been DEPRECATED, due to conflicts with v1.3 handling of links
-   * !! In v1.2, this syntax created a thumbnail link.  To accomplish the same thing, use weblink thumbnails `[Url Descr]`, `[Descr](Url)`, `"Descr":Url`
-     * Markup (a): `[[http://vimwiki.googlecode.com/hg/screenshots/vimwiki1.png|http://vimwiki.googlecode.com/hg/screenshots/tn_vimwiki1.png|width:150px; height:120px]]`
-       * Example: [[http://vimwiki.googlecode.com/hg/screenshots/vimwiki1.png|http://vimwiki.googlecode.com/hg/screenshots/tn_vimwiki1.png|width:150px; height:120px]] <-- !? XXX: deprecated !!
-     * Markup (b): `[[http://vimwiki.googlecode.com/hg/screenshots/vimwiki1.png][http://vimwiki.googlecode.com/hg/screenshots/tn_vimwiki1.png][width:150px; height:120px]]`
-       * Example: [[http://vimwiki.googlecode.com/hg/screenshots/vimwiki1.png][http://vimwiki.googlecode.com/hg/screenshots/tn_vimwiki1.png][width:150px; height:120px]] <-- !? XXX: deprecated !!
-     * v1.2 Expected Description: _the image_
-     * v1.2 Expected Style: `width:150px; height:120px`
-     * v1.2 Expected Target: `<a href="http://vimwiki.googlecode.com/hg/screenshots/vimwiki1.png"> <img src="http://vimwiki.googlecode.com/hg/screenshots/tn_vimwiki1.png" /></a>`
-     * v1.3 Expected Alternate: `http://vimwiki.googlecode.com/hg/screenshots/tn_vimwiki1.png`
-     * v1.3 Expected Style: `width:150px; height:120px`
-     * v1.3 Expected Target: `<img src="http://vimwiki.googlecode.com/hg/screenshots/vimwiki1.png" alt="http://vimwiki.googlecode.com/hg/screenshots/tn_vimwiki1.png" />`
-
-
-== Example Images ==
-
- # Local Image 
-   [[../../images/vimwiki_logo.png]]
- # Vimwiki Thumbnail
-   [[http://vimwiki.googlecode.com/hg/images/vimwiki_logo.png|Vimwiki thumbnail]]
- # Vimwiki Screenshot
-   [[http://vimwiki.googlecode.com/hg/screenshots/vimwiki1.png|Vimwiki screenshot]]
- # Vimwiki Screenshot Thumbnail
-   [[http://vimwiki.googlecode.com/hg/screenshots/tn_vimwiki1.png|Vimiki screenshot thumbnail]]
- # [[http://upload.wikimedia.org/wikipedia/commons/thumb/7/77/Puffer_Fish_DSC01257.JPG/281px-Puffer_Fish_DSC01257.jpg|281px-Puffer_Fish]]
-
 
 
