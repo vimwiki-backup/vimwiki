@@ -37,3 +37,19 @@ del {text-decoration: line-through; color: #777777;}
 .done2 {color: #80a000;}
 .done3 {color: #00c000;}
 .done4 {color: #7f7f7f; text-decoration: line-through;}
+code {
+    font: 12px Monaco,"Courier New","DejaVu Sans Mono","Bitstream Vera Sans Mono",monospace;
+    -webkit-border-radius: 1px;
+    -moz-border-radius: 1px;
+    border-radius: 1px;
+    -moz-background-clip: padding;
+    -webkit-background-clip: padding-box;
+    background-clip: padding-box;
+    padding: 0px 3px;
+    display: inline-block;
+    color: #52595d;
+    border: 1px solid #ccc;
+    background-color: #f9f9f9;
+    /* color: #0000FF; */
+    /* background-color: #DDDDDD; */
+}
