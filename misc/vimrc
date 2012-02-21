@@ -19,7 +19,7 @@ let g:vimwiki_list = [
 
 " Replace VIMWIKIHOME and generate html
 function! VimwikiMisc2Html() "{{{
-  execute '%s/VIMWIKIHOME/\=getcwd()/g'
+  "execute '%s/VIMWIKIHOME/\=getcwd()[1 :]/g'
   execute 'normal \wh'
   execute 'normal u'
   execute 'wq'
