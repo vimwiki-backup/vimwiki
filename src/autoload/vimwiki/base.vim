@@ -1299,6 +1299,7 @@ function! s:normalize_link(str, rxUrl, rxDesc, template) " {{{
   endif
   let lnk = substitute(template, '__LinkDescription__', descr, '')
   let lnk = substitute(lnk, '__LinkUrl__', url, '')
+  return lnk
 endfunction " }}}
 
 function! s:normalize_weblink(str, rxUrl, rxDesc, template) " {{{
