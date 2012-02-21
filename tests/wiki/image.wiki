@@ -1,11 +1,11 @@
-http://example.com/image.jpg
-http://example.com/image.jpeg
-http://example.com/image.png
-http://example.com/image.gif
-http://example.com/image.tif
-http://example.com/image.bmp
-http://example.com/image.ico
+{{http://example.com/image.jpg}}
+{{http://example.com/image.jpeg}}
+{{http://example.com/image.png}}
+{{http://example.com/image.gif}}
+{{http://example.com/image.tif}} unrecognized extensions, TODO: (high priority) raw URLs are processed incorrectly!
+{{http://example.com/image.bmp}} unrecognized extensions, TODO: (high priority) raw URLs are processed incorrectly!
+{{http://example.com/image.ico}} unrecognized extensions, TODO: (high priority) raw URLs are processed incorrectly!
 
-# [[http://upload.wikimedia.org/wikipedia/commons/thumb/7/77/Puffer_Fish_DSC01257.JPG/1197px-Puffer_Fish_DSC01257.JPG|1197px-Puffer_Fish]] image with uppercase extension
-# [[http://upload.wikimedia.org/wikipedia/commons/thumb/7/77/Puffer_Fish_DSC01257.JPG/1197px-Puffer_Fish_DSC01257.jpg|1197px-Puffer_Fish]] image with lowercase extension
+# {{http://upload.wikimedia.org/wikipedia/commons/thumb/7/77/Puffer_Fish_DSC01257.JPG/1197px-Puffer_Fish_DSC01257.JPG}{1197px-Puffer_Fish}} image with uppercase extension
+# {{http://upload.wikimedia.org/wikipedia/commons/thumb/7/77/Puffer_Fish_DSC01257.JPG/1197px-Puffer_Fish_DSC01257.jpg}{1197px-Puffer_Fish}} image with lowercase extension
 
