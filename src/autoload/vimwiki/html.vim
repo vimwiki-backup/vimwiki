@@ -388,8 +388,8 @@ function! s:linkify_link(src, descr) "{{{
   let src_str = ' href="'.a:src.'"'
   let descr_str = ''
   if a:descr != ''
-    if a:descr =~ g:vimwiki_rxImage
-      let descr_str = s:tag_image(a:descr)
+    if a:descr =~ g:vimwiki_rxImagelink
+      let descr_str = s:tag_imagelink(a:descr)
     elseif a:descr =~ g:vimwiki_rxImageUrl
       let descr_str = s:linkify_image(a:descr, '', '')
     else
@@ -407,11 +407,11 @@ function s:linkify_dirlink(src, descr) "{{{
   return s:linkify_link(a:src.dir_link, a:descr)
 endfunction "}}}
 
-function! s:tag_image(value) "{{{
+function! s:tag_imagelink(value) "{{{
   let str = a:value
-  let url = matchstr(str, g:vimwiki_rxImageMatchUrl)
-  let descr = matchstr(str, g:vimwiki_rxImageMatchDescr)
-  let style = matchstr(str, g:vimwiki_rxImageMatchStyle)
+  let url = matchstr(str, g:vimwiki_rxImagelinkMatchUrl)
+  let descr = matchstr(str, g:vimwiki_rxImagelinkMatchDescr)
+  let style = matchstr(str, g:vimwiki_rxImagelinkMatchStyle)
   let line = s:linkify_image(url, descr, style)
   return line
 endfunction "}}}
@@ -468,7 +468,7 @@ endfunction "}}}
 "
 "
 "
-"{{{ Deprecated/Refactored by linkify_image, linkify_link, tag_image,
+"{{{ Deprecated/Refactored by linkify_image, linkify_link, tag_imagelink,
 "   tag_weblink, and tag_wikilink
 "
 function! s:tag_internal_link(value) "{{{
@@ -498,7 +498,7 @@ function! s:tag_internal_link(value) "{{{
       "
       " Use weblink formats to create thumbnail links 
       "   e.g. : [imgurl](url), "imgurl":url, or [url imgurl]
-      " XXX: see s:tag_wikilink(), s:tag_image(), s:linkify_link(), and
+      " XXX: see s:tag_wikilink(), s:tag_imagelink(), s:linkify_link(), and
       " s:linkify_image()
       let link = '<a href="'.a:src.'"><img src="'.a:caption.'"'.style_str.' />'.
             \ '</a>'
@@ -506,7 +506,7 @@ function! s:tag_internal_link(value) "{{{
       " XXX: see s:tag_wikilink(), s:linkify_link()
       let link = '<a href="'.a:src.'">'.a:caption.'</a>'
     elseif s:is_img_link(a:src)
-      " XXX: see s:tag_image() and s:linkify_image()
+      " XXX: see s:tag_imagelink() and s:linkify_image()
       let link = '<img src="'.a:src.'" alt="'.a:caption.'"'. style_str.' />'
     elseif vimwiki#base#is_link_to_dir(a:src)
       " XXX: see s:tag_wikilink(), s:linkify_dirlink()
@@ -566,10 +566,10 @@ function! s:tag_external_link(value) "{{{
     endif
     if s:is_img_link(rest)
       if rest!=head
-        " XXX: see s:tag_weblink, s:tag_image, s:linkify_link, and s:linkify_image
+        " XXX: see s:tag_weblink, s:tag_imagelink, s:linkify_link, and s:linkify_image
         let line = '<a href="'.head.'"><img src="'.rest.'" /></a>'
       else
-        " XXX: see s:tag_weblink, s:tag_image, s:linkify_link, and s:linkify_image
+        " XXX: see s:tag_weblink, s:tag_imagelink, s:linkify_link, and s:linkify_image
         let line = '<img src="'.rest.'" />'
       endif
     else
@@ -613,7 +613,7 @@ function! s:tag_barebone_link(value) "{{{
   return line
 endfunction "}}}
 "
-"}}} Deprecated/Refactored by linkify_image, linkify_link, tag_image,
+"}}} Deprecated/Refactored by linkify_image, linkify_link, tag_imagelink,
 "   tag_weblink, and tag_wikilink
 "
 "
@@ -730,10 +730,10 @@ endfunction " }}}
 
 function! s:process_tags_links(line) " {{{
   let line = a:line
-  let line = s:make_tag(line, g:vimwiki_rxImage, 's:tag_image')
+  let line = s:make_tag(line, g:vimwiki_rxImagelink, 's:tag_imagelink')
   let line = s:make_tag(line, g:vimwiki_rxWeblink, 's:tag_weblink')
   let line = s:make_tag(line, g:vimwiki_rxWikiLink, 's:tag_wikilink')
-"{{{ Replaced by tag_image, tag_weblink, and tag_wikilink
+"{{{ Replaced by tag_imagelink, tag_weblink, and tag_wikilink
 " let line = s:make_tag(line, '\[\[.\{-}\]\]', 's:tag_internal_link')
 " let line = s:make_tag(line, '\[.\{-}\]', 's:tag_external_link')
 " let line = s:make_tag(line, g:vimwiki_rxWeblink, 's:tag_barebone_link')

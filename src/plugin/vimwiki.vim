@@ -272,9 +272,9 @@ let s:vimwiki_defaults.interwiki_domain = ''
 " custom_wiki2html
 let s:vimwiki_defaults.custom_wiki2html = ''
 
-" weblink_template
-let s:vimwiki_defaults.weblink_template = '[__LinkUrl__ __LinkDescription__]'
-"let s:vimwiki_defaults.weblink_template = '[__LinkDescription__](__LinkUrl__)'
+" web_template
+let s:vimwiki_defaults.web_template = '[__LinkUrl__ __LinkDescription__]'
+"let s:vimwiki_defaults.web_template = '[__LinkDescription__](__LinkUrl__)'
 
 " image_template
 let s:vimwiki_defaults.image_template = '{__LinkUrl__|__LinkDescription__|__LinkStyle__}'
@@ -493,7 +493,7 @@ let g:vimwiki_rxWeblinkMatchUrl0 = g:vimwiki_rxWeblink0
 let g:vimwiki_rxWeblinkMatchDescr0 = ''
 "
 let template_args = '\%(__LinkUrl__\|__LinkDescription__\)'
-let weblink_t = VimwikiGet('weblink_template')
+let weblink_t = VimwikiGet('web_template')
 if g:vimwiki_debug
   echom 'Weblink Template: '.weblink_t
 endif
@@ -544,13 +544,13 @@ let g:vimwiki_rxWeblinkMatchDescr = ''.
 " LINKS: Images {{{
 
 " match URL
-let g:vimwiki_rxImageProtocols = ''.  
+let g:vimwiki_rxImagelinkProtocols = ''.  
       \ '\%('.
         \ '\%('.join(split(g:vimwiki_web_schemes1, '\s*,\s*'), '\|'). '\):'.
         \ '\%(\%(//\)\|\%(\\\\\)\)'.
       \ '\)\?'
 "
-let g:vimwiki_rxImageUrl = g:vimwiki_rxImageProtocols .
+let g:vimwiki_rxImageUrl = g:vimwiki_rxImagelinkProtocols .
     \ '\S\{-1,}'. '\%(([^ \t()]*)\)\=' .
     \ '\%('.
       \ '\%('. join(split(tolower(g:vimwiki_image_exts), '\s*,\s*'), '\|'). '\)'.
@@ -595,16 +595,16 @@ let g:vimwiki_rxImageMatchStyle1 = vimwiki#base#apply_template(t_Image,
 " 
 " *. ANY image
 " *a) match ANY image
-let g:vimwiki_rxImage = ''.
+let g:vimwiki_rxImagelink = ''.
       \ g:vimwiki_rxImage1
 " *b) match URL within ANY image
-let g:vimwiki_rxImageMatchUrl = ''.
+let g:vimwiki_rxImagelinkMatchUrl = ''.
       \ g:vimwiki_rxImageMatchUrl1
 " *c) match DESCRIPTION within ANY image
-let g:vimwiki_rxImageMatchDescr = ''.
+let g:vimwiki_rxImagelinkMatchDescr = ''.
       \ g:vimwiki_rxImageMatchDescr1
 " *c) match STYLE within ANY image
-let g:vimwiki_rxImageMatchStyle = ''.
+let g:vimwiki_rxImagelinkMatchStyle = ''.
       \ g:vimwiki_rxImageMatchStyle1
 "
 "}}}
