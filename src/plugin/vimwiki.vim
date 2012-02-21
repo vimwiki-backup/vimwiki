@@ -141,6 +141,14 @@ function! s:get_suffix(template, tag) "{{{
   return a:template[match_end :]
 endfunction "}}}
 
+function! s:get_unique_chars(str) "{{{
+  let char_dict = {}
+  for chr in split(a:str, '\zs')
+    let char_dict[chr] = 1
+  endfor
+  return join(keys(char_dict), '')
+endfunction "}}}
+
 " OPTION get/set functions {{{
 " return value of option for current wiki or if second parameter exists for
 " wiki with a given index.
@@ -444,7 +452,7 @@ let g:vimwiki_WikiLinkTemplate2 = g:vimwiki_rxWikiLinkPrefix . '__LinkUrl__'.
 let magic_chars = '.*[]\^$'
 let exclude_chars = g:vimwiki_rxWikiLinkPrefix.g:vimwiki_rxWikiLinkSeparator.
       \ g:vimwiki_rxWikiLinkSuffix
-let exclude_chars = escape(exclude_chars, magic_chars)
+let exclude_chars = s:get_unique_chars(exclude_chars)
 let valid_chars = '[^'.escape(exclude_chars, magic_chars).']'
 "
 let g:vimwiki_rxWikiLinkPrefix = escape(g:vimwiki_rxWikiLinkPrefix, magic_chars)
@@ -498,6 +506,7 @@ let g:vimwiki_WikiInclTemplate2 = g:vimwiki_rxWikiInclPrefix . '__LinkUrl__'.
 let magic_chars = '.*[]\^$'
 let exclude_chars = g:vimwiki_rxWikiInclPrefix. g:vimwiki_rxWikiInclSeparator.
       \ g:vimwiki_rxWikiInclSuffix
+let exclude_chars = s:get_unique_chars(exclude_chars)
 let valid_chars = '[^'.escape(exclude_chars, magic_chars).']'
 "
 let g:vimwiki_rxWikiInclPrefix = escape(g:vimwiki_rxWikiInclPrefix, magic_chars)
@@ -566,6 +575,7 @@ let magic_chars = '.*[]\^$'
 " list all delimiters that appear in Template *after* DESCRIPTION
 let exclude_chars = s:get_suffix(web_template, '__LinkDescription__')
 let exclude_chars = join(split(exclude_chars, template_args), '')
+let exclude_chars = s:get_unique_chars(exclude_chars)
 let valid_chars = '[^'.escape(exclude_chars, magic_chars).']'
 let g:vimwiki_rxWeblinkDescr = valid_chars.'*'
 "
@@ -633,11 +643,13 @@ let magic_chars = '.*[]\^$'
 " list all delimiters that appear in Template *after* DESCRIPTION
 let exclude_chars = s:get_suffix(t_Image, '__LinkDescription__')
 let exclude_chars = join(split(exclude_chars, template_args), '')
+let exclude_chars = s:get_unique_chars(exclude_chars)
 let valid_chars = '[^'.escape(exclude_chars, magic_chars).']'
 let g:vimwiki_rxImagelinkDescr = valid_chars.'*'
 " list all delimiters that appear in Template *after* STYLE
 let exclude_chars = s:get_suffix(t_Image, '__LinkStyle__')
 let exclude_chars = join(split(exclude_chars, template_args), '')
+let exclude_chars = s:get_unique_chars(exclude_chars)
 let valid_chars = '[^'.escape(exclude_chars, magic_chars).']'
 let g:vimwiki_rxImagelinkStyle = valid_chars.'*'
 "

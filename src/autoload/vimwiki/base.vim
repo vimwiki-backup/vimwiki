@@ -1288,8 +1288,7 @@ function! s:clean_url(url) " {{{
   let url = filter(url, 'v:val != "https\:"')
   let url = filter(url, 'v:val != "file\:"')
   let url = filter(url, 'v:val != "xml\:"')
-  let url = join(url, " ")
-  return url
+  return join(url, " ")
 endfunction " }}}
 
 function! s:normalize_link(str, rxUrl, rxDesc, template) " {{{
