@@ -11,6 +11,8 @@ endif
 let g:loaded_vimwiki_diary_auto = 1
 "}}}
 
+let g:vimwiki_max_scan_for_caption = 20
+
 function! s:prefix_zero(num) "{{{
   if a:num < 10
     return '0'.a:num
@@ -71,10 +73,9 @@ fun! s:read_captions(files) "{{{
     let fl_key = fnamemodify(fl, ':t:r')
 
     if filereadable(fl)
-      for line in readfile(fl, '', 5)
-        " TODO: Header regexp should be used here...
-        if line =~ '^\s*=.*=\s*' && !has_key(result, fl_key)
-          let result[fl_key] = matchstr(line, '=\s*\zs.\{-}\ze\s*=\s*')
+      for line in readfile(fl, '', g:vimwiki_max_scan_for_caption)
+        if line =~ g:vimwiki_rxHeader && !has_key(result, fl_key)
+          let result[fl_key] = matchstr(line, g:vimwiki_rxHeader)
         endif
       endfor
     endif
@@ -136,7 +137,7 @@ endfun "}}}
 fun! s:format_diary(...) "{{{
   let result = []
 
-  call add(result, '= '.VimwikiGet('diary_header').' =')
+  call add(result, substitute(g:vimwiki_rxH1_Template, '__Header__', VimwikiGet('diary_header'), ''))
 
   if a:0
     let g_files = s:group_links(s:get_diary_links(a:1))
@@ -147,19 +148,23 @@ fun! s:format_diary(...) "{{{
   " for year in s:rev(sort(keys(g_files)))
   for year in s:sort(keys(g_files))
     call add(result, '')
-    call add(result, '== '.year.' ==')
+    call add(result, substitute(g:vimwiki_rxH2_Template, '__Header__', year , ''))
 
     " for month in s:rev(sort(keys(g_files[year])))
     for month in s:sort(keys(g_files[year]))
       call add(result, '')
-      call add(result, '=== '.s:get_month_name(month).' ===')
+      call add(result, substitute(g:vimwiki_rxH3_Template, '__Header__', s:get_month_name(month), ''))
 
       " for [fl, cap] in s:rev(sort(items(g_files[year][month])))
       for [fl, cap] in s:sort(items(g_files[year][month]))
         if empty(cap)
-          call add(result, repeat(' ', &sw).'* [['.fl.']]')
+          let entry = substitute(g:vimwiki_WikiLinkTemplate1, '__LinkUrl__', fl, '')
+          let entry = substitute(entry, '__LinkDescription__', cap, '')
+          call add(result, repeat(' ', &sw).'* '.entry)
         else
-          call add(result, repeat(' ', &sw).'* [['.fl.'|'.fl.': '.cap.']]')
+          let entry = substitute(g:vimwiki_WikiLinkTemplate2, '__LinkUrl__', fl, '')
+          let entry = substitute(entry, '__LinkDescription__', cap, '')
+          call add(result, repeat(' ', &sw).'* '.entry)
         endif
       endfor
 
@@ -200,8 +205,8 @@ endfunction "}}}
 function! s:set_diary_section(lines, diary_lines) "{{{
   " remove diary section
   let lines = a:lines
-  let ln_start = match(lines, '=\s*'.VimwikiGet('diary_header').'\s*=')
-  let ln_end = match(lines, '=[^=].*[^=]=\s*$', ln_start+1)
+  let ln_start = match(lines, substitute(g:vimwiki_rxH1_Template, '__Header__', VimwikiGet('diary_header'), ''))
+  let ln_end = match(lines, g:vimwiki_rxH1, ln_start+1)
 
   if ln_end < 0
     let ln_end = len(lines)
@@ -221,7 +226,11 @@ endfunction "}}}
 
 function! s:add_link(diaryfile, newlink) "{{{
   let fname = expand(a:diaryfile)
-  let lines = s:get_file_contents(fname)
+  if filereadable(fname)
+    let lines = s:get_file_contents(fname)
+  else
+    let lines = []
+  endif
 
   call s:set_diary_section(lines, s:format_diary(a:newlink))
 

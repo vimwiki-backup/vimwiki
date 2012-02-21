@@ -19,6 +19,12 @@ execute 'runtime! syntax/vimwiki_'.VimwikiGet('syntax').'.vim'
 " generic headers
 if g:vimwiki_symH
   "" symmetric
+  let g:vimwiki_rxH1_Template = repeat(g:vimwiki_rxH, 1).' __Header__ '.repeat(g:vimwiki_rxH, 1)
+  let g:vimwiki_rxH2_Template = repeat(g:vimwiki_rxH, 2).' __Header__ '.repeat(g:vimwiki_rxH, 2)
+  let g:vimwiki_rxH3_Template = repeat(g:vimwiki_rxH, 3).' __Header__ '.repeat(g:vimwiki_rxH, 3)
+  let g:vimwiki_rxH4_Template = repeat(g:vimwiki_rxH, 4).' __Header__ '.repeat(g:vimwiki_rxH, 4)
+  let g:vimwiki_rxH5_Template = repeat(g:vimwiki_rxH, 5).' __Header__ '.repeat(g:vimwiki_rxH, 5)
+  let g:vimwiki_rxH6_Template = repeat(g:vimwiki_rxH, 6).' __Header__ '.repeat(g:vimwiki_rxH, 6)
   let g:vimwiki_rxH1 = '^\s*'.g:vimwiki_rxH.'\{1}[^'.g:vimwiki_rxH.']\+.*[^'.g:vimwiki_rxH.']\+'.g:vimwiki_rxH.'\{1}\s*$'
   let g:vimwiki_rxH2 = '^\s*'.g:vimwiki_rxH.'\{2}[^'.g:vimwiki_rxH.']\+.*[^'.g:vimwiki_rxH.']\+'.g:vimwiki_rxH.'\{2}\s*$'
   let g:vimwiki_rxH3 = '^\s*'.g:vimwiki_rxH.'\{3}[^'.g:vimwiki_rxH.']\+.*[^'.g:vimwiki_rxH.']\+'.g:vimwiki_rxH.'\{3}\s*$'
@@ -28,6 +34,12 @@ if g:vimwiki_symH
   let g:vimwiki_rxHeader = '^\s*\('.g:vimwiki_rxH.'\{1,6}\)\zs[^'.g:vimwiki_rxH.']\+.*[^'.g:vimwiki_rxH.']\+\ze\1\s*$'
 else
   "" asymm
+  let g:vimwiki_rxH1_Template = repeat(g:vimwiki_rxH, 1).' __Header__'
+  let g:vimwiki_rxH2_Template = repeat(g:vimwiki_rxH, 2).' __Header__'
+  let g:vimwiki_rxH3_Template = repeat(g:vimwiki_rxH, 3).' __Header__'
+  let g:vimwiki_rxH4_Template = repeat(g:vimwiki_rxH, 4).' __Header__'
+  let g:vimwiki_rxH5_Template = repeat(g:vimwiki_rxH, 5).' __Header__'
+  let g:vimwiki_rxH6_Template = repeat(g:vimwiki_rxH, 6).' __Header__'
   let g:vimwiki_rxH1 = '^\s*'.g:vimwiki_rxH.'\{1}[^'.g:vimwiki_rxH.']\+.*'
   let g:vimwiki_rxH2 = '^\s*'.g:vimwiki_rxH.'\{2}[^'.g:vimwiki_rxH.']\+.*'
   let g:vimwiki_rxH3 = '^\s*'.g:vimwiki_rxH.'\{3}[^'.g:vimwiki_rxH.']\+.*'
