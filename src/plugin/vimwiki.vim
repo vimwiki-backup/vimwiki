@@ -493,26 +493,26 @@ let g:vimwiki_rxWeblinkMatchUrl0 = g:vimwiki_rxWeblink0
 let g:vimwiki_rxWeblinkMatchDescr0 = ''
 "
 let template_args = '\%(__LinkUrl__\|__LinkDescription__\)'
-let weblink_t = VimwikiGet('web_template')
+let web_template = VimwikiGet('web_template')
 if g:vimwiki_debug
-  echom 'Weblink Template: '.weblink_t
+  echom 'Weblink Template: '.web_template
 endif
 let magic_chars = '.*[]\^$'
 " list all delimiters that appear in Template *after* DESCRIPTION
-let exclude_chars = s:get_suffix(weblink_t, '__LinkDescription__')
+let exclude_chars = s:get_suffix(web_template, '__LinkDescription__')
 let exclude_chars = join(split(exclude_chars, template_args), '')
 let valid_chars = '[^'.escape(exclude_chars, magic_chars).']'
 let g:vimwiki_rxWeblinkDescr = valid_chars.'*'
 "
-let g:vimwiki_rxWeblink1 = vimwiki#base#apply_template(weblink_t, 
+let g:vimwiki_rxWeblink1 = vimwiki#base#apply_template(web_template, 
       \ g:vimwiki_rxWeblinkUrl, 
       \ g:vimwiki_rxWeblinkDescr, 
       \ '')
-let g:vimwiki_rxWeblinkMatchUrl1 = vimwiki#base#apply_template(weblink_t,
+let g:vimwiki_rxWeblinkMatchUrl1 = vimwiki#base#apply_template(web_template,
       \ '\zs'.g:vimwiki_rxWeblinkUrl.'\ze', 
       \ g:vimwiki_rxWeblinkDescr, 
       \ '')
-let g:vimwiki_rxWeblinkMatchDescr1 = vimwiki#base#apply_template(weblink_t, 
+let g:vimwiki_rxWeblinkMatchDescr1 = vimwiki#base#apply_template(web_template, 
       \ g:vimwiki_rxWeblinkUrl, 
       \ '\zs'.g:vimwiki_rxWeblinkDescr.'\ze', 
       \ '')
@@ -550,7 +550,7 @@ let g:vimwiki_rxImagelinkProtocols = ''.
         \ '\%(\%(//\)\|\%(\\\\\)\)'.
       \ '\)\?'
 "
-let g:vimwiki_rxImageUrl = g:vimwiki_rxImagelinkProtocols .
+let g:vimwiki_rxImagelinkUrl = g:vimwiki_rxImagelinkProtocols .
     \ '\S\{-1,}'. '\%(([^ \t()]*)\)\=' .
     \ '\%('.
       \ '\%('. join(split(tolower(g:vimwiki_image_exts), '\s*,\s*'), '\|'). '\)'.
@@ -569,43 +569,43 @@ let magic_chars = '.*[]\^$'
 let exclude_chars = s:get_suffix(t_Image, '__LinkDescription__')
 let exclude_chars = join(split(exclude_chars, template_args), '')
 let valid_chars = '[^'.escape(exclude_chars, magic_chars).']'
-let g:vimwiki_rxImageDescr = valid_chars.'*'
+let g:vimwiki_rxImagelinkDescr = valid_chars.'*'
 " list all delimiters that appear in Template *after* STYLE
 let exclude_chars = s:get_suffix(t_Image, '__LinkStyle__')
 let exclude_chars = join(split(exclude_chars, template_args), '')
 let valid_chars = '[^'.escape(exclude_chars, magic_chars).']'
-let g:vimwiki_rxImageStyle = valid_chars.'*'
+let g:vimwiki_rxImagelinkStyle = valid_chars.'*'
 "
-let g:vimwiki_rxImage1 = vimwiki#base#apply_template(t_Image, 
-      \ g:vimwiki_rxImageUrl, 
-      \ g:vimwiki_rxImageDescr,
-      \ g:vimwiki_rxImageStyle)
-let g:vimwiki_rxImageMatchUrl1 = vimwiki#base#apply_template(t_Image,
-      \ '\zs'.g:vimwiki_rxImageUrl.'\ze', 
-      \ g:vimwiki_rxImageDescr, 
-      \ g:vimwiki_rxImageStyle)
-let g:vimwiki_rxImageMatchDescr1 = vimwiki#base#apply_template(t_Image,
-      \ g:vimwiki_rxImageUrl, 
-      \ '\zs'.g:vimwiki_rxImageDescr.'\ze', 
-      \ g:vimwiki_rxImageStyle)
-let g:vimwiki_rxImageMatchStyle1 = vimwiki#base#apply_template(t_Image,
-      \ g:vimwiki_rxImageUrl, 
-      \ g:vimwiki_rxImageDescr,
-      \ '\zs'.g:vimwiki_rxImageStyle.'\ze')
+let g:vimwiki_rxImagelink1 = vimwiki#base#apply_template(t_Image, 
+      \ g:vimwiki_rxImagelinkUrl, 
+      \ g:vimwiki_rxImagelinkDescr,
+      \ g:vimwiki_rxImagelinkStyle)
+let g:vimwiki_rxImagelinkMatchUrl1 = vimwiki#base#apply_template(t_Image,
+      \ '\zs'.g:vimwiki_rxImagelinkUrl.'\ze', 
+      \ g:vimwiki_rxImagelinkDescr, 
+      \ g:vimwiki_rxImagelinkStyle)
+let g:vimwiki_rxImagelinkMatchDescr1 = vimwiki#base#apply_template(t_Image,
+      \ g:vimwiki_rxImagelinkUrl, 
+      \ '\zs'.g:vimwiki_rxImagelinkDescr.'\ze', 
+      \ g:vimwiki_rxImagelinkStyle)
+let g:vimwiki_rxImagelinkMatchStyle1 = vimwiki#base#apply_template(t_Image,
+      \ g:vimwiki_rxImagelinkUrl, 
+      \ g:vimwiki_rxImagelinkDescr,
+      \ '\zs'.g:vimwiki_rxImagelinkStyle.'\ze')
 " 
 " *. ANY image
 " *a) match ANY image
 let g:vimwiki_rxImagelink = ''.
-      \ g:vimwiki_rxImage1
+      \ g:vimwiki_rxImagelink1
 " *b) match URL within ANY image
 let g:vimwiki_rxImagelinkMatchUrl = ''.
-      \ g:vimwiki_rxImageMatchUrl1
+      \ g:vimwiki_rxImagelinkMatchUrl1
 " *c) match DESCRIPTION within ANY image
 let g:vimwiki_rxImagelinkMatchDescr = ''.
-      \ g:vimwiki_rxImageMatchDescr1
+      \ g:vimwiki_rxImagelinkMatchDescr1
 " *c) match STYLE within ANY image
 let g:vimwiki_rxImagelinkMatchStyle = ''.
-      \ g:vimwiki_rxImageMatchStyle1
+      \ g:vimwiki_rxImagelinkMatchStyle1
 "
 "}}}
 
