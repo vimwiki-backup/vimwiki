@@ -237,6 +237,54 @@ if !exists("*VimwikiWeblinkHandler") "{{{
 endif "}}}
 " CALLBACK }}}
 
+if !exists("*VimwikiWikiIncludeHandler") "{{{
+  function! VimwikiWikiIncludeHandler(value) "{{{
+    " {{imgurl}}                -> <img src="imgurl"/>
+    " {{imgurl}{descr}{style}}  -> <img src="imgurl" alt="descr" style="style" />
+    " ???
+    " {{imgurl}{arg1}{arg2}}    -> ???
+    let str = a:value
+    if match(str, g:vimwiki_wikiword_escape_prefix) == 0
+      return a:value[len(g:vimwiki_wikiword_escape_prefix):]
+    endif
+    let url = matchstr(str, g:vimwiki_rxWikiInclMatchUrl)
+
+    " Include image
+    if url =~ g:vimwiki_rxImagelinkUrl
+      let descr = matchstr(str, VimwikiWikiInclMatchArg(1))
+      let style = matchstr(str, VimwikiWikiInclMatchArg(2))
+
+      " resolve url
+      let [scheme, path, subdir, lnk, ext] = vimwiki#base#resolve_scheme(url, '.html')
+
+      " construct url from parts
+      if scheme == ''
+        let url = subdir.lnk.ext
+      elseif scheme=~'wiki\d*' || scheme=~'diary\d*' || scheme=~'local\d*'
+        " prepend 'file:' for wiki: and local: schemes
+        let url = 'file://'.path.subdir.lnk.ext
+      else
+        let url = scheme.':'.path.subdir.lnk.ext
+      endif
+
+      " generate html output
+      if g:vimwiki_debug
+        echom '{{scheme='.scheme.', path='.path.', subdir='.subdir.', lnk='.lnk.', ext='.ext.'}}'
+      endif
+      let url = escape(url, '#')
+      let line = vimwiki#html#linkify_image(url, descr, style)
+      return line
+    endif
+     
+    " Additional handlers ...
+
+    " Otherwise
+    return str
+
+  endfunction "}}}
+endif "}}}
+" CALLBACK }}}
+
 " DEFAULT wiki {{{
 let s:vimwiki_defaults = {}
 let s:vimwiki_defaults.path = '~/vimwiki/'
@@ -269,19 +317,25 @@ let s:vimwiki_defaults.diary_link_fmt = '%Y-%m-%d'
 let s:vimwiki_defaults.interwiki_prefix = ''
 let s:vimwiki_defaults.interwiki_domain = ''
 
+" NEW! in v1.3
 " custom_wiki2html
 let s:vimwiki_defaults.custom_wiki2html = ''
 
-" web_template
-let s:vimwiki_defaults.web_template = '[__LinkUrl__ __LinkDescription__]'
-"let s:vimwiki_defaults.web_template = '[__LinkDescription__](__LinkUrl__)'
+" NEW! in v1.3
+" wikilink, wikiincl separators (should not be the same)
+"let s:vimwiki_defaults.wikilink_separator = ']['
+"let s:vimwiki_defaults.wikiincl_separator = '}{'
+let s:vimwiki_defaults.link_separator = ']['
+let s:vimwiki_defaults.incl_separator = '}{'
 
-" image_template
-let s:vimwiki_defaults.image_template = '{__LinkUrl__|__LinkDescription__|__LinkStyle__}'
-"let s:vimwiki_defaults.image_template = '![__LinkDescription__](__LinkUrl__)'
-" TODO: Move template definitions to 'syntax/vimwiki_xxx.vim', and figure out
-" how to read that file here !!
-"let t_Image = g:vimwiki_ImageTemplate
+" NEW! in v1.3
+" web_template, image_template
+" TODO: move to 'syntax/vimwiki_xxx.vim' ... !!
+let s:vimwiki_defaults.web_template = 
+      \ '[__LinkUrl__ __LinkDescription__]'
+let s:vimwiki_defaults.image_template = 
+      \ '{__LinkUrl__|__LinkDescription__|__LinkStyle__}'
+"
 "}}}
 
 " DEFAULT options {{{
@@ -378,7 +432,7 @@ let g:vimwiki_rxNoWikiWord = g:vimwiki_wikiword_escape_prefix.wword
 " TODO: put these in 'syntax/vimwiki_xxx.vim'
 let g:vimwiki_rxWikiLinkPrefix = '[['
 let g:vimwiki_rxWikiLinkSuffix = ']]'
-let g:vimwiki_rxWikiLinkSeparator = ']['
+let g:vimwiki_rxWikiLinkSeparator = VimwikiGet('link_separator')
 " [[URL]]
 let g:vimwiki_WikiLinkTemplate1 = g:vimwiki_rxWikiLinkPrefix . '__LinkUrl__'. 
       \ g:vimwiki_rxWikiLinkSuffix
@@ -431,7 +485,7 @@ endif
 " TODO: put these in 'syntax/vimwiki_xxx.vim'
 let g:vimwiki_rxWikiInclPrefix = '{{'
 let g:vimwiki_rxWikiInclSuffix = '}}'
-let g:vimwiki_rxWikiInclSeparator = '}{'
+let g:vimwiki_rxWikiInclSeparator = VimwikiGet('incl_separator')
 "
 " '{{__LinkUrl__}}'
 let g:vimwiki_WikiInclTemplate1 = g:vimwiki_rxWikiInclPrefix . '__LinkUrl__'. 
@@ -450,8 +504,8 @@ let g:vimwiki_rxWikiInclPrefix = escape(g:vimwiki_rxWikiInclPrefix, magic_chars)
 let g:vimwiki_rxWikiInclSuffix = escape(g:vimwiki_rxWikiInclSuffix, magic_chars)
 let g:vimwiki_rxWikiInclSeparator = escape(g:vimwiki_rxWikiInclSeparator, magic_chars)
 let g:vimwiki_rxWikiInclUrl = valid_chars.'\+'
-let g:vimwiki_rxWikiInclArgs = 
-      \ '\%('. g:vimwiki_rxWikiInclSeparator. valid_chars.'*'. '\)*'
+let g:vimwiki_rxWikiInclArg = valid_chars.'*'
+let g:vimwiki_rxWikiInclArgs = '\%('. g:vimwiki_rxWikiInclSeparator. g:vimwiki_rxWikiInclArg. '\)'.'*'
 "
 "
 " *. {{URL}[{...}]}  - i.e.  {{URL}}, {{URL}{ARG1}}, {{URL}{ARG1}{ARG2}}, etc.
@@ -463,6 +517,17 @@ let g:vimwiki_rxWikiIncl = g:vimwiki_rxWikiInclPrefix.
 let g:vimwiki_rxWikiInclMatchUrl = g:vimwiki_rxWikiInclPrefix.
       \ '\zs'. g:vimwiki_rxWikiInclUrl. '\ze'.
       \ g:vimwiki_rxWikiInclArgs. g:vimwiki_rxWikiInclSuffix
+" *c,d,e),...
+"   match n-th ARG within {{URL}[{ARG1}{ARG2}{...}]}
+function! VimwikiWikiInclMatchArg(nn_index)
+  let rx = g:vimwiki_rxWikiInclPrefix. g:vimwiki_rxWikiInclUrl
+  let rx = rx. repeat(g:vimwiki_rxWikiInclSeparator. g:vimwiki_rxWikiInclArg, a:nn_index-1)
+  if a:nn_index > 0
+    let rx = rx. g:vimwiki_rxWikiInclSeparator. '\zs'. g:vimwiki_rxWikiInclArg. '\ze'
+  endif
+  let rx = rx. g:vimwiki_rxWikiInclArgs. g:vimwiki_rxWikiInclSuffix
+  return rx
+endfunction
 "}}}
 
 
