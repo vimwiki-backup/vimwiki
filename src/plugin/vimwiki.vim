@@ -579,24 +579,23 @@ let exclude_chars = s:get_unique_chars(exclude_chars)
 let valid_chars = '[^'.escape(exclude_chars, magic_chars).']'
 let g:vimwiki_rxWeblinkDescr = valid_chars.'*'
 "
+" " 2012-02-04 TODO not starting with [[ or ][ ?  ... prefix = '[\[\]]\@<!\[' 
+" 1. web template
 let g:vimwiki_rxWeblink1 = vimwiki#base#apply_template(web_template, 
       \ g:vimwiki_rxWeblinkUrl, 
       \ g:vimwiki_rxWeblinkDescr, 
       \ '')
+" 1a) match URL within web template
 let g:vimwiki_rxWeblinkMatchUrl1 = vimwiki#base#apply_template(web_template,
       \ '\zs'.g:vimwiki_rxWeblinkUrl.'\ze', 
       \ g:vimwiki_rxWeblinkDescr, 
       \ '')
+" 1b) match DESCRIPTION within web template
 let g:vimwiki_rxWeblinkMatchDescr1 = vimwiki#base#apply_template(web_template, 
       \ g:vimwiki_rxWeblinkUrl, 
       \ '\zs'.g:vimwiki_rxWeblinkDescr.'\ze', 
       \ '')
 "
-" " 2012-02-04 DONE - FIXME not starting with [[ or ][ ? 
-" " 2. [DESCRIPTION](URL)
-" let g:vimwiki_rxWeblinkPrefix2 = '[\[\]]\@<!\[' 
-" " 3. [URL DESCRIPTION]
-" let g:vimwiki_rxWeblinkPrefix3 = '[\[\]]\@<!\['
 "
 " *. ANY weblink
 " *a) match ANY weblink
@@ -653,18 +652,23 @@ let exclude_chars = s:get_unique_chars(exclude_chars)
 let valid_chars = '[^'.escape(exclude_chars, magic_chars).']'
 let g:vimwiki_rxImagelinkStyle = valid_chars.'*'
 "
+"
+" 1. image template
 let g:vimwiki_rxImagelink1 = vimwiki#base#apply_template(t_Image, 
       \ g:vimwiki_rxImagelinkUrl, 
       \ g:vimwiki_rxImagelinkDescr,
       \ g:vimwiki_rxImagelinkStyle)
+" 1a) match URL within image template
 let g:vimwiki_rxImagelinkMatchUrl1 = vimwiki#base#apply_template(t_Image,
       \ '\zs'.g:vimwiki_rxImagelinkUrl.'\ze', 
       \ g:vimwiki_rxImagelinkDescr, 
       \ g:vimwiki_rxImagelinkStyle)
+" 1b) match DESCRIPTION within image template
 let g:vimwiki_rxImagelinkMatchDescr1 = vimwiki#base#apply_template(t_Image,
       \ g:vimwiki_rxImagelinkUrl, 
       \ '\zs'.g:vimwiki_rxImagelinkDescr.'\ze', 
       \ g:vimwiki_rxImagelinkStyle)
+" 1c) match STYLE within image template
 let g:vimwiki_rxImagelinkMatchStyle1 = vimwiki#base#apply_template(t_Image,
       \ g:vimwiki_rxImagelinkUrl, 
       \ g:vimwiki_rxImagelinkDescr,
