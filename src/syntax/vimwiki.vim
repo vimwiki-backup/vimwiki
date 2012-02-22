@@ -60,8 +60,8 @@ syntax spell toplevel
 
 syn match VimwikiLinkChar contained /\[\[/
 syn match VimwikiLinkChar contained /\]\]/
-syn match VimwikiLinkChar contained /\[\[[^\[\]\|]\{-}|\ze.\{-}]]/
-syn match VimwikiLinkChar contained /\[\[[^\[\]\|]\{-}]\[\ze.\{-}]]/
+syn match VimwikiLinkChar contained /\[\[[^\[\]]\{-}\ze.\{-}]]/
+syn match VimwikiLinkChar contained /\[\[[^\[\]]\{-}]\[\ze.\{-}]]/
 
 syn match VimwikiLinkChar contained /{{/
 syn match VimwikiLinkChar contained /}}/
@@ -80,8 +80,8 @@ endif
 
 syn match VimwikiNoExistsLinkChar contained /\[\[/
 syn match VimwikiNoExistsLinkChar contained /\]\]/
-syn match VimwikiNoExistsLinkChar contained /\[\[[^\[\]\|]\{-}|\ze.*]]/
-syn match VimwikiNoExistsLinkChar contained /\[\[[^\[\]\|]\{-}]\[\ze.*]]/
+syn match VimwikiNoExistsLinkChar contained /\[\[[^\[\]]\{-}\ze.*]]/
+syn match VimwikiNoExistsLinkChar contained /\[\[[^\[\]]\{-}]\[\ze.*]]/
 
 syn match VimwikiNoExistsLinkChar contained /{{/
 syn match VimwikiNoExistsLinkChar contained /}}/
