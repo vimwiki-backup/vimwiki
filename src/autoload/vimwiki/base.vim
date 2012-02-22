@@ -159,7 +159,7 @@ function! vimwiki#base#open_link(cmd, link, ...) "{{{
   " nonzero wnum = a:1 selects an alternate wiki to open link: let idx = a:1 - 1
   " let idx = a:wnum - 1
   " resolve url
-  let [scheme, path, subdir, lnk, ext] = vimwiki#base#resolve_scheme(a:link, '.wiki')
+  let [scheme, path, subdir, lnk, ext] = vimwiki#base#resolve_scheme(a:link, VimwikiGet('ext'))
   if lnk == ''
     echom 'Vimwiki Error: Unable to resolve link!'
     return
