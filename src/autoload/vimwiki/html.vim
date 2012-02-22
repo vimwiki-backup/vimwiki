@@ -375,7 +375,7 @@ function! vimwiki#html#linkify_link(src, descr) "{{{
   let descr = substitute(a:descr,'^\s*\(.*\)\s*$','\1','')
   let descr = (descr == "" ? a:src : descr)
   let descr_str = (descr =~ g:vimwiki_rxWikiIncl 
-        \ ? VimwikiWikiIncludeHandler(descr) 
+        \ ? s:tag_wikiincl(descr) 
         \ : descr)
   return '<a'.src_str.'>'.descr_str.'</a>'
 endfunction "}}}
@@ -405,6 +405,35 @@ function! s:tag_weblink(value) "{{{
   return line
 endfunction "}}}
 
+function! s:tag_wikiincl(value) "{{{
+  " {{imgurl}{arg1}{arg2}}    -> ???
+  " {{imgurl}}                -> <img src="imgurl"/>
+  " {{imgurl}{descr}{style}}  -> <img src="imgurl" alt="descr" style="style" />
+  let str = a:value
+  if match(str, g:vimwiki_wikiword_escape_prefix) == 0
+    return a:value[len(g:vimwiki_wikiword_escape_prefix):]
+  endif
+  " custom transclusions
+  let line = VimwikiWikiIncludeHandler(str)
+  " otherwise, assume image transclusion
+  if line == ''
+    let url_0 = matchstr(str, g:vimwiki_rxWikiInclMatchUrl)
+    let descr = matchstr(str, VimwikiWikiInclMatchArg(1))
+    let style = matchstr(str, VimwikiWikiInclMatchArg(2))
+    " resolve url
+    let [scheme, path, subdir, lnk, ext, url] = 
+          \ vimwiki#base#resolve_scheme(url_0, '.html')
+    " generate html output
+    if g:vimwiki_debug
+      echom '{{scheme='.scheme.', path='.path.', subdir='.subdir.', lnk='.lnk.', ext='.ext.'}}'
+    endif
+    let url = escape(url, '#')
+    let line = vimwiki#html#linkify_image(url, descr, style)
+    return line
+  endif
+  return line
+endfunction "}}}
+
 function! s:tag_wikilink(value) "{{{
   " [[url]]                -> <a href="url.html">url</a>
   " [[url][descr]]         -> <a href="url.html">descr</a>
@@ -420,17 +449,8 @@ function! s:tag_wikilink(value) "{{{
   let descr = (substitute(descr,'^\s*\(.*\)\s*$','\1','') != '' ? descr : url)
 
   " resolve url
-  let [scheme, path, subdir, lnk, ext] = vimwiki#base#resolve_scheme(url, '.html')
-
-  " construct url from parts
-  if scheme == ''
-    let url = subdir.lnk.ext
-  elseif scheme=~'wiki\d*' || scheme=~'diary\d*' || scheme=~'local\d*'
-    " prepend 'file:' for wiki: and local: schemes
-    let url = 'file://'.path.subdir.lnk.ext
-  else
-    let url = scheme.':'.path.subdir.lnk.ext
-  endif
+  let [scheme, path, subdir, lnk, ext, url] = 
+        \ vimwiki#base#resolve_scheme(url, '.html')
 
   " generate html output
   if g:vimwiki_debug
@@ -555,7 +575,7 @@ endfunction " }}}
 function! s:process_tags_links(line) " {{{
   let line = a:line
   let line = s:make_tag(line, g:vimwiki_rxWikiLink, 's:tag_wikilink')
-  let line = s:make_tag(line, g:vimwiki_rxWikiIncl, 'VimwikiWikiIncludeHandler')
+  let line = s:make_tag(line, g:vimwiki_rxWikiIncl, 's:tag_wikiincl')
   let line = s:make_tag(line, g:vimwiki_rxImagelink, 's:tag_imagelink')
   let line = s:make_tag(line, g:vimwiki_rxWeblink, 's:tag_weblink')
   return line
