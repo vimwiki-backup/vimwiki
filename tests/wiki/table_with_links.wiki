@@ -1,0 +1,25 @@
+
+| Markup                      |
+|-----------------------------|
+| GitHub                      |
+| [[Github]]                  |
+| http://github.com           |
+| [[http://github.com]]       |
+| [http://github.com GitHub]  |
+
+| Description         |
+|---------------------|
+| `GitHub`            |
+| `Github`            |
+| `http://github.com` |
+| `http://github.com` |
+| `GitHub`            |
+
+| URL                 |
+|---------------------|
+| `GitHub.wiki`       |
+| `Github.wiki`       |
+| `http://github.com` |
+| `http://github.com` |
+| `http://github.com` |
+

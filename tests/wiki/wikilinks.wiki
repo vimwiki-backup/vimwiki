@@ -1,0 +1,34 @@
+%toc
+= Wikilinks =
+
+ # [[PageTwo]] 
+ # [[PageThree]] 
+
+= Wikilinks With ][-Separator =
+
+These syntaxes only work when 'link_separator' == ']['
+
+ # [[PageTwo][Page Two]]
+ # [[PageThree][Page Three]] 
+
+= Wikilinks To Local Resources =
+
+ # [[headers]] : Highlighted as link
+ # [[blockquote]] : Highlighted as link
+ # [[missing]] : Highlighted as missing-link
+ # [[diary/]]  : Highlighted as link
+ # [[../wiki/]] : Highlighted as missing-link
+
+= Wikilinks To Non-Wiki Local Resources =
+
+ # [[Path/To/Nowhere.txt]] : Highlighted as missing-link.  Schemeless URLs are equivalent to wiki-scheme URLs, which are fixed with an .html extension
+ # [[file:///Absolute/Path/To/Nowhere.txt]] : Always highlight absolute paths as links.  No .html extension added
+ # [[local:Path/To/Nowhere.txt]] : Always highlight local paths as links.  No .html extension added
+
+= Wikilinks To Urls =
+
+ # [[http://github.com]] : Highlighted as link
+ # [[file:///Users/stu/Downloads/2011-11-22-FlashReport_11_22_11.fin.pdf]] : Highlighted as link
+
+
+
