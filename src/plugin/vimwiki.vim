@@ -626,6 +626,7 @@ let g:vimwiki_rxImagelinkProtocols = ''.
 "
 let g:vimwiki_rxImagelinkUrl = g:vimwiki_rxImagelinkProtocols .
     \ '\S\{-1,}'. '\%(([^ \t()]*)\)\=' .
+    \ '\.'.
     \ '\%('.
       \ '\%('. join(split(tolower(g:vimwiki_image_exts), '\s*,\s*'), '\|'). '\)'.
       \ '\|'.
