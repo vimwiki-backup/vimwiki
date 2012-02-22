@@ -257,23 +257,25 @@ if !exists("*VimwikiWikiIncludeHandler") "{{{
     endif
     let url = matchstr(str, g:vimwiki_rxWikiInclMatchUrl)
 
+    " resolve url
+    let [scheme, path, subdir, lnk, ext] = vimwiki#base#resolve_scheme(url, '.html')
+
+    " construct url from parts
+    if scheme == ''
+      let url = subdir.lnk.ext
+    elseif scheme=~'wiki\d*' || scheme=~'diary\d*' || scheme=~'local\d*'
+      " prepend 'file:' for wiki: and local: schemes
+      let url = 'file://'.path.subdir.lnk.ext
+    else
+      let url = scheme.':'.path.subdir.lnk.ext
+    endif
+
+    "echom 'transclude url = '.url
+
     " Include image
-    if url =~ g:vimwiki_rxImagelinkUrl
+    if url =~ g:vimwiki_rxImagelinkUrl.'$'
       let descr = matchstr(str, VimwikiWikiInclMatchArg(1))
       let style = matchstr(str, VimwikiWikiInclMatchArg(2))
-
-      " resolve url
-      let [scheme, path, subdir, lnk, ext] = vimwiki#base#resolve_scheme(url, '.html')
-
-      " construct url from parts
-      if scheme == ''
-        let url = subdir.lnk.ext
-      elseif scheme=~'wiki\d*' || scheme=~'diary\d*' || scheme=~'local\d*'
-        " prepend 'file:' for wiki: and local: schemes
-        let url = 'file://'.path.subdir.lnk.ext
-      else
-        let url = scheme.':'.path.subdir.lnk.ext
-      endif
 
       " generate html output
       if g:vimwiki_debug
