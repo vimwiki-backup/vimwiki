@@ -58,15 +58,15 @@ endif
 
 syntax spell toplevel
 
-syn match VimwikiLinkChar contained /\[\[/
-syn match VimwikiLinkChar contained /\]\]/
-syn match VimwikiLinkChar contained /\[\[[^\[\]]\{-}\ze.\{-}]]/
-syn match VimwikiLinkChar contained /\[\[[^\[\]]\{-}]\[\ze.\{-}]]/
 
-syn match VimwikiLinkChar contained /{{/
-syn match VimwikiLinkChar contained /}}/
-syn match VimwikiLinkChar contained /}{/ conceal cchar=~
-syn match VimwikiLinkChar contained /{{[^{}]\{-}}{\ze.\{-}}}/
+execute 'syn match VimwikiLinkChar contained /'.g:vimwiki_rxWikiLinkPrefix.'/'
+execute 'syn match VimwikiLinkChar contained /'.g:vimwiki_rxWikiLinkSuffix.'/'
+execute 'syn match VimwikiLinkChar contained /'.g:vimwiki_rxWikiLinkPrefix.g:vimwiki_rxWikiLinkUrl.g:vimwiki_rxWikiLinkSeparator.'\ze'.g:vimwiki_rxWikiLinkDescr.g:vimwiki_rxWikiLinkSuffix.'/'
+
+execute 'syn match VimwikiLinkChar contained /'.g:vimwiki_rxWikiInclPrefix.'/'
+execute 'syn match VimwikiLinkChar contained /'.g:vimwiki_rxWikiInclSuffix.'/'
+execute 'syn match VimwikiLinkChar contained /'.g:vimwiki_rxWikiInclSeparator.'/ conceal cchar=~'
+execute 'syn match VimwikiLinkChar contained /'.g:vimwiki_rxWikiInclPrefix.g:vimwiki_rxWikiInclUrl.g:vimwiki_rxWikiInclSeparator.'\ze'.g:vimwiki_rxWikiInclArg.g:vimwiki_rxWikiInclArgs.g:vimwiki_rxWikiInclSuffix.'/'
 " syn match VimwikiLinkChar contained /{{[^\{\}\n]\{-}}{[^\{\}\n]\{-}\zs}{.*\ze}}/ TODO: trouble getting '\zs' working !?!
 
 if exists("+conceallevel")
@@ -78,15 +78,14 @@ if exists("+conceallevel")
         \.g:vimwiki_url_maxsave.'}\)\@=` conceal cchar=~'
 endif
 
-syn match VimwikiNoExistsLinkChar contained /\[\[/
-syn match VimwikiNoExistsLinkChar contained /\]\]/
-syn match VimwikiNoExistsLinkChar contained /\[\[[^\[\]]\{-}\ze.*]]/
-syn match VimwikiNoExistsLinkChar contained /\[\[[^\[\]]\{-}]\[\ze.*]]/
+execute 'syn match VimwikiNoExistsLinkChar contained /'.g:vimwiki_rxWikiLinkPrefix.'/'
+execute 'syn match VimwikiNoExistsLinkChar contained /'.g:vimwiki_rxWikiLinkSuffix.'/'
+execute 'syn match VimwikiNoExistsLinkChar contained /'.g:vimwiki_rxWikiLinkPrefix.g:vimwiki_rxWikiLinkUrl.g:vimwiki_rxWikiLinkSeparator.'\ze'.g:vimwiki_rxWikiLinkDescr.g:vimwiki_rxWikiLinkSuffix.'/'
 
-syn match VimwikiNoExistsLinkChar contained /{{/
-syn match VimwikiNoExistsLinkChar contained /}}/
-syn match VimwikiNoExistsLinkChar contained /}{/ conceal cchar=~
-syn match VimwikiNoExistsLinkChar contained /{{[^{}]\{-}}{\ze.\{-}}}/
+execute 'syn match VimwikiNoExistsLinkChar contained /'.g:vimwiki_rxWikiInclPrefix.'/'
+execute 'syn match VimwikiNoExistsLinkChar contained /'.g:vimwiki_rxWikiInclSuffix.'/'
+execute 'syn match VimwikiNoExistsLinkChar contained /'.g:vimwiki_rxWikiInclSeparator.'/ conceal cchar=~'
+execute 'syn match VimwikiNoExistsLinkChar contained /'.g:vimwiki_rxWikiInclPrefix.g:vimwiki_rxWikiInclUrl.g:vimwiki_rxWikiInclSeparator.'\ze'.g:vimwiki_rxWikiInclArg.g:vimwiki_rxWikiInclArgs.g:vimwiki_rxWikiInclSuffix.'/'
 " syn match VimwikiNoExistsLinkChar contained /{{[^\{\}\n]\{-}}{[^\{\}\n]\{-}\zs}{.*\ze}}/ TODO: trouble getting '\zs' working !?!
 
 execute 'syn match VimwikiEqInChar contained /'.g:vimwiki_char_eqin.'/'
