@@ -2008,6 +2008,7 @@ Vim plugins: http://www.vim.org/scripts/script.php?script_id=2226
     * Issue 282: Is it possible to disable table cell switch in insert mode?
       See |g:vimwiki_table_mappings|. Option |g:vimwiki_table_auto_fmt| was
       used before to switch table mappings. 
+    * Issue 283: Directory indexes broken.
 
 1.2~
     * Issue 70: Table spanning cell support.

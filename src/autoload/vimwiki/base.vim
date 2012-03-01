@@ -323,12 +323,7 @@ endfunction
 function! vimwiki#base#edit_file(command, filename) "{{{
   let fname = escape(a:filename, '% ')
   call vimwiki#base#mkdir(fnamemodify(a:filename, ":p:h"))
-  try
-    execute a:command.' '.fname
-  catch /E37/ " catch 'No write since last change' error
-    execute ':split '.fname
-  catch /E325/ " catch 'ATTENTION' error (:h E325)
-  endtry
+  execute a:command.' '.fname
 endfunction
 " }}}
 
