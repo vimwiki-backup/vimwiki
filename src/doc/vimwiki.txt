@@ -421,11 +421,13 @@ ic                      An inner column in a table.
 *:Vimwiki2HTML*
     Convert current wiki page to HTML.
 
+
 *:Vimwiki2HTMLBrowse*
     Convert current wiki page to HTML and open in in webbrowser.
 
 *:VimwikiAll2HTML*
     Convert all wiki pages to HTML.
+    Default css file (style.css) is created if there is no one.
 
 *:VimwikiToggleListItem*
     Toggle list item on/off (checked/unchecked)
