@@ -377,16 +377,6 @@ function! s:strip_word(word) "{{{
 endfunction
 " }}}
 
-function! vimwiki#base#is_non_wiki_link(lnk) "{{{
-  let exts = '.\+\.\%('.
-          \ join(split(g:vimwiki_file_exts, '\s*,\s*'), '\|').
-          \ '\)$'
-  if a:lnk =~ exts
-    return 1
-  endif
-  return 0
-endfunction "}}}
-
 function! vimwiki#base#is_link_to_dir(link) "{{{
   " Check if link is to a directory.
   " It should be ended with \ or /.
@@ -628,7 +618,7 @@ function! s:highlight_existent_links() "{{{
 
     " a) match WikiWord
     if g:vimwiki_camel_case &&
-          \ link =~ g:vimwiki_rxWikiWord && !vimwiki#base#is_non_wiki_link(link)
+          \ link =~ g:vimwiki_rxWikiWord
       call s:add_target_syntax_ON('!\@<!\<'. link. '\>')
     endif
     " b) match [[URL]]
@@ -671,11 +661,6 @@ function! s:highlight_existent_links() "{{{
     call s:add_target_syntax_ON(target)
   endfor
 
-  " Deprecated
-  " " Issue 103: Always highlight links to non-wiki files as existed.
-  " let rxFileExt = '\%('.join(split(tolower(g:vimwiki_file_exts).','.
-  "       \ toupper(g:vimwiki_file_exts), '\s*,\s*'), '\|').'\)'
-  " let non_wiki_link = g:vimwiki_rxWikiLinkUrl. '\.'. rxFileExt
 endfunction "}}}
 
 
@@ -882,10 +867,6 @@ function! vimwiki#base#rename_link() "{{{
   " check new_fname - it should be 'good', not empty
   if substitute(new_link, '\s', '', 'g') == ''
     echomsg 'vimwiki: Cannot rename to an empty filename!'
-    return
-  endif
-  if vimwiki#base#is_non_wiki_link(new_link)
-    echomsg 'vimwiki: Cannot rename to a filename with extension (ie .txt .html)!'
     return
   endif
 
