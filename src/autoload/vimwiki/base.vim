@@ -203,7 +203,7 @@ function! vimwiki#base#open_link(cmd, link, ...) "{{{
   else
     " rm duplicate /-chars
     call vimwiki#base#edit_file(a:cmd, 
-          \ substitute(path.subdir.lnk.ext, '^/\+', '/', 'g'))
+          \ substitute(path.subdir.lnk.ext, '^/\+', '/', ''))
   endif
   " save previous link
   if update_prev_link && exists('vimwiki_prev_link')
