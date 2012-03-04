@@ -388,6 +388,11 @@ let g:vimwiki_rxSchemeUrlMatchUrl = rxSchemes.':\zs.*\ze'
 
 "
 " LINKS: WikiLinks  {{{
+" Words
+" - more permissive than '\<\w\+\>' which uses 'iskeyword' characters
+" - less permissive than rxWikiLinkUrl which uses non-separator characters
+let g:vimwiki_rxWord = '\<\S\+\>'
+
 let wword = '\C\<\%(['.g:vimwiki_upper.']['.g:vimwiki_lower.']\+\)\{2,}\>'
 
 " 0. WikiWordURLs
