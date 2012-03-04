@@ -434,7 +434,7 @@ let g:vimwiki_rxWikiLinkMatchDescr = g:vimwiki_rxWikiLinkPrefix.
       \ g:vimwiki_rxWikiLinkUrl. g:vimwiki_rxWikiLinkSeparatorOpt.
       \ '\zs'. g:vimwiki_rxWikiLinkDescr. '\ze'. g:vimwiki_rxWikiLinkSuffix
 "
-" *. wikilink or wikiword
+" *. wikilink or wikiword WARNING: g:vimwiki_camel_case may be deprecated
 if g:vimwiki_camel_case
   " *a) match ANY wikilink or wikiword
   let g:vimwiki_rxWikiLink = g:vimwiki_rxWikiLink.'\|'. g:vimwiki_rxWikiWord
