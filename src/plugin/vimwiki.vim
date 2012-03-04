@@ -335,8 +335,6 @@ call s:default('table_auto_fmt', 1)
 call s:default('w32_dir_enc', '')
 call s:default('CJK_length', 0)
 call s:default('dir_link', '')
-call s:default('file_exts', 'pdf,txt,doc,rtf,xls,php,zip,rar,7z,html,gz')
-call s:default('image_exts', 'jpg,jpeg,png,gif')
 call s:default('valid_html_tags', 'b,i,s,u,sub,sup,kbd,br,hr,div,center,strong,em')
 call s:default('user_htmls', '')
 
@@ -583,17 +581,10 @@ let g:vimwiki_rxImagelinkProtocols = ''.
         \ '\%('.join(split(g:vimwiki_web_schemes1, '\s*,\s*'), '\|'). '\):'.
         \ '\%(\%(//\)\|\%(\\\\\)\)'.
       \ '\)\?'
-"
-let g:vimwiki_rxImagelinkUrl = g:vimwiki_rxImagelinkProtocols .
-    \ '\S\{-1,}'. '\%(([^ \t()]*)\)\=' .
-    \ '\.'.
-    \ '\%('.
-      \ '\%('. join(split(tolower(g:vimwiki_image_exts), '\s*,\s*'), '\|'). '\)'.
-      \ '\|'.
-      \ '\%('. join(split(toupper(g:vimwiki_image_exts), '\s*,\s*'), '\|'). '\)'.
-    \ '\)'
 
-"
+let g:vimwiki_rxImagelinkUrl = g:vimwiki_rxImagelinkProtocols .
+    \ '\S\{-1,}'. '\%(([^ \t()]*)\)\='
+
 let template_args = '\%(__LinkUrl__\|__LinkDescription__\|__LinkStyle__\)'
 let t_Image = VimwikiGet('image_template')
 if g:vimwiki_debug
