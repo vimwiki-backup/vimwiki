@@ -561,6 +561,8 @@ function! vimwiki#base#highlight_links() "{{{
   else
     " Wikilink
     call s:add_target_syntax_ON(g:vimwiki_rxWikiLink)
+    " WikiIncl
+    call s:add_target_syntax_ON(g:vimwiki_rxWikiIncl)
   endif
 
   " Weblink
