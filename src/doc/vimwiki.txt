@@ -1833,20 +1833,6 @@ Default: '' (empty)
 
 
 ------------------------------------------------------------------------------
-*g:vimwiki_file_exts*
-
-Comma-separated list of file extensions.
-
-Consider you have the following link: [[my_script.php][my script]].
-If there is a 'php' extension in g:vimwiki_file_exts, this link would be
-htmlized to <a href="my_script.php">my script</a>.
-Otherwise it would be <a href="my_script.php.html">my script</a> (note .html)
-
-
-Default: 'pdf,txt,doc,rtf,xls,php,zip,rar,7z,html,gz'
-
-
-------------------------------------------------------------------------------
 *g:vimwiki_valid_html_tags*
 
 Comma-separated list of HTML tags that can be used in vimwiki.
@@ -1972,8 +1958,9 @@ Vim plugins: http://www.vim.org/scripts/script.php?script_id=2226
 14. Changelog                                              *vimwiki-changelog*
 
 1.3 dev~
-    CameCased links are off by default! Check |g:vimwiki_camel_case| to turn
-    it on.
+    * CameCased links are off by default! Check |g:vimwiki_camel_case| to turn
+      it on.
+    * g:vimwiki_image_exts and g:vimwiki_file_exts options are removed.
 
     * Issue 225: handling of HTML tags in code and block code
     * Issue 275 and 96: web links with parentheses or near parentheses or
