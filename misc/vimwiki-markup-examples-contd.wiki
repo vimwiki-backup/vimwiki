@@ -11,6 +11,8 @@ See also: [[vimwiki-markup-examples][markup examples]]
 
 The following examples are provided to exhibit the functioning of URLs with "schemes".  Each example below is provided with a brief note describing the expected appearance and behavior when followed.
 
+Please follow the setup instructions from [[vimwiki-markup-examples][markup examples]].
+
 == Definitions W/O, L/U, R/T ==
 
  * W(iki) means Wiki page
@@ -25,7 +27,9 @@ The following examples are provided to exhibit the functioning of URLs with "sch
 == noscheme: L+R ==
 
  # EgPageTwo, EgPageThree
-   * HL=none , n/a, n/a
+   * HL=none , n/a, n/a, (to be highlighted, these examples require
+     `g:vimwiki_camel_case == 1` WARNING: `g:vimwiki_camel_case` is being
+     considered for deprecation)
  # [[EgPageTwo]], [[EgPageTwo][Page Two]]
    * HL=link , existent, opens existing wiki file in vim
  # [[EgPageThree]], [[EgPageThree][Page Three]]
