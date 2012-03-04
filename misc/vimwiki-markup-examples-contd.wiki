@@ -5,7 +5,13 @@ Generates: `misc/html/vimwiki-markup-examples-contd.html`
 See also: [[vimwiki-markup-examples][markup examples]]
 
 
-= Definitions W/O, L/U, R/T =
+%toc
+
+= Understanding Schemes =
+
+The following examples are provided to exhibit the functioning of URLs with "schemes".  Each example below is provided with a brief note describing the expected appearance and behavior when followed.
+
+== Definitions W/O, L/U, R/T ==
 
  * W(iki) means Wiki page
  * O(ther) means non-Wiki page
@@ -16,29 +22,31 @@ See also: [[vimwiki-markup-examples][markup examples]]
 
 = Wikilinks To Files =
 
-== noscheme: L+R == 
+== noscheme: L+R ==
 
- # PageTwo, [[PageTwo]], [[PageTwo][Page Two]], [[diary/2010-12-30]], [[diary/2010-12-30][2010-12-30]]
+ # EgPageTwo, EgPageThree
+   * HL=none , n/a, n/a
+ # [[EgPageTwo]], [[EgPageTwo][Page Two]]
    * HL=link , existent, opens existing wiki file in vim
- # PageThree, [[PageThree]], [[PageThree][Page Three]], [[diary/2010-12-31]], [[diary/2010-12-31][2010-12-31]] 
+ # [[EgPageThree]], [[EgPageThree][Page Three]]
    * HL=missing-link , non-existent, opens as NEW WIKI file in vim
 
 == wiki: L+R ==
 
- # [[wiki:PageTwo]], [[wiki:PageTwo][Page Two]], [[wiki:diary/2010-12-30]], [[wiki:diary/2010-12-30][2010-12-30]]
+ # [[wiki:EgPageTwo]], [[wiki:EgPageTwo][Page Two]]
    * HL=link , existent, opens existing wiki file in vim
- # [[wiki0:PageTwo]], [[wiki0:PageTwo][Page Two]], [[wiki0:diary/2010-12-30]], [[wiki0:diary/2010-12-30][2010-12-30]]
+ # [[wiki0:EgPageTwo]], [[wiki0:EgPageTwo][Page Two]]
    * HL=link , existent, opens existing wiki file in vim
- # [[wiki1:PageTwo]], [[wiki1:PageTwo][Page Two]], [[wiki1:diary/2010-12-30]], [[wiki1:diary/2010-12-30][2010-12-30]]
+ # [[wiki1:EgPageTwo]], [[wiki1:EgPageTwo][Page Two]]
    * HL=link , existent or non-existent, opens existing or NEW WIKI file in vim, or complains that numbered wiki does not exist
-   * HL always on for wiki's other than the active one, regardless of whether file is found
- # [[wiki:PageThree]], [[wiki:PageThree][Page Three]], [[wiki:diary/2010-12-31]], [[wiki:diary/2010-12-31][2010-12-31]] 
+ # [[wiki:EgPageThree]], [[wiki:EgPageThree][Page Three]]
    * HL=missing-link , non-existent, opens as NEW WIKI file in vim
- # [[wiki0:PageThree]], [[wiki0:PageThree][Page Three]], [[wiki0:diary/2010-12-31]], [[wiki0:diary/2010-12-31][2010-12-31]] 
+ # [[wiki0:EgPageThree]], [[wiki0:EgPageThree][Page Three]]
    * HL=missing-link , non-existent, opens as NEW WIKI file in vim
- # [[wiki1:PageThree]], [[wiki1:PageThree][Page Three]], [[wiki1:diary/2010-12-31]], [[wiki1:diary/2010-12-31][2010-12-31]] 
+ # [[wiki1:EgPageThree]], [[wiki1:EgPageThree][Page Three]]
    * HL=link , existent or non-existent, opens existing or NEW WIKI file in vim, or complains that numbered wiki does not exist
-   * HL always on for wiki's other than the active one, regardless of whether file is found
+
+HL always on for schemes other than the active wiki, regardless of whether file is found
 
 == diary: L+R ==
 
@@ -48,82 +56,91 @@ See also: [[vimwiki-markup-examples][markup examples]]
    * HL=link , existent, opens existing wiki file in vim
  # [[diary1:2010-12-30]], [[diary1:2010-12-30][2010-12-30]]
    * HL=link , existent, opens existing wiki file in vim, or complains that numbered wiki does not exist
-   * HL always on for wiki's other than the active one, regardless of whether file is found
  # [[diary:2013-12-30]], [[diary:2013-12-30][2013-12-30]]
    * HL=link , non-existent, opens existing wiki file in vim TODO: enable HL=missing-link for diary
  # [[diary0:2013-12-30]], [[diary0:2013-12-30][2013-12-30]]
    * HL=link , non-existent, opens existing wiki file in vim TODO: enable HL=missing-link for diary
  # [[diary1:2013-12-30]], [[diary1:2013-12-30][2013-12-30]]
    * HL=link , non-existent, opens existing wiki file in vim, or complains that numbered wiki does not exist
-   * HL always on for wiki's other than the active one, regardless of whether file is found
- # [[diary:PageTwo]], [[diary:PageTwo][Page Two]]
+ # [[diary:EgPageTwo]], [[diary:EgPageTwo][Page Two]]
    * HL=link , invalid and non-existent, opens non-diary wiki file in "diary/" directory in vim TODO: problematic!?
+
+HL always on for non-wiki schemes
 
 == local: L+R ==
 
- # [[local:PageTwo.wiki]], [[local:PageTwo.wiki][Page Two]], [[local:diary/2010-12-30.wiki]], [[local:diary/2010-12-30.wiki][2010-12-30]]
+ # [[local:EgPageTwo.wiki]], [[local:EgPageTwo.wiki][Page Two]]
    * HL=link, existent, opens existing file in vim
- # [[local:PageTwo]], [[local:PageTwo][Page Two]], [[local:diary/2010-12-30]], [[local:diary/2010-12-30][2010-12-30]]
+ # [[local:EgPageTwo]], [[local:EgPageTwo][Page Two]]
    * HL=link, non-existent, opens new non-wiki file WITHOUT EXTENSION in vim
-   * HL always on for non-wiki schemes
- # [[local:diary/2010-12-31]], [[local:diary/2010-12-31][2010-12-31]]
-   * HL=link , non-existent, opens new non-wiki file without extension in "diary/" directory in vim TODO: problematic!?
-   * HL always on for non-wiki schemes
+
+HL always on for non-wiki schemes
 
 == file: U+R ==
 
- # [[file:///Users/stu/Research/Tools/VimPlugins/vimwiki-custom/sandbox/wiki/index.wiki]], [[file:///Users/stu/Research/Tools/VimPlugins/vimwiki-custom/sandbox/wiki/index.wiki][index]] 
+ # [[file:///Users/stu/Research/Tools/VimPlugins/vimwiki-custom/sandbox/wiki/index.wiki]], [[file:///Users/stu/Research/Tools/VimPlugins/vimwiki-custom/sandbox/wiki/index.wiki][index]]
    * HL=link & shortened, existent, opens existing wiki file in vim (but does not update prev_wiki_page !!)
-   * HL always on for non-wiki schemes
  # [[file:///Users/stu/Research/Tools/VimPlugins/vimwiki-custom/sandbox/html/index.html]], [[file:///Users/stu/Research/Tools/VimPlugins/vimwiki-custom/sandbox/html/index.html][index]]
    * HL=link & shortened, existent, opens existing html file in vim
-   * HL always on for non-wiki schemes
+
+HL always on for non-wiki schemes
 
 == http: U+R ==
 
- # [[http://github.com]], [[http://github.com][Github]] 
+ # [[http://github.com]], [[http://github.com][Github]]
    * HL=link, existent, opens webpage in browser
-   * HL always on for non-wiki schemes
+
+HL always on for non-wiki schemes
 
 = Wikilinks To Directories =
 
-== noscheme: L+R == 
+== noscheme: L+R ==
 
- # [[images/]], [[images/][images]], [[diary/]], [[diary/][diary]]
-   * HL=link , existent, "Illegal file name" ... but still opens tmp file with that name in vim
- # [[../images/]], [[../images/][images]], [[../imagestt/]], [[../imagestt/][images]] 
-   * HL=missing-link , existent or non-existent, "Illegal file name" ... but still opens tmp file with that name in vim
+ # [[html/]], [[html/][html]]
+   * HL=link , existent, opens netrw directory listing
+ # [[../images/]], [[../images/][images]]
+   * HL=missing-link , existent, opens netrw directory listing
+ # [[EgMissingDir/]], [[EgMissingDir/][Missing Directory]]
+   * HL=missing-link , non-existent, creates NEW directory and opens netrw directory listing
 
 == wiki: L+R ==
 
-"wiki:" does not really make sense in front of "directory/"
+"wiki:" does not really make sense in front of "dir/"
 
- # [[wiki:images/]], [[wiki:images/][images]], [[wiki:diary/]], [[wiki:diary/][diary]] 
-   * HL=link , existent, "Illegal file name" ... but still opens tmp file with that name in vim
- # [[wiki0:images/]], [[wiki0:images/][images]], [[wiki0:diary/]], [[wiki:diary/][diary]] 
-   * HL=link , existent, "Illegal file name" ... but still opens tmp file with that name in vim
- # [[wiki1:images/]], [[wiki1:images/][images]], [[wiki1:diary/]], [[wiki1:diary/][diary]] 
-   * HL=link , existent, "Illegal file name" ... but still opens tmp file with that name in vim, or complains that numbered wiki does not exist
-   * HL always on for wiki's other than the active one, regardless of whether file is found
- # [[wiki:../images/]], [[wiki:../images/][images]], [[wiki:../imagestt/]], [[wiki:../imagestt/][images]] 
-   * HL=missing-link , non-existent, "Illegal file name" ... but still opens tmp file with that name in vim
- # [[wiki0:../images/]], [[wiki0:../images/][images]], [[wiki0:../imagestt/]], [[wiki0:../imagestt/][images]] 
-   * HL=missing-link , non-existent, "Illegal file name" ... but still opens tmp file with that name in vim
- # [[wiki1:../images/]], [[wiki1:../images/][images]], [[wiki1:../imagestt/]], [[wiki1:../imagestt/][images]] 
-   * HL=link , non-existent, "Illegal file name" ... but still opens tmp file with that name in vim, or complains that numbered wiki does not exist
-   * HL always on for wiki's other than the active one, regardless of whether file is found
+ # [[wiki:html/]], [[wiki:html/][html]]
+   * HL=link , existent, opens netrw directory listing
+ # [[wiki0:html/]], [[wiki0:html/][html]]
+   * HL=link , existent, opens netrw directory listing
+ # [[wiki1:html/]], [[wiki1:html/][html]]
+   * HL=link , existent, opens netrw directory listing, or complains that numbered wiki does not exist
+ # [[wiki:EgMissingDir/]], [[wiki:EgMissingDir/][Missing Directory]]
+   * HL=missing-link , non-existent, creates NEW directory and opens netrw directory listing
+ # [[wiki0:EgMissingDir/]], [[wiki0:EgMissingDir/][Missing Directory]]
+   * HL=missing-link , non-existent, creates NEW directory and opens netrw directory listing
+ # [[wiki1:EgMissingDir/]], [[wiki1:EgMissingDir/][Missing Directory]]
+   * HL=link , non-existent, creates NEW directory and opens netrw directory listing, or complains that numbered wiki does not exist
+
+HL always on for wiki's other than the active one, regardless of whether directory is found
 
 == diary: L+R ==
 
- # [[diary:images/]], [[diary:images/][images]]
-   * HL=link , non-existent, "Illegal file name" ... but still opens tmp file "diary/images/.wiki" in vim TODO: problematic !?
+"diary:" does not really make sense in front of "dir/"
+
+ # [[diary:EgMissingDir/]], [[diary:EgMissingDir/][Missing Directory]]
+   * HL=link , non-existent, opens NEW file "diary/EgMissingDir/.wiki" in vim TODO: problematic !?
+
+HL always on for non-wiki schemes
 
 == local: L+R ==
 
- # [[local:images/]], [[local:images/][images]], [[local:diary/]], [[local:diary/][diary]] 
-   * HL=link , existent, "Illegal file name" ... but still opens tmp file with that name in vim
- # [[local:../images/]], [[local:../images/][images]], [[local:../imagestt/]], [[local:../imagestt/][images]] 
-   * HL=link , non-existent, "Illegal file name" ... but still opens tmp file with that name in vim
+ # [[local:html/]], [[local:html/][html]]
+   * HL=link , existent, opens netrw directory listing
+ # [[local:EgMissingDir/]], [[local:EgMissingDir/][Missing Directory]]
+   * HL=link , non-existent, creates NEW directory and opens netrw directory listing
+ # [[local1:EgMissingDir/]], [[local1:EgMissingDir/][Missing Directory]]
+   * HL=link , non-existent, creates NEW directory and opens netrw directory listing, or complains that numbered wiki does not exist
+
+HL always on for non-wiki schemes
 
 == file: U+R ==
 
@@ -134,38 +151,38 @@ See also: [[vimwiki-markup-examples][markup examples]]
 
 == noscheme: U+T ==
 
- # {{PageTwo}}, {{PageTwo}{Page Two}} with descr, {{PageTwo}{Page Two}{arg1}} with descr and extra arg
+ # {{EgPageTwo}}, {{EgPageTwo}{Page Two}} with descr, {{EgPageTwo}{Page Two}{arg1}} with descr and extra arg
    * HL=link , existent , opens existing wiki file TODO: figure out how to conceal "arg1", "arg2", etc.
- # {{PageThree}}, {{PageThree}{Page Three}} with descr, {{PageThree}{Page Three}{arg1}{arg2}} with descr and extra args
+ # {{EgPageThree}}, {{EgPageThree}{Page Three}} with descr, {{EgPageThree}{Page Three}{arg1}{arg2}} with descr and extra args
    * HL=link , existent , opens existing wiki file
 
 == wiki: U+T ==
 
- # {{wiki:PageTwo}}, {{wiki:PageTwo}{Page Two}} with descr, {{wiki:PageTwo}{Page Two}{arg1}{arg2}} with descr and extra args
+ # {{wiki:EgPageTwo}}, {{wiki:EgPageTwo}{Page Two}} with descr, {{wiki:EgPageTwo}{Page Two}{arg1}{arg2}} with descr and extra args
    * HL=link , existent , opens existing wiki file
- # {{wiki0:PageTwo}}, {{wiki0:PageTwo}{Page Two}} with descr, {{wiki0:PageTwo}{Page Two}{arg1}{arg2}} with descr and extra args
+ # {{wiki0:EgPageTwo}}, {{wiki0:EgPageTwo}{Page Two}} with descr, {{wiki0:EgPageTwo}{Page Two}{arg1}{arg2}} with descr and extra args
    * HL=link , existent , opens existing wiki file
- # {{wiki1:PageTwo}}, {{wiki1:PageTwo}{Page Two}} with descr, {{wiki1:PageTwo}{Page Two}{arg1}{arg2}} with descr and extra args
+ # {{wiki1:EgPageTwo}}, {{wiki1:EgPageTwo}{Page Two}} with descr, {{wiki1:EgPageTwo}{Page Two}{arg1}{arg2}} with descr and extra args
    * HL=link , existent , opens existing wiki file, or complains that numbered wiki does not exist
-   * HL always on for wiki's other than the active one, regardless of whether file is found
- # {{wiki:PageThree}}, {{wiki:PageThree}{Page Three}} with descr, {{wiki:PageThree}{Page Three}{arg1}{arg2}} with descr and extra args
+ # {{wiki:EgPageThree}}, {{wiki:EgPageThree}{Page Three}} with descr, {{wiki:EgPageThree}{Page Three}{arg1}{arg2}} with descr and extra args
    * HL=missing-link , non-existent , opens existing wiki file
- # {{wiki0:PageThree}}, {{wiki0:PageThree}{Page Three}} with descr, {{wiki0:PageThree}{Page Three}{arg1}{arg2}} with descr and extra args
+ # {{wiki0:EgPageThree}}, {{wiki0:EgPageThree}{Page Three}} with descr, {{wiki0:EgPageThree}{Page Three}{arg1}{arg2}} with descr and extra args
    * HL=missing-link , non-existent , opens existing wiki file
- # {{wiki1:PageThree}}, {{wiki1:PageThree}{Page Three}} with descr, {{wiki1:PageThree}{Page Three}{arg1}{arg2}} with descr and extra args
+ # {{wiki1:EgPageThree}}, {{wiki1:EgPageThree}{Page Three}} with descr, {{wiki1:EgPageThree}{Page Three}{arg1}{arg2}} with descr and extra args
    * HL=link , existent or non-existent, opens existing wiki file, or complains that numbered wiki does not exist
-   * HL always on for wiki's other than the active one, regardless of whether file is found
+
+HL always on for schemes other than the active wiki, regardless of whether file is found
 
 == local: U+T ==
 
- # {{local:PageTwo.wiki}}, {{local:PageTwo.wiki}{Page Two}} with descr, {{local:PageTwo.wiki}{Page Two}{arg1}{arg2}{arg3}} with descr and extra args
+ # {{local:EgPageTwo.wiki}}, {{local:EgPageTwo.wiki}{Page Two}} with descr, {{local:EgPageTwo.wiki}{Page Two}{arg1}{arg2}{arg3}} with descr and extra args
    * HL=link , existent , opens existing file in vim
- # {{local:PageTwo}}, {{local:PageTwo}{Page Two}} with descr, {{local:PageTwo}{Page Two}{arg1}{arg2}{arg3}} with descr and extra args
+ # {{local:EgPageTwo}}, {{local:EgPageTwo}{Page Two}} with descr, {{local:EgPageTwo}{Page Two}{arg1}{arg2}{arg3}} with descr and extra args
    * HL=link, non-existent, opens new non-wiki file WITHOUT EXTENSION in vim
-   * HL always on for non-wiki schemes
  # {{local:diary/2010-12-31}}, {{local:diary/2010-12-31}{2010-12-31}}
    * HL=link , non-existent, opens new non-wiki file without extension in "diary/" directory in vim TODO: problematic!?
-   * HL always on for non-wiki schemes
+
+HL always on for non-wiki schemes
 
 == file: U+T ==
 
@@ -174,7 +191,7 @@ See also: [[vimwiki-markup-examples][markup examples]]
 
 == http: U+T ==
 
-"http:" does not really make sense for a wiki page 
+"http:" does not really make sense for a wiki page
 
 
 = Wikiincludes to Images =
@@ -235,20 +252,20 @@ See also: [[vimwiki-markup-examples][markup examples]]
 
 
 
-= Links =
+= Additional Examples =
 == Local Wikilinks ==
 
  * [[../../tests/wiki/wikiword][wikiword]]
 
- # PageTwo 
+ # EgPageTwo
  # -
- # [[PageTwo]] 
+ # [[EgPageTwo]]
  # ][-separator
- # [[PageTwo][PageTwo]] : expected HL : blue & underline
- # [[PageThree][PageThree]] : missing-link! expected HL : none & red-dotted underline
+ # [[EgPageTwo][EgPageTwo]] : expected HL : blue & underline
+ # [[EgPageThree][EgPageThree]] : missing-link! expected HL : none & red-dotted underline
  # |-separator
- # [[PageTwo|PageTwo]] : expected HL : blue & underline
- # [[PageThree|PageThree]] : missing-link! expected HL : none & red-dotted underline
+ # [[EgPageTwo|EgPageTwo]] : expected HL : blue & underline
+ # [[EgPageThree|EgPageThree]] : missing-link! expected HL : none & red-dotted underline
  # -
  # [[file:///Users/stu/Downloads/2011-11-22-FlashReport_11_22_11.fin.pdf]] : expected HL : blue & underline since "pdf" is recognized file ext
 
@@ -291,7 +308,7 @@ See also: [[vimwiki-markup-examples][markup examples]]
  # -
  # http://upload.wikimedia.org/wikipedia/commons/thumb/7/77/Puffer_Fish_DSC01257.JPG/281px-Puffer_Fish_DSC01257.jpg
  # -
- # http://github.com 
+ # http://github.com
  # http://github.com,
  # http://github.com;
  # http://github.com)
@@ -343,34 +360,30 @@ See also: [[vimwiki-markup-examples][markup examples]]
    # [[http://upload.wikimedia.org/wikipedia/commons/thumb/7/77/Puffer_Fish_DSC01257.JPG/281px-Puffer_Fish_DSC01257.jpg][281px-Puffer_Fish]]
 
 
-= Normalize Link Syntax Wiki Page =
-
- * [[../../../vimwiki-wiki/NormalizeLinkSyntax][NormalizeLinkSyntax]]
-
 = Tests =
 
- # [[../../tests/wiki/blockquote][blockquote]]
- # [[../../tests/wiki/bold][bold]]
- # [[../../tests/wiki/complex_word][complex_word]]
- # [[../../tests/wiki/definition][definition]]
- # [[../../tests/wiki/headers][headers]]
- # [[../../tests/wiki/hr][hr]]
- # [[../../tests/wiki/image][image]]
- # [[../../tests/wiki/index][index]]
- # [[../../tests/wiki/italic][italic]]
- # [[../../tests/wiki/link][link]]
- # [[../../tests/wiki/ordered_list][ordered_list]]
- # [[../../tests/wiki/paragraphs][paragraphs]]
- # [[../../tests/wiki/placeholders][placeholders]]
- # [[../../tests/wiki/preformatted][preformatted]]
- # [[../../tests/wiki/strikeout][strikeout]]
- # [[../../tests/wiki/subscript][subscript]]
- # [[../../tests/wiki/superscript][superscript]]
- # [[../../tests/wiki/table][table]]
- # [[../../tests/wiki/table_with_links][table_with_links]]
- # [[../../tests/wiki/unordered_list][unordered_list]]
- # [[../../tests/wiki/web_links][web_links]]
- # [[../../tests/wiki/wikilinks][wikilinks]]
- # [[../../tests/wiki/wikiword][wikiword]]
+ # [[../tests/wiki/blockquote][blockquote]]
+ # [[../tests/wiki/bold][bold]]
+ # [[../tests/wiki/complex_word][complex_word]]
+ # [[../tests/wiki/definition][definition]]
+ # [[../tests/wiki/headers][headers]]
+ # [[../tests/wiki/hr][hr]]
+ # [[../tests/wiki/image][image]]
+ # [[../tests/wiki/index][index]]
+ # [[../tests/wiki/italic][italic]]
+ # [[../tests/wiki/link][link]]
+ # [[../tests/wiki/ordered_list][ordered_list]]
+ # [[../tests/wiki/paragraphs][paragraphs]]
+ # [[../tests/wiki/placeholders][placeholders]]
+ # [[../tests/wiki/preformatted][preformatted]]
+ # [[../tests/wiki/strikeout][strikeout]]
+ # [[../tests/wiki/subscript][subscript]]
+ # [[../tests/wiki/superscript][superscript]]
+ # [[../tests/wiki/table][table]]
+ # [[../tests/wiki/table_with_links][table_with_links]]
+ # [[../tests/wiki/unordered_list][unordered_list]]
+ # [[../tests/wiki/web_links][web_links]]
+ # [[../tests/wiki/wikilinks][wikilinks]]
+ # [[../tests/wiki/wikiword][wikiword]]
 
 

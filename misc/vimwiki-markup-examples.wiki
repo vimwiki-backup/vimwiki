@@ -16,7 +16,6 @@ Several link syntaxes are recognized by Vimwiki
  * Raw URLs
    # `URL`
  * Wiki Links
-   # `WikiWord`
    # `[[URL]]`
    # `[[URL][DESCR]]`
  * Wiki-Include Links (Initially, for images only)
@@ -91,44 +90,60 @@ In your `.vimrc` these are configured as follows:
 }}}
 
 
+= Setup =
+
+In order to highlight the links correctly as described, 1) Vim should be initialized using the `misc/vimrc` file, 2) the following files and directories must exist in the [[./][misc/]] directory,
+
+ > EgFoundPage.wiki
+ > EgPage2.wiki
+ > EgPageTwo.wiki
+ > html/
+
+and, 3) the following pages must not exist in the [[./][misc/]] directory,
+
+ > EgMissingPage.wiki
+ > EgPageThree.wiki
+ > EgMissingDirectory/
+
+
 = Examples of Links =
 
 == Wiki Links ==
-=== a) Wikiwords ===
+%% === a) Wikiwords ===
 
-Wikiwords are connected capitalized words.
+%% Wikiwords are connected capitalized words.
 
- # EgMissingPage (*1*)(*2*)
-   * vim syntax: dotted-red underline
- # EgFoundPage (*1*)(*3*)
-   * vim syntax: blue highlight, blue underline
+%%  # EgMissingPage (*1*)(*2*)
+%%    * vim syntax: dotted-red underline TODO: g:vimwiki_camel_case has been deprecated
+%%  # EgFoundPage (*1*)(*3*)
+%%    * vim syntax: blue highlight, blue underline TODO: g:vimwiki_camel_case has been deprecated
 
-Note *1*: Only works if `g:vimwiki_camel_case == 1`
+%% Note *1*: Only works if `g:vimwiki_camel_case == 1`
 
-Note *2*: Only works wiki page is missing (i.e. it does not yet exist)
+%% Note *2*: Only works wiki page is missing (i.e. it does not yet exist)
 
-Note *3*: Only works wiki page exists
+%% Note *3*: Only works wiki page exists
 
-*Markup & Expected Results*
+%% *Markup & Expected Results*
 
-| Link | Markup        | Description   | URL                     |
-|------|---------------|---------------|-------------------------|
-| 1.   | `EgMissingPage` | `EgMissingPage` | `EgMissingPage.html` |
-| 2.   | `EgFoundPage`   | `EgFoundPage`   | `EgFoundPage.html`   |
+%% | Link | Markup        | Description   | URL                     |
+%% |------|---------------|---------------|-------------------------|
+%% | 1.   | `EgMissingPage` | `EgMissingPage` | `EgMissingPage.html` |
+%% | 2.   | `EgFoundPage`   | `EgFoundPage`   | `EgFoundPage.html`   |
 
-=== b) Escaped Wikiword ===
+%% === b) Escaped Wikiword ===
 
- # !EgMissingPage
-   * vim syntax: none
- # !EgFoundPage
-   * vim syntax: none
+%%  # !EgMissingPage
+%%    * vim syntax: none
+%%  # !EgFoundPage
+%%    * vim syntax: none
 
-*Markup & Expected Results*
+%% *Markup & Expected Results*
 
-| Link | Markup         | Description   | URL |
-|------|----------------|---------------|-----|
-| 1.   | `!EgMissingPage` | `EgMissingPage` | n/a |
-| 2.   | `!EgFoundPage`   | `EgFoundPage`   | n/a |
+%% | Link | Markup         | Description   | URL |
+%% |------|----------------|---------------|-----|
+%% | 1.   | `!EgMissingPage` | `EgMissingPage` | n/a |
+%% | 2.   | `!EgFoundPage`   | `EgFoundPage`   | n/a |
 
 === c) [[-Wiki Links ===
 
@@ -198,7 +213,7 @@ Local resources are specified relative current wiki page
    * [[../src/][vimwiki src/]] (*4*)(*6*)
  # Use the "local:" scheme to link to a directory without using the trailing
    slash and without appending `/homepage.html`
-   * [[local:../src][vimwiki src/]] (*4*)
+   * [[local:../src][vimwiki src/]] (*4*)   XXX: works if try-stmt omitted from edit_file()
  # Extensions are not modified with the "local:" scheme
    * [[local:vimwikiqrc.pdf]] 
 
