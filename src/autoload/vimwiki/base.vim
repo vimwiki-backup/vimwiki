@@ -618,7 +618,7 @@ function! s:highlight_existent_links() "{{{
     let safe_link = vimwiki#base#unsafe_link(link)
     let safe_link = escape(safe_link , '~&$.*')
 
-    " a) match WikiWord
+    " a) match WikiWord WARNING: g:vimwiki_camel_case may be deprecated
     if g:vimwiki_camel_case &&
           \ link =~ g:vimwiki_rxWikiWord
       call s:add_target_syntax_ON('!\@<!\<'. link. '\>')
