@@ -2,6 +2,9 @@
 Make: `vim -n -u misc/vimrc -c "VimwikiMisc2Html" misc/vimwiki-markup-examples.wiki`
 Generates: `misc/html/vimwiki-markup-examples.html`
 
+See also: [[vimwiki-markup-examples-contd][markup_examples continued]]
+
+
 %toc
 
 = Vimwiki Links =
