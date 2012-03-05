@@ -199,7 +199,7 @@ function! vimwiki#base#open_link(cmd, link, ...) "{{{
     echom 'open_link: scheme='.scheme.', path='.path.', subdir='.subdir.', lnk='.lnk.', ext='.ext
   endif
   if use_weblink_handler
-    call VimwikiWeblinkHandler(escape(url, '#'))
+    call VimwikiWeblinkHandler(url)
   else
     " rm duplicate /-chars
     call vimwiki#base#edit_file(a:cmd, 
@@ -783,14 +783,14 @@ function! vimwiki#base#follow_link(split, ...) "{{{
   let lnk = matchstr(s:get_word_at_cursor(g:vimwiki_rxWeblink),
         \ g:vimwiki_rxWeblinkMatchUrl)
   if lnk != ""
-    call VimwikiWeblinkHandler(escape(lnk, '#'))
+    call VimwikiWeblinkHandler(lnk)
     return
   endif
   " try Imagelink
   let lnk = matchstr(s:get_word_at_cursor(g:vimwiki_rxImagelink),
         \ g:vimwiki_rxImagelinkMatchUrl)
   if lnk != ""
-    call VimwikiWeblinkHandler(escape(lnk, '#'))
+    call VimwikiWeblinkHandler(lnk)
     return
   endif
 
