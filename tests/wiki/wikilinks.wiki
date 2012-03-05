@@ -23,7 +23,7 @@ These syntaxes only work when 'link_separator' == ']['
 
  # [[Path/To/Nowhere.txt]] : Highlighted as missing-link.  Schemeless URLs are equivalent to wiki-scheme URLs, which are fixed with an .html extension
  # [[file:///Absolute/Path/To/Nowhere.txt]] : Always highlight absolute paths as links.  No .html extension added
- # [[wiki:Path/To/Nowhere.txt]] : Always highlight local paths as links.  No .html extension added
+ %% # [[wiki:Path/To/Nowhere.txt]] : Always highlight local paths as links.  No .html extension added
 
 = Wikilinks To Urls =
 
