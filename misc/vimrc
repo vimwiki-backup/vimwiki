@@ -1,3 +1,5 @@
+set background=dark
+
 
 " There options are required by vimwiki.
 set nocompatible
