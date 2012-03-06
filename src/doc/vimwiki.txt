@@ -35,6 +35,9 @@ CONTENTS                                                    *vimwiki-contents*
         5.9. Blockquotes             |vimwiki-syntax-blockquotes|
         5.10. Comments               |vimwiki-syntax-comments|
         5.11. Horizontal line        |vimwiki-syntax-hr|
+        5.12. Schemes                |vimwiki-syntax-schemes|
+        5.13. Transclusions          |vimwiki-syntax-transclude|
+        5.14. Thumbnails             |vimwiki-syntax-thumbnails|
     6. Folding/Outline               |vimwiki-folding|
     7. Placeholders                  |vimwiki-placeholders|
     8. Todo lists                    |vimwiki-todo-lists|
@@ -282,13 +285,11 @@ NORMAL MODE                                           *vimwiki-local-mappings*
                         :nmap -- <Plug>VimwikiRemoveHeaderLevel
 
                         *vimwiki_+*
-+                       Converts wikilinks and weblinks from any recognized
-                        format into a preferred format that is specified in
-                        your syntax file.  See |vimwiki-option-syntax|.
-                        "+" can be activated in normal mode with the cursor
-                        over a link, or in visual mode with a text-selection
-                        over a link.  See the NormalizeLinkSyntax wiki page
-                        on the web for details and examples.
++                       Normalize link syntax: E.g. Add placeholder text to
+                        Wiki- or Weblinks that are missing descriptions.
+                        Convert raw URLs into Web Links.  Convert words into
+                        Wikilinks.  Can be activated in normal mode with the
+                        cursor over a word or link.
 
                         *vimwiki_gqq*  *vimwiki_gww*
 gqq                     Format table. If you made some changes to a table
@@ -525,9 +526,9 @@ text should be decorated: >
 ------------------------------------------------------------------------------
 5.2. Links                                              *vimwiki-syntax-links*
 
-Internal links~
+Wikiwords~
 
-As of version 1.3 CamelCased links are off by default.
+As of version 1.3 WikiWord links are off by default.
 
 WikiWords: >
   CapitalizedWordsConnected
@@ -536,84 +537,63 @@ You can prevent linking of WikiWords by adding an exclamation mark in front of
 them: >
   !CapitalizedWordsConnected
 
-Or disable it completely with |g:vimwiki_camel_case|.
+Or disable them completely with |g:vimwiki_camel_case|.
 
 The string prefix used to prevent linking of WikiWords ("!" in the example
 above) is customizable using |g:vimwiki_wikiword_escape_prefix|.
 
+WARNING: WikiWord links may be dropped in future releases.
+
+
+Wikilinks~
+
 Link with spaces in it: >
   [[This is a link]]
 or: >
-  [[This is a link source|Description of the link]]
-or: >
   [[This is a link source][Description of the link]]
 
-External links~
-Plain link: >
+The separator is customizable, using |vimwiki-option-link_separator|;
+the prefix / suffix pair "[[", "]]" is not.
+
+
+Templated Weblinks~
+
+See |vimwiki-option-web_template| for customization.
+
+Link with description: >
+  [http://habamax.ru/blog habamax home page]
+  [mailto:habamax@gmail.com Drop a line to Maxim Kim]
+
+
+Templated Imagelinks~
+
+See |vimwiki-option-image_template| for customization.
+
+Image: >
+  {http://helloworld.com/blabla.jpg||}
+
+Image with alternate text: >
+  {http://helloworld.com/blabla.jpg|cool stuff|width:150px; height: 120px;}
+
+Image with alternate text and style: >
+  {http://helloworld.com/blabla.jpg|cool stuff|width:150px; height: 120px;}
+
+Image with style, but without alternate text: >
+  {http://helloworld.com/blabla.jpg|cool stuff|width:150px; height: 120px;}
+
+Note: For templated imagelinks, the separators must be present even if the
+alternate text or style is empty.
+
+A newer, alternative syntax for adding images to Html is to use wiki-include 
+links.  See |vimwiki-syntax-transclude|.
+
+Raw URLs~
+
+Raw URLs are also supported: >
  http://code.google.com/p/vimwiki
  mailto:habamax@gmail.com
  ftp://vim.org
 
-Link with description: >
- [http://habamax.ru/blog habamax home page]
- [mailto:habamax@gmail.com Drop a line to Maxim Kim]
-
-Textile-style link: >
- "habamax home page (optional title attribute)":http://habamax.ru/blog
-
-Markdown-style link: >
- [habamax home page](http://habamax.ru/blog)
-
-
-Images and image links~
-An image link is a link to a file with a jpg, jpeg, png or gif extension.
-Uppercase extensions are also recognized.
-Plain image link: >
- http://someaddr.com/picture.jpg
-in HTML: >
- <img src="http://someaddr.com/picture.jpg" />
-
-Link to a local image: >
- [[images/pabloymoira.jpg]]
-in HTML: >
- <img src="images/pabloymoira.jpg" />
-Path to image (ie. images/pabloymoira.jpg) is relative to
-|vimwiki-option-path_html|.
-
-Double bracketed link to an image: >
- [[http://habamax.ru/blog/wp-content/uploads/2009/01/2740254sm.jpg]]
-in HTML: >
- <img src="http://habamax.ru/ ... /.jpg" />
-
-Double bracketed link to an image with description text: >
- [[http://habamax.ru/blog/wp-content/uploads/2009/01/2740254sm.jpg|dance]]
-in HTML: >
- <a href="http://habamax.ru/ ... /.jpg">dance</a>
-
-Double bracketed link to an image with alternate text: >
- [[http://habamax.ru/blog/wp-content/uploads/2009/01/2740254sm.jpg|dance|]]
-in HTML: >
- <img src="http://habamax.ru/ ... /.jpg" alt="dance"/>
-
-Double bracketed link to an image with alternate text and some style: >
- [[http://helloworld.com/blabla.jpg|cool stuff|width:150px; height: 120px;]]
-in HTML: >
- <img src="http://helloworld.com/ ... /.jpg" alt="cool stuff"
- style="width:150px; height:120px"/>
-
-Double bracketed link to an image without alternate text and some style: >
- [[http://helloworld.com/blabla.jpg||width:150px; height: 120px;]]
-in HTML: >
- <img src="http://helloworld.com/ ... /.jpg" alt=""
- style="width:150px; height:120px"/>
-
-Thumbnail link: >
- [http://someaddr.com/bigpicture.jpg http://someaddr.com/thumbnail.jpg]
-or >
- [[http://someaddr.com/bigpicture.jpg|http://someaddr.com/thumbnail.jpg]]
-in HTML: >
- <a href="http://someaddr.com/ ... /.jpg">
-  <img src="http://../thumbnail.jpg /></a>
 
 
 ------------------------------------------------------------------------------
@@ -895,6 +875,118 @@ E.g.: >
 4 or more dashes at the start of the line is a 'horizontal line' (<hr />): >
  ----
 <
+
+------------------------------------------------------------------------------
+5.12. Schemes                                           *vimwiki-syntax-schemes*
+
+In addition to standard web schemes (e.g. `http:`, `https:`, `ftp:`, etc.) the
+following special schemes are supported.
+
+Interwiki:~
+
+If you maintain more than one wiki, you can create interwiki links between them
+by adding a numbered prefix "wiki#:" in front of a link: >
+  [[wiki#:This is a link]]
+or: >
+  [[wiki#:This is a link source][Description of the link]]
+
+The number "#", in the range 0..N-1, identifies the destination wiki in
+|g:vimwiki_list|.  If the number is omitted, the destination defaults to the
+current wiki.
+
+Diary:~
+
+The diary scheme is used to concisely link to diary entries: >
+  [[diary#:2012-03-05]]
+
+This scheme precludes explicit inclusion of |vimwiki-option-diary_rel_path|.
+
+Local:~
+
+A local resource that is not a wiki page may be specified with a path relative
+to the current page: >
+  [[local#:../assets/data.csv][data (CSV)]]
+
+When followed or converted to HTML, extensions of local-scheme links are not
+modified.
+
+File:~
+
+The file scheme allows you to directly link to arbitray resources using
+absolute paths and extensions: >
+  [[file:///home/somebody/a/b/c/music.mp3]]
+
+Schemeless:~
+
+The default, schemeless URLs are treated internally as "wiki:" URLs in all
+respects except when converted to Html.  Schemeless links convert to plain
+relative path URLs, nearly verbatim: >
+  relpath/wikipage.html
+
+The "wiki#:", "local#:", and "diary#:" schemes prepend absolute paths to the
+URLs: >
+  file:///abs_path_to_html#/relpath/wikipage.html
+
+The detection of non-existent links when |vimwiki-option-maxhi| equals 1
+applies only to the current wiki (e.g. "wiki:", and "wiki#:").  All other
+"scheme:URL" links appear as regular links even if they do not exist.
+
+
+------------------------------------------------------------------------------
+5.13. Transclusions                                *vimwiki-syntax-transclude*
+
+Transclusion, or Wiki-Include, Links~
+
+A wikilink that uses "{{" and "}}" delims signifies content that is to be
+included into the Html output, rather than referenced via hyperlink.  
+
+The separator is customizable using |vimwiki-option-incl_separator|;
+the prefix / suffix pair "{{", "}}" is not.
+
+The primary purpose for wiki-include links is to include images.  Image URLs
+may use any of the supported schemes, may be absolute or relative, and need
+not end with an extension.
+
+Include from a local URL: >
+  {{local:../../images/vimwiki_logo.png}}
+or from a universal URL: >
+  {{http://vimwiki.googlecode.com/hg/images/vimwiki_logo.png}}
+
+{{-Wiki-include link to an image with alternate text: >
+  {{http://vimwiki.googlecode.com/hg/images/vimwiki_logo.png}{Vimwiki}}
+in HTML: >
+  <img src="http://vimwiki.googlecode.com/hg/images/vimwiki_logo.png" 
+  alt="Vimwiki"/>
+
+{{-Wiki-include link to an image with alternate text and some style: >
+  {{http://.../vimwiki_logo.png}{cool stuff}{width:150px; height: 120px;}}
+in HTML: >
+  <img src="http://vimwiki.googlecode.com/hg/images/vimwiki_logo.png" 
+  alt="cool stuff" style="width:150px; height:120px"/>
+
+{{-Wiki-include link to an image _without_ alternate text and some style: >
+  {{http://.../vimwiki_logo.png}{}{width:150px; height: 120px;}}
+in HTML: >
+  <img src="http://vimwiki.googlecode.com/hg/images/vimwiki_logo.png" 
+  alt="" style="width:150px; height:120px"/>
+
+A trial feature allows you to supply your own handler for wiki-include links.
+See |VimwikiWikiIncludeHandler|.
+
+------------------------------------------------------------------------------
+5.14. Thumbnails                                    *vimwiki-syntax-thumbnails*
+
+Thumbnail links~
+>
+Thumbnail links are specified via a {{-transcluded image as description for
+a wikilink: >
+  [[http://someaddr.com/bigpicture.jpg][{{http://someaddr.com/thumbnail.jpg}}]]
+
+in HTML: >
+  <a href="http://someaddr.com/ ... /.jpg">
+  <img src="http://../thumbnail.jpg /></a>
+
+
 
 
 ==============================================================================
@@ -1217,6 +1309,7 @@ path with the trailing slash ('/') removed and '_html' added; i.e. for: >
 
 path_html will be set to '~/okidoki_html/'.
 
+
 *vimwiki-option-auto_export*
 ------------------------------------------------------------------------------
 Key             Default value     Values~
@@ -1255,7 +1348,7 @@ Extension of wiki files: >
 *vimwiki-option-syntax*
 ------------------------------------------------------------------------------
 Key             Default value     Values~
-syntax          default           default, media
+syntax          default           default, media, markdown
 
 Description~
 Wiki syntax.
@@ -1265,6 +1358,62 @@ moment.
 To use MediaWiki's wiki markup: >
   let g:vimwiki_list = [{'path': '~/my_site/', 'syntax': 'media'}]
 <
+
+*vimwiki-option-link_separator*
+------------------------------------------------------------------------------
+Key             Default value~
+>
+ link_separator  ][
+<
+Description~
+Customize the separator for wikilinks: >
+  let g:vimwiki_list = [{'link_separator': ']['}]
+<
+
+*vimwiki-option-incl_separator*
+------------------------------------------------------------------------------
+Key             Default value~
+>
+ incl_separator  }{
+<
+Description~
+Customize the separator for wiki-includes: >
+  let g:vimwiki_list = [{'incl_separator': '}{'}]
+<
+ 
+Setting identical separators for |vimwiki-option-link_separator| and
+|vimwiki-option-incl_separator| is not recommended.  For best results, their
+characters-sets should not overlap.
+
+
+*vimwiki-option-web_template*
+------------------------------------------------------------------------------
+Key             Default value~
+>
+ web_template    [__LinkUrl__ __LinkDescription__]
+<
+Description~
+Customize Vimwiki's weblinks.  For example, Markdown compatibility is achieved
+with the following: >
+  let g:vimwiki_list = [{'web_template': '[__LinkDescription__](__LinkUrl__)'}]
+<
+For backwards compatibility with Vimwiki V1.2, the default web_template is set
+accordingly.
+
+*vimwiki-option-image_template*
+------------------------------------------------------------------------------
+Key             Default value~
+>
+ image_template  {__LinkUrl__|__LinkDescription__|__LinkStyle__}
+<
+Description~
+Customize Vimwiki's image links.  For example, Markdown compatibility is
+achieved with the following: >
+  let g:vimwiki_list = [{'image_template': '![__LinkDescription__](__LinkUrl__)'}]
+<
+For image links, backwards compatibility with Vimwiki V1.2 is harder to
+maintain.  Instead, the default syntax replaces "[[" and "]]" delimiters with
+"{" and "}".
 
 *vimwiki-option-template_path*
 ------------------------------------------------------------------------------
@@ -1696,6 +1845,36 @@ You can redefine VimwikiWeblinkHandler function to do something else: >
   endfunction 
 
 
+-----------------------------------------------------------------------------
+VimwikiWikiIncludeHandler~
+
+Vimwiki includes the contents of a wiki-include URL as an image by default.
+
+A trial feature allows you to supply your own handler for wiki-include links.
+The handler should return the empty string when it does not recognize or
+cannot otherwise convert the link.  A customized handler might look like this: >
+
+  " Convert {{URL}{#}{ID}} -> URL#ID
+  function! VimwikiWikiIncludeHandler(value) "{{{
+    let str = a:value
+
+    " complete URL
+    let url_0 = matchstr(str, g:vimwiki_rxWikiInclMatchUrl)
+    " URL parts
+    let [scheme, path, subdir, lnk, ext, url] = 
+          \ vimwiki#base#resolve_scheme(url_0, VimwikiGet('ext'))
+    let arg1 = matchstr(str, VimwikiWikiInclMatchArg(1))
+    let arg2 = matchstr(str, VimwikiWikiInclMatchArg(2))
+
+    if arg1 =~ '#'
+      return url.'#'.arg2
+    endif
+
+    " Return the empty string when unable to process link
+    return ''
+  endfunction "}}}
+<
+
 ------------------------------------------------------------------------------
 *g:vimwiki_table_mappings*
 
@@ -1998,6 +2177,35 @@ Vim plugins: http://www.vim.org/scripts/script.php?script_id=2226
       See |g:vimwiki_table_mappings|. Option |g:vimwiki_table_auto_fmt| was
       used before to switch table mappings. 
     * Issue 283: Directory indexes broken.
+
+
+    * REMOVED: [[-Wikilinks with '|'-separator.  However, the separator can be
+      configured.  See customization options |vimwiki-option-link_separator| and
+      |vimwiki-option-incl_separator| 
+    * REMOVED: Markdown and Textile links.  However, the format of weblinks
+      can be configured.  See options |vimwiki-option-web_template| and
+      |vimwiki-option-image_template|.
+    * REMOVED: Plain image links have been removed
+      e.g. http://someaddr.com/picture.jpg
+    * REMOVED: [[-Image links, that were identified by image extension in
+      Vimwiki V1.2.  These syntaxes may be upgraded to V1.3 by replacing
+      [[-delims with either {-delims or {{-delims
+
+    * NEW: Templated/Customizable Weblinks.  
+      Default web_template = [URL DESCR]
+    * NEW: Templated/Customizable Imagelinks.  
+      Default image_template = {URL\|DESCR\|STYLE} (w/o backslashes)
+    * NEW: {{-Wiki-include links "transclude" URL contents into Html, rather
+      than reference contents via hyperlink
+    * NEW: Default VimwikiWikiIncludeHandler transcludes all URLs as images,
+      with optional style parameters
+    * NEW: Customizable {{-Wiki-include handler. See |VimwikiWikiIncludeHandler|
+    * NEW: Image links have been re-implemented using {{-Transclusion
+    * NEW: Thumbnail links are now specified using {{-Transclusion as a
+      description for a wikilink
+    * NEW: Interwiki schemes, and several additional schemes, have been introduced
+    * NEW: '+'-Cmd to create and normalize links
+
 
 1.2~
     * Issue 70: Table spanning cell support.
