@@ -2191,20 +2191,23 @@ Vim plugins: http://www.vim.org/scripts/script.php?script_id=2226
       Vimwiki V1.2.  These syntaxes may be upgraded to V1.3 by replacing
       [[-delims with either {-delims or {{-delims
 
-    * NEW: Templated/Customizable Weblinks.  
-      Default web_template = [URL DESCR]
-    * NEW: Templated/Customizable Imagelinks.  
+    * NEW: Templated/Customizable Weblinks.  See |vimwiki-syntax-links|
+      and |vimwiki-option-web_template|.  Default web_template = [URL DESCR]
+    * NEW: Templated/Customizable Imagelinks.  See |vimwiki-syntax-links|
+      and |vimwiki-option-image_template|.  
       Default image_template = {URL\|DESCR\|STYLE} (w/o backslashes)
     * NEW: {{-Wiki-include links "transclude" URL contents into Html, rather
-      than reference contents via hyperlink
+      than reference contents via hyperlink.  See |vimwiki-syntax-transclude|.
     * NEW: Default VimwikiWikiIncludeHandler transcludes all URLs as images,
-      with optional style parameters
+      with optional style parameters.  See |vimwiki-syntax-transclude|.
     * NEW: Customizable {{-Wiki-include handler. See |VimwikiWikiIncludeHandler|
-    * NEW: Image links have been re-implemented using {{-Transclusion
+    * NEW: Image links have been re-implemented using {{-Transclusion.  See
+      |vimwiki-syntax-transclude|.
     * NEW: Thumbnail links are now specified using {{-Transclusion as a
-      description for a wikilink
-    * NEW: Interwiki schemes, and several additional schemes, have been introduced
-    * NEW: '+'-Cmd to create and normalize links
+      description for a wikilink.  See |vimwiki-syntax-thumbnails|.
+    * NEW: Interwiki schemes, and several additional schemes, have been 
+      introduced.  See |vimwiki-syntax-schemes|.
+    * NEW: '+'-Cmd to create and normalize links.  See |vimwiki_+|.
 
 
 1.2~
