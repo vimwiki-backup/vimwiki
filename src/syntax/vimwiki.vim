@@ -16,39 +16,23 @@ endif
 " Load concrete Wiki syntax
 execute 'runtime! syntax/vimwiki_'.VimwikiGet('syntax').'.vim'
 
-" generic headers
+" generic headers "{{{
 if g:vimwiki_symH
   "" symmetric
-  let g:vimwiki_rxH1_Template = repeat(g:vimwiki_rxH, 1).' __Header__ '.repeat(g:vimwiki_rxH, 1)
-  let g:vimwiki_rxH2_Template = repeat(g:vimwiki_rxH, 2).' __Header__ '.repeat(g:vimwiki_rxH, 2)
-  let g:vimwiki_rxH3_Template = repeat(g:vimwiki_rxH, 3).' __Header__ '.repeat(g:vimwiki_rxH, 3)
-  let g:vimwiki_rxH4_Template = repeat(g:vimwiki_rxH, 4).' __Header__ '.repeat(g:vimwiki_rxH, 4)
-  let g:vimwiki_rxH5_Template = repeat(g:vimwiki_rxH, 5).' __Header__ '.repeat(g:vimwiki_rxH, 5)
-  let g:vimwiki_rxH6_Template = repeat(g:vimwiki_rxH, 6).' __Header__ '.repeat(g:vimwiki_rxH, 6)
-  let g:vimwiki_rxH1 = '^\s*'.g:vimwiki_rxH.'\{1}[^'.g:vimwiki_rxH.']\+.*[^'.g:vimwiki_rxH.']\+'.g:vimwiki_rxH.'\{1}\s*$'
-  let g:vimwiki_rxH2 = '^\s*'.g:vimwiki_rxH.'\{2}[^'.g:vimwiki_rxH.']\+.*[^'.g:vimwiki_rxH.']\+'.g:vimwiki_rxH.'\{2}\s*$'
-  let g:vimwiki_rxH3 = '^\s*'.g:vimwiki_rxH.'\{3}[^'.g:vimwiki_rxH.']\+.*[^'.g:vimwiki_rxH.']\+'.g:vimwiki_rxH.'\{3}\s*$'
-  let g:vimwiki_rxH4 = '^\s*'.g:vimwiki_rxH.'\{4}[^'.g:vimwiki_rxH.']\+.*[^'.g:vimwiki_rxH.']\+'.g:vimwiki_rxH.'\{4}\s*$'
-  let g:vimwiki_rxH5 = '^\s*'.g:vimwiki_rxH.'\{5}[^'.g:vimwiki_rxH.']\+.*[^'.g:vimwiki_rxH.']\+'.g:vimwiki_rxH.'\{5}\s*$'
-  let g:vimwiki_rxH6 = '^\s*'.g:vimwiki_rxH.'\{6}[^'.g:vimwiki_rxH.']\+.*[^'.g:vimwiki_rxH.']\+'.g:vimwiki_rxH.'\{6}\s*$'
-  let g:vimwiki_rxHeader = '^\s*\('.g:vimwiki_rxH.'\{1,6}\)\zs[^'.g:vimwiki_rxH.']\+.*[^'.g:vimwiki_rxH.']\+\ze\1\s*$'
+  for i in range(1,6)
+    let g:vimwiki_rxH{i}_Template = repeat(g:vimwiki_rxH, i).' __Header__ '.repeat(g:vimwiki_rxH, i)
+    let g:vimwiki_rxH{i} = '^\s*'.g:vimwiki_rxH.'\{'.i.'}[^'.g:vimwiki_rxH.'].*[^'.g:vimwiki_rxH.']'.g:vimwiki_rxH.'\{'.i.'}\s*$'
+  endfor
+  let g:vimwiki_rxHeader = '^\s*\('.g:vimwiki_rxH.'\{1,6}\)\zs[^'.g:vimwiki_rxH.'].*[^'.g:vimwiki_rxH.']\ze\1\s*$'
 else
-  "" asymm
-  let g:vimwiki_rxH1_Template = repeat(g:vimwiki_rxH, 1).' __Header__'
-  let g:vimwiki_rxH2_Template = repeat(g:vimwiki_rxH, 2).' __Header__'
-  let g:vimwiki_rxH3_Template = repeat(g:vimwiki_rxH, 3).' __Header__'
-  let g:vimwiki_rxH4_Template = repeat(g:vimwiki_rxH, 4).' __Header__'
-  let g:vimwiki_rxH5_Template = repeat(g:vimwiki_rxH, 5).' __Header__'
-  let g:vimwiki_rxH6_Template = repeat(g:vimwiki_rxH, 6).' __Header__'
-  let g:vimwiki_rxH1 = '^\s*'.g:vimwiki_rxH.'\{1}[^'.g:vimwiki_rxH.']\+.*'
-  let g:vimwiki_rxH2 = '^\s*'.g:vimwiki_rxH.'\{2}[^'.g:vimwiki_rxH.']\+.*'
-  let g:vimwiki_rxH3 = '^\s*'.g:vimwiki_rxH.'\{3}[^'.g:vimwiki_rxH.']\+.*'
-  let g:vimwiki_rxH4 = '^\s*'.g:vimwiki_rxH.'\{4}[^'.g:vimwiki_rxH.']\+.*'
-  let g:vimwiki_rxH5 = '^\s*'.g:vimwiki_rxH.'\{5}[^'.g:vimwiki_rxH.']\+.*'
-  let g:vimwiki_rxH6 = '^\s*'.g:vimwiki_rxH.'\{6}[^'.g:vimwiki_rxH.']\+.*'
-  let g:vimwiki_rxHeader = '^\s*\('.g:vimwiki_rxH.'\{1,6}\)\zs[^'.g:vimwiki_rxH.']\+.*\ze'
+  " asymmetric
+  for i in range(1,6)
+    let g:vimwiki_rxH{i}_Template = repeat(g:vimwiki_rxH, i).' __Header__'
+    let g:vimwiki_rxH{i} = '^\s*'.g:vimwiki_rxH.'\{'.i.'}[^'.g:vimwiki_rxH.'].*$'
+  endfor
+  let g:vimwiki_rxHeader = '^\s*\('.g:vimwiki_rxH.'\{1,6}\)\zs[^'.g:vimwiki_rxH.'].*\ze$'
 endif
-
+" }}}
 
 
 " Concealed chars " {{{
@@ -198,47 +182,34 @@ execute 'syntax match VimwikiUnderline #\c<u>.\{-}</u># contains=VimwikiHTMLTag'
 execute 'syntax match VimwikiComment /'.g:vimwiki_rxComment.'/ contains=@Spell'
 
 " Header levels, 1-6
-execute 'syntax match VimwikiHeader1 /'.g:vimwiki_rxH1.'/ contains=VimwikiTodo,VimwikiHeaderChar,VimwikiNoExistsLink,VimwikiLink,@Spell'
-execute 'syntax match VimwikiHeader2 /'.g:vimwiki_rxH2.'/ contains=VimwikiTodo,VimwikiHeaderChar,VimwikiNoExistsLink,VimwikiLink,@Spell'
-execute 'syntax match VimwikiHeader3 /'.g:vimwiki_rxH3.'/ contains=VimwikiTodo,VimwikiHeaderChar,VimwikiNoExistsLink,VimwikiLink,@Spell'
-execute 'syntax match VimwikiHeader4 /'.g:vimwiki_rxH4.'/ contains=VimwikiTodo,VimwikiHeaderChar,VimwikiNoExistsLink,VimwikiLink,@Spell'
-execute 'syntax match VimwikiHeader5 /'.g:vimwiki_rxH5.'/ contains=VimwikiTodo,VimwikiHeaderChar,VimwikiNoExistsLink,VimwikiLink,@Spell'
-execute 'syntax match VimwikiHeader6 /'.g:vimwiki_rxH6.'/ contains=VimwikiTodo,VimwikiHeaderChar,VimwikiNoExistsLink,VimwikiLink,@Spell'
-
+for i in range(1,6)
+  execute 'syntax match VimwikiHeader'.i.' /'.g:vimwiki_rxH{i}.'/ contains=VimwikiTodo,VimwikiHeaderChar,VimwikiNoExistsLink,VimwikiLink,@Spell'
+endfor
 
 " }}}
-" group names "{{{
+
+" header groups highlighting "{{{
 
 if g:vimwiki_hl_headers == 0
   " Strangely in default colorscheme Title group is not set to bold for cterm...
   if !exists("g:colors_name")
     hi Title cterm=bold
   endif
-
-  hi link VimwikiHeader1 Title
-  hi link VimwikiHeader2 Title
-  hi link VimwikiHeader3 Title
-  hi link VimwikiHeader4 Title
-  hi link VimwikiHeader5 Title
-  hi link VimwikiHeader6 Title
+  for i in range(1,6)
+    execute 'hi link VimwikiHeader'.i.' Title'
+  endfor
 else
   if &background == 'light'
-    hi def VimwikiHeader1 guibg=bg guifg=#aa5858 gui=bold ctermfg=DarkRed   term=bold cterm=bold 
-    hi def VimwikiHeader2 guibg=bg guifg=#507030 gui=bold ctermfg=DarkGreen term=bold cterm=bold 
-    hi def VimwikiHeader3 guibg=bg guifg=#1030a0 gui=bold ctermfg=DarkBlue  term=bold cterm=bold 
-    hi def VimwikiHeader4 guibg=bg guifg=#103040 gui=bold ctermfg=Black     term=bold cterm=bold 
-    hi def VimwikiHeader5 guibg=bg guifg=#505050 gui=bold ctermfg=Black     term=bold cterm=bold 
-    hi def VimwikiHeader6 guibg=bg guifg=#636363 gui=bold ctermfg=Black     term=bold cterm=bold 
-  else                                                                                           
-    hi def VimwikiHeader1 guibg=bg guifg=#e08090 gui=bold ctermfg=Red       term=bold cterm=bold 
-    hi def VimwikiHeader2 guibg=bg guifg=#80e090 gui=bold ctermfg=Green     term=bold cterm=bold 
-    hi def VimwikiHeader3 guibg=bg guifg=#6090e0 gui=bold ctermfg=Blue      term=bold cterm=bold 
-    hi def VimwikiHeader4 guibg=bg guifg=#c0c0f0 gui=bold ctermfg=White     term=bold cterm=bold 
-    hi def VimwikiHeader5 guibg=bg guifg=#e0e0f0 gui=bold ctermfg=White     term=bold cterm=bold 
-    hi def VimwikiHeader6 guibg=bg guifg=#f0f0f0 gui=bold ctermfg=White     term=bold cterm=bold 
+    let color_guifg = ['#aa5858','#507030','#1030a0','#103040','#505050','#636363']
+    let color_ctermfg = ['DarkRed','DarkGreen','DarkBlue','Black','Black','Black']
+  else
+    let color_guifg = ['#e08090','#80e090','#6090e0','#c0c0f0','#e0e0f0','#f0f0f0']
+    let color_ctermfg = ['Red','Green','Blue','White','White','White']
   endif
+  for i in range(1,6)
+    execute 'hi def VimwikiHeader'.i.' guibg=bg guifg='.color_guifg[i-1].' gui=bold ctermfg='.color_ctermfg[i-1].' term=bold cterm=bold' 
+  endfor
 endif
-
 "}}}
 
 
