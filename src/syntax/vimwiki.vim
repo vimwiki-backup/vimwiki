@@ -70,12 +70,9 @@ execute 'syn match VimwikiLinkChar contained /'.g:vimwiki_rxWikiInclPrefix.g:vim
 " syn match VimwikiLinkChar contained /{{[^\{\}\n]\{-}}{[^\{\}\n]\{-}\zs}{.*\ze}}/ TODO: trouble getting '\zs' working !?!
 
 if exists("+conceallevel")
-  execute 'syn match VimwikiLinkRest contained `\(//.\{-}/\)\@<=\S\{'
-        \.g:vimwiki_url_mingain.',}\([/=#?].\|.\{'
-        \.g:vimwiki_url_maxsave.'}\)\@=` conceal cchar=~'
-  execute 'syn match VimwikiNoExistsLinkRest contained `\(//.\{-}/\)\@<=\S\{'
-        \.g:vimwiki_url_mingain.',}\([/=#?].\|.\{'
-        \.g:vimwiki_url_maxsave.'}\)\@=` conceal cchar=~'
+  execute 'syn match VimwikiLinkRest contained `\%(///\=[^/ \t]\+/\)\zs\S\{'
+        \.g:vimwiki_url_mingain.',}\ze\%([/#?]\w\|\S\{'
+        \.g:vimwiki_url_maxsave.'}\)` conceal cchar=~ transparent contains=NONE'
 endif
 
 execute 'syn match VimwikiNoExistsLinkChar contained /'.g:vimwiki_rxWikiLinkPrefix.'/'
@@ -322,9 +319,7 @@ hi def link VimwikiSuperScriptChar VimwikiMarkers
 hi def link VimwikiSubScriptChar VimwikiMarkers
 hi def link VimwikiCodeChar VimwikiMarkers
 hi def link VimwikiHeaderChar VimwikiMarkers
-hi def link VimwikiLinkRest VimwikiLink
 hi def link VimwikiLinkChar VimwikiLink
-hi def link VimwikiNoExistsLinkRest VimwikiNoExistsLink
 hi def link VimwikiNoExistsLinkChar VimwikiNoExistsLink
 
 hi def link VimwikiEqInCharT VimwikiMarkers

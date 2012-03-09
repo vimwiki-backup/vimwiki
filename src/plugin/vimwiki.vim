@@ -346,7 +346,7 @@ call s:default('html_header_numbering', 0)
 call s:default('html_header_numbering_sym', '')
 call s:default('conceallevel', 2)
 call s:default('url_mingain', 12)
-call s:default('url_maxsave', 12)
+call s:default('url_maxsave', 15)
 call s:default('debug', 0)
 
 call s:default('wikiword_escape_prefix', '!')
@@ -543,9 +543,10 @@ function! s:setup_templated_weblink_regexps() " {{{
   "
   let template_args = '\%(__LinkUrl__\|__LinkDescription__\)'
   let web_template = VimwikiGet('web_template')
-  if g:vimwiki_debug
-    echom 'Weblink Template: '.web_template
-  endif
+  "XXX plugin loaded on every Vim start!
+  "if g:vimwiki_debug
+  "  echom 'Weblink Template: '.web_template
+  "endif
   let magic_chars = '.*[]\^$'
   " list all delimiters that appear in Template *after* DESCRIPTION
   let exclude_chars = s:get_suffix(web_template, '__LinkDescription__')
@@ -607,9 +608,9 @@ let g:vimwiki_rxImagelinkUrl = g:vimwiki_rxImagelinkProtocols .
 function! s:setup_templated_imagelink_regexps() " {{{
   let template_args = '\%(__LinkUrl__\|__LinkDescription__\|__LinkStyle__\)'
   let t_Image = VimwikiGet('image_template')
-  if g:vimwiki_debug
-    echom 'Image Template: '.t_Image
-  endif
+  "if g:vimwiki_debug
+  "  echom 'Image Template: '.t_Image
+  "endif
   let magic_chars = '.*[]\^$'
   " list all delimiters that appear in Template *after* DESCRIPTION
   let exclude_chars = s:get_suffix(t_Image, '__LinkDescription__')

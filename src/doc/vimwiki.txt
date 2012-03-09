@@ -2062,12 +2062,13 @@ Default: 12
 
 The maximum number of characters that is retained at the end after concealing
 URLs. At most there will be |g:vimwiki_url_maxsave| characters left at the end of the URL.
-However, it will be less when one of /,=,#,? can be found at the end.
-In that case the URL will be concealed right before the last occurance of one
+However, it could be less when one of /,#,? can be found at the end.
+In that case the URL will be concealed right before the last occurrence of one
 of these characters.
-The conceal feature works only with vim >= 7.3.
+The conceal feature works only with vim >= 7.3. Beware: when using the default
+'wrap' option, the effect is not always pleasing.
 
-Default: 12
+Default: 15
 
 
 ------------------------------------------------------------------------------
