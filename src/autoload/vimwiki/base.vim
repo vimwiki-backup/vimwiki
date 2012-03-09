@@ -532,7 +532,7 @@ function! s:add_target_syntax_OFF(target) " {{{
     echom '[vimwiki_debug] syntax target > '.a:target
   endif
   let prefix0 = 'syntax match VimwikiNoExistsLink `'
-  let suffix0 = '` display contains=@NoSpell,VimwikiNoExistsLinkRest,VimwikiNoExistsLinkChar'
+  let suffix0 = '` display contains=@NoSpell,VimwikiLinkRest,VimwikiLinkChar'
   let prefix1 = 'syntax match VimwikiNoExistsLinkT `'
   let suffix1 = '` display contained'
   execute prefix0. a:target. suffix0

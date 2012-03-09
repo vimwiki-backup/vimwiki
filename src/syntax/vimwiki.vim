@@ -58,32 +58,22 @@ endif
 
 syntax spell toplevel
 
+" VimwikiLinkChar is for syntax markers (and also URL when a description
+" is present) and may be concealed
+let options = ' contained transparent contains=NONE'
+execute 'syn match VimwikiLinkChar /'.g:vimwiki_rxWikiLinkPrefix.'/'.options
+execute 'syn match VimwikiLinkChar /'.g:vimwiki_rxWikiLinkSuffix.'/'.options
+execute 'syn match VimwikiLinkChar /'.g:vimwiki_rxWikiLinkPrefix.g:vimwiki_rxWikiLinkUrl.g:vimwiki_rxWikiLinkSeparator.'\ze'.g:vimwiki_rxWikiLinkDescr.g:vimwiki_rxWikiLinkSuffix.'/'.options
 
-execute 'syn match VimwikiLinkChar contained /'.g:vimwiki_rxWikiLinkPrefix.'/'
-execute 'syn match VimwikiLinkChar contained /'.g:vimwiki_rxWikiLinkSuffix.'/'
-execute 'syn match VimwikiLinkChar contained /'.g:vimwiki_rxWikiLinkPrefix.g:vimwiki_rxWikiLinkUrl.g:vimwiki_rxWikiLinkSeparator.'\ze'.g:vimwiki_rxWikiLinkDescr.g:vimwiki_rxWikiLinkSuffix.'/'
-
-execute 'syn match VimwikiLinkChar contained /'.g:vimwiki_rxWikiInclPrefix.'/'
-execute 'syn match VimwikiLinkChar contained /'.g:vimwiki_rxWikiInclSuffix.'/'
-execute 'syn match VimwikiLinkChar contained /'.g:vimwiki_rxWikiInclSeparator.'/ conceal cchar=~'
-execute 'syn match VimwikiLinkChar contained /'.g:vimwiki_rxWikiInclPrefix.g:vimwiki_rxWikiInclUrl.g:vimwiki_rxWikiInclSeparator.'\ze'.g:vimwiki_rxWikiInclArg.g:vimwiki_rxWikiInclArgs.g:vimwiki_rxWikiInclSuffix.'/'
+execute 'syn match VimwikiLinkChar /'.g:vimwiki_rxWikiInclPrefix.'/'.options
+execute 'syn match VimwikiLinkChar /'.g:vimwiki_rxWikiInclSuffix.'/'.options
+execute 'syn match VimwikiLinkChar /'.g:vimwiki_rxWikiInclPrefix.g:vimwiki_rxWikiInclUrl.g:vimwiki_rxWikiInclSeparator.'\ze'.g:vimwiki_rxWikiInclArg.g:vimwiki_rxWikiInclArgs.g:vimwiki_rxWikiInclSuffix.'/'.options
 " syn match VimwikiLinkChar contained /{{[^\{\}\n]\{-}}{[^\{\}\n]\{-}\zs}{.*\ze}}/ TODO: trouble getting '\zs' working !?!
-
-if exists("+conceallevel")
-  execute 'syn match VimwikiLinkRest contained `\%(///\=[^/ \t]\+/\)\zs\S\{'
+execute 'syn match VimwikiLinkChar /'.g:vimwiki_rxWikiInclSeparator.'/ cchar=~'.options
+" A shortener for long URLs: LinkRest (a middle part of the URL) is concealed
+execute 'syn match VimwikiLinkRest contained `\%(///\=[^/ \t]\+/\)\zs\S\{'
         \.g:vimwiki_url_mingain.',}\ze\%([/#?]\w\|\S\{'
-        \.g:vimwiki_url_maxsave.'}\)` conceal cchar=~ transparent contains=NONE'
-endif
-
-execute 'syn match VimwikiNoExistsLinkChar contained /'.g:vimwiki_rxWikiLinkPrefix.'/'
-execute 'syn match VimwikiNoExistsLinkChar contained /'.g:vimwiki_rxWikiLinkSuffix.'/'
-execute 'syn match VimwikiNoExistsLinkChar contained /'.g:vimwiki_rxWikiLinkPrefix.g:vimwiki_rxWikiLinkUrl.g:vimwiki_rxWikiLinkSeparator.'\ze'.g:vimwiki_rxWikiLinkDescr.g:vimwiki_rxWikiLinkSuffix.'/'
-
-execute 'syn match VimwikiNoExistsLinkChar contained /'.g:vimwiki_rxWikiInclPrefix.'/'
-execute 'syn match VimwikiNoExistsLinkChar contained /'.g:vimwiki_rxWikiInclSuffix.'/'
-execute 'syn match VimwikiNoExistsLinkChar contained /'.g:vimwiki_rxWikiInclSeparator.'/ conceal cchar=~'
-execute 'syn match VimwikiNoExistsLinkChar contained /'.g:vimwiki_rxWikiInclPrefix.g:vimwiki_rxWikiInclUrl.g:vimwiki_rxWikiInclSeparator.'\ze'.g:vimwiki_rxWikiInclArg.g:vimwiki_rxWikiInclArgs.g:vimwiki_rxWikiInclSuffix.'/'
-" syn match VimwikiNoExistsLinkChar contained /{{[^\{\}\n]\{-}}{[^\{\}\n]\{-}\zs}{.*\ze}}/ TODO: trouble getting '\zs' working !?!
+        \.g:vimwiki_url_maxsave.'}\)` cchar=~ '.options
 
 execute 'syn match VimwikiEqInChar contained /'.g:vimwiki_char_eqin.'/'
 execute 'syn match VimwikiBoldChar contained /'.g:vimwiki_char_bold.'/'
@@ -319,8 +309,6 @@ hi def link VimwikiSuperScriptChar VimwikiMarkers
 hi def link VimwikiSubScriptChar VimwikiMarkers
 hi def link VimwikiCodeChar VimwikiMarkers
 hi def link VimwikiHeaderChar VimwikiMarkers
-hi def link VimwikiLinkChar VimwikiLink
-hi def link VimwikiNoExistsLinkChar VimwikiNoExistsLink
 
 hi def link VimwikiEqInCharT VimwikiMarkers
 hi def link VimwikiBoldCharT VimwikiMarkers
