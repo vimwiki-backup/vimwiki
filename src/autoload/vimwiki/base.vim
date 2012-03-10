@@ -547,19 +547,6 @@ endfunction " }}}
 
 " LINKS remnants of syntax groups functions {{{
 " TODO ?
-"   match n-th ARG within {{URL}[{ARG1}{ARG2}{...}]} " {{{
-" *c,d,e),...
-"function! VimwikiWikiInclMatchArg(nn_index)
-function! vimwiki#base#InclMatchArg(nn_index)
-  let rx = g:vimwiki_rxWikiInclPrefix. g:vimwiki_rxWikiInclUrl
-  let rx = rx. repeat(g:vimwiki_rxWikiInclSeparator. g:vimwiki_rxWikiInclArg, a:nn_index-1)
-  if a:nn_index > 0
-    let rx = rx. g:vimwiki_rxWikiInclSeparator. '\zs'. g:vimwiki_rxWikiInclArg. '\ze'
-  endif
-  let rx = rx. g:vimwiki_rxWikiInclArgs. g:vimwiki_rxWikiInclSuffix
-  return rx
-endfunction
-"}}}
 
 " TODO
 function! s:get_existing_wikilinks() "{{{

@@ -370,6 +370,20 @@ endfunction "}}}
 
 
 "{{{ v1.3 links
+"   match n-th ARG within {{URL}[{ARG1}{ARG2}{...}]} " {{{
+" *c,d,e),...
+"function! VimwikiWikiInclMatchArg(nn_index)
+function! vimwiki#html#InclMatchArg(nn_index)
+  let rx = g:vimwiki_rxWikiInclPrefix. g:vimwiki_rxWikiInclUrl
+  let rx = rx. repeat(g:vimwiki_rxWikiInclSeparator. g:vimwiki_rxWikiInclArg, a:nn_index-1)
+  if a:nn_index > 0
+    let rx = rx. g:vimwiki_rxWikiInclSeparator. '\zs'. g:vimwiki_rxWikiInclArg. '\ze'
+  endif
+  let rx = rx. g:vimwiki_rxWikiInclArgs. g:vimwiki_rxWikiInclSuffix
+  return rx
+endfunction
+"}}}
+
 function! vimwiki#html#linkify_link(src, descr) "{{{
   let src_str = ' href="'.a:src.'"'
   let descr = substitute(a:descr,'^\s*\(.*\)\s*$','\1','')
@@ -418,8 +432,8 @@ function! s:tag_wikiincl(value) "{{{
   " otherwise, assume image transclusion
   if line == ''
     let url_0 = matchstr(str, g:vimwiki_rxWikiInclMatchUrl)
-    let descr = matchstr(str, VimwikiWikiInclMatchArg(1))
-    let style = matchstr(str, VimwikiWikiInclMatchArg(2))
+    let descr = matchstr(str, vimwiki#html#InclMatchArg(1))
+    let style = matchstr(str, vimwiki#html#InclMatchArg(2))
     " resolve url
     let [scheme, path, subdir, lnk, ext, url] = 
           \ vimwiki#base#resolve_scheme(url_0, '.html')
