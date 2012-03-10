@@ -3,18 +3,492 @@
 " Author: Maxim Kim <habamax@gmail.com>
 " Home: http://code.google.com/p/vimwiki/
 
+"TODO do nothing if ...? (?)
+if VimwikiGet('maxhi')
+  let b:existing_wikifiles = vimwiki#base#get_links('*'.VimwikiGet('ext'))
+  let b:existing_wikidirs = vimwiki#base#get_links('*/')
+endif
+  "let b:xxx = 1
 " Quit if syntax file is already loaded
 if version < 600
   syntax clear
 elseif exists("b:current_syntax")
+  "TODO ? update wikilink syntax group here if really needed (?) for :e and such
+  "if VimwikiGet('maxhi')
+  " ...
+  "endif
   finish
 endif
 
+" XXX obsolete
 " Links highlighting is controlled by vimwiki#base#highlight_links() function.
 " It is called from setup_buffer_enter() function in the BufEnter autocommand.
 
-" Load concrete Wiki syntax
+
+" LINKS: assume this is common to all syntaxes "{{{
+" LINKS: Schemes and Interwikis {{{
+let g:vimwiki_web_schemes1 = 'http,https,file,ftp,gopher,telnet,nntp,ldap,'.
+      \ 'rsync,imap,pop,irc,ircs,cvs,svn,svn+ssh,git,ssh,fish,sftp'
+let g:vimwiki_web_schemes2 = 'mailto,news,xmpp,sip,sips,doi,urn,tel'
+
+let g:vimwiki_wiki_schemes = 'wiki'.','.
+      \ 'wiki0,wiki1,wiki2,wiki3,wiki4,wiki5,wiki6,wiki7,wiki8,wiki9'
+let g:vimwiki_diary_schemes = 'diary'.','.
+      \ 'diary0,diary1,diary2,diary3,diary4,diary5,diary6,diary7,diary8,diary9'
+let g:vimwiki_local_schemes = 'local'.','.
+      \ 'local0,local1,local2,local3,local4,local5,local6,local7,local8,local9'
+
+let rxSchemes = '\%('. 
+      \ join(split(g:vimwiki_wiki_schemes, '\s*,\s*'), '\|').'\|'.
+      \ join(split(g:vimwiki_diary_schemes, '\s*,\s*'), '\|').'\|'.
+      \ join(split(g:vimwiki_local_schemes, '\s*,\s*'), '\|').'\|'.
+      \ join(split(g:vimwiki_web_schemes1, '\s*,\s*'), '\|').'\|'. 
+      \ join(split(g:vimwiki_web_schemes2, '\s*,\s*'), '\|').
+      \ '\)'
+
+let g:vimwiki_rxSchemeUrl = rxSchemes.':.*'
+let g:vimwiki_rxSchemeUrlMatchScheme = '\zs'.rxSchemes.'\ze:.*'
+let g:vimwiki_rxSchemeUrlMatchUrl = rxSchemes.':\zs.*\ze'
+" }}}
+
+" LINKS: WikiLinks  {{{
+" Words
+" - more permissive than '\<\w\+\>' which uses 'iskeyword' characters
+" - less permissive than rxWikiLinkUrl which uses non-separator characters
+let g:vimwiki_rxWord = '\<\S\+\>'
+" }}}
+
+" LINKS: WebLinks {{{
+" match URL for common protocols;  XXX ms-help ??
+" see http://en.wikipedia.org/wiki/URI_scheme  http://tools.ietf.org/html/rfc3986
+let g:vimwiki_rxWebProtocols = ''.
+      \ '\%('.
+        \ '\%('.
+          \ '\%('.join(split(g:vimwiki_web_schemes1, '\s*,\s*'), '\|').'\):'.
+          \ '\%(//\)'.
+        \ '\)'.
+      \ '\|'.
+        \ '\%('.join(split(g:vimwiki_web_schemes2, '\s*,\s*'), '\|').'\):'.
+      \ '\)'
+"
+let g:vimwiki_rxWeblinkUrl = g:vimwiki_rxWebProtocols .
+    \ '\S\{-1,}'. '\%(([^ \t()]*)\)\='
+" }}}
+
+" LINKS: Images {{{
+
+" match URL
+let g:vimwiki_rxImagelinkProtocols = ''.  
+      \ '\%('.
+        \ '\%('.join(split(g:vimwiki_web_schemes1, '\s*,\s*'), '\|'). '\):'.
+        \ '\%(//\)'.
+      \ '\)\?'
+
+let g:vimwiki_rxImagelinkUrl = g:vimwiki_rxImagelinkProtocols .
+    \ '\S\{-1,}'. '\%(([^ \t()]*)\)\='
+" }}}
+" }}}
+
+" -------------------------------------------------------------------------
+" TODO fixed link templates for each kind of wiki goes into vimwiki_kind.vim
+" Load concrete Wiki syntax: sets regexes and templates for headers and links
 execute 'runtime! syntax/vimwiki_'.VimwikiGet('syntax').'.vim'
+" -------------------------------------------------------------------------
+
+
+" LINKS: setup of larger regexes {{{
+function! s:get_suffix(template, tag) "{{{
+  let match_end = matchend(a:template, a:tag)
+  let match_end = (match_end > 0) ? match_end : 0
+  return a:template[match_end :]
+endfunction "}}}
+
+function! s:get_unique_chars(str) "{{{
+  let char_dict = {}
+  for chr in split(a:str, '\zs')
+    let char_dict[chr] = 1
+  endfor
+  return join(keys(char_dict), '')
+endfunction "}}}
+
+"function! vimwiki#base#setup_wikilink_regexps() " {{{
+  let wword = '\C\<\%(['.g:vimwiki_upper.']['.g:vimwiki_lower.']\+\)\{2,}\>'
+  " 0. WikiWordURLs
+  " 0a) match WikiWordURLs
+  let g:vimwiki_rxWikiWord = g:vimwiki_wikiword_escape_prefix.'\@<!'.wword
+  let g:vimwiki_rxNoWikiWord = g:vimwiki_wikiword_escape_prefix.wword
+  "
+  " TODO: put these in 'syntax/vimwiki_xxx.vim'
+  let g:vimwiki_rxWikiLinkPrefix = '[['
+  let g:vimwiki_rxWikiLinkSuffix = ']]'
+  let g:vimwiki_rxWikiLinkSeparator = VimwikiGet('link_separator')
+  " [[URL]]
+  let g:vimwiki_WikiLinkTemplate1 = g:vimwiki_rxWikiLinkPrefix . '__LinkUrl__'. 
+        \ g:vimwiki_rxWikiLinkSuffix
+  " [[URL][DESCRIPTION]]
+  let g:vimwiki_WikiLinkTemplate2 = g:vimwiki_rxWikiLinkPrefix . '__LinkUrl__'. 
+        \ g:vimwiki_rxWikiLinkSeparator. '__LinkDescription__'.
+        \ g:vimwiki_rxWikiLinkSuffix
+  "
+  let magic_chars = '.*[]\^$'
+  let exclude_chars = g:vimwiki_rxWikiLinkPrefix.g:vimwiki_rxWikiLinkSeparator.
+        \ g:vimwiki_rxWikiLinkSuffix
+  let exclude_chars = s:get_unique_chars(exclude_chars)
+  let valid_chars = '[^'.escape(exclude_chars, magic_chars).']'
+  "
+  let g:vimwiki_rxWikiLinkPrefix = escape(g:vimwiki_rxWikiLinkPrefix, magic_chars)
+  let g:vimwiki_rxWikiLinkSuffix = escape(g:vimwiki_rxWikiLinkSuffix, magic_chars)
+  let g:vimwiki_rxWikiLinkSeparator = escape(g:vimwiki_rxWikiLinkSeparator, magic_chars)
+  let g:vimwiki_rxWikiLinkSeparatorOpt = '\%('.g:vimwiki_rxWikiLinkSeparator.'\)\?'
+  let g:vimwiki_rxWikiLinkUrl = valid_chars.'\+'
+  let g:vimwiki_rxWikiLinkDescr = valid_chars.'*'
+  "
+  " 1. [[URL]], or [[URL][DESCRIPTION]]
+  " 1a) match [[URL][DESCRIPTION]]
+  let g:vimwiki_rxWikiLink = g:vimwiki_rxWikiLinkPrefix.
+        \ g:vimwiki_rxWikiLinkUrl. g:vimwiki_rxWikiLinkSeparatorOpt.
+        \ g:vimwiki_rxWikiLinkDescr. g:vimwiki_rxWikiLinkSuffix
+  " 1b) match URL within [[URL][DESCRIPTION]]
+  let g:vimwiki_rxWikiLinkMatchUrl = g:vimwiki_rxWikiLinkPrefix.
+        \ '\zs'. g:vimwiki_rxWikiLinkUrl. '\ze'. g:vimwiki_rxWikiLinkSeparatorOpt.
+        \ g:vimwiki_rxWikiLinkDescr. g:vimwiki_rxWikiLinkSuffix
+  " 1c) match DESCRIPTION within [[URL][DESCRIPTION]]
+  let g:vimwiki_rxWikiLinkMatchDescr = g:vimwiki_rxWikiLinkPrefix.
+        \ g:vimwiki_rxWikiLinkUrl. g:vimwiki_rxWikiLinkSeparatorOpt.
+        \ '\zs'. g:vimwiki_rxWikiLinkDescr. '\ze'. g:vimwiki_rxWikiLinkSuffix
+  " HERE
+  " *. wikilink or wikiword WARNING: g:vimwiki_camel_case may be deprecated
+  if g:vimwiki_camel_case
+    " *a) match ANY wikilink or wikiword
+    let g:vimwiki_rxWikiLink = g:vimwiki_rxWikiLink.'\|'. g:vimwiki_rxWikiWord
+    " *b) match URL wikilink or wikiword
+    let g:vimwiki_rxWikiLinkMatchUrl = g:vimwiki_rxWikiLinkMatchUrl.'\|'.
+          \ g:vimwiki_rxWikiWord
+  endif
+"endfunction " }}}
+
+"function! vimwiki#base#setup_wikiincl_regexps() " {{{
+  " TODO: put these in 'syntax/vimwiki_xxx.vim'
+  let g:vimwiki_rxWikiInclPrefix = '{{'
+  let g:vimwiki_rxWikiInclSuffix = '}}'
+  let g:vimwiki_rxWikiInclSeparator = VimwikiGet('incl_separator')
+  "
+  " '{{__LinkUrl__}}'
+  let g:vimwiki_WikiInclTemplate1 = g:vimwiki_rxWikiInclPrefix . '__LinkUrl__'. 
+        \ g:vimwiki_rxWikiInclSuffix
+  " '{{__LinkUrl____LinkDescription__}}'
+  let g:vimwiki_WikiInclTemplate2 = g:vimwiki_rxWikiInclPrefix . '__LinkUrl__'. 
+        \ '__LinkDescription__'.
+        \ g:vimwiki_rxWikiInclSuffix
+  "
+  let magic_chars = '.*[]\^$'
+  let exclude_chars = g:vimwiki_rxWikiInclPrefix. g:vimwiki_rxWikiInclSeparator.
+        \ g:vimwiki_rxWikiInclSuffix
+  let exclude_chars = s:get_unique_chars(exclude_chars)
+  let valid_chars = '[^'.escape(exclude_chars, magic_chars).']'
+  "
+  let g:vimwiki_rxWikiInclPrefix = escape(g:vimwiki_rxWikiInclPrefix, magic_chars)
+  let g:vimwiki_rxWikiInclSuffix = escape(g:vimwiki_rxWikiInclSuffix, magic_chars)
+  let g:vimwiki_rxWikiInclSeparator = escape(g:vimwiki_rxWikiInclSeparator, magic_chars)
+  let g:vimwiki_rxWikiInclUrl = valid_chars.'\+'
+  let g:vimwiki_rxWikiInclArg = valid_chars.'*'
+  let g:vimwiki_rxWikiInclArgs = '\%('. g:vimwiki_rxWikiInclSeparator. g:vimwiki_rxWikiInclArg. '\)'.'*'
+  "
+  "
+  " *. {{URL}[{...}]}  - i.e.  {{URL}}, {{URL}{ARG1}}, {{URL}{ARG1}{ARG2}}, etc.
+  " *a) match {{URL}[{...}]}
+  let g:vimwiki_rxWikiIncl = g:vimwiki_rxWikiInclPrefix.
+        \ g:vimwiki_rxWikiInclUrl. 
+        \ g:vimwiki_rxWikiInclArgs. g:vimwiki_rxWikiInclSuffix
+  " *b) match URL within {{URL}[{...}]}
+  let g:vimwiki_rxWikiInclMatchUrl = g:vimwiki_rxWikiInclPrefix.
+        \ '\zs'. g:vimwiki_rxWikiInclUrl. '\ze'.
+        \ g:vimwiki_rxWikiInclArgs. g:vimwiki_rxWikiInclSuffix
+"endfunction "}}}
+
+"function! vimwiki#base#setup_templated_weblink_regexps() " {{{
+  " FIXME all submatches can be done with "numbered" \( \) groups
+  " 0. URL : free-standing links: keep URL UR(L) strip trailing punct: URL; URL) UR(L)) 
+  let g:vimwiki_rxWeblink0 = '[\["(|]\@<!'. g:vimwiki_rxWeblinkUrl .
+        \ '\%([),:;.!?]\=\%([ \t]\|$\)\)\@='
+  " 0a) match URL within URL
+  let g:vimwiki_rxWeblinkMatchUrl0 = g:vimwiki_rxWeblink0
+  " 0b) match DESCRIPTION within URL
+  let g:vimwiki_rxWeblinkMatchDescr0 = ''
+  "
+  let template_args = '\%(__LinkUrl__\|__LinkDescription__\)'
+  let web_template = VimwikiGet('web_template')
+  "XXX plugin loaded on every Vim start!
+  "if g:vimwiki_debug
+  "  echom 'Weblink Template: '.web_template
+  "endif
+  let magic_chars = '.*[]\^$'
+  " list all delimiters that appear in Template *after* DESCRIPTION
+  let exclude_chars = s:get_suffix(web_template, '__LinkDescription__')
+  let exclude_chars = join(split(exclude_chars, template_args), '')
+  let exclude_chars = s:get_unique_chars(exclude_chars)
+  let valid_chars = '[^'.escape(exclude_chars, magic_chars).']'
+  let g:vimwiki_rxWeblinkDescr = valid_chars.'*'
+  "
+  " " 2012-02-04 TODO not starting with [[ or ][ ?  ... prefix = '[\[\]]\@<!\[' 
+  " 1. web template
+  let g:vimwiki_rxWeblink1 = vimwiki#base#apply_template(web_template, 
+        \ g:vimwiki_rxWeblinkUrl, 
+        \ g:vimwiki_rxWeblinkDescr, 
+        \ '')
+  " 1a) match URL within web template
+  let g:vimwiki_rxWeblinkMatchUrl1 = vimwiki#base#apply_template(web_template,
+        \ '\zs'.g:vimwiki_rxWeblinkUrl.'\ze', 
+        \ g:vimwiki_rxWeblinkDescr, 
+        \ '')
+  " 1b) match DESCRIPTION within web template
+  let g:vimwiki_rxWeblinkMatchDescr1 = vimwiki#base#apply_template(web_template, 
+        \ g:vimwiki_rxWeblinkUrl, 
+        \ '\zs'.g:vimwiki_rxWeblinkDescr.'\ze', 
+        \ '')
+  "
+  "
+  " *. ANY weblink
+  " *a) match ANY weblink
+  let g:vimwiki_rxWeblink = ''.
+        \ g:vimwiki_rxWeblink1.'\|'.
+        \ g:vimwiki_rxWeblink0
+  " *b) match URL within ANY weblink
+  let g:vimwiki_rxWeblinkMatchUrl = ''.
+        \ g:vimwiki_rxWeblinkMatchUrl1.'\|'.
+        \ g:vimwiki_rxWeblinkMatchUrl0
+  " *c) match DESCRIPTION within ANY weblink
+  let g:vimwiki_rxWeblinkMatchDescr = ''.
+        \ g:vimwiki_rxWeblinkMatchDescr1.'\|'.
+        \ g:vimwiki_rxWeblinkMatchDescr0
+"endfunction  "}}}
+
+"function! vimwiki#base#setup_templated_imagelink_regexps() " {{{
+  let template_args = '\%(__LinkUrl__\|__LinkDescription__\|__LinkStyle__\)'
+  let t_Image = VimwikiGet('image_template')
+  "if g:vimwiki_debug
+  "  echom 'Image Template: '.t_Image
+  "endif
+  let magic_chars = '.*[]\^$'
+  " list all delimiters that appear in Template *after* DESCRIPTION
+  let exclude_chars = s:get_suffix(t_Image, '__LinkDescription__')
+  let exclude_chars = join(split(exclude_chars, template_args), '')
+  let exclude_chars = s:get_unique_chars(exclude_chars)
+  let valid_chars = '[^'.escape(exclude_chars, magic_chars).']'
+  let g:vimwiki_rxImagelinkDescr = valid_chars.'*'
+  " list all delimiters that appear in Template *after* STYLE
+  let exclude_chars = s:get_suffix(t_Image, '__LinkStyle__')
+  let exclude_chars = join(split(exclude_chars, template_args), '')
+  let exclude_chars = s:get_unique_chars(exclude_chars)
+  let valid_chars = '[^'.escape(exclude_chars, magic_chars).']'
+  let g:vimwiki_rxImagelinkStyle = valid_chars.'*'
+  "
+  "
+  " 1. image template
+  let g:vimwiki_rxImagelink1 = vimwiki#base#apply_template(t_Image, 
+        \ g:vimwiki_rxImagelinkUrl, 
+        \ g:vimwiki_rxImagelinkDescr,
+        \ g:vimwiki_rxImagelinkStyle)
+  " 1a) match URL within image template
+  let g:vimwiki_rxImagelinkMatchUrl1 = vimwiki#base#apply_template(t_Image,
+        \ '\zs'.g:vimwiki_rxImagelinkUrl.'\ze', 
+        \ g:vimwiki_rxImagelinkDescr, 
+        \ g:vimwiki_rxImagelinkStyle)
+  " 1b) match DESCRIPTION within image template
+  let g:vimwiki_rxImagelinkMatchDescr1 = vimwiki#base#apply_template(t_Image,
+        \ g:vimwiki_rxImagelinkUrl, 
+        \ '\zs'.g:vimwiki_rxImagelinkDescr.'\ze', 
+        \ g:vimwiki_rxImagelinkStyle)
+  " 1c) match STYLE within image template
+  let g:vimwiki_rxImagelinkMatchStyle1 = vimwiki#base#apply_template(t_Image,
+        \ g:vimwiki_rxImagelinkUrl, 
+        \ g:vimwiki_rxImagelinkDescr,
+        \ '\zs'.g:vimwiki_rxImagelinkStyle.'\ze')
+  " 
+  " *. ANY image
+  " *a) match ANY image
+  let g:vimwiki_rxImagelink = ''.
+        \ g:vimwiki_rxImagelink1
+  " *b) match URL within ANY image
+  let g:vimwiki_rxImagelinkMatchUrl = ''.
+        \ g:vimwiki_rxImagelinkMatchUrl1
+  " *c) match DESCRIPTION within ANY image
+  let g:vimwiki_rxImagelinkMatchDescr = ''.
+        \ g:vimwiki_rxImagelinkMatchDescr1
+  " *c) match STYLE within ANY image
+  let g:vimwiki_rxImagelinkMatchStyle = ''.
+        \ g:vimwiki_rxImagelinkMatchStyle1
+"endfunction  "}}}
+
+"}}} end of Links
+
+" {{{
+"call vimwiki#base#setup_wikilink_regexps()
+"call vimwiki#base#setup_templated_imagelink_regexps()
+"call vimwiki#base#setup_wikiincl_regexps()
+"call vimwiki#base#setup_templated_weblink_regexps()
+"}}}
+ 
+"TODO
+" LINKS: highlighting is complicated due to "nonexistent" links feature {{{
+function! s:add_target_syntax_ON(target) " {{{
+  if g:vimwiki_debug > 1
+    echom '[vimwiki_debug] syntax target > '.a:target
+  endif
+  let prefix0 = 'syntax match VimwikiLink `'
+  let suffix0 = '` display contains=@NoSpell,VimwikiLinkRest,VimwikiLinkChar'
+  let prefix1 = 'syntax match VimwikiLinkT `'
+  let suffix1 = '` display contained'
+  execute prefix0. a:target. suffix0
+  execute prefix1. a:target. suffix1
+endfunction "}}}
+
+function! s:add_target_syntax_OFF(target) " {{{
+  if g:vimwiki_debug > 1
+    echom '[vimwiki_debug] syntax target > '.a:target
+  endif
+  let prefix0 = 'syntax match VimwikiNoExistsLink `'
+  let suffix0 = '` display contains=@NoSpell,VimwikiLinkRest,VimwikiLinkChar'
+  let prefix1 = 'syntax match VimwikiNoExistsLinkT `'
+  let suffix1 = '` display contained'
+  execute prefix0. a:target. suffix0
+  execute prefix1. a:target. suffix1
+endfunction "}}}
+
+"FIXME only works for subdirectories
+function! s:highlight_existing_links() "{{{
+  " Links with subdirs should be highlighted for linux and windows separators
+  " Change \ or / to [/\\]
+  let os_p = '[/\\]'
+  let os_p2 = escape(os_p, '\')
+
+  " Wikilink
+  " Conditional highlighting that depends on the existence of a wiki file or
+  " directory is only available for 'wiki#:' links
+  " links set up upon BufEnter (see plugin/...)
+  let links = b:existing_wikifiles
+  "let links = s:get_links('*'.VimwikiGet('ext'))
+  call map(links, 'substitute(v:val, os_p, os_p2, "g")')
+  let rxScheme = '\%(\%(wiki\|wiki'.g:vimwiki_current_idx.'\):\)\?'
+  for link in links
+    let safe_link = vimwiki#base#unsafe_link(link)
+    let safe_link = escape(safe_link , '~&$.*')
+
+    " a) match WikiWord WARNING: g:vimwiki_camel_case may be deprecated
+    if g:vimwiki_camel_case &&
+          \ link =~ g:vimwiki_rxWikiWord
+      call s:add_target_syntax_ON('!\@<!\<'. link. '\>')
+    endif
+    " b) match [[URL]]
+    let target = vimwiki#base#apply_template(g:vimwiki_WikiLinkTemplate1,
+          \ rxScheme.safe_link, g:vimwiki_rxWikiLinkDescr, '')
+    call s:add_target_syntax_ON(target)
+    " c) match [[URL][DESCRIPTION]]
+    let target = vimwiki#base#apply_template(g:vimwiki_WikiLinkTemplate2,
+          \ rxScheme.safe_link, g:vimwiki_rxWikiLinkDescr, '')
+    call s:add_target_syntax_ON(target)
+
+    " a) match {{URL}}
+    let target = vimwiki#base#apply_template(g:vimwiki_WikiInclTemplate1,
+          \ rxScheme.safe_link, g:vimwiki_rxWikiInclArgs, '')
+    call s:add_target_syntax_ON(target)
+    " b) match {{URL}[{...}]}
+    let target = vimwiki#base#apply_template(g:vimwiki_WikiInclTemplate2,
+          \ rxScheme.safe_link, g:vimwiki_rxWikiInclArgs, '')
+    call s:add_target_syntax_ON(target)
+
+  endfor
+
+  " Wikilink Dirs
+  " Conditional highlighting that depends on the existence of a wiki file or
+  " directory is only available for 'wiki#:' links
+  " dirs set up upon BufEnter (see plugin/...)
+  let dirs = b:existing_wikidirs
+  "let dirs = s:get_links('*/')
+  call map(dirs, 'substitute(v:val, os_p, os_p2, "g")')
+  for dir in dirs
+    let safe_link = vimwiki#base#unsafe_link(dir)
+    let safe_link = escape(safe_link , '~&$.*')
+    let safe_link = safe_link.'[/\\]'
+
+    " 1a) match [[DIRURL]]
+    let target = vimwiki#base#apply_template(g:vimwiki_WikiLinkTemplate1,
+          \ rxScheme.safe_link, g:vimwiki_rxWikiLinkDescr, '')
+    call s:add_target_syntax_ON(target)
+    " 2a) match [[DIRURL][DESCRIPTION]]
+    let target = vimwiki#base#apply_template(g:vimwiki_WikiLinkTemplate2,
+          \ rxScheme.safe_link, g:vimwiki_rxWikiLinkDescr, '')
+    call s:add_target_syntax_ON(target)
+  endfor
+
+endfunction "}}}
+
+
+"function! s:highlight_links() "{{{
+"  try
+"    syntax clear VimwikiNoExistsLink
+"    syntax clear VimwikiNoExistsLinkT
+"    syntax clear VimwikiLink
+"    syntax clear VimwikiLinkT
+"  catch
+"  endtry
+
+  " use max highlighting - could be quite slow if there are too many wikifiles
+  if VimwikiGet('maxhi')
+    " WikiLink
+    call s:add_target_syntax_OFF(g:vimwiki_rxWikiLink)
+    " WikiIncl
+    call s:add_target_syntax_OFF(g:vimwiki_rxWikiIncl)
+
+    " Subsequently, links verified on vimwiki's path are highlighted as existing
+    call s:highlight_existing_links()
+  else
+    " Wikilink
+    call s:add_target_syntax_ON(g:vimwiki_rxWikiLink)
+    " WikiIncl
+    call s:add_target_syntax_ON(g:vimwiki_rxWikiIncl)
+  endif
+
+  " Weblink
+  call s:add_target_syntax_ON(g:vimwiki_rxWeblink)
+
+  " Image
+  call s:add_target_syntax_ON(g:vimwiki_rxImagelink)
+
+  " WikiLink
+  " All remaining schemes except wiki: and wiki<idx>: where idx is index of
+  " current wiki are highlighted automatically
+  let other_wiki_schemes = filter(split(g:vimwiki_wiki_schemes, '\s*,\s*'), 
+            \ 'v:val !~ "\\%(wiki\\>\\|wiki'.g:vimwiki_current_idx.'\\>\\)"')
+  let rxScheme = '\%('.
+        \ join(other_wiki_schemes, '\|'). '\|'.
+        \ join(split(g:vimwiki_diary_schemes, '\s*,\s*'), '\|'). '\|'.
+        \ join(split(g:vimwiki_local_schemes, '\s*,\s*'), '\|'). '\|'.
+        \ join(split(g:vimwiki_web_schemes1, '\s*,\s*'), '\|').
+        \ '\):'
+  " a) match [[nonwiki-scheme-URL]]
+  let target = vimwiki#base#apply_template(g:vimwiki_WikiLinkTemplate1,
+        \ rxScheme.g:vimwiki_rxWikiLinkUrl, g:vimwiki_rxWikiLinkDescr, '')
+  call s:add_target_syntax_ON(target)
+  " b) match [[nonwiki-scheme-URL][DESCRIPTION]]
+  let target = vimwiki#base#apply_template(g:vimwiki_WikiLinkTemplate2,
+        \ rxScheme.g:vimwiki_rxWikiLinkUrl, g:vimwiki_rxWikiLinkDescr, '')
+  call s:add_target_syntax_ON(target)
+
+  " a) match {{nonwiki-scheme-URL}}
+  let target = vimwiki#base#apply_template(g:vimwiki_WikiInclTemplate1,
+        \ rxScheme.g:vimwiki_rxWikiInclUrl, g:vimwiki_rxWikiInclArgs, '')
+  call s:add_target_syntax_ON(target)
+  " b) match {{nonwiki-scheme-URL}[{...}]}
+  let target = vimwiki#base#apply_template(g:vimwiki_WikiInclTemplate2,
+        \ rxScheme.g:vimwiki_rxWikiInclUrl, g:vimwiki_rxWikiInclArgs, '')
+  call s:add_target_syntax_ON(target)
+
+"endfunction "}}}
+
+"call vimwiki#base#highlight_links()
+
+" }}}
 
 " generic headers "{{{
 if g:vimwiki_symH
@@ -32,10 +506,15 @@ else
   endfor
   let g:vimwiki_rxHeader = '^\s*\('.g:vimwiki_rxH.'\{1,6}\)\zs[^'.g:vimwiki_rxH.'].*\ze$'
 endif
+
+" Header levels, 1-6
+for i in range(1,6)
+  execute 'syntax match VimwikiHeader'.i.' /'.g:vimwiki_rxH{i}.'/ contains=VimwikiTodo,VimwikiHeaderChar,VimwikiNoExistsLink,VimwikiLink,@Spell'
+endfor
+
 " }}}
 
-
-" Concealed chars " {{{
+" concealed chars " {{{
 if exists("+conceallevel")
   syntax conceal on
 endif
@@ -73,7 +552,7 @@ if exists("+conceallevel")
 endif
 " }}}
 
-" Non concealed chars " {{{
+" non concealed chars " {{{
 execute 'syn match VimwikiHeaderChar contained /\%(^\s*'.g:vimwiki_rxH.'\+\)\|\%('.g:vimwiki_rxH.'\+\s*$\)/'
 execute 'syn match VimwikiEqInCharT contained /'.g:vimwiki_char_eqin.'/'
 execute 'syn match VimwikiBoldCharT contained /'.g:vimwiki_char_bold.'/'
@@ -85,13 +564,14 @@ execute 'syn match VimwikiDelTextCharT contained /'.g:vimwiki_char_deltext.'/'
 execute 'syn match VimwikiSuperScriptT contained /'.g:vimwiki_char_superscript.'/'
 execute 'syn match VimwikiSubScriptT contained /'.g:vimwiki_char_subscript.'/'
 
-
 " Emoticons
 syntax match VimwikiEmoticons /\%((.)\|:[()|$@]\|:-[DOPS()\]|$@]\|;)\|:'(\)/
 
 let g:vimwiki_rxTodo = '\C\%(TODO:\|DONE:\|STARTED:\|FIXME:\|FIXED:\|XXX:\)'
 execute 'syntax match VimwikiTodo /'. g:vimwiki_rxTodo .'/'
+" }}}
 
+" main syntax groups {{{
 
 " Tables
 syntax match VimwikiTableRow /^\s*|.\+|\s*$/ 
@@ -180,12 +660,6 @@ execute 'syntax match VimwikiItalic #\c<i>.\{-}</i># contains=VimwikiHTMLTag'
 execute 'syntax match VimwikiUnderline #\c<u>.\{-}</u># contains=VimwikiHTMLTag'
 
 execute 'syntax match VimwikiComment /'.g:vimwiki_rxComment.'/ contains=@Spell'
-
-" Header levels, 1-6
-for i in range(1,6)
-  execute 'syntax match VimwikiHeader'.i.' /'.g:vimwiki_rxH{i}.'/ contains=VimwikiTodo,VimwikiHeaderChar,VimwikiNoExistsLink,VimwikiLink,@Spell'
-endfor
-
 " }}}
 
 " header groups highlighting "{{{
@@ -212,8 +686,7 @@ else
 endif
 "}}}
 
-
-" Group Links "{{{ 
+" syntax group highlighting "{{{ 
 
 hi def link VimwikiMarkers Normal
 
