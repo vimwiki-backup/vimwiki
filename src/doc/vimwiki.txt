@@ -570,16 +570,16 @@ Templated Imagelinks~
 See |vimwiki-option-image_template| for customization.
 
 Image: >
-  {http://helloworld.com/blabla.jpg||}
+  {{http://helloworld.com/blabla.jpg}}
 
 Image with alternate text: >
-  {http://helloworld.com/blabla.jpg|cool stuff|width:150px; height: 120px;}
+  {{http://helloworld.com/blabla.jpg}{cool stuff}}
 
 Image with alternate text and style: >
-  {http://helloworld.com/blabla.jpg|cool stuff|width:150px; height: 120px;}
+  {{http://helloworld.com/blabla.jpg}{cool stuff}{width:150px; height: 120px;}}
 
 Image with style, but without alternate text: >
-  {http://helloworld.com/blabla.jpg|cool stuff|width:150px; height: 120px;}
+  {{http://helloworld.com/blabla.jpg}{}{width:150px; height: 120px;}}
 
 Note: For templated imagelinks, the separators must be present even if the
 alternate text or style is empty.
