@@ -128,7 +128,7 @@ function! vimwiki#base#resolve_scheme(lnk, wiki_output_ext) " {{{
     let idx = g:vimwiki_current_idx
   endif
   " path
-  let path = (wiki_path ? VimwikiGet('path_html', idx) : '')
+  let path = (wiki_path ? VimwikiGet('path', idx) : '')
   " relative path for diary
   let path = path. (diary_rel_path ? VimwikiGet('diary_rel_path', idx) : '')
   " subdir
