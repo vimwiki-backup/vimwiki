@@ -111,6 +111,8 @@ function! vimwiki#base#resolve_scheme(lnk, wiki_output_ext) " {{{
     let diary_rel_path = 1
     let wiki_extension = 1
   elseif scheme =~ 'local*'
+    let path = expand('%:p:h')
+    return [scheme, path, '', lnk, '', 'file:///'.path.'/'.lnk]
     let numbered_scheme = 1
     let wiki_path = 1
     let wiki_subdirectory = 1
@@ -126,7 +128,7 @@ function! vimwiki#base#resolve_scheme(lnk, wiki_output_ext) " {{{
     let idx = g:vimwiki_current_idx
   endif
   " path
-  let path = (wiki_path ? VimwikiGet('path', idx) : '')
+  let path = (wiki_path ? VimwikiGet('path_html', idx) : '')
   " relative path for diary
   let path = path. (diary_rel_path ? VimwikiGet('diary_rel_path', idx) : '')
   " subdir
@@ -154,10 +156,11 @@ function! vimwiki#base#resolve_scheme(lnk, wiki_output_ext) " {{{
 
   " construct url from parts
   if scheme == ''
-    let url = subdir.lnk.ext
+    let url = lnk.ext
   elseif scheme=~'wiki\d*' || scheme=~'diary\d*' || scheme=~'local\d*'
     " prepend 'file:' for wiki: and local: schemes
-    let url = 'file://'.path.subdir.lnk.ext
+    " FIXME for wiki, diary: must use html_path
+    let url = 'file:///'.path.lnk.ext
   else
     let url = scheme.':'.path.subdir.lnk.ext
   endif
@@ -547,19 +550,6 @@ endfunction " }}}
 
 " LINKS remnants of syntax groups functions {{{
 " TODO ?
-"   match n-th ARG within {{URL}[{ARG1}{ARG2}{...}]} " {{{
-" *c,d,e),...
-"function! VimwikiWikiInclMatchArg(nn_index)
-function! vimwiki#base#InclMatchArg(nn_index)
-  let rx = g:vimwiki_rxWikiInclPrefix. g:vimwiki_rxWikiInclUrl
-  let rx = rx. repeat(g:vimwiki_rxWikiInclSeparator. g:vimwiki_rxWikiInclArg, a:nn_index-1)
-  if a:nn_index > 0
-    let rx = rx. g:vimwiki_rxWikiInclSeparator. '\zs'. g:vimwiki_rxWikiInclArg. '\ze'
-  endif
-  let rx = rx. g:vimwiki_rxWikiInclArgs. g:vimwiki_rxWikiInclSuffix
-  return rx
-endfunction
-"}}}
 
 " TODO
 function! s:get_existing_wikilinks() "{{{
