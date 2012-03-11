@@ -4,7 +4,22 @@
 
 This directory contains HTML-generation tests and tools to execute them.
 
-= Usage =
+== Usage ==
+
+To simply generate HTML for all the test files:
+# yank the `!vim ...` line below using `yy`
+# enter the command line with `:`
+# press `CTRL-R "` and `Enter`
+
+{{{
+!vim -n -u vimrc -c "exe 'VimwikiIndex' | exe 'VimwikiAll2HTML' | quit"
+}}}
+
+The generated files will be in `html` directory, which is the same level
+as the `wiki` directory.
+
+
+Alternatively:
 
 Execute `python test.py`:
 {{{
