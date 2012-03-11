@@ -373,7 +373,7 @@ endfunction "}}}
 "   match n-th ARG within {{URL}[{ARG1}{ARG2}{...}]} " {{{
 " *c,d,e),...
 "function! VimwikiWikiInclMatchArg(nn_index)
-function! vimwiki#html#InclMatchArg(nn_index)
+function! vimwiki#html#incl_match_arg(nn_index)
   let rx = g:vimwiki_rxWikiInclPrefix. g:vimwiki_rxWikiInclUrl
   let rx = rx. repeat(g:vimwiki_rxWikiInclSeparator. g:vimwiki_rxWikiInclArg, a:nn_index-1)
   if a:nn_index > 0
@@ -432,8 +432,8 @@ function! s:tag_wikiincl(value) "{{{
   " otherwise, assume image transclusion
   if line == ''
     let url_0 = matchstr(str, g:vimwiki_rxWikiInclMatchUrl)
-    let descr = matchstr(str, vimwiki#html#InclMatchArg(1))
-    let style = matchstr(str, vimwiki#html#InclMatchArg(2))
+    let descr = matchstr(str, vimwiki#html#incl_match_arg(1))
+    let style = matchstr(str, vimwiki#html#incl_match_arg(2))
     " resolve url
     let [scheme, path, subdir, lnk, ext, url] = 
           \ vimwiki#base#resolve_scheme(url_0, '.html')
