@@ -110,20 +110,10 @@ function! s:setup_buffer_enter() "{{{
   "     au GUIEnter * nested VimwikiIndex
   if &filetype == ''
     set filetype=vimwiki
+  elseif &syntax == 'vimwiki'
+    set syntax=vimwiki
   endif
 
-  " Update global regexps for links based on per-wiki 
-  " options: link_separator, incl_separator, web_template, image_template
-  "call vimwiki#base#setup_wikilink_regexps()
-  "call vimwiki#base#setup_wikiincl_regexps()
-  "call vimwiki#base#setup_templated_weblink_regexps()
-  "call vimwiki#base#setup_templated_imagelink_regexps()
-
-  " Update existed/non-existed links highlighting.
-  " TODO would get set only after the syntax file is read (too late!)
-  "call vimwiki#base#highlight_links()
-  "let b:existing_wikifiles = vimwiki#base#get_links('*'.VimwikiGet('ext'))
-  "let b:existing_wikidirs = vimwiki#base#get_links('*/')
 
   " Settings foldmethod, foldexpr and foldtext are local to window. Thus in a
   " new tab with the same buffer folding is reset to vim defaults. So we
