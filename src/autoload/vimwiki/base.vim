@@ -114,11 +114,15 @@ function! vimwiki#base#resolve_scheme(lnk, as_html) " {{{
     let diary_rel_path = 1
     let wiki_extension = 1
   elseif scheme =~ 'local*'
-    let path = expand('%:p:h')
-    return [scheme, path, '', lnk, '', 'file://'.path.'/'.lnk]
+    "XXX: this approach breaks local1:, local2:, etc.
+    " let path = expand('%:p:h')
+    " return [scheme, path, '', lnk, '', 'file://'.path.'/'.lnk]
     let numbered_scheme = 1
     let add_path = 1
-    let wiki_subdirectory = 1
+    "XXX: instead, we can just turn off the inclusion of wiki_subdirectorys
+    " But why !?  It would be easier for the end-user for local*: schemes
+    " to work like wiki*: schemes with regards to subdirectories ... no?
+    let wiki_subdirectory = 0
   endif
   " numbered scheme
   if numbered_scheme && scheme =~ '\D\+\d\+'
