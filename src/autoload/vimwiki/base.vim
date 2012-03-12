@@ -116,7 +116,7 @@ function! vimwiki#base#resolve_scheme(lnk, as_html) " {{{
   elseif scheme =~ 'local*'
     "XXX: this approach breaks local1:, local2:, etc.
     " let path = expand('%:p:h')
-    " return [scheme, path, '', lnk, '', 'file://'.path.'/'.lnk]
+    " return [scheme, path, '', lnk, '', 'file:///'.path.'/'.lnk]
     let numbered_scheme = 1
     let add_path = 1
     "XXX: instead, we can just turn off the inclusion of wiki_subdirectorys
@@ -172,18 +172,18 @@ function! vimwiki#base#resolve_scheme(lnk, as_html) " {{{
   elseif scheme=~'wiki\d*' || scheme=~'diary\d*' || scheme=~'local\d*'
     " prepend 'file:' for wiki: and local: schemes
     " FIXME for wiki, diary: must use html_path
-    let url = 'file://'.path.lnk.ext
+    let url = 'file:///'.path.lnk.ext
   else
     let url = scheme.':'.path.subdir.lnk.ext
   endif
+  " ensure there is triple slashes after 'file:'
+  let url = substitute(url, '^file:/\{4,}', 'file:///', '')
 
   " result
   return [scheme, path, subdir, lnk, ext, url]
 endfunction "}}}
 
 function! vimwiki#base#open_link(cmd, link, ...) "{{{
-  " nonzero wnum = a:1 selects an alternate wiki to open link: let idx = a:1 - 1
-  " let idx = a:wnum - 1
   " resolve url
   let [scheme, path, subdir, lnk, ext, url] = 
         \ vimwiki#base#resolve_scheme(a:link, 0)
@@ -714,20 +714,6 @@ function! vimwiki#base#find_prev_link() "{{{
 endfunction
 " }}}
 
-function! vimwiki#base#find_interwiki(prefix) "{{{
-  if a:prefix == ""
-    return -1
-  endif
-  let idx = 0
-  while idx < len(g:vimwiki_list)
-    if a:prefix == VimwikiGet('interwiki_prefix', idx)
-      return idx
-    endif
-    let idx += 1
-  endwhile
-  return -1
-endfunction "}}}
-
 function! vimwiki#base#follow_link(split, ...) "{{{
   if a:split == "split"
     let cmd = ":split "
@@ -739,9 +725,6 @@ function! vimwiki#base#follow_link(split, ...) "{{{
     let cmd = ":e "
   endif
 
-  " nonzero wnum selects an alternate wiki to open link
-  " let wnum = a:wnum
-  let wnum = 0
   " try WikiLink
   let lnk = matchstr(s:get_word_at_cursor(g:vimwiki_rxWikiLink),
         \ g:vimwiki_rxWikiLinkMatchUrl)
