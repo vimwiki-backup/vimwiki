@@ -82,7 +82,7 @@ function! vimwiki#base#current_subdir()"{{{
   return vimwiki#base#subdir(VimwikiGet('path'), expand('%:p'))
 endfunction"}}}
 
-function! vimwiki#base#resolve_scheme(lnk, wiki_output_ext) " {{{
+function! vimwiki#base#resolve_scheme(lnk, as_html) " {{{
   " schemeless
   let lnk = a:lnk
   let is_schemeless = lnk !~ g:vimwiki_rxSchemeUrl
@@ -92,7 +92,8 @@ function! vimwiki#base#resolve_scheme(lnk, wiki_output_ext) " {{{
   let lnk = matchstr(lnk, g:vimwiki_rxSchemeUrlMatchUrl)
   " scheme behaviors
   let numbered_scheme = 0
-  let wiki_path = 0
+  let add_path = 0
+  let html_path = 0
   let diary_rel_path = 0
   let wiki_subdirectory = 0
   let make_link_safe = 0
@@ -100,21 +101,23 @@ function! vimwiki#base#resolve_scheme(lnk, wiki_output_ext) " {{{
   let wiki_directory = 0
   if scheme =~ 'wiki*'
     let numbered_scheme = 1
-    let wiki_path = 1
+    let add_path = 1
+    let html_path = 1
     let wiki_subdirectory = 1
     let make_link_safe = 1
     let wiki_extension = 1
     let wiki_directory = 1
   elseif scheme =~ 'diary*'
     let numbered_scheme = 1
-    let wiki_path = 1
+    let add_path = 1
+    let html_path = 1
     let diary_rel_path = 1
     let wiki_extension = 1
   elseif scheme =~ 'local*'
     let path = expand('%:p:h')
-    return [scheme, path, '', lnk, '', 'file:///'.path.'/'.lnk]
+    return [scheme, path, '', lnk, '', 'file://'.path.'/'.lnk]
     let numbered_scheme = 1
-    let wiki_path = 1
+    let add_path = 1
     let wiki_subdirectory = 1
   endif
   " numbered scheme
@@ -128,7 +131,15 @@ function! vimwiki#base#resolve_scheme(lnk, wiki_output_ext) " {{{
     let idx = g:vimwiki_current_idx
   endif
   " path
-  let path = (wiki_path ? VimwikiGet('path', idx) : '')
+  if add_path
+    if html_path && a:as_html
+      let path = VimwikiGet('path_html', idx)
+    else
+      let path = VimwikiGet('path', idx)
+    endif
+  else
+    let path = ''
+  endif
   " relative path for diary
   let path = path. (diary_rel_path ? VimwikiGet('diary_rel_path', idx) : '')
   " subdir
@@ -141,10 +152,7 @@ function! vimwiki#base#resolve_scheme(lnk, wiki_output_ext) " {{{
   let lnk = (make_link_safe ? vimwiki#base#safe_link(lnk) : lnk)
   " extension
   if wiki_extension
-    let ext = VimwikiGet('ext', idx)
-    if a:wiki_output_ext != ''
-      let ext = a:wiki_output_ext
-    endif
+    let ext = (a:as_html ? '.html' : VimwikiGet('ext', idx))
     " default link for directories
     if wiki_directory && vimwiki#base#is_link_to_dir(lnk)
       let ext = (g:vimwiki_dir_link != '' ? g:vimwiki_dir_link. ext : '')
@@ -160,7 +168,7 @@ function! vimwiki#base#resolve_scheme(lnk, wiki_output_ext) " {{{
   elseif scheme=~'wiki\d*' || scheme=~'diary\d*' || scheme=~'local\d*'
     " prepend 'file:' for wiki: and local: schemes
     " FIXME for wiki, diary: must use html_path
-    let url = 'file:///'.path.lnk.ext
+    let url = 'file://'.path.lnk.ext
   else
     let url = scheme.':'.path.subdir.lnk.ext
   endif
@@ -174,7 +182,7 @@ function! vimwiki#base#open_link(cmd, link, ...) "{{{
   " let idx = a:wnum - 1
   " resolve url
   let [scheme, path, subdir, lnk, ext, url] = 
-        \ vimwiki#base#resolve_scheme(a:link, VimwikiGet('ext'))
+        \ vimwiki#base#resolve_scheme(a:link, 0)
   if lnk == ''
     echom 'Vimwiki Error: Unable to resolve link!'
     return
