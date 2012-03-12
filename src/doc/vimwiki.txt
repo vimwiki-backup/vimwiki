@@ -278,12 +278,12 @@ NORMAL MODE                                           *vimwiki-local-mappings*
                         vimwiki, so it should be ok to use '=' here.
                         To remap: >
                         :nmap == <Plug>VimwikiAddHeaderLevel
-
+<
                         *vimwiki_-*
 -                       Remove header level.
                         To remap: >
                         :nmap -- <Plug>VimwikiRemoveHeaderLevel
-
+<
                         *vimwiki_+*
 +                       Normalize link syntax: E.g. Add placeholder text to
                         Wiki- or Weblinks that are missing descriptions.
