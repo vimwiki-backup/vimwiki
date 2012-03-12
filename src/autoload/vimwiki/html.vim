@@ -436,7 +436,7 @@ function! s:tag_wikiincl(value) "{{{
     let style = matchstr(str, vimwiki#html#incl_match_arg(2))
     " resolve url
     let [scheme, path, subdir, lnk, ext, url] = 
-          \ vimwiki#base#resolve_scheme(url_0, '.html')
+          \ vimwiki#base#resolve_scheme(url_0, 1)
     " generate html output
     if g:vimwiki_debug
       echom '{{scheme='.scheme.', path='.path.', subdir='.subdir.', lnk='.lnk.', ext='.ext.'}}'
@@ -464,7 +464,7 @@ function! s:tag_wikilink(value) "{{{
 
   " resolve url
   let [scheme, path, subdir, lnk, ext, url] = 
-        \ vimwiki#base#resolve_scheme(url, '.html')
+        \ vimwiki#base#resolve_scheme(url, 1)
 
   " generate html output
   if g:vimwiki_debug
