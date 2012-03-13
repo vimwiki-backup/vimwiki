@@ -176,7 +176,7 @@ function! vimwiki#base#resolve_scheme(lnk, as_html) " {{{
   let lnk = substitute(lnk, '/\+', '/', 'g')
   " is there a better way?
   if has('win16') || has('win32') || has('win64')
-    let lnk = substitute(lnk, '^/\([[:alpha:]]:\)', '\1', '')
+    let lnk = substitute(lnk, '^/\ze[[:alpha:]]:', '', '')
   endif
 
   " construct url from parts
