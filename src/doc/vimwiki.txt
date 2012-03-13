@@ -2159,6 +2159,7 @@ Vim plugins: http://www.vim.org/scripts/script.php?script_id=2226
       is.
     * Issue 223: 2-leftmouse should be 2-leftmouse. Double click on non
       wikilinks should visually select a word.
+    * Issue 224: Quick page-link creation.
     * Issue 229: Turn off the HTML conversion message. |g:vimwiki_debug|
       option is added.
     * Issue 233: Would like something to replicate VimOutliner 'body
