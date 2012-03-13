@@ -245,7 +245,7 @@ let s:vimwiki_defaults.path_html = '~/vimwiki_html/'
 let s:vimwiki_defaults.css_name = 'style.css'
 let s:vimwiki_defaults.index = 'index'
 let s:vimwiki_defaults.ext = '.wiki'
-let s:vimwiki_defaults.maxhi = 1
+let s:vimwiki_defaults.maxhi = 0
 let s:vimwiki_defaults.syntax = 'default'
 
 let s:vimwiki_defaults.template_path = ''
