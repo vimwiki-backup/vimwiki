@@ -8,12 +8,6 @@ if exists("g:loaded_vimwiki_auto") || &cp
 endif
 let g:loaded_vimwiki_auto = 1
 
-if has("win32")
-  let s:os_sep = '\'
-else
-  let s:os_sep = '/'
-endif
-
 let s:badsymbols = '['.g:vimwiki_badsyms.g:vimwiki_stripsym.'<>|?*:"]'
 
 " MISC helper functions {{{
@@ -76,9 +70,9 @@ function! vimwiki#base#subdir(path, filename)"{{{
   endwhile
 
   let p = split(strpart(filename, idx), '[/\\]')
-  let res = join(p[:-2], s:os_sep)
+  let res = join(p[:-2], '/')
   if len(res) > 0
-    let res = res.s:os_sep
+    let res = res.'/'
   endif
   return res
 endfunction"}}}
@@ -175,13 +169,8 @@ function! vimwiki#base#resolve_scheme(lnk, as_html) " {{{
   let path = substitute(path, '/\+', '/', 'g')
   let subdir = substitute(subdir, '/\+', '/', 'g')
   let lnk = substitute(lnk, '/\+', '/', 'g')
-  " is there a better way?
   if has('win16') || has('win32') || has('win64')
-    if lnk =~ '^/[[:alpha:]]:'
-      let lnk = substitute(lnk, '^/', '', '')
-    endif
-    " here's a shorter version ... does this help at all?
-    "let lnk = substitute(lnk, '^/\([[:alpha:]]:\)', '\1', '')
+    let lnk = substitute(lnk, '^/\([[:alpha:]]:\)', '\1', '')
   endif
 
   " construct url from parts
