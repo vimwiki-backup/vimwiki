@@ -4,7 +4,9 @@
 """Test vimwiki's HTML generator.
 """
 
+import os
 import os.path
+import fnmatch
 from glob import glob
 
 # There is no raw_input in python 3 
@@ -16,6 +18,14 @@ except:
 def get_testname(filename):
     return os.path.splitext(os.path.basename(filename))[0]
 
+def touch(fname):
+    with open(fname, 'a'):
+        os.utime(fname, None)
+
+def touch_test_wikies():
+    for root, dirnames, filenames in os.walk('wiki'):
+        for filename in fnmatch.filter(filenames, '*.wiki'):
+            touch(os.path.join(root, filename))
 
 def gen_vimwiki_htmls():
     # Generate HTML using vimwiki.
@@ -67,6 +77,7 @@ def test_all():
 
 def main():
     print("Converting wiki to html...")
+    touch_test_wikies()
     if gen_vimwiki_htmls() != 0:
         raise Exception("vim failed with status %d" % status)
 
