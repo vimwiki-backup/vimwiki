@@ -1513,12 +1513,12 @@ or even >
 *vimwiki-option-maxhi*
 ------------------------------------------------------------------------------
 Key             Default value     Values~
-maxhi           1                 0, 1
+maxhi           0                 0, 1
 
 Description~
-Non-existent wiki links highlighting can be quite slow. If you don't want it,
-set maxhi to 0: >
-  let g:vimwiki_list = [{'path': '~/my_site/', 'maxhi': 0}]
+Non-existent wiki links highlighting can be quite slow. If you still want it,
+set maxhi to 1: >
+  let g:vimwiki_list = [{'path': '~/my_site/', 'maxhi': 1}]
 
 This disables filesystem checks for wiki links.
 
@@ -2148,6 +2148,8 @@ Vim plugins: http://www.vim.org/scripts/script.php?script_id=2226
 1.3 dev~
     * CameCased links are off by default! Check |g:vimwiki_camel_case| to turn
       it on.
+    * Highlighting nonexisted links are off by default! Check
+      |vimwiki-option-maxhi| to turn it on.
     * g:vimwiki_image_exts and g:vimwiki_file_exts options are removed.
 
     * Issue 225: handling of HTML tags in code and block code
@@ -2165,6 +2167,7 @@ Vim plugins: http://www.vim.org/scripts/script.php?script_id=2226
       is.
     * Issue 223: 2-leftmouse should be 2-leftmouse. Double click on non
       wikilinks should visually select a word.
+    * Issue 224: Quick page-link creation.
     * Issue 229: Turn off the HTML conversion message. |g:vimwiki_debug|
       option is added.
     * Issue 233: Would like something to replicate VimOutliner 'body
