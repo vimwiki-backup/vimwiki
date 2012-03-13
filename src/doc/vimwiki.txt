@@ -901,6 +901,10 @@ The diary scheme is used to concisely link to diary entries: >
 
 This scheme precludes explicit inclusion of |vimwiki-option-diary_rel_path|.
 
+The number "#", in the range 0..N-1, identifies the destination wiki in
+|g:vimwiki_list|.  If the number is omitted, the destination defaults to the
+current wiki.
+
 Local:~
 
 A local resource that is not a wiki page may be specified with a path relative
@@ -909,6 +913,10 @@ to the current page: >
 
 When followed or converted to HTML, extensions of local-scheme links are not
 modified.
+
+The number "#", in the range 0..N-1, identifies the destination wiki in
+|g:vimwiki_list|.  If the number is omitted, the destination defaults to the
+current wiki.
 
 File:~
 
