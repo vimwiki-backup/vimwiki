@@ -23,7 +23,12 @@ function! vimwiki#base#chomp_slash(str) "{{{
 endfunction "}}}
 
 function! vimwiki#base#path_norm(path) "{{{
-  return substitute(a:path, '\', '/', 'g')
+  " /-slashes
+  let path = substitute(a:path, '\', '/', 'g')
+  " treat multiple consecutive slashes as one path separator
+  let path = substitute(path, '/\+', '/', 'g')
+  " ensure that we are not fooled by a symbolic link
+  return resolve(path)
 endfunction "}}}
 
 function! vimwiki#base#mkdir(path) "{{{
