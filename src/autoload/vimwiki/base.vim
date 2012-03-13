@@ -170,11 +170,18 @@ function! vimwiki#base#resolve_scheme(lnk, as_html) " {{{
   let path = substitute(path, '/\+', '/', 'g')
   let subdir = substitute(subdir, '/\+', '/', 'g')
   let lnk = substitute(lnk, '/\+', '/', 'g')
+  " is there a better way?
+  if has('win16') || has('win32') || has('win64')
+    if lnk =~ '^/[[:alpha:]]:'
+      let lnk = substitute(lnk, '^/', '', '')
+    endif
+  endif
 
   " construct url from parts
   if scheme == ''
     let url = lnk.ext
-  elseif scheme=~'wiki\d*' || scheme=~'diary\d*' || scheme=~'local\d*'
+  elseif scheme=~'wiki\d*' || scheme=~'diary\d*' || scheme=~'local\d*' 
+        \|| scheme=~'file'
     " prepend 'file:' for wiki: and local: schemes
     " FIXME for wiki, diary: must use html_path
     let url = 'file:///'.path.lnk.ext
