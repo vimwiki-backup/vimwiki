@@ -175,6 +175,8 @@ function! vimwiki#base#resolve_scheme(lnk, as_html) " {{{
     if lnk =~ '^/[[:alpha:]]:'
       let lnk = substitute(lnk, '^/', '', '')
     endif
+    " here's a shorter version ... does this help at all?
+    "let lnk = substitute(lnk, '^/\([[:alpha:]]:\)', '\1', '')
   endif
 
   " construct url from parts
