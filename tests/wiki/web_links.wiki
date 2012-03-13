@@ -1,0 +1,109 @@
+%toc
+== Weblinks ==
+Test both plain and marked-up links.
+=== With punctuation ===
+`(text URL)` or `URL,` or `URL?`
+# (http://www.abc.com/koko#lili) TODO: (low priority) unsupported syntax: not highlighted, no html 
+# https://en.wikipedia.org/wiki/John_Smith_(mathematician)
+# `https://en.wikipedia.org/wiki/John_Smith_(mathematician)`
+# (this link https://en.wikipedia.org/wiki/John_Smith_(mathematician))
+# http://http://en.wikipedia.org/wiki/Vim_(text_editor)  hmm
+# http://en.wikipedia.org/wiki/Vim_(text_editor)
+# http://en.wikipedia.org/wiki/Vim_(text_editor), 
+# http://en.wikipedia.org/wiki/Vim_(text_editor); 
+# http://en.wikipedia.org/wiki/Vim_(text_editor):
+# http://en.wikipedia.org/wiki/Vim_(text_editor). 
+# http://en.wikipedia.org/wiki/Vim_(text_editor)! 
+# http://en.wikipedia.org/wiki/Vim_(text_editor)?
+# http://en.wikipedia.org/wiki/Vim_(text_editor)_again?
+# (http://www.novell.com/linux/releasenotes/x86_64/SUSE-SLES/11/#rnotes-deprecated) TODO: (low priority) not a valid link...
+# www.example.com/koko#lili not enough!
+# http://www.abc.com/koko#lili(here space is really needed!)
+# hjklhttp://www.abc.com/koko#lili   ? accepted? TODO: (high priority) I think, whitespace or a punctuation mark should be at the beginning of a weblink.
+
+=== Several on a line ===
+# http://en.wikipedia.org/wiki/Vim_(text_editor), http://en.wikipedia.org/wiki/Vim_(text_editor); http://en.wikipedia.org/wiki/Vim_(text_editor). http://en.wikipedia.org/wiki/Vim_(text_editor)! http://en.wikipedia.org/wiki/Vim_(text_editor)?
+# http://en.wikipedia.org/wiki/Vim,     http://en.wikipedia.org/wiki/Vim;    http://en.wikipedia.org/wiki/Vim.     http://en.wikipedia.org/wiki/Vim?     http://en.wikipedia.org/wiki/Vim! 
+# http://en.wikipedia.org/wiki/Vim, http://en.wikipedia.org/wiki/Vim: http://en.wikipedia.org/wiki/Vim; http://en.wikipedia.org/wiki/Vim? http://en.wikipedia.org/wiki/Vim! 
+# http://en.wikipedia.org/wiki/Vim. http://en.wikipedia.org/wiki/Vim, http://en.wikipedia.org/wiki/Vim; http://en.wikipedia.org/wiki/Vim! http://en.wikipedia.org/wiki/Vim? something
+
+=== Examples of URIs ===
+{{{
+     http://tools.ietf.org/html/rfc4248
+     ftp://ftp.is.co.za/rfc/rfc1808.txt
+     http://www.ietf.org/rfc/rfc2396.txt
+     mailto:John.Doe@example.com
+     news:comp.infosystems.www.servers.unix
+     tel:+1-816-555-1212
+     doi:10.1000/182
+     telnet://192.0.2.16:80/
+     git://github.com/gitster/git.git
+     urn:oasis:names:specification:docbook:dtd:xml:4.1.2
+     ldap://[2001:db8::7]/c=GB?objectClass?one
+}}}
+#    http://tools.ietf.org/html/rfc4248
+#    ftp://ftp.is.co.za/rfc/rfc1808.txt
+#    http://www.ietf.org/rfc/rfc2396.txt
+#    mailto:John.Doe@example.com
+#    news:comp.infosystems.www.servers.unix
+#    tel:+1-816-555-1212
+#    doi:10.1000/182
+#    telnet://192.0.2.16:80/
+#    git://github.com/gitster/git.git
+#    urn:oasis:names:specification:docbook:dtd:xml:4.1.2
+#    ldap://[2001:db8::7]/c=GB?objectClass?one      _Working!_
+
+
+== Bracketed Weblinks ==
+`[URL DESCRIPTION]` or `[URL ]`?
+{{{
+# [http://en.wikipedia.org/wiki/Vim_(text_editor) Vim]
+# [http://en.wikipedia.org/wiki/Vim_(text_editor) (Vim)]
+# [http://en.wikipedia.org/wiki/Vim_(text_editor) http://what?]
+# [http://en.wikipedia.org/wiki/Vim_(text_editor)]
+# [http://en.wikipedia.org/wiki/Vim_(text_editor) ]
+# [http://en.wikipedia.org/wiki/Vim]
+# [http://en.wikipedia.org/wiki/Vim  ]
+# [http://en.wikipedia.org/wiki/Vim  ][doi:10.1000/182 This Document]
+# [http://en.wikipedia.org/wiki/Vim_(text_editor) http://what?] [http://en.wikipedia.org/wiki/Vim  ][doi:10.1000/182 This Document]
+# [doi:10.1000/182 This Document]
+# [telnet://192.0.2.16:80/  local server]
+# [git://github.com/gitster/git.git  Gitster]
+# [urn:oasis:names:specification:docbook:dtd:xml:4.1.2  abstract]
+# [ldap://[2001:db8::7]/c=GB?objectClass?one      _Fixed now!_]
+}}}
+
+# [http://en.wikipedia.org/wiki/Vim_(text_editor) Vim]
+# [http://en.wikipedia.org/wiki/Vim_(text_editor) (Vim)]
+# [http://en.wikipedia.org/wiki/Vim_(text_editor) http://what?]
+# [http://en.wikipedia.org/wiki/Vim_(text_editor)] TODO: trailing-\s-reqmt (high priority)!
+# [http://en.wikipedia.org/wiki/Vim_(text_editor) ]
+# [http://en.wikipedia.org/wiki/Vim] TODO: trailing-\s-reqmt (high priority)!
+# [http://en.wikipedia.org/wiki/Vim  ]
+# [http://en.wikipedia.org/wiki/Vim  ][doi:10.1000/182 This Document]
+# [http://en.wikipedia.org/wiki/Vim_(text_editor) http://what?] [http://en.wikipedia.org/wiki/Vim  ][doi:10.1000/182 This Document]
+# [doi:10.1000/182 This Document]
+# [telnet://192.0.2.16:80/  local server]
+# [git://github.com/gitster/git.git  Gitster]
+# [urn:oasis:names:specification:docbook:dtd:xml:4.1.2  abstract]
+# [ldap://[2001:db8::7]/c=GB?objectClass?one      _Fixed now!_]
+
+
+== Markdown Weblinks ==
+`[DESCRIPTION](URL)`
+{{{
+# http://code.google.com/p/vimwiki/wiki/NormalizeLinkSyntax
+# [github.com](http://github.com)
+# [github.com](http://github.com)(what to do here?)
+# (and this link [github.com](http://github.com))
+# [and other links like [github.com](http://github.com)] what to do here?
+# [Vim (text_editor)](http://en.wikipedia.org/wiki/Vim_(text_editor))
+# (and this link [Vim (text_editor)](http://en.wikipedia.org/wiki/Vim_(text_editor)))
+}}}
+# http://code.google.com/p/vimwiki/wiki/NormalizeLinkSyntax
+# [github.com](http://github.com)
+# [github.com](http://github.com)(what to do here?)
+# (and this link [github.com](http://github.com))
+# [and other links like [github.com](http://github.com)] what to do here?
+# [Vim (text_editor)](http://en.wikipedia.org/wiki/Vim_(text_editor))
+# (and this link [Vim (text_editor)](http://en.wikipedia.org/wiki/Vim_(text_editor)))
