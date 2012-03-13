@@ -38,15 +38,12 @@ function! s:path_common_pfx(path1, path2) "{{{
 endfunction "}}}
 
 function! s:find_wiki(path) "{{{
-  " treat multiple consecutive slashes as one path separator
-  let path = substitute(a:path, '/\+', '/', 'g')
-  " ensure that we are not fooled by a symbolic link
-  let realpath = resolve(vimwiki#base#chomp_slash(path))
+  let path = vimwiki#base#path_norm(vimwiki#base#chomp_slash(a:path))
   let idx = 0
   while idx < len(g:vimwiki_list)
-    let path = vimwiki#base#chomp_slash(expand(VimwikiGet('path', idx)))
-    let path = vimwiki#base#path_norm(path)
-    if s:path_common_pfx(path, realpath) == path
+    let idx_path = expand(VimwikiGet('path', idx))
+    let idx_path = vimwiki#base#path_norm(vimwiki#base#chomp_slash(idx_path))
+    if s:path_common_pfx(idx_path, path) == idx_path
       return idx
     endif
     let idx += 1
