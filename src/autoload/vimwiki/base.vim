@@ -166,6 +166,11 @@ function! vimwiki#base#resolve_scheme(lnk, as_html) " {{{
   endif
   let scheme = (is_schemeless ? '' : scheme)
 
+  " remove repeated /'s
+  let path = substitute(path, '/\+', '/', 'g')
+  let subdir = substitute(subdir, '/\+', '/', 'g')
+  let lnk = substitute(lnk, '/\+', '/', 'g')
+
   " construct url from parts
   if scheme == ''
     let url = lnk.ext
@@ -176,8 +181,8 @@ function! vimwiki#base#resolve_scheme(lnk, as_html) " {{{
   else
     let url = scheme.':'.path.subdir.lnk.ext
   endif
-  " ensure there is triple slashes after 'file:'
-  let url = substitute(url, '^file:/\{4,}', 'file:///', '')
+  " ensure there are three slashes after 'file:'
+  let url = substitute(url, '^file:/*', 'file:///', '')
 
   " result
   return [scheme, path, subdir, lnk, ext, url]
