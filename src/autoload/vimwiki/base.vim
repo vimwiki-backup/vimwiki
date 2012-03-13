@@ -89,6 +89,17 @@ function! vimwiki#base#resolve_scheme(lnk, as_html) " {{{
   " parse
   let scheme = matchstr(lnk, g:vimwiki_rxSchemeUrlMatchScheme)
   let lnk = matchstr(lnk, g:vimwiki_rxSchemeUrlMatchUrl)
+  let path = ''
+  let subdir = ''
+  let ext = ''
+  if !(scheme =~ 'wiki*' || scheme =~ 'diary*' || scheme =~ 'local*' 
+        \ || scheme =~ 'file')
+    return [scheme, path, subdir, lnk, ext, scheme.':'.lnk]
+  endif
+  "
+  " schemes below here resolve to the local filesystem, although 'file:///' 
+  " is omitted when the schemeless syntax is used
+  "
   " scheme behaviors
   let numbered_scheme = 0
   let add_path = 0
@@ -113,16 +124,12 @@ function! vimwiki#base#resolve_scheme(lnk, as_html) " {{{
     let diary_rel_path = 1
     let wiki_extension = 1
   elseif scheme =~ 'local*'
-    "XXX: this approach breaks local1:, local2:, etc.
-    " let path = expand('%:p:h')
-    " return [scheme, path, '', lnk, '', 'file:///'.path.'/'.lnk]
     let numbered_scheme = 1
     let add_path = 1
-    "XXX: instead, we can just turn off the inclusion of wiki_subdirectorys
-    " But why !?  It would be easier for the end-user for local*: schemes
-    " to work like wiki*: schemes with regards to subdirectories ... no?
-    let wiki_subdirectory = 0
+    "XXX: local-schemes work like wiki-schemes with regards to subdirs
+    let wiki_subdirectory = 1
   endif
+
   " numbered scheme
   if numbered_scheme && scheme =~ '\D\+\d\+'
     let idx = eval(matchstr(scheme, '\D\+\zs\d\+\ze'))
@@ -133,6 +140,7 @@ function! vimwiki#base#resolve_scheme(lnk, as_html) " {{{
   else
     let idx = g:vimwiki_current_idx
   endif
+
   " path
   if add_path
     if html_path && a:as_html
@@ -140,19 +148,19 @@ function! vimwiki#base#resolve_scheme(lnk, as_html) " {{{
     else
       let path = VimwikiGet('path', idx)
     endif
-  else
-    let path = ''
   endif
+
   " relative path for diary
   let path = path. (diary_rel_path ? VimwikiGet('diary_rel_path', idx) : '')
+
   " subdir
   if wiki_subdirectory && idx == g:vimwiki_current_idx
     let subdir = vimwiki#base#current_subdir()
-  else
-    let subdir = ''
   endif
+
   " special chars
   let lnk = (make_link_safe ? vimwiki#base#safe_link(lnk) : lnk)
+
   " extension
   if wiki_extension
     let ext = (a:as_html ? '.html' : VimwikiGet('ext', idx))
@@ -160,32 +168,27 @@ function! vimwiki#base#resolve_scheme(lnk, as_html) " {{{
     if wiki_directory && vimwiki#base#is_link_to_dir(lnk)
       let ext = (g:vimwiki_dir_link != '' ? g:vimwiki_dir_link. ext : '')
     endif
-  else
-    let ext = ''
   endif
-  let scheme = (is_schemeless ? '' : scheme)
 
   " remove repeated /'s
   let path = substitute(path, '/\+', '/', 'g')
   let subdir = substitute(subdir, '/\+', '/', 'g')
   let lnk = substitute(lnk, '/\+', '/', 'g')
+  " is there a better way?
   if has('win16') || has('win32') || has('win64')
     let lnk = substitute(lnk, '^/\([[:alpha:]]:\)', '\1', '')
   endif
 
   " construct url from parts
-  if scheme == ''
-    let url = lnk.ext
-  elseif scheme=~'wiki\d*' || scheme=~'diary\d*' || scheme=~'local\d*' 
-        \|| scheme=~'file'
-    " prepend 'file:' for wiki: and local: schemes
-    " FIXME for wiki, diary: must use html_path
-    let url = 'file:///'.path.lnk.ext
+  if is_schemeless && a:as_html
+    let scheme = ''
+    let url = subdir.lnk.ext
+    " Tomas had the following: let url = lnk.ext
   else
-    let url = scheme.':'.path.subdir.lnk.ext
+    " ensure there are three slashes after 'file:'
+    let url = 'file:///'.path.subdir.lnk.ext
+    let url = substitute(url, '^file:/*', 'file:///', '')
   endif
-  " ensure there are three slashes after 'file:'
-  let url = substitute(url, '^file:/*', 'file:///', '')
 
   " result
   return [scheme, path, subdir, lnk, ext, url]
