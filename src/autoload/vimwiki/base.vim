@@ -1319,7 +1319,7 @@ function! s:normalize_link_syntax_n() " {{{
   if !empty(word_at_cursor)
     let sub = s:normalize_link(word_at_cursor,
           \ g:vimwiki_rxWord, '',
-          \ g:vimwiki_WikiLinkTemplate2)
+          \ g:vimwiki_WikiLinkTemplate1)
     call s:replace_text(lnum, word_at_cursor, sub)
     if g:vimwiki_debug > 1
       echomsg "Word: ".word_at_cursor." Sub: ".sub
