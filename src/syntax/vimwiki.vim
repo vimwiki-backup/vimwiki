@@ -3,22 +3,22 @@
 " Author: Maxim Kim <habamax@gmail.com>
 " Home: http://code.google.com/p/vimwiki/
 
+" Quit if syntax file is already loaded
+if version < 600
+  syntax clear
+elseif exists("b:current_syntax")
+  finish
+endif
 "TODO do nothing if ...? (?)
 if VimwikiGet('maxhi')
   let b:existing_wikifiles = vimwiki#base#get_links('*'.VimwikiGet('ext'))
   let b:existing_wikidirs = vimwiki#base#get_links('*/')
 endif
   "let b:xxx = 1
-" Quit if syntax file is already loaded
-if version < 600
-  syntax clear
-elseif exists("b:current_syntax")
   "TODO ? update wikilink syntax group here if really needed (?) for :e and such
   "if VimwikiGet('maxhi')
   " ...
   "endif
-  finish
-endif
 
 " XXX obsolete
 " Links highlighting is controlled by vimwiki#base#highlight_links() function.

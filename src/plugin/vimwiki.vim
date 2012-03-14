@@ -72,6 +72,7 @@ function! s:setup_filetype() "{{{
     return
   endif
 
+  unlet! b:vimwiki_fs_rescan
   set filetype=vimwiki
 endfunction "}}}
 
@@ -110,9 +111,14 @@ function! s:setup_buffer_enter() "{{{
   if &filetype == ''
     set filetype=vimwiki
   elseif &syntax == 'vimwiki'
-    set syntax=vimwiki
+    " to force a rescan of the filesystem which may have changed
+    " and update VimwikiLinks syntax group that depends on it;
+    " b:vimwiki_fs_rescan indicates that setup_filetype() has not been run
+    if exists("b:vimwiki_fs_rescan") && VimwikiGet('maxhi')
+      set syntax=vimwiki
+    endif
+    let b:vimwiki_fs_rescan = 1
   endif
-
 
   " Settings foldmethod, foldexpr and foldtext are local to window. Thus in a
   " new tab with the same buffer folding is reset to vim defaults. So we
