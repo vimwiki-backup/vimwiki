@@ -61,9 +61,9 @@ endfunction
 "}}}
 
 function! vimwiki#base#subdir(path, filename)"{{{
-  let path = expand(a:path)
+  let path = a:path
   " ensure that we are not fooled by a symbolic link
-  let filename = resolve(expand(a:filename))
+  let filename = resolve(a:filename)
   let idx = 0
   while path[idx] ==? filename[idx]
     let idx = idx + 1
@@ -315,12 +315,10 @@ function! vimwiki#base#get_links(pat) "{{{
   let links = split(globlinks, '\n')
 
   " remove paths
-  let rem_path = escape(expand(VimwikiGet('path')).subdir, '\')
+  let rem_path = escape(expand(VimwikiGet('path').subdir), '\')
   call map(links, 'substitute(v:val, rem_path, "", "g")')
-
   " Remove trailing slashes.
   call map(links, 'substitute(v:val, "[/\\\\]*$", "", "g")')
-
   return links
 endfunction "}}}
 
