@@ -276,21 +276,6 @@ let s:vimwiki_defaults.diary_link_fmt = '%Y-%m-%d'
 " NEW! in v1.3
 " custom_wiki2html
 let s:vimwiki_defaults.custom_wiki2html = ''
-
-" NEW! in v1.3
-" wikilink, wikiincl separators (should not be the same)
-"let s:vimwiki_defaults.wikilink_separator = ']['
-"let s:vimwiki_defaults.wikiincl_separator = '}{'
-let s:vimwiki_defaults.link_separator = ']['
-let s:vimwiki_defaults.incl_separator = '}{'
-
-" NEW! in v1.3
-" web_template, image_template
-" TODO: move to 'syntax/vimwiki_xxx.vim' ... !!
-let s:vimwiki_defaults.web_template = 
-      \ '[__LinkUrl__ __LinkDescription__]'
-let s:vimwiki_defaults.image_template = 
-      \ '{__LinkUrl__|__LinkDescription__|__LinkStyle__}'
 "
 "}}}
 
