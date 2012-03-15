@@ -118,13 +118,11 @@ function! vimwiki#base#resolve_scheme(lnk, as_html) " {{{
     let wiki_extension = 1
     let wiki_directory = 1
   elseif scheme =~ 'diary*'
-    let numbered_scheme = 1
     let add_path = 1
     let html_path = 1
     let diary_rel_path = 1
     let wiki_extension = 1
   elseif scheme =~ 'local*'
-    let numbered_scheme = 1
     let add_path = 1
     "XXX: local-schemes work like wiki-schemes with regards to subdirs
     let wiki_subdirectory = 1
@@ -1301,7 +1299,7 @@ function! s:normalize_link_syntax_n() " {{{
   if !empty(web_link_at_cursor)
     let sub = s:normalize_link(web_link_at_cursor,
           \ g:vimwiki_rxWeblinkMatchUrl, g:vimwiki_rxWeblinkMatchDescr,
-          \ VimwikiGet('web_template'))
+          \ g:vimwiki_web_template)
     call s:replace_text(lnum, g:vimwiki_rxWeblink, sub)
     if g:vimwiki_debug > 1
       echomsg "WebLink: ".web_link_at_cursor." Sub: ".sub
@@ -1312,7 +1310,7 @@ function! s:normalize_link_syntax_n() " {{{
   if !empty(image_link_at_cursor)
     let sub = s:normalize_imagelink(image_link_at_cursor,
           \ g:vimwiki_rxImagelinkMatchUrl, g:vimwiki_rxImagelinkMatchDescr,
-          \ g:vimwiki_rxImagelinkMatchStyle, VimwikiGet('image_template'))
+          \ g:vimwiki_rxImagelinkMatchStyle, g:imwiki_image_template)
     call s:replace_text(lnum, g:vimwiki_rxImagelink, sub)
     if g:vimwiki_debug > 1
       echomsg "ImageLink: ".wiki_link_at_cursor." Sub: ".sub
@@ -1380,7 +1378,7 @@ function! s:normalize_link_syntax_v() " {{{
     if !done && visual_selection =~ g:vimwiki_rxWeblink1
       call setreg('"', v_prefix. s:normalize_link(web_link_at_cursor, 
             \ g:vimwiki_rxWeblinkMatchUrl1, g:vimwiki_rxWeblinkMatchDescr1, 
-            \ VimwikiGet('web_template')). v_suffix, 'v')
+            \ g:vimwiki_web_template). v_suffix, 'v')
       if g:vimwiki_debug > 1
         echomsg 'Weblink: '.visual_selection.' Sub: '.@"
       endif
@@ -1390,7 +1388,7 @@ function! s:normalize_link_syntax_v() " {{{
     if !done && visual_selection =~ g:vimwiki_rxImagelink
       call setreg('"', v_prefix. s:normalize_imagelink(image_link_at_cursor,
             \ g:vimwiki_rxImagelinkMatchUrl, g:vimwiki_rxImagelinkMatchDescr, 
-            \ g:vimwiki_rxImagelinkMatchStyle, VimwikiGet('image_template')). v_suffix, 'v')
+            \ g:vimwiki_rxImagelinkMatchStyle, g:vimwiki_image_template). v_suffix, 'v')
       if g:vimwiki_debug > 1
         echomsg 'Image: '.visual_selection.' Sub: '.@"
       endif
@@ -1401,7 +1399,7 @@ function! s:normalize_link_syntax_v() " {{{
     if !done && visual_selection =~ g:vimwiki_rxWeblink0
       call setreg('"', v_prefix. s:normalize_link(url_at_cursor, 
             \ g:vimwiki_rxWeblinkMatchUrl0, g:vimwiki_rxWeblinkMatchDescr0, 
-            \ VimwikiGet('web_template')). v_suffix, 'v')
+            \ g:vimwiki_web_template). v_suffix, 'v')
       if g:vimwiki_debug > 1
         echomsg 'Raw Url: '.visual_selection.' Sub: '.@"
       endif

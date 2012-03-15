@@ -552,22 +552,26 @@ Link with spaces in it: >
 or: >
   [[This is a link source][Description of the link]]
 
-The separator is customizable, using |vimwiki-option-link_separator|;
-the prefix / suffix pair "[[", "]]" is not.
+The separator is customizable, using |g:vimwiki_link_separator| in your chosen
+syntax file; the prefix / suffix pair "[[", "]]" is not.
 
 
 Templated Weblinks~
 
-See |vimwiki-option-web_template| for customization.
+For backwards compatibility with the default syntax of Vimwiki V1.2, the
+web_template is set accordingly.
 
 Link with description: >
   [http://habamax.ru/blog habamax home page]
   [mailto:habamax@gmail.com Drop a line to Maxim Kim]
 
+To customize, see |g:vimwiki_web_template| in your chosen syntax file.
 
 Templated Imagelinks~
 
-See |vimwiki-option-image_template| for customization.
+For image links, backwards compatibility with Vimwiki V1.2 is harder to
+maintain.  Instead, the default syntax replaces "[[" and "]]" delimiters with
+"{" and "}".
 
 Image: >
   {http://helloworld.com/blabla.jpg||}
@@ -583,6 +587,8 @@ Image with style, but without alternate text: >
 
 Note: For templated imagelinks, the separators must be present even if the
 alternate text or style is empty.
+
+To customize, see |g:vimwiki_image_template| in your chosen syntax file.
 
 A newer, alternative syntax for adding images to Html is to use wiki-include 
 links.  See |vimwiki-syntax-transclude|.
@@ -948,8 +954,8 @@ Transclusion, or Wiki-Include, Links~
 A wikilink that uses "{{" and "}}" delims signifies content that is to be
 included into the Html output, rather than referenced via hyperlink.  
 
-The separator is customizable using |vimwiki-option-incl_separator|;
-the prefix / suffix pair "{{", "}}" is not.
+The separator is customizable using |g:vimwiki_incl_separator| in your chosen
+syntax file; the prefix / suffix pair "{{", "}}" is not.
 
 The primary purpose for wiki-include links is to include images.  Image URLs
 may use any of the supported schemes, may be absolute or relative, and need
@@ -1366,62 +1372,6 @@ moment.
 To use MediaWiki's wiki markup: >
   let g:vimwiki_list = [{'path': '~/my_site/', 'syntax': 'media'}]
 <
-
-*vimwiki-option-link_separator*
-------------------------------------------------------------------------------
-Key             Default value~
->
- link_separator  ][
-<
-Description~
-Customize the separator for wikilinks: >
-  let g:vimwiki_list = [{'link_separator': ']['}]
-<
-
-*vimwiki-option-incl_separator*
-------------------------------------------------------------------------------
-Key             Default value~
->
- incl_separator  }{
-<
-Description~
-Customize the separator for wiki-includes: >
-  let g:vimwiki_list = [{'incl_separator': '}{'}]
-<
- 
-Setting identical separators for |vimwiki-option-link_separator| and
-|vimwiki-option-incl_separator| is not recommended.  For best results, their
-characters-sets should not overlap.
-
-
-*vimwiki-option-web_template*
-------------------------------------------------------------------------------
-Key             Default value~
->
- web_template    [__LinkUrl__ __LinkDescription__]
-<
-Description~
-Customize Vimwiki's weblinks.  For example, Markdown compatibility is achieved
-with the following: >
-  let g:vimwiki_list = [{'web_template': '[__LinkDescription__](__LinkUrl__)'}]
-<
-For backwards compatibility with Vimwiki V1.2, the default web_template is set
-accordingly.
-
-*vimwiki-option-image_template*
-------------------------------------------------------------------------------
-Key             Default value~
->
- image_template  {__LinkUrl__|__LinkDescription__|__LinkStyle__}
-<
-Description~
-Customize Vimwiki's image links.  For example, Markdown compatibility is
-achieved with the following: >
-  let g:vimwiki_list = [{'image_template': '![__LinkDescription__](__LinkUrl__)'}]
-<
-For image links, backwards compatibility with Vimwiki V1.2 is harder to
-maintain.  Instead, the default syntax replaces "[[" and "]]" delimiters with
-"{" and "}".
 
 *vimwiki-option-template_path*
 ------------------------------------------------------------------------------
@@ -2192,11 +2142,11 @@ Vim plugins: http://www.vim.org/scripts/script.php?script_id=2226
 
 
     * REMOVED: [[-Wikilinks with '|'-separator.  However, the separator can be
-      configured.  See customization options |vimwiki-option-link_separator| and
-      |vimwiki-option-incl_separator| 
+      configured.  See customization options |g:vimwiki_link_separator| and
+      |g:vimwiki_incl_separator| in your chosen syntax file.
     * REMOVED: Markdown and Textile links.  However, the format of weblinks
-      can be configured.  See options |vimwiki-option-web_template| and
-      |vimwiki-option-image_template|.
+      can be configured.  See variables |g:vimwiki_web_template| and
+      |g:vimwiki_image_template| in your chosen syntax file.
     * REMOVED: Plain image links have been removed
       e.g. http://someaddr.com/picture.jpg
     * REMOVED: [[-Image links, that were identified by image extension in
@@ -2204,10 +2154,10 @@ Vim plugins: http://www.vim.org/scripts/script.php?script_id=2226
       [[-delims with either {-delims or {{-delims
 
     * NEW: Templated/Customizable Weblinks.  See |vimwiki-syntax-links|
-      and |vimwiki-option-web_template|.  Default web_template = [URL DESCR]
+      and |g:vimwiki_web_template|.  Default syntax web_template = [URL DESCR]
     * NEW: Templated/Customizable Imagelinks.  See |vimwiki-syntax-links|
-      and |vimwiki-option-image_template|.  
-      Default image_template = {URL\|DESCR\|STYLE} (w/o backslashes)
+      and |g:vimwiki_image_template|.  
+      Default syntax image_template = {URL\|DESCR\|STYLE} (w/o backslashes)
     * NEW: {{-Wiki-include links "transclude" URL contents into Html, rather
       than reference contents via hyperlink.  See |vimwiki-syntax-transclude|.
     * NEW: Default VimwikiWikiIncludeHandler transcludes all URLs as images,
