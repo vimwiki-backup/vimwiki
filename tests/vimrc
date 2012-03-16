@@ -20,3 +20,5 @@ let wiki.template_path = getcwd().'/'
 let wiki.template_default = 'empty'
 let wiki.template_ext = '.tpl'
 let g:vimwiki_list = [wiki]
+
+let g:vimwiki_camel_case = 0
