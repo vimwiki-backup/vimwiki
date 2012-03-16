@@ -248,7 +248,9 @@ function! s:make_date_link(...) "{{{
 endfunction "}}}
 
 function! vimwiki#diary#make_note(index, ...) "{{{
-  call vimwiki#base#select(a:index)
+  " XXX: force loading of appropriate syntax to avoid issue:290
+  call vimwiki#diary#goto_index(a:index)
+  "call vimwiki#base#select(a:index)
   call vimwiki#base#mkdir(VimwikiGet('path').VimwikiGet('diary_rel_path'))
   if a:0
     let link = 'diary:'.s:make_date_link(a:1)
