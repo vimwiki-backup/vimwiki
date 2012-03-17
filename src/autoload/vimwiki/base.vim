@@ -25,15 +25,21 @@ function! vimwiki#base#path_norm(path) "{{{
   return resolve(path)
 endfunction "}}}
 
-function! vimwiki#base#mkdir(path) "{{{
+" If the optional argument 'confirm' == 1 is provided,
+" vimwiki#base#mkdir will ask before creating a directory 
+function! vimwiki#base#mkdir(path, ...) "{{{
   let path = expand(a:path)
   if !isdirectory(path) && exists("*mkdir")
     let path = vimwiki#base#chomp_slash(path)
     if s:is_windows() && !empty(g:vimwiki_w32_dir_enc)
       let path = iconv(path, &enc, g:vimwiki_w32_dir_enc)
     endif
+    if a:0 && a:1 && tolower(input("Vimwiki: Make new directory: ".path."\n [Y]es/[n]o? ")) !~ "y"
+      return 0
+    endif
     call mkdir(path, "p")
   endif
+  return 1
 endfunction
 " }}}
 
@@ -375,8 +381,13 @@ endfunction
 
 function! vimwiki#base#edit_file(command, filename) "{{{
   let fname = escape(a:filename, '% ')
-  call vimwiki#base#mkdir(fnamemodify(a:filename, ":p:h"))
-  execute a:command.' '.fname
+  let dir = fnamemodify(a:filename, ":p:h")
+  if vimwiki#base#mkdir(dir, 1)
+    execute a:command.' '.fname
+  else
+    echom ' '
+    echom 'Vimwiki: Unable to edit file in non-existent directory: '.dir
+  endif
 endfunction
 " }}}
 
