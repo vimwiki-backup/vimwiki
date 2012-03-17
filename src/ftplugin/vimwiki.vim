@@ -410,8 +410,8 @@ endif
 nnoremap <silent><buffer> <Plug>VimwikiRemoveHeaderLevel :
       \<C-U>call vimwiki#base#RemoveHeaderLevel()<CR>
 
-nnoremap <silent><buffer> + :call vimwiki#base#NormalizeLinkSyntax(0)<CR>
-"vnoremap <silent><buffer> + :<C-U>call vimwiki#base#NormalizeLinkSyntax(1)<CR>
+nnoremap <silent><buffer> + :call VimwikiNormalizeLink(0)<CR>
+"vnoremap <silent><buffer> + :<C-U>call VimwikiNormalizeLink(1)<CR>
 "UNSTABLE
 
 " }}}

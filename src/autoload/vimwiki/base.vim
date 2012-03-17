@@ -1426,7 +1426,7 @@ function! s:normalize_link_syntax_v() " {{{
 
 endfunction " }}}
 
-function! vimwiki#base#NormalizeLinkSyntax(is_visual_mode) "{{{
+function! VimwikiNormalizeLink(is_visual_mode) "{{{
   if !a:is_visual_mode
     call s:normalize_link_syntax_n()
   elseif visualmode() ==# 'v' && line("'<") == line("'>")
