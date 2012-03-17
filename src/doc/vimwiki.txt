@@ -588,6 +588,9 @@ Image with style, but without alternate text: >
 Note: For templated imagelinks, the separators must be present even if the
 alternate text or style is empty.
 
+Note: For templated imagelinks, the third argument currently only accepts
+style parameters, unlink {{-links.
+
 To customize, see |g:vimwiki_image_template| in your chosen syntax file.
 
 A newer, alternative syntax for adding images to Html is to use wiki-include 
@@ -973,16 +976,16 @@ in HTML: >
   alt="Vimwiki"/>
 
 {{-Wiki-include link to an image with alternate text and some style: >
-  {{http://.../vimwiki_logo.png}{cool stuff}{width:150px; height: 120px;}}
+  {{http://.../vimwiki_logo.png}{cool stuff}{style="width:150px; height: 120px;"}}
 in HTML: >
   <img src="http://vimwiki.googlecode.com/hg/images/vimwiki_logo.png" 
   alt="cool stuff" style="width:150px; height:120px"/>
 
-{{-Wiki-include link to an image _without_ alternate text and some style: >
-  {{http://.../vimwiki_logo.png}{}{width:150px; height: 120px;}}
+{{-Wiki-include link to an image _without_ alternate text and css class: >
+  {{http://.../vimwiki_logo.png}{}{class="center flow blabla"}}
 in HTML: >
   <img src="http://vimwiki.googlecode.com/hg/images/vimwiki_logo.png" 
-  alt="" style="width:150px; height:120px"/>
+  alt="" class="center flow blabla"/>
 
 A trial feature allows you to supply your own handler for wiki-include links.
 See |VimwikiWikiIncludeHandler|.

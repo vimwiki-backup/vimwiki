@@ -156,7 +156,7 @@ HL always on for non-wiki schemes
 == noscheme: U+T ==
 
  # {{EgPageTwo}}, {{EgPageTwo}{Page Two}} with descr, {{EgPageTwo}{Page Two}{arg1}} with descr and extra arg
-   * HL=link , existent , opens existing wiki file TODO: figure out how to conceal "arg1", "arg2", etc.
+   * HL=link , existent , opens existing wiki file
  # {{EgPageThree}}, {{EgPageThree}{Page Three}} with descr, {{EgPageThree}{Page Three}{arg1}{arg2}} with descr and extra args
    * HL=link , existent , opens existing wiki file
 
@@ -204,9 +204,9 @@ HL always on for non-wiki schemes
 
  # {{images/281px-Puffer_Fish_DSC01257.JPG}}, {{images/281px-Puffer_Fish_DSC01257.JPG}{281px-Puffer_Fish}} with descr
    * HL=missing-link , non-existent WIKI file , opens as NEW WIKI file in vim
- # {{images/281px-Puffer_Fish_DSC01257.JPG}{}{width:150px; height: 120px;}} with style
+ # {{images/281px-Puffer_Fish_DSC01257.JPG}{}{style="width:150px; height: 120px;"}} with style
    * HL=missing-link , non-existent WIKI file , opens as NEW WIKI file in vim
- # {{images/281px-Puffer_Fish_DSC01257.JPG}{281px-Puffer_Fish}{width:150px; height: 120px;}} with descr & style
+ # {{images/281px-Puffer_Fish_DSC01257.JPG}{281px-Puffer_Fish}{style="width:150px; height: 120px;"}} with descr & style
    * HL=missing-link , non-existent WIKI file , opens as NEW WIKI file in vim
 
 == wiki: U+T ==
@@ -215,9 +215,9 @@ HL always on for non-wiki schemes
 
  # {{wiki:images/281px-Puffer_Fish_DSC01257.JPG}}, {{wiki:images/281px-Puffer_Fish_DSC01257.JPG}{281px-Puffer_Fish}} with descr
    * HL=missing-link , non-existent WIKI file , opens as NEW WIKI file WITH EXTENSION in vim
- # {{wiki:images/281px-Puffer_Fish_DSC01257.JPG}{}{wiki:width:150px; height: 120px;}} with style
+ # {{wiki:images/281px-Puffer_Fish_DSC01257.JPG}{}{style="width:150px; height: 120px;"}} with style
    * HL=missing-link , non-existent WIKI file , opens as NEW WIKI file WITH EXTENSION in vim
- # {{wiki:images/281px-Puffer_Fish_DSC01257.JPG}{281px-Puffer_Fish}{wiki:width:150px; height: 120px;}} with descr & style
+ # {{wiki:images/281px-Puffer_Fish_DSC01257.JPG}{281px-Puffer_Fish}{style="width:150px; height: 120px;"}} with descr & style
    * HL=missing-link , non-existent WIKI file , opens as NEW WIKI file WITH EXTENSION in vim
 
 
@@ -227,9 +227,9 @@ HL always on for non-wiki schemes
 
  # {{local:images/281px-Puffer_Fish_DSC01257.JPG}}, {{local:images/281px-Puffer_Fish_DSC01257.JPG}{281px-Puffer_Fish}} with descr
    * HL=link , existent image , opens as RAW IMAGE FILE in vim
- # {{local:images/281px-Puffer_Fish_DSC01257.JPG}{}{width:150px; height: 120px;}} with style
+ # {{local:images/281px-Puffer_Fish_DSC01257.JPG}{}{style="width:150px; height: 120px;"}} with style
    * HL=link , existent image , opens as RAW IMAGE FILE in vim
- # {{local:images/281px-Puffer_Fish_DSC01257.JPG}{281px-Puffer_Fish}{width:150px; height: 120px;}} with descr & style
+ # {{local:images/281px-Puffer_Fish_DSC01257.JPG}{281px-Puffer_Fish}{style="width:150px; height: 120px;"}} with descr & style
    * HL=link , existent image , opens as RAW IMAGE FILE in vim
 
 == file: U+T ==
@@ -238,18 +238,18 @@ HL always on for non-wiki schemes
 
  # {{file:///Users/stu/Research/Tools/VimPlugins/vimwiki-custom/sandbox/wiki/images/281px-Puffer_Fish_DSC01257.JPG}}, {{file:///Users/stu/Research/Tools/VimPlugins/vimwiki-custom/sandbox/wiki/images/281px-Puffer_Fish_DSC01257.JPG}{281px-Puffer_Fish}} with descr
    * HL=link , existent image , opens as RAW IMAGE FILE in vim
- # {{file:///Users/stu/Research/Tools/VimPlugins/vimwiki-custom/sandbox/wiki/images/281px-Puffer_Fish_DSC01257.JPG}{}{width:150px; height: 120px;}} with style
+ # {{file:///Users/stu/Research/Tools/VimPlugins/vimwiki-custom/sandbox/wiki/images/281px-Puffer_Fish_DSC01257.JPG}{}{style="width:150px; height: 120px;"}} with style
    * HL=link , existent image , opens as RAW IMAGE FILE in vim
- # {{file:///Users/stu/Research/Tools/VimPlugins/vimwiki-custom/sandbox/wiki/images/281px-Puffer_Fish_DSC01257.JPG}{281px-Puffer_Fish}{width:150px; height: 120px;}} with descr & style
+ # {{file:///Users/stu/Research/Tools/VimPlugins/vimwiki-custom/sandbox/wiki/images/281px-Puffer_Fish_DSC01257.JPG}{281px-Puffer_Fish}{style="width:150px; height: 120px;"}} with descr & style
    * HL=link , existent image , opens as RAW IMAGE FILE in vim
 
 == http: U+T ==
 
  # {{http://upload.wikimedia.org/wikipedia/commons/thumb/7/77/Puffer_Fish_DSC01257.JPG/281px-Puffer_Fish_DSC01257.jpg}}, {{http://upload.wikimedia.org/wikipedia/commons/thumb/7/77/Puffer_Fish_DSC01257.JPG/281px-Puffer_Fish_DSC01257.jpg}{281px-Puffer_Fish}} with descr
    * HL=link , existent image , opens as weblink in browser
- # {{http://upload.wikimedia.org/wikipedia/commons/thumb/7/77/Puffer_Fish_DSC01257.JPG/281px-Puffer_Fish_DSC01257.jpg}{}{width:150px; height: 120px;}} with style
+ # {{http://upload.wikimedia.org/wikipedia/commons/thumb/7/77/Puffer_Fish_DSC01257.JPG/281px-Puffer_Fish_DSC01257.jpg}{}{style="width:150px; height: 120px;"}} with style
    * HL=link , existent image , opens as weblink in browser
- # {{http://upload.wikimedia.org/wikipedia/commons/thumb/7/77/Puffer_Fish_DSC01257.JPG/281px-Puffer_Fish_DSC01257.jpg}{281px-Puffer_Fish}{width:150px; height: 120px;}} with descr & style
+ # {{http://upload.wikimedia.org/wikipedia/commons/thumb/7/77/Puffer_Fish_DSC01257.JPG/281px-Puffer_Fish_DSC01257.jpg}{281px-Puffer_Fish}{style="width:150px; height: 120px;"}} with descr & style
    * HL=link , existent image , opens as weblink in browser
 
 
@@ -271,7 +271,7 @@ HL always on for non-wiki schemes
  # [[EgPageTwo|EgPageTwo]] : expected HL : blue & underline
  # [[EgPageThree|EgPageThree]] : missing-link! expected HL : none & red-dotted underline
  # -
- # [[file:///Users/stu/Downloads/2011-11-22-FlashReport_11_22_11.fin.pdf]] : expected HL : blue & underline since "pdf" is recognized file ext
+ # [[file:///Users/stu/Downloads/2011-11-22-FlashReport_11_22_11.fin.pdf]] : expected HL : blue & underline
 
 
 == Relative Url Wikilinks  ==
@@ -293,15 +293,12 @@ HL always on for non-wiki schemes
  * [[../../tests/wiki/wikilinks][wikilinks]]
  * [sandbox wiki index wiki](file:///Users/stu/Research/Tools/VimPlugins/vimwiki-custom/sandbox/wiki/index.wiki)
 
- # [[file:///Users/stu/Research/Tools/VimPlugins/vimwiki-custom/sandbox/wiki/index.wiki]] : expected HL : none & red-dotted underline since "wiki" is not recognized file ext
+ # [[file:///Users/stu/Research/Tools/VimPlugins/vimwiki-custom/sandbox/wiki/index.wiki]]
    * `[[file:///Users/stu/Research/Tools/VimPlugins/vimwiki-custom/sandbox/wiki/index.wiki]]`
  # [[http://github.com]]
    * `[[http://github.com]]`
-   * ERROR : follow_link treating this as a relative link TODO: fix me !!
-   * Expected behavior: Do nothing, ... since `[["U"-link]]` is not a valid wikilink syntax
-   * Expected highlighting: OFF (missing-link)
- # `[[http://upload.wikimedia.org/wikipedia/commons/thumb/7/77/Puffer_Fish_DSC01257.JPG/281px-Puffer_Fish_DSC01257.jpg][281px-Puffer_Fish]]`
-   * [[http://upload.wikimedia.org/wikipedia/commons/thumb/7/77/Puffer_Fish_DSC01257.JPG/281px-Puffer_Fish_DSC01257.jpg][281px-Puffer_Fish]]
+ # [[http://upload.wikimedia.org/wikipedia/commons/thumb/7/77/Puffer_Fish_DSC01257.JPG/281px-Puffer_Fish_DSC01257.jpg][281px-Puffer_Fish]]
+   * `[[http://upload.wikimedia.org/wikipedia/commons/thumb/7/77/Puffer_Fish_DSC01257.JPG/281px-Puffer_Fish_DSC01257.jpg][281px-Puffer_Fish]]`
 
 == Raw Url Weblinks ==
 
@@ -323,7 +320,7 @@ HL always on for non-wiki schemes
 
  * [[../../tests/wiki/web_links][web_links]]
 
- # USING WeblinkTemplate: `[__LinkDescription__](__LinkUrl__)`
+ # USING syntax = 'markdown'
    # [github](http://github.com)
    # [www.cs.princeton.edu ~blei](http://www.cs.princeton.edu/~blei)
    # [en.wikipedia.org wiki Prospero%27s_Books](https://en.wikipedia.org/wiki/Prospero%27s_Books)
@@ -333,7 +330,7 @@ HL always on for non-wiki schemes
    # [ ](http://github.com)
    # [](http://github.com)
  # -
- # USING WeblinkTemplate: `[__LinkUrl__ __LinkDescription__]`
+ # USING syntax = 'default'
    # [http://github.com github]
    # [http://www.cs.princeton.edu/~blei www.cs.princeton.edu ~blei]
    # [https://en.wikipedia.org/wiki/Prospero%27s_Books en.wikipedia.org wiki Prospero%27s_Books]
@@ -346,17 +343,15 @@ HL always on for non-wiki schemes
    # TODO:
    # [http://github.com] <-- trailing SPACE issue
    # [file:///Users/stu/Downloads/2011-11-22-FlashReport_11_22_11.fin.pdf]  <-- trailing SPACE issue
- # -
- # The file /Users/stu/Research/Tools/VimPlugins/vimwiki-master/"vim":http:/www.vim.org does not exist.
 
 == Image Links ==
 
- # USING ImageTemplate: `{__LinkUrl__|__LinkDescription__|__LinkStyle__}`
+ # USING syntax = 'default'
    # {http://upload.wikimedia.org/wikipedia/commons/thumb/7/77/Puffer_Fish_DSC01257.JPG/281px-Puffer_Fish_DSC01257.jpg||}
    # {http://upload.wikimedia.org/wikipedia/commons/thumb/7/77/Puffer_Fish_DSC01257.JPG/281px-Puffer_Fish_DSC01257.jpg|281px-Puffer_Fish|}
    # {http://upload.wikimedia.org/wikipedia/commons/thumb/7/77/Puffer_Fish_DSC01257.JPG/281px-Puffer_Fish_DSC01257.jpg|281px-Puffer_Fish|width:150px; height: 120px;}
  # -
- # USING ImageTemplate: `![__LinkDescription__](__LinkUrl__)`
+ # USING syntax = 'markdown'
    # ![](http://upload.wikimedia.org/wikipedia/commons/thumb/7/77/Puffer_Fish_DSC01257.JPG/281px-Puffer_Fish_DSC01257.jpg)
    # ![281px-Puffer_Fish](http://upload.wikimedia.org/wikipedia/commons/thumb/7/77/Puffer_Fish_DSC01257.JPG/281px-Puffer_Fish_DSC01257.jpg)
  # -

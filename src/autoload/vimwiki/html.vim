@@ -394,11 +394,11 @@ function! vimwiki#html#linkify_link(src, descr) "{{{
   return '<a'.src_str.'>'.descr_str.'</a>'
 endfunction "}}}
 
-function! vimwiki#html#linkify_image(src, descr, style) "{{{
+function! vimwiki#html#linkify_image(src, descr, verbatim_str) "{{{
   let src_str = ' src="'.a:src.'"'
   let descr_str = (a:descr != '' ? ' alt="'.a:descr.'"' : '')
-  let style_str = (a:style != '' ? ' style="'.a:style.'"' : '')
-  return '<img'.src_str.descr_str.style_str.' />'
+  let verbatim_str = (a:verbatim_str != '' ? ' '.a:verbatim_str : '')
+  return '<img'.src_str.descr_str.verbatim_str.' />'
 endfunction "}}}
 
 function! s:tag_imagelink(value) "{{{
@@ -406,7 +406,8 @@ function! s:tag_imagelink(value) "{{{
   let url = matchstr(str, g:vimwiki_rxImagelinkMatchUrl)
   let descr = matchstr(str, g:vimwiki_rxImagelinkMatchDescr)
   let style = matchstr(str, g:vimwiki_rxImagelinkMatchStyle)
-  let line = vimwiki#html#linkify_image(url, descr, style)
+  let verbatim_str = (style != '' ? 'style="'.style.'"' : '')
+  let line = vimwiki#html#linkify_image(url, descr, verbatim_str)
   return line
 endfunction "}}}
 
@@ -422,7 +423,8 @@ endfunction "}}}
 function! s:tag_wikiincl(value) "{{{
   " {{imgurl}{arg1}{arg2}}    -> ???
   " {{imgurl}}                -> <img src="imgurl"/>
-  " {{imgurl}{descr}{style}}  -> <img src="imgurl" alt="descr" style="style" />
+  " {{imgurl}{descr}{style="A"}} -> <img src="imgurl" alt="descr" style="A" />
+  " {{imgurl}{descr}{class="B"}} -> <img src="imgurl" alt="descr" class="B" />
   let str = a:value
   if match(str, g:vimwiki_wikiword_escape_prefix) == 0
     return a:value[len(g:vimwiki_wikiword_escape_prefix):]
@@ -433,7 +435,7 @@ function! s:tag_wikiincl(value) "{{{
   if line == ''
     let url_0 = matchstr(str, g:vimwiki_rxWikiInclMatchUrl)
     let descr = matchstr(str, vimwiki#html#incl_match_arg(1))
-    let style = matchstr(str, vimwiki#html#incl_match_arg(2))
+    let verbatim_str = matchstr(str, vimwiki#html#incl_match_arg(2))
     " resolve url
     let [scheme, path, subdir, lnk, ext, url] = 
           \ vimwiki#base#resolve_scheme(url_0, 1)
@@ -442,7 +444,7 @@ function! s:tag_wikiincl(value) "{{{
       echom '{{scheme='.scheme.', path='.path.', subdir='.subdir.', lnk='.lnk.', ext='.ext.'}}'
     endif
     let url = escape(url, '#')
-    let line = vimwiki#html#linkify_image(url, descr, style)
+    let line = vimwiki#html#linkify_image(url, descr, verbatim_str)
     return line
   endif
   return line
