@@ -357,13 +357,13 @@ endfunction "}}}
  
 "TODO
 " LINKS: highlighting is complicated due to "nonexistent" links feature {{{
-function! s:add_target_syntax_ON(target) " {{{
+function! s:add_target_syntax_ON(target, type) " {{{
   if g:vimwiki_debug > 1
     echom '[vimwiki_debug] syntax target > '.a:target
   endif
-  let prefix0 = 'syntax match VimwikiLink `'
-  let suffix0 = '` display contains=@NoSpell,VimwikiLinkRest,VimwikiLinkChar'
-  let prefix1 = 'syntax match VimwikiLinkT `'
+  let prefix0 = 'syntax match '.a:type.' `'
+  let suffix0 = '` display contains=@NoSpell,VimwikiLinkRest,'.a:type.'Char'
+  let prefix1 = 'syntax match '.a:type.'T `'
   let suffix1 = '` display contained'
   execute prefix0. a:target. suffix0
   execute prefix1. a:target. suffix1
@@ -403,25 +403,25 @@ function! s:highlight_existing_links() "{{{
     " a) match WikiWord WARNING: g:vimwiki_camel_case may be deprecated
     if g:vimwiki_camel_case &&
           \ link =~ g:vimwiki_rxWikiWord
-      call s:add_target_syntax_ON('!\@<!\<'. link. '\>')
+      call s:add_target_syntax_ON('!\@<!\<'. link. '\>', 'VimwikiLink')
     endif
     " b) match [[URL]]
     let target = vimwiki#base#apply_template(g:vimwiki_WikiLinkTemplate1,
           \ rxScheme.safe_link, g:vimwiki_rxWikiLinkDescr, '')
-    call s:add_target_syntax_ON(target)
+    call s:add_target_syntax_ON(target, 'VimwikiLink')
     " c) match [[URL][DESCRIPTION]]
     let target = vimwiki#base#apply_template(g:vimwiki_WikiLinkTemplate2,
           \ rxScheme.safe_link, g:vimwiki_rxWikiLinkDescr, '')
-    call s:add_target_syntax_ON(target)
+    call s:add_target_syntax_ON(target, 'VimwikiLink')
 
     " a) match {{URL}}
     let target = vimwiki#base#apply_template(g:vimwiki_WikiInclTemplate1,
           \ rxScheme.safe_link, g:vimwiki_rxWikiInclArgs, '')
-    call s:add_target_syntax_ON(target)
+    call s:add_target_syntax_ON(target, 'VimwikiLink')
     " b) match {{URL}[{...}]}
     let target = vimwiki#base#apply_template(g:vimwiki_WikiInclTemplate2,
           \ rxScheme.safe_link, g:vimwiki_rxWikiInclArgs, '')
-    call s:add_target_syntax_ON(target)
+    call s:add_target_syntax_ON(target, 'VimwikiLink')
 
   endfor
 
@@ -440,79 +440,66 @@ function! s:highlight_existing_links() "{{{
     " 1a) match [[DIRURL]]
     let target = vimwiki#base#apply_template(g:vimwiki_WikiLinkTemplate1,
           \ rxScheme.safe_link, g:vimwiki_rxWikiLinkDescr, '')
-    call s:add_target_syntax_ON(target)
+    call s:add_target_syntax_ON(target, 'VimwikiLink')
     " 2a) match [[DIRURL][DESCRIPTION]]
     let target = vimwiki#base#apply_template(g:vimwiki_WikiLinkTemplate2,
           \ rxScheme.safe_link, g:vimwiki_rxWikiLinkDescr, '')
-    call s:add_target_syntax_ON(target)
+    call s:add_target_syntax_ON(target, 'VimwikiLink')
   endfor
 
 endfunction "}}}
 
 
-"function! s:highlight_links() "{{{
-"  try
-"    syntax clear VimwikiNoExistsLink
-"    syntax clear VimwikiNoExistsLinkT
-"    syntax clear VimwikiLink
-"    syntax clear VimwikiLinkT
-"  catch
-"  endtry
-
-  " use max highlighting - could be quite slow if there are too many wikifiles
-  if VimwikiGet('maxhi')
-    " WikiLink
-    call s:add_target_syntax_OFF(g:vimwiki_rxWikiLink)
-    " WikiIncl
-    call s:add_target_syntax_OFF(g:vimwiki_rxWikiIncl)
-
-    " Subsequently, links verified on vimwiki's path are highlighted as existing
-    call s:highlight_existing_links()
-  else
-    " Wikilink
-    call s:add_target_syntax_ON(g:vimwiki_rxWikiLink)
-    " WikiIncl
-    call s:add_target_syntax_ON(g:vimwiki_rxWikiIncl)
-  endif
-
-  " Weblink
-  call s:add_target_syntax_ON(g:vimwiki_rxWeblink)
-
-  " Image
-  call s:add_target_syntax_ON(g:vimwiki_rxImagelink)
-
+" use max highlighting - could be quite slow if there are too many wikifiles
+if VimwikiGet('maxhi')
   " WikiLink
-  " All remaining schemes except wiki: and wiki<idx>: where idx is index of
-  " current wiki are highlighted automatically
-  let other_wiki_schemes = filter(split(g:vimwiki_wiki_schemes, '\s*,\s*'), 
-            \ 'v:val !~ "\\%(wiki\\>\\|wiki'.g:vimwiki_current_idx.'\\>\\)"')
-  let rxScheme = '\%('.
-        \ join(other_wiki_schemes, '\|'). '\|'.
-        \ join(split(g:vimwiki_diary_schemes, '\s*,\s*'), '\|'). '\|'.
-        \ join(split(g:vimwiki_local_schemes, '\s*,\s*'), '\|'). '\|'.
-        \ join(split(g:vimwiki_web_schemes1, '\s*,\s*'), '\|').
-        \ '\):'
-  " a) match [[nonwiki-scheme-URL]]
-  let target = vimwiki#base#apply_template(g:vimwiki_WikiLinkTemplate1,
-        \ rxScheme.g:vimwiki_rxWikiLinkUrl, g:vimwiki_rxWikiLinkDescr, '')
-  call s:add_target_syntax_ON(target)
-  " b) match [[nonwiki-scheme-URL][DESCRIPTION]]
-  let target = vimwiki#base#apply_template(g:vimwiki_WikiLinkTemplate2,
-        \ rxScheme.g:vimwiki_rxWikiLinkUrl, g:vimwiki_rxWikiLinkDescr, '')
-  call s:add_target_syntax_ON(target)
+  call s:add_target_syntax_OFF(g:vimwiki_rxWikiLink)
+  " WikiIncl
+  call s:add_target_syntax_OFF(g:vimwiki_rxWikiIncl)
 
-  " a) match {{nonwiki-scheme-URL}}
-  let target = vimwiki#base#apply_template(g:vimwiki_WikiInclTemplate1,
-        \ rxScheme.g:vimwiki_rxWikiInclUrl, g:vimwiki_rxWikiInclArgs, '')
-  call s:add_target_syntax_ON(target)
-  " b) match {{nonwiki-scheme-URL}[{...}]}
-  let target = vimwiki#base#apply_template(g:vimwiki_WikiInclTemplate2,
-        \ rxScheme.g:vimwiki_rxWikiInclUrl, g:vimwiki_rxWikiInclArgs, '')
-  call s:add_target_syntax_ON(target)
+  " Subsequently, links verified on vimwiki's path are highlighted as existing
+  call s:highlight_existing_links()
+else
+  " Wikilink
+  call s:add_target_syntax_ON(g:vimwiki_rxWikiLink, 'VimwikiLink')
+  " WikiIncl
+  call s:add_target_syntax_ON(g:vimwiki_rxWikiIncl, 'VimwikiLink')
+endif
 
-"endfunction "}}}
+" Weblink
+call s:add_target_syntax_ON(g:vimwiki_rxWeblink, 'VimwikiTemplLink')
 
-"call vimwiki#base#highlight_links()
+" Image
+call s:add_target_syntax_ON(g:vimwiki_rxImagelink, 'VimwikiTemplLink')
+
+" WikiLink
+" All remaining schemes except wiki: and wiki<idx>: where idx is index of
+" current wiki are highlighted automatically
+let other_wiki_schemes = filter(split(g:vimwiki_wiki_schemes, '\s*,\s*'), 
+          \ 'v:val !~ "\\%(wiki\\>\\|wiki'.g:vimwiki_current_idx.'\\>\\)"')
+let rxScheme = '\%('.
+      \ join(other_wiki_schemes, '\|'). '\|'.
+      \ join(split(g:vimwiki_diary_schemes, '\s*,\s*'), '\|'). '\|'.
+      \ join(split(g:vimwiki_local_schemes, '\s*,\s*'), '\|'). '\|'.
+      \ join(split(g:vimwiki_web_schemes1, '\s*,\s*'), '\|').
+      \ '\):'
+" a) match [[nonwiki-scheme-URL]]
+let target = vimwiki#base#apply_template(g:vimwiki_WikiLinkTemplate1,
+      \ rxScheme.g:vimwiki_rxWikiLinkUrl, g:vimwiki_rxWikiLinkDescr, '')
+call s:add_target_syntax_ON(target, 'VimwikiLink')
+" b) match [[nonwiki-scheme-URL][DESCRIPTION]]
+let target = vimwiki#base#apply_template(g:vimwiki_WikiLinkTemplate2,
+      \ rxScheme.g:vimwiki_rxWikiLinkUrl, g:vimwiki_rxWikiLinkDescr, '')
+call s:add_target_syntax_ON(target, 'VimwikiLink')
+
+" a) match {{nonwiki-scheme-URL}}
+let target = vimwiki#base#apply_template(g:vimwiki_WikiInclTemplate1,
+      \ rxScheme.g:vimwiki_rxWikiInclUrl, g:vimwiki_rxWikiInclArgs, '')
+call s:add_target_syntax_ON(target, 'VimwikiLink')
+" b) match {{nonwiki-scheme-URL}[{...}]}
+let target = vimwiki#base#apply_template(g:vimwiki_WikiInclTemplate2,
+      \ rxScheme.g:vimwiki_rxWikiInclUrl, g:vimwiki_rxWikiInclArgs, '')
+call s:add_target_syntax_ON(target, 'VimwikiLink')
 
 " }}}
 
@@ -535,7 +522,7 @@ endif
 
 " Header levels, 1-6
 for i in range(1,6)
-  execute 'syntax match VimwikiHeader'.i.' /'.g:vimwiki_rxH{i}.'/ contains=VimwikiTodo,VimwikiHeaderChar,VimwikiNoExistsLink,VimwikiLink,@Spell'
+  execute 'syntax match VimwikiHeader'.i.' /'.g:vimwiki_rxH{i}.'/ contains=VimwikiTodo,VimwikiHeaderChar,VimwikiNoExistsLink,VimwikiLink,VimwikiTemplLink,@Spell'
 endfor
 
 " }}}
@@ -561,11 +548,11 @@ execute 'syn match VimwikiLinkChar /'.g:vimwiki_rxWikiInclArgs.g:vimwiki_rxWikiI
 
 
 " TODO: concealing works for weblinks, but causes problems for wikilinks
-" execute 'syn match VimwikiLinkChar "'.g:vimwiki_rxWeblinkPrefix.'"'.options
-" execute 'syn match VimwikiLinkChar "'.g:vimwiki_rxWeblinkSuffix.'"'.options
+execute 'syn match VimwikiTemplLinkChar "'.g:vimwiki_rxWeblinkPrefix.'"'.options
+execute 'syn match VimwikiTemplLinkChar "'.g:vimwiki_rxWeblinkSuffix.'"'.options
 
-" execute 'syn match VimwikiLinkChar "'.g:vimwiki_rxImagelinkPrefix.'"'.options
-" execute 'syn match VimwikiLinkChar "'.g:vimwiki_rxImagelinkSuffix.'"'.options
+execute 'syn match VimwikiTemplLinkChar "'.g:vimwiki_rxImagelinkPrefix.'"'.options
+execute 'syn match VimwikiTemplLinkChar "'.g:vimwiki_rxImagelinkSuffix.'"'.options
 
 
 " A shortener for long URLs: LinkRest (a middle part of the URL) is concealed
@@ -612,6 +599,7 @@ execute 'syntax match VimwikiTodo /'. g:vimwiki_rxTodo .'/'
 syntax match VimwikiTableRow /^\s*|.\+|\s*$/ 
       \ transparent contains=VimwikiCellSeparator,
                            \ VimwikiLinkT,
+                           \ VimwikiTemplLinkT,
                            \ VimwikiNoExistsLinkT,
                            \ VimwikiEmoticons,
                            \ VimwikiTodo,
@@ -754,7 +742,9 @@ hi def link VimwikiNoExistsLink SpellBad
 hi def link VimwikiNoExistsLinkT VimwikiNoExistsLink
 
 hi def link VimwikiLink Underlined
+hi def link VimwikiTemplLink VimwikiLink
 hi def link VimwikiLinkT VimwikiLink
+hi def link VimwikiTemplLinkT VimwikiLink
 
 hi def link VimwikiList Identifier
 hi def link VimwikiCheckBox VimwikiList
