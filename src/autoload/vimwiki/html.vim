@@ -1411,9 +1411,9 @@ function! vimwiki#html#Wiki2HTML(path, wikifile) "{{{
     let lsource = readfile(wikifile)
     let ldest = []
 
-    if g:vimwiki_debug
-      echo 'Generating HTML ... '
-    endif
+    "if g:vimwiki_debug
+    "  echo 'Generating HTML ... '
+    "endif
 
     call vimwiki#base#mkdir(path)
 
@@ -1528,11 +1528,13 @@ function! vimwiki#html#Wiki2HTML(path, wikifile) "{{{
     return
   endif
 
-  " measure the elapsed time and cut away miliseconds and smaller
-  let elapsedtimestr = matchstr(reltimestr(reltime(starttime)),'\d\+\(\.\d\d\)\=')
-  if g:vimwiki_debug
-    echon "\r".htmlfile.' written (time: '.elapsedtimestr.'s)'
-  endif
+  " measure the elapsed time 
+  let time1 = vimwiki#base#time(starttime)  "XXX
+  call VimwikiLog_extend('html',[htmlfile,time1])
+  "if g:vimwiki_debug
+  "  echon "\r".htmlfile.' written (time: '.time1.'s)'
+  "endif
+
   return path.htmlfile
 endfunction "}}}
 

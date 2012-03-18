@@ -63,6 +63,7 @@ function! s:setup_buffer_leave()"{{{
 endfunction"}}}
 
 function! s:setup_filetype() "{{{
+  let time0 = reltime()  " start the clock  "XXX
   " Find what wiki current buffer belongs to.
   let path = expand('%:p:h')
   let ext = '.'.expand('%:e')
@@ -71,12 +72,18 @@ function! s:setup_filetype() "{{{
   if idx == -1 && g:vimwiki_global_ext == 0
     return
   endif
+  "XXX when idx = -1?
+  let g:vimwiki_current_idx = idx
+  let b:vimwiki_idx = idx
 
   unlet! b:vimwiki_fs_rescan
   set filetype=vimwiki
+  let time1 = vimwiki#base#time(time0)  "XXX
+  call VimwikiLog_extend('timing',['plugin:setup_filetype:time1',time1])
 endfunction "}}}
 
 function! s:setup_buffer_enter() "{{{
+  let time0 = reltime()  " start the clock  "XXX
   if exists("b:vimwiki_idx")
     let g:vimwiki_current_idx = b:vimwiki_idx
   else
@@ -119,6 +126,7 @@ function! s:setup_buffer_enter() "{{{
     endif
     let b:vimwiki_fs_rescan = 1
   endif
+  let time1 = vimwiki#base#time(time0)  "XXX
 
   " Settings foldmethod, foldexpr and foldtext are local to window. Thus in a
   " new tab with the same buffer folding is reset to vim defaults. So we
@@ -138,6 +146,8 @@ function! s:setup_buffer_enter() "{{{
   if g:vimwiki_menu != ""
     exe 'nmenu enable '.g:vimwiki_menu.'.Table'
   endif
+  "let time2 = vimwiki#base#time(time0)  "XXX
+  call VimwikiLog_extend('timing',['plugin:setup_buffer_enter:time1',time1])
 endfunction "}}}
 
 " OPTION get/set functions {{{
@@ -163,6 +173,7 @@ function! VimwikiGet(option, ...) "{{{
   " if path's ending is not a / or \
   " then add it
   if a:option == 'path' || a:option == 'path_html'
+    let g:VimwikiLog.path += 1  "XXX
     let p = g:vimwiki_list[idx][a:option]
     " resolve doesn't work quite right with symlinks ended with / or \
     " XXX no call to vimwiki#base here or else the whole autoload/base gets loaded!
@@ -444,6 +455,16 @@ function! s:build_table_menu(topmenu)
   exe 'nmenu disable '.a:topmenu.'.Table'
 endfunction
 
+" Logging and performance instrumentation "{{{
+let g:VimwikiLog = {}
+let g:VimwikiLog.path = 0     " # of calls to VimwikiGet with path or path_html
+let g:VimwikiLog.timing = []  " various timing measurements
+let g:VimwikiLog.html = []    " html conversion timing
+function! VimwikiLog_extend(what,...)  "{{{
+  call extend(g:VimwikiLog[a:what],a:000)
+endfunction "}}}
+"}}}
+
 "XXX make sure anything below does not cause autoload/base to be loaded
 if !empty(g:vimwiki_menu)
   call s:build_menu(g:vimwiki_menu)
@@ -457,5 +478,6 @@ if g:vimwiki_use_calendar
   let g:calendar_sign = 'vimwiki#diary#calendar_sign'
 endif
 "}}}
+
 
 let &cpo = s:old_cpo

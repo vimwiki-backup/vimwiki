@@ -71,6 +71,7 @@ function! vimwiki#base#subdir(path, filename)"{{{
   " ensure that we are not fooled by a symbolic link
   let filename = resolve(a:filename)
   let idx = 0
+  "FIXME this can terminate in the middle of a path component!
   while path[idx] ==? filename[idx]
     let idx = idx + 1
   endwhile
@@ -312,7 +313,9 @@ function! vimwiki#base#get_links(pat) "{{{
   else
     let search_dirs = '**/'
   endif
-  let globlinks = glob(VimwikiGet('path').subdir.search_dirs.a:pat)
+  let time1 = reltime()  " start the clock  "XXX
+  let globlinks = glob(VimwikiGet('path').subdir.search_dirs.a:pat,1)
+  let time2 = vimwiki#base#time(time1)  "XXX
 
   " remove extensions (and backup extensions too: .wiki~)
   let globlinks = substitute(globlinks, '\'.VimwikiGet('ext').'\~\?', "", "g")
@@ -323,6 +326,8 @@ function! vimwiki#base#get_links(pat) "{{{
   call map(links, 'substitute(v:val, rem_path, "", "g")')
   " Remove trailing slashes.
   call map(links, 'substitute(v:val, "[/\\\\]*$", "", "g")')
+  "let time3 = vimwiki#base#time(time1)  "XXX
+  call VimwikiLog_extend('timing',['base:afterglob('.len(links).')',time2])
   return links
 endfunction "}}}
 
@@ -1322,7 +1327,7 @@ function! s:normalize_link_syntax_n() " {{{
   if !empty(image_link_at_cursor)
     let sub = s:normalize_imagelink(image_link_at_cursor,
           \ g:vimwiki_rxImagelinkMatchUrl, g:vimwiki_rxImagelinkMatchDescr,
-          \ g:vimwiki_rxImagelinkMatchStyle, g:imwiki_image_template)
+          \ g:vimwiki_rxImagelinkMatchStyle, g:vimwiki_image_template)
     call s:replace_text(lnum, g:vimwiki_rxImagelink, sub)
     if g:vimwiki_debug > 1
       echomsg "ImageLink: ".wiki_link_at_cursor." Sub: ".sub
@@ -1449,3 +1454,8 @@ endfunction "}}}
 
 " }}}
 
+
+function! vimwiki#base#time(starttime) "{{{
+  " measure the elapsed time and cut away miliseconds and smaller
+  return matchstr(reltimestr(reltime(a:starttime)),'\d\+\(\.\d\d\)\=')
+endfunction "}}}
