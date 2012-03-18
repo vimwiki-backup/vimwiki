@@ -298,6 +298,12 @@ endif
 vnoremap <silent><script><buffer>
       \ <Plug>VimwikiNormalizeLinkVisual :<C-U>VimwikiNormalizeLink 1<CR>
 
+if !hasmapto('<Plug>VimwikiNormalizeLinkVisualCR')
+  vmap <silent><buffer> <CR> <Plug>VimwikiNormalizeLinkVisualCR
+endif
+vnoremap <silent><script><buffer>
+      \ <Plug>VimwikiNormalizeLinkVisualCR :<C-U>VimwikiNormalizeLink 1<CR>
+
 if !hasmapto('<Plug>VimwikiTabnewLink')
   nmap <silent><buffer> <D-CR> <Plug>VimwikiTabnewLink
   nmap <silent><buffer> <C-S-CR> <Plug>VimwikiTabnewLink
