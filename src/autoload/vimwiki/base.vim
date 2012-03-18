@@ -775,7 +775,8 @@ function! vimwiki#base#follow_link(split, ...) "{{{
   if a:0 > 0
     execute "normal! ".a:1
   else		
-    execute "normal! \n"
+    " execute "normal! \n"
+    call vimwiki#base#normalize_link(0)
   endif
 
 endfunction " }}}
