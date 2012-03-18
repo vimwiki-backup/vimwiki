@@ -187,7 +187,7 @@ endfunction "}}}
 
 " }}}
 
-" CALLBACK function "{{{
+" CALLBACK functions "{{{
 " User can redefine it.
 if !exists("*VimwikiWeblinkHandler") "{{{
   function VimwikiWeblinkHandler(weblink)
@@ -234,7 +234,6 @@ if !exists("*VimwikiWeblinkHandler") "{{{
     echomsg 'Default Vimwiki Weblink Handler was unable to open the HTML file!'
   endfunction
 endif "}}}
-" CALLBACK }}}
 
 if !exists("*VimwikiWikiIncludeHandler") "{{{
   function! VimwikiWikiIncludeHandler(value) "{{{
@@ -355,12 +354,13 @@ augroup vimwiki
     exe 'autocmd BufLeave,BufHidden *'.ext.' call s:setup_buffer_leave()'
     exe 'autocmd BufNewFile,BufRead, *'.ext.' call s:setup_filetype()'
 
-    " ColorScheme could have or could have not a
-    " VimwikiHeader1..VimwikiHeader6 highlight groups. We need to refresh
-    " syntax after colorscheme change.
-    "TODO this is needlessly run for the first time before any syntax is setup!
-    "exe 'autocmd ColorScheme *'.ext.' syntax enable'.
-    "      \ ' | call vimwiki#base#highlight_links()'
+    " (Tomas)
+    " TODO this is needlessly run for the first time before any syntax is setup!
+    " (Maxim)
+    " Without this line colorscheme command ruins syntax highlighting.
+    " Just comment it and switch colorscheme and you'll see that 
+    " *this is not bold*
+    exe 'autocmd ColorScheme *'.ext.' syntax enable'
 
     " Format tables when exit from insert mode. Do not use textwidth to
     " autowrap tables.
