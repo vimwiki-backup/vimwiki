@@ -1420,7 +1420,7 @@ function! s:normalize_link_syntax_v() " {{{
     if !done && visual_selection =~ g:vimwiki_rxWikiLinkUrl
       call setreg('"', v_prefix. s:normalize_link(@", 
             \ g:vimwiki_rxWikiLinkUrl, '', 
-            \ g:vimwiki_WikiLinkTemplate2). v_suffix, 'v')
+            \ g:vimwiki_WikiLinkTemplate1). v_suffix, 'v')
       if g:vimwiki_debug > 1
         echomsg 'WikiLinkUrl: '.visual_selection.' Sub: '.@"
       endif
@@ -1437,7 +1437,7 @@ function! s:normalize_link_syntax_v() " {{{
 
 endfunction " }}}
 
-function! VimwikiNormalizeLink(is_visual_mode) "{{{
+function! vimwiki#base#normalize_link(is_visual_mode) "{{{
   if !a:is_visual_mode
     call s:normalize_link_syntax_n()
   elseif visualmode() ==# 'v' && line("'<") == line("'>")

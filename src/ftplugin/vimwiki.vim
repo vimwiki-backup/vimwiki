@@ -213,6 +213,8 @@ command! -buffer VimwikiGoBackLink call vimwiki#base#go_back_link()
 command! -buffer VimwikiSplitLink call vimwiki#base#follow_link('split')
 command! -buffer VimwikiVSplitLink call vimwiki#base#follow_link('vsplit')
 
+command! -buffer -nargs=? VimwikiNormalizeLink call vimwiki#base#normalize_link(<f-args>)
+
 command! -buffer VimwikiTabnewLink call vimwiki#base#follow_link('tabnew')
 
 command! -buffer -range VimwikiToggleListItem call vimwiki#lst#ToggleListItem(<line1>, <line2>)
@@ -283,6 +285,18 @@ if !hasmapto('<Plug>VimwikiVSplitLink')
 endif
 nnoremap <silent><script><buffer>
       \ <Plug>VimwikiVSplitLink :VimwikiVSplitLink<CR>
+
+if !hasmapto('<Plug>VimwikiNormalizeLink')
+  nmap <silent><buffer> + <Plug>VimwikiNormalizeLink
+endif
+nnoremap <silent><script><buffer>
+      \ <Plug>VimwikiNormalizeLink :VimwikiNormalizeLink 0<CR>
+
+if !hasmapto('<Plug>VimwikiNormalizeLinkVisual')
+  vmap <silent><buffer> + <Plug>VimwikiNormalizeLinkVisual
+endif
+vnoremap <silent><script><buffer>
+      \ <Plug>VimwikiNormalizeLinkVisual :<C-U>VimwikiNormalizeLink 1<CR>
 
 if !hasmapto('<Plug>VimwikiTabnewLink')
   nmap <silent><buffer> <D-CR> <Plug>VimwikiTabnewLink
@@ -410,9 +424,6 @@ endif
 nnoremap <silent><buffer> <Plug>VimwikiRemoveHeaderLevel :
       \<C-U>call vimwiki#base#RemoveHeaderLevel()<CR>
 
-nnoremap <silent><buffer> + :call VimwikiNormalizeLink(0)<CR>
-"vnoremap <silent><buffer> + :<C-U>call VimwikiNormalizeLink(1)<CR>
-"UNSTABLE
 
 " }}}
 
