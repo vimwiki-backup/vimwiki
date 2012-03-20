@@ -22,7 +22,21 @@ These syntaxes only work when 'link_separator' == ']['
  # [[../subwiki2/]]  : Highlighted as link
  # [[../subwiki2/wikilinks2]]  : Highlighted as link
  # [[../subwiki2/wikilinks1]]  : Highlighted as missing-link
+
+= Wiki directories =
+
+ # [[./subsubwiki1/]]  : Highlighted as missing-link (?) (non-reduced path)
+ # [[subsubwiki2/]]  : Highlighted as link
+ # [[../subwiki2/]]  : Highlighted as link
+ # [[..\subwiki2/]] : nonstandard path too highlighted as link
+ # [[..\subwiki2\]] : nonstandard path too highlighted as link
  # [[../wiki/]] : Highlighted as missing-link
+ # [[../../wiki/]]  : Highlighted as missing-link (the path leaves the wiki)
+ # [[./]]  : Highlighted as link
+ # [[a/]]  : Highlighted as missing-link
+ # [[../]] : Highlighted as link
+ # [[..\]] : nonstandard path too highlighted as link
+ # [[../../]] : Highlighted as missing-link
 
 = Wikilinks To Non-Wiki Local Resources =
 
@@ -35,6 +49,5 @@ These syntaxes only work when 'link_separator' == ']['
 
  # [[http://github.com]] : Highlighted as link
  # [[file:///Users/stu/Downloads/2011-11-22-FlashReport_11_22_11.fin.pdf]] : Highlighted as link
-
 
 
