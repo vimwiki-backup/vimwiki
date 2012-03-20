@@ -298,9 +298,6 @@ function! s:is_path_absolute(path) "{{{
   return a:path =~ '^/.*' || a:path =~ '^[[:alpha:]]:[/\\].*'
 endfunction "}}}
 
-"TODO
-"function! Get_links(pat) "{{{
-"}}}
 function! vimwiki#base#get_links(pat) "{{{
   " search all wiki files in 'path' and its subdirs.
   let subdir = vimwiki#base#current_subdir()
@@ -404,7 +401,8 @@ function! s:search_word(wikiRx, cmd) "{{{
 endfunction
 " }}}
 
-function! s:get_word_at_cursor(wikiRX) "{{{
+" Returns part of the line that matches wikiRX at cursor
+function! s:matchstr_at_cursor(wikiRX) "{{{
   let col = col('.') - 1
   let line = getline('.')
   let ebeg = -1
@@ -749,28 +747,28 @@ function! vimwiki#base#follow_link(split, ...) "{{{
   endif
 
   " try WikiLink
-  let lnk = matchstr(s:get_word_at_cursor(g:vimwiki_rxWikiLink),
+  let lnk = matchstr(s:matchstr_at_cursor(g:vimwiki_rxWikiLink),
         \ g:vimwiki_rxWikiLinkMatchUrl)
   if lnk != ""
     call vimwiki#base#open_link(cmd, lnk)
     return
   endif
   " try WikiIncl
-  let lnk = matchstr(s:get_word_at_cursor(g:vimwiki_rxWikiIncl),
+  let lnk = matchstr(s:matchstr_at_cursor(g:vimwiki_rxWikiIncl),
         \ g:vimwiki_rxWikiInclMatchUrl)
   if lnk != ""
     call vimwiki#base#open_link(cmd, lnk)
     return
   endif
   " try Weblink
-  let lnk = matchstr(s:get_word_at_cursor(g:vimwiki_rxWeblink),
+  let lnk = matchstr(s:matchstr_at_cursor(g:vimwiki_rxWeblink),
         \ g:vimwiki_rxWeblinkMatchUrl)
   if lnk != ""
     call VimwikiWeblinkHandler(lnk)
     return
   endif
   " try Imagelink
-  let lnk = matchstr(s:get_word_at_cursor(g:vimwiki_rxImagelink),
+  let lnk = matchstr(s:matchstr_at_cursor(g:vimwiki_rxImagelink),
         \ g:vimwiki_rxImagelinkMatchUrl)
   if lnk != ""
     call VimwikiWeblinkHandler(lnk)
@@ -1285,11 +1283,11 @@ endfunction " }}}
 function! s:normalize_link_syntax_n() " {{{
   let lnum = line('.')
 
-  let wiki_link_at_cursor = s:get_word_at_cursor(g:vimwiki_rxWikiLink)
-  let wiki_incl_at_cursor = s:get_word_at_cursor(g:vimwiki_rxWikiIncl)
-  let web_link_at_cursor = s:get_word_at_cursor(g:vimwiki_rxWeblink)
-  let image_link_at_cursor = s:get_word_at_cursor(g:vimwiki_rxImagelink)
-  let word_at_cursor = s:get_word_at_cursor(g:vimwiki_rxWord)
+  let wiki_link_at_cursor = s:matchstr_at_cursor(g:vimwiki_rxWikiLink)
+  let wiki_incl_at_cursor = s:matchstr_at_cursor(g:vimwiki_rxWikiIncl)
+  let web_link_at_cursor = s:matchstr_at_cursor(g:vimwiki_rxWeblink)
+  let image_link_at_cursor = s:matchstr_at_cursor(g:vimwiki_rxImagelink)
+  let word_at_cursor = s:matchstr_at_cursor(g:vimwiki_rxWord)
   " rxWord is less permissive than rxWikiLinkUrl which is used in
   " normalize_link_syntax_v
 
@@ -1356,13 +1354,13 @@ function! s:normalize_link_syntax_v() " {{{
   let rt = getregtype('"')
   let done = 0
 
-  let wiki_link_at_cursor = s:get_word_at_cursor(g:vimwiki_rxWikiLink)
-  let wiki_incl_at_cursor = s:get_word_at_cursor(g:vimwiki_rxWikiIncl)
-  let web_link_at_cursor = s:get_word_at_cursor(g:vimwiki_rxWeblink1)
-  let image_link_at_cursor = s:get_word_at_cursor(g:vimwiki_rxImagelink)
-  " let url_at_cursor = s:get_word_at_cursor(g:vimwiki_rxWeblinkUrl)
-  let url_at_cursor = s:get_word_at_cursor(g:vimwiki_rxWeblink0)
-  let word_at_cursor = s:get_word_at_cursor(g:vimwiki_rxWikiLinkUrl)
+  let wiki_link_at_cursor = s:matchstr_at_cursor(g:vimwiki_rxWikiLink)
+  let wiki_incl_at_cursor = s:matchstr_at_cursor(g:vimwiki_rxWikiIncl)
+  let web_link_at_cursor = s:matchstr_at_cursor(g:vimwiki_rxWeblink1)
+  let image_link_at_cursor = s:matchstr_at_cursor(g:vimwiki_rxImagelink)
+  " let url_at_cursor = s:matchstr_at_cursor(g:vimwiki_rxWeblinkUrl)
+  let url_at_cursor = s:matchstr_at_cursor(g:vimwiki_rxWeblink0)
+  let word_at_cursor = s:matchstr_at_cursor(g:vimwiki_rxWikiLinkUrl)
 
   try
     norm! gvy
