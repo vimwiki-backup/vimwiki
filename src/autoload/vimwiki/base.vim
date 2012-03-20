@@ -1169,6 +1169,13 @@ function! vimwiki#base#RemoveHeaderLevel() "{{{
 endfunction
 " }}}
 
+" TODO: There is a bug with text replacing I belive.
+" Consider you have a line:
+" [[hello]] my dear [[world]]
+" Now put your cursor on [[world]] and press + to Normalize it to
+" [[world][world]]
+" The line transforms into:
+" [[world][world]] my dear [[world]]
 function! s:replace_text(lnum, str, sub) " {{{
   call setline(a:lnum, substitute(getline(a:lnum), a:str.'\V', '\="'.a:sub.'"', ''))
 endfunction " }}}
@@ -1233,63 +1240,66 @@ endfunction " }}}
 function! s:normalize_link_syntax_n() " {{{
   let lnum = line('.')
 
-  let wiki_link_at_cursor = s:matchstr_at_cursor(g:vimwiki_rxWikiLink)
-  let wiki_incl_at_cursor = s:matchstr_at_cursor(g:vimwiki_rxWikiIncl)
-  let web_link_at_cursor = s:matchstr_at_cursor(g:vimwiki_rxWeblink)
-  let image_link_at_cursor = s:matchstr_at_cursor(g:vimwiki_rxImagelink)
-  let word_at_cursor = s:matchstr_at_cursor(g:vimwiki_rxWord)
-  " rxWord is less permissive than rxWikiLinkUrl which is used in
-  " normalize_link_syntax_v
-
   " try WikiLink
-  if !empty(wiki_link_at_cursor)
-    let sub = s:normalize_link(wiki_link_at_cursor,
+  let lnk = s:matchstr_at_cursor(g:vimwiki_rxWikiLink)
+  if !empty(lnk)
+    let sub = s:normalize_link(lnk,
           \ g:vimwiki_rxWikiLinkMatchUrl, g:vimwiki_rxWikiLinkMatchDescr,
           \ g:vimwiki_WikiLinkTemplate2)
     call s:replace_text(lnum, g:vimwiki_rxWikiLink, sub)
     if g:vimwiki_debug > 1
-      echomsg "WikiLink: ".wiki_link_at_cursor." Sub: ".sub
+      echomsg "WikiLink: ".lnk." Sub: ".sub
     endif
     return
   endif
+  
   " try WikiIncl
-  if !empty(wiki_incl_at_cursor)
+  let lnk = s:matchstr_at_cursor(g:vimwiki_rxWikiIncl)
+  if !empty(lnk)
     " NO-OP !!
     if g:vimwiki_debug > 1
-      echomsg "WikiIncl: ".wiki_incl_at_cursor." Sub: ".wiki_incl_at_cursor
+      echomsg "WikiIncl: ".lnk." Sub: ".lnk
     endif
     return
   endif
+
   " try Weblink
-  if !empty(web_link_at_cursor)
-    let sub = s:normalize_link(web_link_at_cursor,
+  let lnk = s:matchstr_at_cursor(g:vimwiki_rxWeblink)
+  if !empty(lnk)
+    let sub = s:normalize_link(lnk,
           \ g:vimwiki_rxWeblinkMatchUrl, g:vimwiki_rxWeblinkMatchDescr,
           \ g:vimwiki_web_template)
     call s:replace_text(lnum, g:vimwiki_rxWeblink, sub)
     if g:vimwiki_debug > 1
-      echomsg "WebLink: ".web_link_at_cursor." Sub: ".sub
+      echomsg "WebLink: ".lnk." Sub: ".sub
     endif
     return
   endif
+  
   " try Image link
-  if !empty(image_link_at_cursor)
-    let sub = s:normalize_imagelink(image_link_at_cursor,
+  let lnk = s:matchstr_at_cursor(g:vimwiki_rxImagelink)
+  if !empty(lnk)
+    let sub = s:normalize_imagelink(lnk,
           \ g:vimwiki_rxImagelinkMatchUrl, g:vimwiki_rxImagelinkMatchDescr,
           \ g:vimwiki_rxImagelinkMatchStyle, g:vimwiki_image_template)
     call s:replace_text(lnum, g:vimwiki_rxImagelink, sub)
     if g:vimwiki_debug > 1
-      echomsg "ImageLink: ".wiki_link_at_cursor." Sub: ".sub
+      echomsg "ImageLink: ".lnk." Sub: ".sub
     endif
     return
   endif
+  
   " try Word (any characters except separators)
-  if !empty(word_at_cursor)
-    let sub = s:normalize_link(word_at_cursor,
+  " rxWord is less permissive than rxWikiLinkUrl which is used in
+  " normalize_link_syntax_v
+  let lnk = s:matchstr_at_cursor(g:vimwiki_rxWord)
+  if !empty(lnk)
+    let sub = s:normalize_link(lnk,
           \ g:vimwiki_rxWord, '',
           \ g:vimwiki_WikiLinkTemplate1)
-    call s:replace_text(lnum, word_at_cursor, sub)
+    call s:replace_text(lnum, lnk, sub)
     if g:vimwiki_debug > 1
-      echomsg "Word: ".word_at_cursor." Sub: ".sub
+      echomsg "Word: ".lnk." Sub: ".sub
     endif
     return
   endif
