@@ -13,7 +13,7 @@ endif
 let starttime = reltime()  " start the clock
 if VimwikiGet('maxhi')
   let b:existing_wikifiles = vimwiki#base#get_links('*'.VimwikiGet('ext'))
-  let b:existing_wikidirs = vimwiki#base#get_links('*/')
+  let b:existing_wikidirs  = vimwiki#base#get_links('*/')
 endif
 let timescans = vimwiki#base#time(starttime)  "XXX
   "let b:xxx = 1
@@ -115,6 +115,7 @@ endfunction "}}}
 
 " LINKS: setup wikilink regexps {{{
 let wword = '\C\<\%(['.g:vimwiki_upper.']['.g:vimwiki_lower.']\+\)\{2,}\>'
+let g:vimwiki_wword = wword
 " 0. WikiWordURLs
 " 0a) match WikiWordURLs
 let g:vimwiki_rxWikiWord = g:vimwiki_wikiword_escape_prefix.'\@<!'.wword
@@ -369,71 +370,53 @@ function! s:add_target_syntax_OFF(target) " {{{
   execute prefix1. a:target. suffix1
 endfunction "}}}
 
-"FIXME only works for subdirectories
+"TODO CamelCase
 function! s:highlight_existing_links() "{{{
-  " Links with subdirs should be highlighted for linux and windows separators
-  " Change \ or / to [/\\]
-  let os_p = '[/\\]'
-  let os_p2 = escape(os_p, '\')
-
   " Wikilink
   " Conditional highlighting that depends on the existence of a wiki file or
   " directory is only available for 'wiki#:' links
   " links set up upon BufEnter (see plugin/...)
-  let links = b:existing_wikifiles
-  "let links = s:get_links('*'.VimwikiGet('ext'))
-  call map(links, 'substitute(v:val, os_p, os_p2, "g")')
+  let safe_links = vimwiki#base#file_pattern(b:existing_wikifiles)
+  " Wikilink Dirs set up upon BufEnter (see plugin/...)
+  let safe_dirs = vimwiki#base#file_pattern(b:existing_wikidirs)
+
   let rxScheme = '\%(\%(wiki\|wiki'.g:vimwiki_current_idx.'\):\)\?'
-  for link in links
-    let safe_link = vimwiki#base#unsafe_link(link)
-    let safe_link = escape(safe_link , '~&$.*')
 
     " a) match WikiWord WARNING: g:vimwiki_camel_case may be deprecated
-    if g:vimwiki_camel_case &&
-          \ link =~ g:vimwiki_rxWikiWord
-      call s:add_target_syntax_ON('!\@<!\<'. link. '\>', 'VimwikiLink')
+    if g:vimwiki_camel_case
+      "TODO filter only those that are CamelCase and in the present directory
+      let ccfiles = substitute(b:existing_wikifiles,"\n\\ze".g:vimwiki_wword."\n","\n#",'g') 
+      "let g:VimwikiLog.cc = ccfiles
+      let ccfiles = substitute(ccfiles,"\n[^#][^\n]*",'','g') 
+      let ccfiles = substitute(ccfiles,"\n\\zs#",'','g') 
+      let safe_ccfiles = vimwiki#base#file_pattern(ccfiles)
+      call s:add_target_syntax_ON(g:vimwiki_wikiword_escape_prefix.'\@<!\<'. safe_ccfiles. '\>', 'VimwikiLink')
     endif
     " b) match [[URL]]
     let target = vimwiki#base#apply_template(g:vimwiki_WikiLinkTemplate1,
-          \ rxScheme.safe_link, g:vimwiki_rxWikiLinkDescr, '')
+          \ rxScheme.safe_links, g:vimwiki_rxWikiLinkDescr, '')
     call s:add_target_syntax_ON(target, 'VimwikiLink')
     " c) match [[URL][DESCRIPTION]]
     let target = vimwiki#base#apply_template(g:vimwiki_WikiLinkTemplate2,
-          \ rxScheme.safe_link, g:vimwiki_rxWikiLinkDescr, '')
+          \ rxScheme.safe_links, g:vimwiki_rxWikiLinkDescr, '')
     call s:add_target_syntax_ON(target, 'VimwikiLink')
 
     " a) match {{URL}}
     let target = vimwiki#base#apply_template(g:vimwiki_WikiInclTemplate1,
-          \ rxScheme.safe_link, g:vimwiki_rxWikiInclArgs, '')
+          \ rxScheme.safe_links, g:vimwiki_rxWikiInclArgs, '')
     call s:add_target_syntax_ON(target, 'VimwikiLink')
-    " b) match {{URL}[{...}]}
+    " b) match {{URL}{...}}
     let target = vimwiki#base#apply_template(g:vimwiki_WikiInclTemplate2,
-          \ rxScheme.safe_link, g:vimwiki_rxWikiInclArgs, '')
+          \ rxScheme.safe_links, g:vimwiki_rxWikiInclArgs, '')
     call s:add_target_syntax_ON(target, 'VimwikiLink')
-
-  endfor
-
-  " Wikilink Dirs
-  " Conditional highlighting that depends on the existence of a wiki file or
-  " directory is only available for 'wiki#:' links
-  " dirs set up upon BufEnter (see plugin/...)
-  let dirs = b:existing_wikidirs
-  "let dirs = s:get_links('*/')
-  call map(dirs, 'substitute(v:val, os_p, os_p2, "g")')
-  for dir in dirs
-    let safe_link = vimwiki#base#unsafe_link(dir)
-    let safe_link = escape(safe_link , '~&$.*')
-    let safe_link = safe_link.'[/\\]'
-
     " 1a) match [[DIRURL]]
     let target = vimwiki#base#apply_template(g:vimwiki_WikiLinkTemplate1,
-          \ rxScheme.safe_link, g:vimwiki_rxWikiLinkDescr, '')
+          \ rxScheme.safe_dirs, g:vimwiki_rxWikiLinkDescr, '')
     call s:add_target_syntax_ON(target, 'VimwikiLink')
     " 2a) match [[DIRURL][DESCRIPTION]]
     let target = vimwiki#base#apply_template(g:vimwiki_WikiLinkTemplate2,
-          \ rxScheme.safe_link, g:vimwiki_rxWikiLinkDescr, '')
+          \ rxScheme.safe_dirs, g:vimwiki_rxWikiLinkDescr, '')
     call s:add_target_syntax_ON(target, 'VimwikiLink')
-  endfor
 endfunction "}}}
 
 
@@ -459,7 +442,6 @@ endif
 
 " Weblink
 call s:add_target_syntax_ON(g:vimwiki_rxWeblink, 'VimwikiTemplLink')
-
 " Image
 call s:add_target_syntax_ON(g:vimwiki_rxImagelink, 'VimwikiTemplLink')
 

@@ -5,13 +5,14 @@
  # [[../wikilinks1]] : Highlighted as link
  # [[../subsubwiki1/wikilinks11]] : Highlighted as link
  # [[../subsubwiki1/wikilinks12]] : Highlighted as missing-link
- # [[../subsubwiki2/wikilinks21]] : Highlighted as link
+ # [[../subsubwiki2/wikilinks21]] : Highlighted as missing-link
  # [[../../headers]] : Highlighted as link
  # [[../../missing]] : Highlighted as missing-link
 
 = Wiki directories =
  # [[../subsubwiki1/]]  : Highlighted as link
- # [[../subsubwiki2/]]  : Highlighted as link
+ # [[./]]  : Highlighted as link
+ # [[../subsubwiki2/]]  : Highlighted as missing-link (non-reduced path)
  # [[../../subwiki2/]]  : Highlighted as link
  # [[../wiki/]] : Highlighted as missing-link
 

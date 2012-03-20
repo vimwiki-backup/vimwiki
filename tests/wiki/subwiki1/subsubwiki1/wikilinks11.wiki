@@ -8,10 +8,16 @@
  # [[../../missing]] : Highlighted as missing-link
 
 = Wiki directories =
- # [[../subsubwiki1/]]  : Highlighted as link
+ # [[../subsubwiki1/]]  : Highlighted as missing-link (?) (non-reduced path)
  # [[../subsubwiki2/]]  : Highlighted as link
  # [[../../subwiki2/]]  : Highlighted as link
  # [[../wiki/]] : Highlighted as missing-link
+ # [[./]]  : Highlighted as link
+ # [[a/]]  : Highlighted as missing-link
+ # [[../]] : Highlighted as link
+ # [[../../]] : Highlighted as link
+ # [[..\..\]] : nonstandard path too highlighted as link
+ # [[../../../]] : Highlighted as missing-link
 
 = Wikilinks To Non-Wiki Local Resources =
 
@@ -21,3 +27,5 @@
  %% # [[local:../../headers.wiki]] : Highlighted as link
 
 
+= Generated Links =
+- [[C:\Documents and Settings\Tomas Pospichal\vimfiles\AllBundles\vimwiki\tests\wiki\subwiki1\subsubwiki1\wikilinks11]]
