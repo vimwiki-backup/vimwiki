@@ -334,7 +334,6 @@ endfunction "}}}
 function! vimwiki#base#get_links(pat) "{{{ return string-list for files
   " in the current wiki matching the pattern "pat"
   " search all wiki files (or directories) in wiki 'path' and its subdirs.
->>>>>>> other
   let subdir = vimwiki#base#current_subdir()
   let invsubdir = substitute(subdir,'[^/]\+','..','g')
   " if current wiki is temporary -- was added by an arbitrary wiki file then do
