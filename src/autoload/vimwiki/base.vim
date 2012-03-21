@@ -456,6 +456,28 @@ function! s:matchstr_at_cursor(wikiRX) "{{{
   endif
 endf "}}}
 
+function! s:replacestr_at_cursor(wikiRX, sub) "{{{
+  let col = col('.') - 1
+  let line = getline('.')
+  let ebeg = -1
+  let cont = match(line, a:wikiRX, 0)
+  while (ebeg >= 0 || (0 <= cont) && (cont <= col))
+    let contn = matchend(line, a:wikiRX, cont)
+    if (cont <= col) && (col < contn)
+      let ebeg = match(line, a:wikiRX, cont)
+      let elen = contn - ebeg
+      break
+    else
+      let cont = match(line, a:wikiRX, contn)
+    endif
+  endwh
+  if ebeg >= 0
+    " TODO: There might be problems with Unicode chars...
+    let newline = strpart(line, 0, ebeg).a:sub.strpart(line, ebeg+elen)
+    call setline(line('.'), newline)
+  endif
+endf "}}}
+
 function! s:strip_word(word) "{{{
   let result = a:word
   if strpart(a:word, 0, 2) == "[["
@@ -1168,17 +1190,6 @@ function! vimwiki#base#RemoveHeaderLevel() "{{{
 endfunction
 " }}}
 
-" TODO: There is a bug with text replacing I belive.
-" Consider you have a line:
-" [[hello]] my dear [[world]]
-" Now put your cursor on [[world]] and press + to Normalize it to
-" [[world][world]]
-" The line transforms into:
-" [[world][world]] my dear [[world]]
-function! s:replace_text(lnum, str, sub) " {{{
-  call setline(a:lnum, substitute(getline(a:lnum), a:str.'\V', '\="'.a:sub.'"', ''))
-endfunction " }}}
-" }}}
 
 " LINK functions {{{
 function! vimwiki#base#apply_template(template, rxUrl, rxDesc, rxStyle) "{{{
@@ -1245,7 +1256,7 @@ function! s:normalize_link_syntax_n() " {{{
     let sub = s:normalize_link(lnk,
           \ g:vimwiki_rxWikiLinkMatchUrl, g:vimwiki_rxWikiLinkMatchDescr,
           \ g:vimwiki_WikiLinkTemplate2)
-    call s:replace_text(lnum, g:vimwiki_rxWikiLink, sub)
+    call s:replacestr_at_cursor(g:vimwiki_rxWikiLink, sub)
     if g:vimwiki_debug > 1
       echomsg "WikiLink: ".lnk." Sub: ".sub
     endif
@@ -1268,7 +1279,7 @@ function! s:normalize_link_syntax_n() " {{{
     let sub = s:normalize_link(lnk,
           \ g:vimwiki_rxWeblinkMatchUrl, g:vimwiki_rxWeblinkMatchDescr,
           \ g:vimwiki_web_template)
-    call s:replace_text(lnum, g:vimwiki_rxWeblink, sub)
+    call s:replacestr_at_cursor(g:vimwiki_rxWeblink, sub)
     if g:vimwiki_debug > 1
       echomsg "WebLink: ".lnk." Sub: ".sub
     endif
@@ -1281,7 +1292,7 @@ function! s:normalize_link_syntax_n() " {{{
     let sub = s:normalize_imagelink(lnk,
           \ g:vimwiki_rxImagelinkMatchUrl, g:vimwiki_rxImagelinkMatchDescr,
           \ g:vimwiki_rxImagelinkMatchStyle, g:vimwiki_image_template)
-    call s:replace_text(lnum, g:vimwiki_rxImagelink, sub)
+    call s:replacestr_at_cursor(g:vimwiki_rxImagelink, sub)
     if g:vimwiki_debug > 1
       echomsg "ImageLink: ".lnk." Sub: ".sub
     endif
@@ -1296,7 +1307,7 @@ function! s:normalize_link_syntax_n() " {{{
     let sub = s:normalize_link(lnk,
           \ g:vimwiki_rxWord, '',
           \ g:vimwiki_WikiLinkTemplate1)
-    call s:replace_text(lnum, lnk, sub)
+    call s:replacestr_at_cursor(lnk, sub)
     if g:vimwiki_debug > 1
       echomsg "Word: ".lnk." Sub: ".sub
     endif
