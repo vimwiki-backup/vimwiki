@@ -54,12 +54,12 @@ def test_all():
         if os.path.exists(expected_name):
             expected = open(expected_name).read()
         else:
-            print "Missing expected output file: " + expected_name
+            print("Missing expected output file: {}".format(expected_name))
             expected = ''
         if os.path.exists(actual_name):
             actual = open(actual_name).read()
         else:
-            print "Missing actual output file: " + actual_name
+            print("Missing actual output file: {}".format(actual_name))
             actual = ''
 
         if expected == actual:
