@@ -4,8 +4,9 @@
 <li><a href="#toc_1">Wikilinks</a>
 <li><a href="#toc_2">Wikilinks With ][-Separator</a>
 <li><a href="#toc_3">Wikilinks To Local Resources</a>
-<li><a href="#toc_4">Wikilinks To Non-Wiki Local Resources</a>
-<li><a href="#toc_5">Wikilinks To Urls</a>
+<li><a href="#toc_4">Wiki Directories</a>
+<li><a href="#toc_5">Wikilinks To Non-Wiki Local Resources</a>
+<li><a href="#toc_6">Wikilinks To Urls</a>
 </ul>
 </div>
 <h1 id="toc_1">Wikilinks</h1>
@@ -47,14 +48,43 @@ These syntaxes only work when 'link_separator' == ']['
 <a href="missing.html">missing</a> : Highlighted as missing-link
 
 <li>
-<a href="diary/">diary/</a>  : Highlighted as link
+<a href="subwiki1/wikilinks1.html">subwiki1/wikilinks1</a> : Highlighted as link
+
+<li>
+<a href="subwiki1/wikilinks2.html">subwiki1/wikilinks2</a> : Highlighted as missing-link
+
+<li>
+<a href="subwiki2/wikilinks2.html">subwiki2/wikilinks2</a> : Highlighted as link
+
+<li>
+<a href="subwiki2/wikilinks1.html">subwiki2/wikilinks1</a> : Highlighted as missing-link
+
+</ol>
+
+<h1 id="toc_4">Wiki Directories</h1>
+
+<ol>
+<li>
+<a href="./">./</a> : Highlighted as link
+
+<li>
+<a href="subwiki1/">subwiki1/</a> : Highlighted as link
+
+<li>
+<a href="subwiki1/subsubwiki2/">subwiki1/subsubwiki2/</a> : Highlighted as link
+
+<li>
+<a href="diary/">diary/</a>  : Highlighted as missing-link
 
 <li>
 <a href="../wiki/">../wiki/</a> : Highlighted as missing-link
 
+<li>
+<a href="../">../</a> : Highlighted as missing-link
+
 </ol>
 
-<h1 id="toc_4">Wikilinks To Non-Wiki Local Resources</h1>
+<h1 id="toc_5">Wikilinks To Non-Wiki Local Resources</h1>
 
 <ol>
 <li>
@@ -65,7 +95,7 @@ These syntaxes only work when 'link_separator' == ']['
 
 </ol>
 
-<h1 id="toc_5">Wikilinks To Urls</h1>
+<h1 id="toc_6">Wikilinks To Urls</h1>
 
 <ol>
 <li>

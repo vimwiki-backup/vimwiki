@@ -4,8 +4,9 @@
 <li><a href="#toc_1">Wikilinks</a>
 <li><a href="#toc_2">Wikilinks With ][-Separator</a>
 <li><a href="#toc_3">Wikilinks To Local Resources</a>
-<li><a href="#toc_4">Wikilinks To Non-Wiki Local Resources</a>
-<li><a href="#toc_5">Wikilinks To Urls</a>
+<li><a href="#toc_4">Wiki directories</a>
+<li><a href="#toc_5">Wikilinks To Non-Wiki Local Resources</a>
+<li><a href="#toc_6">Wikilinks To Urls</a>
 </ul>
 </div>
 <h1 id="toc_1">Wikilinks</h1>
@@ -64,12 +65,50 @@ These syntaxes only work when 'link_separator' == ']['
 <li>
 <a href="../subwiki2/wikilinks1.html">../subwiki2/wikilinks1</a>  : Highlighted as missing-link
 
+</ol>
+
+<h1 id="toc_4">Wiki directories</h1>
+
+<ol>
+<li>
+<a href="./subsubwiki1/">./subsubwiki1/</a>  : Highlighted as missing-link (?) (non-reduced path)
+
+<li>
+<a href="subsubwiki2/">subsubwiki2/</a>  : Highlighted as link
+
+<li>
+<a href="../subwiki2/">../subwiki2/</a>  : Highlighted as link
+
+<li>
+[[..\subwiki2/]] : nonstandard path too highlighted as link
+
+<li>
+[[..\subwiki2\]] : nonstandard path too highlighted as link
+
 <li>
 <a href="../wiki/">../wiki/</a> : Highlighted as missing-link
 
+<li>
+<a href="../../wiki/">../../wiki/</a>  : Highlighted as missing-link (the path leaves the wiki)
+
+<li>
+<a href="./">./</a>  : Highlighted as link
+
+<li>
+<a href="a/">a/</a>  : Highlighted as missing-link
+
+<li>
+<a href="../">../</a> : Highlighted as link
+
+<li>
+[[..\]] : nonstandard path too highlighted as link
+
+<li>
+<a href="../../">../../</a> : Highlighted as missing-link
+
 </ol>
 
-<h1 id="toc_4">Wikilinks To Non-Wiki Local Resources</h1>
+<h1 id="toc_5">Wikilinks To Non-Wiki Local Resources</h1>
 
 <ol>
 <li>
@@ -80,7 +119,7 @@ These syntaxes only work when 'link_separator' == ']['
 
 </ol>
 
-<h1 id="toc_5">Wikilinks To Urls</h1>
+<h1 id="toc_6">Wikilinks To Urls</h1>
 
 <ol>
 <li>
