@@ -1563,15 +1563,18 @@ function! vimwiki#html#WikiAll2HTML(path) "{{{
   let setting_more = &more
   setlocal nomore
 
+  let currentfile = expand('%:p')
   let wikifiles = split(glob(VimwikiGet('path').'**/*'.VimwikiGet('ext')), '\n')
   for wikifile in wikifiles
     if !s:is_html_uptodate(wikifile)
       echomsg 'Processing '.wikifile
+      call vimwiki#base#edit_file(':e', wikifile)
       call vimwiki#html#Wiki2HTML(path, wikifile)
     else
       echomsg 'Skipping '.wikifile
     endif
   endfor
+  call vimwiki#base#edit_file(':e', currentfile)
   call s:create_default_CSS(path)
   echomsg 'Done!'
 
