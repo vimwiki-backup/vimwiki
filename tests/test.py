@@ -15,8 +15,8 @@ try:
 except:
     myinput = input
 
-def get_testname(filename):
-    return os.path.splitext(os.path.basename(filename))[0]
+def get_testname(filename, wikipath):
+    return os.path.splitext(os.path.relpath(filename, wikipath))[0]
 
 def touch(fname):
     with open(fname, 'a'):
@@ -47,7 +47,7 @@ def test_all():
     tests = []
     for root, dirnames, filenames in os.walk('wiki'):
         for filename in fnmatch.filter(filenames, '*.wiki'):
-            tests.append(get_testname(os.path.join(root, filename)))
+            tests.append(get_testname(os.path.join(root, filename), 'wiki'))
     for test in tests:
         expected_name = os.path.join('expected_html', test+'.html')
         actual_name = os.path.join('html', test+'.html')
@@ -90,7 +90,7 @@ def main():
     for expected, actual in failed_tests:
         question = "Would you like to vimdiff failed test named '{}'? (y/n) "
         print ('vim -d "%s" "%s"' % (expected, actual))
-        answer = myinput(question.format(get_testname(expected)))
+        answer = myinput(question.format(get_testname(expected, 'wiki')))
         if answer == 'y':
             command = 'vim -d "%s" "%s"' % (expected, actual)
             os.system(command)
