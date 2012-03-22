@@ -7,7 +7,7 @@
 import os
 import os.path
 import fnmatch
-from glob import glob
+#from glob import glob
 
 # There is no raw_input in python 3 
 try:
@@ -44,17 +44,22 @@ def test_all():
     failed_tests = []
 
     # Compare actual HTML with expected one.
-    tests = [get_testname(fname) for fname in glob('wiki/*.wiki')]
+    tests = []
+    for root, dirnames, filenames in os.walk('wiki'):
+        for filename in fnmatch.filter(filenames, '*.wiki'):
+            tests.append(get_testname(os.path.join(root, filename)))
     for test in tests:
         expected_name = os.path.join('expected_html', test+'.html')
         actual_name = os.path.join('html', test+'.html')
         if os.path.exists(expected_name):
             expected = open(expected_name).read()
         else:
+            print "Missing expected output file: " + expected_name
             expected = ''
         if os.path.exists(actual_name):
             actual = open(actual_name).read()
         else:
+            print "Missing actual output file: " + actual_name
             actual = ''
 
         if expected == actual:
