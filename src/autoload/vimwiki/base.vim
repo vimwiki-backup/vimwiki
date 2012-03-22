@@ -191,6 +191,9 @@ function! vimwiki#base#resolve_scheme(lnk, as_html) " {{{
   " subdir
   if wiki_subdirectory && idx == g:vimwiki_current_idx
     let subdir = vimwiki#base#current_subdir()
+    if g:vimwiki_debug > 1
+      echo "XXX> Current file = ".expand('%:p')
+    endif
   endif
 
   " special chars
@@ -217,8 +220,10 @@ function! vimwiki#base#resolve_scheme(lnk, as_html) " {{{
   " construct url from parts
   if is_schemeless && a:as_html
     let scheme = ''
-    let url = subdir.lnk.ext
-    " Tomas had the following: let url = lnk.ext
+    " Stu had the following: 
+    "let url = subdir.lnk.ext
+    " Tomas had the following: 
+    let url = lnk.ext
   else
     " ensure there are three slashes after 'file:'
     let url = 'file:///'.path.subdir.lnk.ext
@@ -888,7 +893,7 @@ function! vimwiki#base#rename_link() "{{{
   let &more = setting_more
 endfunction " }}}
 
-function! vimwiki#base#ui_select()"{{{
+function! vimwiki#base#ui_select() "{{{
   call s:print_wiki_list()
   let idx = input("Select Wiki (specify number): ")
   if idx == ""
