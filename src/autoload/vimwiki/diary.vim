@@ -50,7 +50,7 @@ endfunction "}}}
 function! s:get_position_links(link) "{{{
   let idx = -1
   let links = []
-  if a:link =~ '\d\{4}-\d\d-\d\d'
+  if a:link =~ '^\d\{4}-\d\d-\d\d'
     let links = keys(s:get_diary_links())
     " include 'today' into links
     if index(links, s:diary_date_link()) == -1
@@ -89,7 +89,7 @@ fun! s:read_captions(files) "{{{
 endfun "}}}
 
 fun! s:get_diary_links(...) "{{{
-  let rx = '\d\{4}-\d\d-\d\d'
+  let rx = '^\d\{4}-\d\d-\d\d'
   let s_files = glob(VimwikiGet('path').VimwikiGet('diary_rel_path').'*'.VimwikiGet('ext'))
   let files = split(s_files, '\n')
   call filter(files, 'fnamemodify(v:val, ":t") =~ "'.escape(rx, '\').'"')
@@ -248,6 +248,9 @@ function! s:make_date_link(...) "{{{
 endfunction "}}}
 
 function! vimwiki#diary#make_note(index, ...) "{{{
+  " XXX: prevent auto_export of index, issue:293
+  let prev_auto_export = VimwikiGet('auto_export')
+  call VimwikiSet('auto_export', 0)
   " XXX: force loading of appropriate syntax to avoid issue:290
   call vimwiki#diary#goto_index(a:index)
   "call vimwiki#base#select(a:index)
@@ -258,6 +261,8 @@ function! vimwiki#diary#make_note(index, ...) "{{{
     let link = 'diary:'.s:make_date_link()
   endif
   call vimwiki#base#open_link(':e ', link, s:diary_index())
+  " XXX: prevent auto_export of index, issue:293
+  call VimwikiSet('auto_export', prev_auto_export)
 endfunction "}}}
 
 function! vimwiki#diary#goto_index(index) "{{{
