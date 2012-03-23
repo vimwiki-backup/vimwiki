@@ -66,6 +66,13 @@ fun! s:get_month_name(month) "{{{
   return g:vimwiki_diary_months[str2nr(a:month)]
 endfun "}}}
 
+function! s:trim(string) "{{{
+  let res = substitute(a:string, '^\s\+', '', '')
+  let res = substitute(res, '\s\+$', '', '')
+  return res
+endfunction "}}}
+
+
 fun! s:read_captions(files) "{{{
   let result = {}
   for fl in a:files
@@ -75,7 +82,7 @@ fun! s:read_captions(files) "{{{
     if filereadable(fl)
       for line in readfile(fl, '', g:vimwiki_max_scan_for_caption)
         if line =~ g:vimwiki_rxHeader && !has_key(result, fl_key)
-          let result[fl_key] = matchstr(line, g:vimwiki_rxHeader)
+          let result[fl_key] = s:trim(matchstr(line, g:vimwiki_rxHeader))
         endif
       endfor
     endif
