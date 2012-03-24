@@ -888,8 +888,17 @@ E.g.: >
 ------------------------------------------------------------------------------
 5.12. Schemes                                           *vimwiki-syntax-schemes*
 
-In addition to standard web schemes (e.g. `http:`, `https:`, `ftp:`, etc.) the
-following special schemes are supported.
+In addition to standard web schemes (e.g. `http:`, `https:`, `ftp:`, etc.) a
+number of special schemes are supported: "wiki#:", "local:", "diary:",
+"file:", and schemeless.
+
+The "wiki#:", "local:", and "diary:" schemes prepend absolute paths to the
+URLs: >
+  file:///abs_path_to_html#/relpath/wikipage.html
+
+The detection of non-existent links when |vimwiki-option-maxhi| equals 1
+applies only to the current wiki (e.g. schemeless and "wiki#:" scheme).  All
+other "SCHEME:URL" links appear as regular links even if they do not exist.
 
 Interwiki:~
 
@@ -900,32 +909,25 @@ or: >
   [[wiki#:This is a link source][Description of the link]]
 
 The number "#", in the range 0..N-1, identifies the destination wiki in
-|g:vimwiki_list|.  If the number is omitted, the destination defaults to the
-current wiki.
+|g:vimwiki_list|.
 
 Diary:~
 
 The diary scheme is used to concisely link to diary entries: >
-  [[diary#:2012-03-05]]
+  [[diary:2012-03-05]]
 
-This scheme precludes explicit inclusion of |vimwiki-option-diary_rel_path|.
-
-The number "#", in the range 0..N-1, identifies the destination wiki in
-|g:vimwiki_list|.  If the number is omitted, the destination defaults to the
-current wiki.
+This scheme precludes explicit inclusion of |vimwiki-option-diary_rel_path|,
+and is most useful on subwiki pages to avoid links such as: >
+  [[../../diary/2012-03-05]]
 
 Local:~
 
 A local resource that is not a wiki page may be specified with a path relative
 to the current page: >
-  [[local#:../assets/data.csv][data (CSV)]]
+  [[local:../assets/data.csv][data (CSV)]]
 
 When followed or converted to HTML, extensions of local-scheme links are not
 modified.
-
-The number "#", in the range 0..N-1, identifies the destination wiki in
-|g:vimwiki_list|.  If the number is omitted, the destination defaults to the
-current wiki.
 
 File:~
 
@@ -935,18 +937,10 @@ absolute paths and extensions: >
 
 Schemeless:~
 
-The default, schemeless URLs are treated internally as "wiki:" URLs in all
+The default, schemeless URLs are treated internally as "wiki#:" URLs in all
 respects except when converted to Html.  Schemeless links convert to plain
 relative path URLs, nearly verbatim: >
   relpath/wikipage.html
-
-The "wiki#:", "local#:", and "diary#:" schemes prepend absolute paths to the
-URLs: >
-  file:///abs_path_to_html#/relpath/wikipage.html
-
-The detection of non-existent links when |vimwiki-option-maxhi| equals 1
-applies only to the current wiki (e.g. "wiki:", and "wiki#:").  All other
-"scheme:URL" links appear as regular links even if they do not exist.
 
 
 ------------------------------------------------------------------------------
