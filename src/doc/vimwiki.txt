@@ -900,6 +900,7 @@ The detection of non-existent links when |vimwiki-option-maxhi| equals 1
 applies only to the current wiki (e.g. schemeless and "wiki#:" scheme).  All
 other "SCHEME:URL" links appear as regular links even if they do not exist.
 
+
 Interwiki:~
 
 If you maintain more than one wiki, you can create interwiki links between them
