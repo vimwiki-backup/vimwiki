@@ -26,6 +26,3 @@
  %% # [[wiki:Path/To/Nowhere.txt]] : Always highlight local paths as links.  No .html extension added
  %% # [[local:../../headers.wiki]] : Highlighted as link
 
-
-= Generated Links =
-- [[C:\Documents and Settings\Tomas Pospichal\vimfiles\AllBundles\vimwiki\tests\wiki\subwiki1\subsubwiki1\wikilinks11]]
