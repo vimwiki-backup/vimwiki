@@ -563,7 +563,7 @@ execute 'syn match VimwikiSuperScriptT contained /'.g:vimwiki_char_superscript.'
 execute 'syn match VimwikiSubScriptT contained /'.g:vimwiki_char_subscript.'/'
 
 " Emoticons
-syntax match VimwikiEmoticons /\%((.)\|:[()|$@]\|:-[DOPS()\]|$@]\|;)\|:'(\)/
+"syntax match VimwikiEmoticons /\%((.)\|:[()|$@]\|:-[DOPS()\]|$@]\|;)\|:'(\)/
 
 let g:vimwiki_rxTodo = '\C\%(TODO:\|DONE:\|STARTED:\|FIXME:\|FIXED:\|XXX:\)'
 execute 'syntax match VimwikiTodo /'. g:vimwiki_rxTodo .'/'
@@ -596,6 +596,20 @@ syntax match VimwikiCellSeparator
 execute 'syntax match VimwikiList /'.g:vimwiki_rxListBullet.'/'
 execute 'syntax match VimwikiList /'.g:vimwiki_rxListNumber.'/'
 execute 'syntax match VimwikiList /'.g:vimwiki_rxListDefine.'/'
+" List item checkbox
+"syntax match VimwikiCheckBox /\[.\?\]/
+let g:vimwiki_rxCheckBox = '\s*\[['.g:vimwiki_listsyms.']\?\]\s'
+" Todo lists have a checkbox
+execute 'syntax match VimwikiListTodo /'.g:vimwiki_rxListBullet.g:vimwiki_rxCheckBox.'/'
+execute 'syntax match VimwikiListTodo /'.g:vimwiki_rxListNumber.g:vimwiki_rxCheckBox.'/'
+if g:vimwiki_hl_cb_checked
+  execute 'syntax match VimwikiCheckBoxDone /'.
+        \ g:vimwiki_rxListBullet.'\s*\['.g:vimwiki_listsyms[4].'\]\s.*$/'.
+        \ ' contains=VimwikiNoExistsLink,VimwikiLink'
+  execute 'syntax match VimwikiCheckBoxDone /'.
+        \ g:vimwiki_rxListNumber.'\s*\['.g:vimwiki_listsyms[4].'\]\s.*$/'.
+        \ ' contains=VimwikiNoExistsLink,VimwikiLink'
+endif
 
 execute 'syntax match VimwikiEqIn /'.g:vimwiki_rxEqIn.'/ contains=VimwikiEqInChar'
 execute 'syntax match VimwikiEqInT /'.g:vimwiki_rxEqIn.'/ contained contains=VimwikiEqInCharT'
@@ -633,16 +647,6 @@ execute 'syntax region VimwikiPre start=/^\s*'.g:vimwiki_rxPreStart.
 execute 'syntax region VimwikiMath start=/^\s*'.g:vimwiki_rxMathStart.
       \ '/ end=/^\s*'.g:vimwiki_rxMathEnd.'\s*$/ contains=@Spell'
 
-" List item checkbox
-syntax match VimwikiCheckBox /\[.\?\]/
-if g:vimwiki_hl_cb_checked
-  execute 'syntax match VimwikiCheckBoxDone /'.
-        \ g:vimwiki_rxListBullet.'\s*\['.g:vimwiki_listsyms[4].'\].*$/'.
-        \ ' contains=VimwikiNoExistsLink,VimwikiLink'
-  execute 'syntax match VimwikiCheckBoxDone /'.
-        \ g:vimwiki_rxListNumber.'\s*\['.g:vimwiki_listsyms[4].'\].*$/'.
-        \ ' contains=VimwikiNoExistsLink,VimwikiLink'
-endif
 
 " placeholders
 syntax match VimwikiPlaceholder /^\s*%toc\%(\s.*\)\?$/ contains=VimwikiPlaceholderParam
@@ -652,13 +656,15 @@ syntax match VimwikiPlaceholder /^\s*%template\%(\s.*\)\?$/ contains=VimwikiPlac
 syntax match VimwikiPlaceholderParam /\s.*/ contained
 
 " html tags
-let html_tags = join(split(g:vimwiki_valid_html_tags, '\s*,\s*'), '\|')
-exe 'syntax match VimwikiHTMLtag #\c</\?\%('.html_tags.'\)\%(\s\{-1}\S\{-}\)\{-}\s*/\?>#'
-execute 'syntax match VimwikiBold #\c<b>.\{-}</b># contains=VimwikiHTMLTag'
-execute 'syntax match VimwikiItalic #\c<i>.\{-}</i># contains=VimwikiHTMLTag'
-execute 'syntax match VimwikiUnderline #\c<u>.\{-}</u># contains=VimwikiHTMLTag'
+if g:vimwiki_valid_html_tags != ''
+  let html_tags = join(split(g:vimwiki_valid_html_tags, '\s*,\s*'), '\|')
+  exe 'syntax match VimwikiHTMLtag #\c</\?\%('.html_tags.'\)\%(\s\{-1}\S\{-}\)\{-}\s*/\?>#'
+  execute 'syntax match VimwikiBold #\c<b>.\{-}</b># contains=VimwikiHTMLTag'
+  execute 'syntax match VimwikiItalic #\c<i>.\{-}</i># contains=VimwikiHTMLTag'
+  execute 'syntax match VimwikiUnderline #\c<u>.\{-}</u># contains=VimwikiHTMLTag'
 
-execute 'syntax match VimwikiComment /'.g:vimwiki_rxComment.'/ contains=@Spell'
+  execute 'syntax match VimwikiComment /'.g:vimwiki_rxComment.'/ contains=@Spell'
+endif
 " }}}
 
 " header groups highlighting "{{{
@@ -722,9 +728,11 @@ hi def link VimwikiLinkT VimwikiLink
 hi def link VimwikiTemplLinkT VimwikiLink
 
 hi def link VimwikiList Identifier
-hi def link VimwikiCheckBox VimwikiList
+hi def link VimwikiListTodo VimwikiList
+"hi def link VimwikiCheckBox VimwikiList
 hi def link VimwikiCheckBoxDone Comment
 hi def link VimwikiEmoticons Character
+hi def link VimwikiHR Identifier
 
 hi def link VimwikiDelText Constant
 hi def link VimwikiDelTextT VimwikiDelText
