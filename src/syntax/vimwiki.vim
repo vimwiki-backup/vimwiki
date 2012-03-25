@@ -669,18 +669,17 @@ if g:vimwiki_hl_headers == 0
     hi Title cterm=bold
   endif
   for i in range(1,6)
-    execute 'hi link VimwikiHeader'.i.' Title'
+    execute 'hi def link VimwikiHeader'.i.' Title'
   endfor
 else
-  if &background == 'light'
-    let color_guifg = ['#aa5858','#507030','#1030a0','#103040','#505050','#636363']
-    let color_ctermfg = ['DarkRed','DarkGreen','DarkBlue','Black','Black','Black']
-  else
-    let color_guifg = ['#e08090','#80e090','#6090e0','#c0c0f0','#e0e0f0','#f0f0f0']
-    let color_ctermfg = ['Red','Green','Blue','White','White','White']
-  endif
+  " default colors when headers of different levels are highlighted differently 
+  " not making it yet another option; needed by ColorScheme autocommand
+  let g:vimwiki_hcolor_guifg_light = ['#aa5858','#507030','#1030a0','#103040','#505050','#636363']
+  let g:vimwiki_hcolor_ctermfg_light = ['DarkRed','DarkGreen','DarkBlue','Black','Black','Black']
+  let g:vimwiki_hcolor_guifg_dark = ['#e08090','#80e090','#6090e0','#c0c0f0','#e0e0f0','#f0f0f0']
+  let g:vimwiki_hcolor_ctermfg_dark = ['Red','Green','Blue','White','White','White']
   for i in range(1,6)
-    execute 'hi def VimwikiHeader'.i.' guibg=bg guifg='.color_guifg[i-1].' gui=bold ctermfg='.color_ctermfg[i-1].' term=bold cterm=bold' 
+    execute 'hi def VimwikiHeader'.i.' guibg=bg guifg='.g:vimwiki_hcolor_guifg_{&bg}[i-1].' gui=bold ctermfg='.g:vimwiki_hcolor_ctermfg_{&bg}[i-1].' term=bold cterm=bold' 
   endfor
 endif
 "}}}

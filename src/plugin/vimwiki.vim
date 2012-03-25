@@ -150,6 +150,19 @@ function! s:setup_buffer_enter() "{{{
   call VimwikiLog_extend('timing',['plugin:setup_buffer_enter:time1',time1])
 endfunction "}}}
 
+function! s:setup_cleared_syntax() "{{{ highlight groups that get cleared
+  " on colorscheme change because they are not linked to Vim-predefined groups
+  hi def VimwikiBold term=bold cterm=bold gui=bold
+  hi def VimwikiItalic term=italic cterm=italic gui=italic
+  hi def VimwikiBoldItalic term=bold cterm=bold gui=bold,italic
+  hi def VimwikiUnderline gui=underline
+  if g:vimwiki_hl_headers == 1
+    for i in range(1,6)
+      execute 'hi def VimwikiHeader'.i.' guibg=bg guifg='.g:vimwiki_hcolor_guifg_{&bg}[i-1].' gui=bold ctermfg='.g:vimwiki_hcolor_ctermfg_{&bg}[i-1].' term=bold cterm=bold' 
+    endfor
+  endif
+endfunction "}}}
+
 " OPTION get/set functions {{{
 " return value of option for current wiki or if second parameter exists for
 " wiki with a given index.
@@ -343,7 +356,7 @@ call s:default('current_idx', 0)
 "}}}
 
 " AUTOCOMMANDS for all known wiki extensions {{{
-" Getting all extensions that different wikies could have
+" Getting all extensions that different wikis could have
 let extensions = {}
 for wiki in g:vimwiki_list
   if has_key(wiki, 'ext')
@@ -364,15 +377,7 @@ augroup vimwiki
     exe 'autocmd BufWinEnter *'.ext.' call s:setup_buffer_enter()'
     exe 'autocmd BufLeave,BufHidden *'.ext.' call s:setup_buffer_leave()'
     exe 'autocmd BufNewFile,BufRead, *'.ext.' call s:setup_filetype()'
-
-    " (Tomas)
-    " TODO this is needlessly run for the first time before any syntax is setup!
-    " (Maxim)
-    " Without this line colorscheme command ruins syntax highlighting.
-    " Just comment it and switch colorscheme and you'll see that 
-    " *this is not bold*
-    exe 'autocmd ColorScheme *'.ext.' syntax enable'
-
+    exe 'autocmd ColorScheme *'.ext.' call s:setup_cleared_syntax()'
     " Format tables when exit from insert mode. Do not use textwidth to
     " autowrap tables.
     if g:vimwiki_table_auto_fmt
