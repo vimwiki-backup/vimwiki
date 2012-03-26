@@ -192,17 +192,17 @@ endfunction "}}}
 " COMMANDS {{{
 command! -buffer Vimwiki2HTML
       \ silent w <bar> 
-      \ call vimwiki#html#Wiki2HTML(expand(VimwikiGet('path_html')),
+      \ call vimwiki#html#Wiki2HTML(expand(g:vimwiki_current_path_html),
       \                             expand('%'))
       \<bar>
       \ echo 'HTML conversion is done.'
 command! -buffer Vimwiki2HTMLBrowse
       \ silent w <bar> 
       \ call VimwikiWeblinkHandler(vimwiki#html#Wiki2HTML(
-      \         expand(VimwikiGet('path_html')),
+      \         expand(g:vimwiki_current_path_html),
       \         expand('%')))
 command! -buffer VimwikiAll2HTML
-      \ call vimwiki#html#WikiAll2HTML(expand(VimwikiGet('path_html')))
+      \ call vimwiki#html#WikiAll2HTML(expand(g:vimwiki_current_path_html))
 
 command! -buffer VimwikiNextLink call vimwiki#base#find_next_link()
 command! -buffer VimwikiPrevLink call vimwiki#base#find_prev_link()
@@ -225,10 +225,10 @@ command! -buffer -nargs=0 VimwikiBacklinks call vimwiki#base#backlinks()
 command! -buffer -nargs=0 VWB call vimwiki#base#backlinks()
 
 exe 'command! -buffer -nargs=* VimwikiSearch lvimgrep <args> '.
-      \ escape(VimwikiGet('path').'**/*'.VimwikiGet('ext'), ' ')
+      \ escape(g:vimwiki_current_path.'**/*'.g:vimwiki_current_ext, ' ')
 
 exe 'command! -buffer -nargs=* VWS lvimgrep <args> '.
-      \ escape(VimwikiGet('path').'**/*'.VimwikiGet('ext'), ' ')
+      \ escape(g:vimwiki_current_path.'**/*'.g:vimwiki_current_ext, ' ')
 
 command! -buffer -nargs=1 VimwikiGoto call vimwiki#base#goto("<args>")
 

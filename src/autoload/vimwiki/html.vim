@@ -28,7 +28,7 @@ function! s:root_path(subdir) "{{{
 endfunction "}}}
 
 function! s:syntax_supported() " {{{
-  return VimwikiGet('syntax') == "default"
+  return g:vimwiki_current_syntax == "default"
 endfunction " }}}
 
 function! s:remove_blank_lines(lines) " {{{
@@ -70,7 +70,7 @@ endfunction " }}}
 
 function! s:default_CSS_full_name(path) " {{{
   let path = expand(a:path)
-  let css_full_name = path.VimwikiGet('css_name')
+  let css_full_name = path.g:vimwiki_current_css_name
   return css_full_name
 endfunction "}}}
 
@@ -89,14 +89,14 @@ endfunction "}}}
 
 function! s:template_full_name(name) "{{{
   if a:name == ''
-    let name = VimwikiGet('template_default')
+    let name = g:vimwiki_current_template_default
   else
     let name = a:name
   endif
 
-  let fname = expand(VimwikiGet('template_path').
+  let fname = expand(g:vimwiki_current_template_path.
         \ name.
-        \ VimwikiGet('template_ext'))
+        \ g:vimwiki_current_template_ext)
 
   if filereadable(fname)
     return fname
@@ -166,9 +166,9 @@ function! s:delete_html_files(path) "{{{
     endif
 
     " delete if there is no corresponding wiki file
-    let subdir = vimwiki#base#subdir(VimwikiGet('path_html'), fname)
-    let wikifile = VimwikiGet("path").subdir.
-          \fnamemodify(fname, ":t:r").VimwikiGet("ext")
+    let subdir = vimwiki#base#subdir(g:vimwiki_current_path_html, fname)
+    let wikifile = g:vimwiki_current_path.subdir.
+          \fnamemodify(fname, ":t:r").g:vimwiki_current_ext
     if filereadable(wikifile)
       continue
     endif
@@ -292,8 +292,7 @@ function! s:is_html_uptodate(wikifile) "{{{
   endif
 
   let wikifile = fnamemodify(a:wikifile, ":p")
-  let subdir = vimwiki#base#subdir(VimwikiGet('path'), wikifile)
-  let htmlfile = expand(VimwikiGet('path_html').subdir.
+  let htmlfile = expand(g:vimwiki_current_path_html.g:vimwiki_current_subdir.
         \fnamemodify(wikifile, ":t:r").".html")
 
   if getftime(wikifile) <= getftime(htmlfile) && tpl_time <= getftime(htmlfile)
@@ -440,7 +439,8 @@ function! s:tag_wikiincl(value) "{{{
     let [scheme, path, subdir, lnk, ext, url] = 
           \ vimwiki#base#resolve_scheme(url_0, 1)
     " generate html output
-    if g:vimwiki_debug
+    " TODO: migrate non-essential debugging messages into g:VimwikiLog
+    if g:vimwiki_debug > 1
       echom '{{scheme='.scheme.', path='.path.', subdir='.subdir.', lnk='.lnk.', ext='.ext.'}}'
     endif
     let url = escape(url, '#')
@@ -469,7 +469,8 @@ function! s:tag_wikilink(value) "{{{
         \ vimwiki#base#resolve_scheme(url, 1)
 
   " generate html output
-  if g:vimwiki_debug
+  " TODO: migrate non-essential debugging messages into g:VimwikiLog
+  if g:vimwiki_debug > 1
     echom '[[scheme='.scheme.', path='.path.', subdir='.subdir.', lnk='.lnk.', ext='.ext.']]'
   endif
   let url = escape(url, '#')
@@ -1373,37 +1374,35 @@ function! s:parse_line(line, state) " {{{
 endfunction " }}}
 
 function! s:use_custom_wiki2html() "{{{
-  let custom_wiki2html = VimwikiGet('custom_wiki2html')
+  let custom_wiki2html = g:vimwiki_current_custom_wiki2html
   return !empty(custom_wiki2html) && s:file_exists(custom_wiki2html)
 endfunction " }}}
 
 function! vimwiki#html#CustomWiki2HTML(path, wikifile, force) "{{{
   call vimwiki#base#mkdir(a:path)
-  execute '!'.VimwikiGet('custom_wiki2html'). ' '
+  execute '!'.g:vimwiki_current_custom_wiki2html. ' '
       \ a:force. ' '.
-      \ VimwikiGet('syntax')
-      \ strpart(VimwikiGet('ext'), 1). ' '.
+      \ g:vimwiki_current_syntax
+      \ strpart(g:vimwiki_current_ext, 1). ' '.
       \ a:path. ' '.
       \ a:wikifile. ' '.
       \ s:default_CSS_full_name(a:path)
 endfunction " }}}
 
-function! vimwiki#html#Wiki2HTML(path, wikifile) "{{{
+function! vimwiki#html#Wiki2HTML(path_html, wikifile) "{{{
 
   let starttime = reltime()  " start the clock
 
   let done = 0
 
   let wikifile = fnamemodify(a:wikifile, ":p")
-  " shouldn't we be using a:path passed as an argument !?
-  let subdir = vimwiki#base#subdir(VimwikiGet('path'), wikifile)
 
-  let path = expand(a:path).subdir
+  let path_html = expand(a:path_html).g:vimwiki_current_subdir
   let htmlfile = fnamemodify(wikifile, ":t:r").'.html'
 
   if s:use_custom_wiki2html()
     let force = 1
-    call vimwiki#html#CustomWiki2HTML(path, wikifile, force)
+    call vimwiki#html#CustomWiki2HTML(path_html, wikifile, force)
     let done = 1
   endif
 
@@ -1415,7 +1414,7 @@ function! vimwiki#html#Wiki2HTML(path, wikifile) "{{{
     "  echo 'Generating HTML ... '
     "endif
 
-    call vimwiki#base#mkdir(path)
+    call vimwiki#base#mkdir(path_html)
 
     " nohtml placeholder -- to skip html generation.
     let nohtml = 0
@@ -1503,9 +1502,9 @@ function! vimwiki#html#Wiki2HTML(path, wikifile) "{{{
     " processing template variables (refactor to a function)
     call map(html_lines, 'substitute(v:val, "%title%", "'. title .'", "g")')
     call map(html_lines, 'substitute(v:val, "%root_path%", "'.
-          \ s:root_path(subdir) .'", "g")')
+          \ s:root_path(g:vimwiki_current_subdir) .'", "g")')
 
-    let css_name = expand(VimwikiGet('css_name'))
+    let css_name = expand(g:vimwiki_current_css_name)
     let css_name = substitute(css_name, '\', '/', 'g')
     call map(html_lines, 'substitute(v:val, "%css%", "'. css_name .'", "g")')
 
@@ -1518,7 +1517,7 @@ function! vimwiki#html#Wiki2HTML(path, wikifile) "{{{
     let html_lines = s:html_insert_contents(html_lines, ldest) " %contents%
     
     "" make html file.
-    call writefile(html_lines, path.htmlfile)
+    call writefile(html_lines, path_html.htmlfile)
     let done = 1
 
   endif
@@ -1535,11 +1534,11 @@ function! vimwiki#html#Wiki2HTML(path, wikifile) "{{{
   "  echon "\r".htmlfile.' written (time: '.time1.'s)'
   "endif
 
-  return path.htmlfile
+  return path_html.htmlfile
 endfunction "}}}
 
 
-function! vimwiki#html#WikiAll2HTML(path) "{{{
+function! vimwiki#html#WikiAll2HTML(path_html) "{{{
   if !s:syntax_supported() && !s:use_custom_wiki2html()
     echomsg 'vimwiki: conversion to HTML is not supported for this syntax!!!'
     return
@@ -1553,29 +1552,38 @@ function! vimwiki#html#WikiAll2HTML(path) "{{{
   exe 'buffer '.cur_buf
   let &eventignore = save_eventignore
 
-  let path = expand(a:path)
-  call vimwiki#base#mkdir(path)
+  let path_html = expand(a:path_html)
+  call vimwiki#base#mkdir(path_html)
 
   echomsg 'Deleting non-wiki html files...'
-  call s:delete_html_files(path)
+  call s:delete_html_files(path_html)
 
   echomsg 'Converting wiki to html files...'
   let setting_more = &more
   setlocal nomore
 
-  let currentfile = expand('%:p')
-  let wikifiles = split(glob(VimwikiGet('path').'**/*'.VimwikiGet('ext')), '\n')
+  " temporarily adjust current_subdir global state variable
+  let current_subdir = g:vimwiki_current_subdir
+
+  let wikifiles = split(glob(g:vimwiki_current_path.'**/*'.g:vimwiki_current_ext), '\n')
   for wikifile in wikifiles
+    let wikifile = fnamemodify(wikifile, ":p")
+    " temporarily adjust current_subdir global state variable
+    let g:vimwiki_current_subdir = 
+          \ vimwiki#base#subdir(g:vimwiki_current_path, wikifile)
+
     if !s:is_html_uptodate(wikifile)
       echomsg 'Processing '.wikifile
-      call vimwiki#base#edit_file(':e', wikifile)
-      call vimwiki#html#Wiki2HTML(path, wikifile)
+
+      call vimwiki#html#Wiki2HTML(path_html, wikifile)
     else
       echomsg 'Skipping '.wikifile
     endif
   endfor
-  call vimwiki#base#edit_file(':e', currentfile)
-  call s:create_default_CSS(path)
+  " reset current_subdir global state variable
+  let g:vimwiki_current_subdir = current_subdir
+
+  call s:create_default_CSS(path_html)
   echomsg 'Done!'
 
   let &more = setting_more
@@ -1585,10 +1593,10 @@ function! s:file_exists(fname) "{{{
   return !empty(getftype(a:fname))
 endfunction "}}}
 
-" uses VimwikiGet('path')
+" uses g:vimwiki_current_path
 function! s:get_wikifile_url(wikifile) "{{{
-  return VimwikiGet("path_html").
-    \ vimwiki#base#subdir(VimwikiGet('path'), a:wikifile).
+  return g:vimwiki_current_path_html.
+    \ vimwiki#base#subdir(g:vimwiki_current_path, a:wikifile).
     \ fnamemodify(a:wikifile, ":t:r").'.html'
 endfunction "}}}
 

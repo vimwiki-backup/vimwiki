@@ -29,15 +29,14 @@ let g:vimwiki_web_schemes1 = 'http,https,file,ftp,gopher,telnet,nntp,ldap,'.
       \ 'rsync,imap,pop,irc,ircs,cvs,svn,svn+ssh,git,ssh,fish,sftp'
 let g:vimwiki_web_schemes2 = 'mailto,news,xmpp,sip,sips,doi,urn,tel'
 
-let g:vimwiki_wiki_schemes = 'wiki'.','.
-      \ 'wiki0,wiki1,wiki2,wiki3,wiki4,wiki5,wiki6,wiki7,wiki8,wiki9'
+let g:vimwiki_wiki_schemes = 'wiki\d\+'
 let g:vimwiki_diary_schemes = 'diary'
 let g:vimwiki_local_schemes = 'local'
 
 let rxSchemes = '\%('. 
-      \ join(split(g:vimwiki_wiki_schemes, '\s*,\s*'), '\|').'\|'.
-      \ join(split(g:vimwiki_diary_schemes, '\s*,\s*'), '\|').'\|'.
-      \ join(split(g:vimwiki_local_schemes, '\s*,\s*'), '\|').'\|'.
+      \ g:vimwiki_wiki_schemes.'\|'.
+      \ g:vimwiki_diary_schemes.'\|'.
+      \ g:vimwiki_local_schemes.'\|'.
       \ join(split(g:vimwiki_web_schemes1, '\s*,\s*'), '\|').'\|'. 
       \ join(split(g:vimwiki_web_schemes2, '\s*,\s*'), '\|').
       \ '\)'

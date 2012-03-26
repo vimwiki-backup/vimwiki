@@ -13,6 +13,67 @@ let s:badsymbols = '['.g:vimwiki_badsyms.g:vimwiki_stripsym.'<>|?*:"]'
 
 " MISC helper functions {{{
 
+function! vimwiki#base#reset_wiki_state(...) "{{{ initialize wiki options and
+  " additional ['key', value] pairs. E.g. reset_wiki_state(['idx', 0]) sets:
+  "   let g:vimwiki_current_idx = 0 " current value
+  "   let b:vimwiki_idx = 0         " buffer-cached value
+  " ['key', value] pairs
+  let g:vimwiki_current_keys = {}
+  for keyval_pair in a:000
+    let g:vimwiki_current_keys[keyval_pair[0]] = 1
+    let g:vimwiki_current_{keyval_pair[0]} = keyval_pair[1]
+  endfor
+  " wiki options
+  let option_dict = VimwikiGetOptions()
+  for kk in keys(option_dict)
+    let g:vimwiki_current_{kk} = option_dict[kk]
+  endfor
+  " update cache
+  call vimwiki#base#cache_wiki_state()
+endfunction "}}}
+
+function! vimwiki#base#cache_wiki_state() "{{{ cache wiki options and state
+  " ['key', value] pairs
+  for kk in keys(g:vimwiki_current_keys)
+    if !exists('g:vimwiki_current_'.kk) && g:vimwiki_debug
+      echo "[Vimwiki Internal Error]: Missing global state variable: 'g:vimwiki_current_".kk."'"
+    endif
+    let b:vimwiki_{kk} = g:vimwiki_current_{kk}
+  endfor
+  " wiki options
+  for kk in VimwikiGetOptionNames()
+    if !exists('g:vimwiki_current_'.kk) && g:vimwiki_debug
+      echo "[Vimwiki Error]: Missing global state variable: 'g:vimwiki_current_".kk."'"
+    endif
+    let b:vimwiki_{kk} = g:vimwiki_current_{kk}
+  endfor
+endfunction "}}}
+
+function! vimwiki#base#recall_wiki_state() "{{{ try loading wiki options
+  "   previously saved to buffer state, return 0 if cache is incomplete
+  " ['key', value] pairs
+  for kk in keys(g:vimwiki_current_keys)
+    if !exists('b:vimwiki_'.kk) 
+      if g:vimwiki_debug
+        echo "[Vimwiki Internal Error]: Missing buffer state variable: 'b:vimwiki_".kk."'"
+      endif
+      return 0
+    endif
+    let g:vimwiki_current_{kk} = b:vimwiki_{kk}
+  endfor
+  " wiki options
+  for kk in VimwikiGetOptionNames()
+    if !exists('b:vimwiki_'.kk) 
+      if g:vimwiki_debug
+        echo "[Vimwiki Internal Error]: Missing buffer state variable: 'b:vimwiki_".kk."'"
+      endif
+      return 0
+    endif
+    let g:vimwiki_current_{kk} = b:vimwiki_{kk}
+  endfor
+  return 1
+endfunction "}}}
+
 function! vimwiki#base#time(starttime) "{{{
   " measure the elapsed time and cut away miliseconds and smaller
   return matchstr(reltimestr(reltime(a:starttime)),'\d\+\(\.\d\d\)\=')
@@ -96,6 +157,7 @@ endfunction
 
 "FIXME TODO slow and faulty
 function! vimwiki#base#subdir(path, filename)"{{{
+  let g:VimwikiLog.subdir += 1  "XXX
   let path = a:path
   " ensure that we are not fooled by a symbolic link
   "FIXME if we are not "fooled", we end up in a completely different wiki?
@@ -122,7 +184,7 @@ function! vimwiki#base#resolve_scheme(lnk, as_html) " {{{
   " schemeless
   let lnk = a:lnk
   let is_schemeless = lnk !~ g:vimwiki_rxSchemeUrl
-  let lnk = (is_schemeless  ? 'wiki:'.lnk : lnk)
+  let lnk = (is_schemeless  ? 'wiki'.g:vimwiki_current_idx.':'.lnk : lnk)
   " parse
   let scheme = matchstr(lnk, g:vimwiki_rxSchemeUrlMatchScheme)
   let lnk = matchstr(lnk, g:vimwiki_rxSchemeUrlMatchUrl)
@@ -179,21 +241,32 @@ function! vimwiki#base#resolve_scheme(lnk, as_html) " {{{
   " path
   if add_path
     if html_path && a:as_html
-      let path = VimwikiGet('path_html', idx)
+      if idx == g:vimwiki_current_idx
+        let path = g:vimwiki_current_path_html
+      else
+        let path = VimwikiGet('path_html', idx)
+      endif
     else
-      let path = VimwikiGet('path', idx)
+      if idx == g:vimwiki_current_idx
+        let path = g:vimwiki_current_path
+      else
+        let path = VimwikiGet('path', idx)
+      endif
     endif
   endif
 
   " relative path for diary
-  let path = path. (diary_rel_path ? VimwikiGet('diary_rel_path', idx) : '')
+  if diary_rel_path
+    if idx == g:vimwiki_current_idx
+      let path = path. g:vimwiki_current_diary_rel_path
+    else
+      let path = path. VimwikiGet('diary_rel_path', idx)
+    endif
+  endif
 
   " subdir
   if wiki_subdirectory && idx == g:vimwiki_current_idx
-    let subdir = vimwiki#base#current_subdir()
-    if g:vimwiki_debug > 1
-      echo "XXX> Current file = ".expand('%:p')
-    endif
+    let subdir = g:vimwiki_current_subdir
   endif
 
   " special chars
@@ -201,7 +274,15 @@ function! vimwiki#base#resolve_scheme(lnk, as_html) " {{{
 
   " extension
   if wiki_extension
-    let ext = (a:as_html ? '.html' : VimwikiGet('ext', idx))
+    if a:as_html
+      let ext = '.html'
+    else
+      if idx == g:vimwiki_current_idx
+        let ext = g:vimwiki_current_ext
+      else
+        let ext = VimwikiGet('ext', idx)
+      endif
+    endif
     " default link for directories
     if wiki_directory && vimwiki#base#is_link_to_dir(lnk)
       let ext = (g:vimwiki_dir_link != '' ? g:vimwiki_dir_link. ext : '')
@@ -283,7 +364,8 @@ function! vimwiki#base#select(wnum)"{{{
     return
   endif
   if &ft == 'vimwiki'
-    let b:vimwiki_idx = g:vimwiki_current_idx
+    " initialize buffer vars with current state (including current_idx, etc)
+    call vimwiki#base#cache_wiki_state()
   endif
   let g:vimwiki_current_idx = a:wnum - 1
 endfunction
@@ -339,7 +421,7 @@ endfunction "}}}
 function! vimwiki#base#get_links(pat) "{{{ return string-list for files
   " in the current wiki matching the pattern "pat"
   " search all wiki files (or directories) in wiki 'path' and its subdirs.
-  let subdir = vimwiki#base#current_subdir()
+  let subdir = g:vimwiki_current_subdir
   let invsubdir = substitute(subdir,'[^/]\+','..','g')
   " if current wiki is temporary -- was added by an arbitrary wiki file then do
   " not search wiki files in subdirectories. Or it would hang the system if
@@ -799,7 +881,7 @@ endfunction "}}}
 
 function! vimwiki#base#rename_link() "{{{
   "" Rename WikiWord, update all links to renamed WikiWord
-  let subdir = vimwiki#base#current_subdir()
+  let subdir = g:vimwiki_current_subdir
   let old_fname = subdir.expand('%:t')
 
   " there is no file (new one maybe)

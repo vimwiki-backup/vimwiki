@@ -49,11 +49,13 @@ function! s:find_wiki(path) "{{{
     let idx += 1
   endwhile
   return -1
+  " an orphan page has been detected
 endfunction "}}}
 
 function! s:setup_buffer_leave()"{{{
-  if &filetype == 'vimwiki' && !exists("b:vimwiki_idx")
-    let b:vimwiki_idx = g:vimwiki_current_idx
+  if &filetype == 'vimwiki'
+    " cache global vars of current state XXX: SLOW!?
+    call vimwiki#base#cache_wiki_state()
   endif
 
   " Set up menu
@@ -72,9 +74,11 @@ function! s:setup_filetype() "{{{
   if idx == -1 && g:vimwiki_global_ext == 0
     return
   endif
-  "XXX when idx = -1?
-  let g:vimwiki_current_idx = idx
-  let b:vimwiki_idx = idx
+  "XXX when idx = -1? (an orphan page has been detected)
+
+  " initialize and cache global vars of current state
+  call vimwiki#base#reset_wiki_state(['idx', idx], 
+        \ ['subdir', vimwiki#base#current_subdir()])
 
   unlet! b:vimwiki_fs_rescan
   set filetype=vimwiki
@@ -84,9 +88,7 @@ endfunction "}}}
 
 function! s:setup_buffer_enter() "{{{
   let time0 = reltime()  " start the clock  "XXX
-  if exists("b:vimwiki_idx")
-    let g:vimwiki_current_idx = b:vimwiki_idx
-  else
+  if !vimwiki#base#recall_wiki_state()
     " Find what wiki current buffer belongs to.
     " If wiki does not exist in g:vimwiki_list -- add new wiki there with
     " buffer's path and ext.
@@ -95,20 +97,22 @@ function! s:setup_buffer_enter() "{{{
     let ext = '.'.expand('%:e')
     let idx = s:find_wiki(path)
 
-    " The buffer's file is not in the path and user do not want his wiki
-    " extension to be global -- do not add new wiki.
+    " The buffer's file is not in the path and user *does NOT* want his wiki
+    " extension to be global -- Do not add new wiki.
     if idx == -1 && g:vimwiki_global_ext == 0
       return
     endif
 
+    " The buffer's file is not in the path and user *does* want his wiki
+    " extension to be global -- Add new wiki.
     if idx == -1
       call add(g:vimwiki_list, {'path': path, 'ext': ext, 'temp': 1})
-      let g:vimwiki_current_idx = len(g:vimwiki_list) - 1
-    else
-      let g:vimwiki_current_idx = idx
+      let idx = len(g:vimwiki_list) - 1
     endif
+    " initialize and cache global vars of current state
+    call vimwiki#base#reset_wiki_state(['idx', idx], 
+          \ ['subdir', vimwiki#base#current_subdir()])
 
-    let b:vimwiki_idx = g:vimwiki_current_idx
   endif
 
   " If you have
@@ -164,14 +168,24 @@ function! s:setup_cleared_syntax() "{{{ highlight groups that get cleared
 endfunction "}}}
 
 " OPTION get/set functions {{{
+" return complete list of options
+function! VimwikiGetOptionNames() "{{{
+  return keys(s:vimwiki_defaults)
+endfunction "}}}
+
+function! VimwikiGetOptions(...) "{{{
+  let idx = a:0 == 0 ? g:vimwiki_current_idx : a:1
+  let option_dict = {}
+  for kk in keys(s:vimwiki_defaults)
+    let option_dict[kk] = VimwikiGet(kk, idx)
+  endfor
+  return option_dict
+endfunction "}}}
+
 " return value of option for current wiki or if second parameter exists for
 " wiki with a given index.
 function! VimwikiGet(option, ...) "{{{
-  if a:0 == 0
-    let idx = g:vimwiki_current_idx
-  else
-    let idx = a:1
-  endif
+  let idx = a:0 == 0 ? g:vimwiki_current_idx : a:1
   if !has_key(g:vimwiki_list[idx], a:option) &&
         \ has_key(s:vimwiki_defaults, a:option)
     if a:option == 'path_html'
@@ -200,11 +214,7 @@ endfunction "}}}
 " set option for current wiki or if third parameter exists for
 " wiki with a given index.
 function! VimwikiSet(option, value, ...) "{{{
-  if a:0 == 0
-    let idx = g:vimwiki_current_idx
-  else
-    let idx = a:1
-  endif
+  let idx = a:0 == 0 ? g:vimwiki_current_idx : a:1
   let g:vimwiki_list[idx][a:option] = a:value
 endfunction "}}}
 " }}}
@@ -463,6 +473,7 @@ endfunction
 " Logging and performance instrumentation "{{{
 let g:VimwikiLog = {}
 let g:VimwikiLog.path = 0     " # of calls to VimwikiGet with path or path_html
+let g:VimwikiLog.subdir = 0   " # of calls to vimwiki#base#subdir()
 let g:VimwikiLog.timing = []  " various timing measurements
 let g:VimwikiLog.html = []    " html conversion timing
 function! VimwikiLog_extend(what,...)  "{{{
