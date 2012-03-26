@@ -35,16 +35,12 @@ Please follow the setup instructions from [[vimwiki-markup-examples][markup exam
  # [[EgPageThree]], [[EgPageThree][Page Three]]
    * HL=missing-link , non-existent, opens as NEW WIKI file in vim
 
-== wiki: L+R ==
+== wiki#: L+R ==
 
- # [[wiki:EgPageTwo]], [[wiki:EgPageTwo][Page Two]]
-   * HL=link , existent, opens existing wiki file in vim
  # [[wiki0:EgPageTwo]], [[wiki0:EgPageTwo][Page Two]]
    * HL=link , existent, opens existing wiki file in vim
  # [[wiki1:EgPageTwo]], [[wiki1:EgPageTwo][Page Two]]
    * HL=link , existent or non-existent, opens existing or NEW WIKI file in vim, or complains that numbered wiki does not exist
- # [[wiki:EgPageThree]], [[wiki:EgPageThree][Page Three]]
-   * HL=missing-link , non-existent, opens as NEW WIKI file in vim
  # [[wiki0:EgPageThree]], [[wiki0:EgPageThree][Page Three]]
    * HL=missing-link , non-existent, opens as NEW WIKI file in vim
  # [[wiki1:EgPageThree]], [[wiki1:EgPageThree][Page Three]]
@@ -107,18 +103,14 @@ HL always on for non-wiki schemes
  # [[EgMissingDir/]], [[EgMissingDir/][Missing Directory]]
    * HL=missing-link , non-existent, creates NEW directory and opens netrw directory listing
 
-== wiki: L+R ==
+== wiki#: L+R ==
 
-"wiki:" does not really make sense in front of "dir/"
+"wiki#:" does not really make sense in front of "dir/"
 
- # [[wiki:html/]], [[wiki:html/][html]]
-   * HL=link , existent, opens netrw directory listing
  # [[wiki0:html/]], [[wiki0:html/][html]]
    * HL=link , existent, opens netrw directory listing
  # [[wiki1:html/]], [[wiki1:html/][html]]
    * HL=link , existent, opens netrw directory listing, or complains that numbered wiki does not exist
- # [[wiki:EgMissingDir/]], [[wiki:EgMissingDir/][Missing Directory]]
-   * HL=missing-link , non-existent, creates NEW directory and opens netrw directory listing
  # [[wiki0:EgMissingDir/]], [[wiki0:EgMissingDir/][Missing Directory]]
    * HL=missing-link , non-existent, creates NEW directory and opens netrw directory listing
  # [[wiki1:EgMissingDir/]], [[wiki1:EgMissingDir/][Missing Directory]]
@@ -160,16 +152,12 @@ HL always on for non-wiki schemes
  # {{EgPageThree}}, {{EgPageThree}{Page Three}} with descr, {{EgPageThree}{Page Three}{arg1}{arg2}} with descr and extra args
    * HL=link , existent , opens existing wiki file
 
-== wiki: U+T ==
+== wiki#: U+T ==
 
- # {{wiki:EgPageTwo}}, {{wiki:EgPageTwo}{Page Two}} with descr, {{wiki:EgPageTwo}{Page Two}{arg1}{arg2}} with descr and extra args
-   * HL=link , existent , opens existing wiki file
  # {{wiki0:EgPageTwo}}, {{wiki0:EgPageTwo}{Page Two}} with descr, {{wiki0:EgPageTwo}{Page Two}{arg1}{arg2}} with descr and extra args
    * HL=link , existent , opens existing wiki file
  # {{wiki1:EgPageTwo}}, {{wiki1:EgPageTwo}{Page Two}} with descr, {{wiki1:EgPageTwo}{Page Two}{arg1}{arg2}} with descr and extra args
    * HL=link , existent , opens existing wiki file, or complains that numbered wiki does not exist
- # {{wiki:EgPageThree}}, {{wiki:EgPageThree}{Page Three}} with descr, {{wiki:EgPageThree}{Page Three}{arg1}{arg2}} with descr and extra args
-   * HL=missing-link , non-existent , opens existing wiki file
  # {{wiki0:EgPageThree}}, {{wiki0:EgPageThree}{Page Three}} with descr, {{wiki0:EgPageThree}{Page Three}{arg1}{arg2}} with descr and extra args
    * HL=missing-link , non-existent , opens existing wiki file
  # {{wiki1:EgPageThree}}, {{wiki1:EgPageThree}{Page Three}} with descr, {{wiki1:EgPageThree}{Page Three}{arg1}{arg2}} with descr and extra args
@@ -209,15 +197,17 @@ HL always on for non-wiki schemes
  # {{images/281px-Puffer_Fish_DSC01257.JPG}{281px-Puffer_Fish}{style="width:150px; height: 120px;"}} with descr & style
    * HL=missing-link , non-existent WIKI file , opens as NEW WIKI file in vim
 
-== wiki: U+T ==
+== wiki#: U+T ==
 
-"wiki:" does not really make sense for an image
+"wiki#:" does not really make sense for an image
 
- # {{wiki:images/281px-Puffer_Fish_DSC01257.JPG}}, {{wiki:images/281px-Puffer_Fish_DSC01257.JPG}{281px-Puffer_Fish}} with descr
+ # {{wiki0:images/281px-Puffer_Fish_DSC01257.JPG}}
    * HL=missing-link , non-existent WIKI file , opens as NEW WIKI file WITH EXTENSION in vim
- # {{wiki:images/281px-Puffer_Fish_DSC01257.JPG}{}{style="width:150px; height: 120px;"}} with style
+ # {{wiki0:images/281px-Puffer_Fish_DSC01257.JPG}{281px-Puffer_Fish}} with descr
    * HL=missing-link , non-existent WIKI file , opens as NEW WIKI file WITH EXTENSION in vim
- # {{wiki:images/281px-Puffer_Fish_DSC01257.JPG}{281px-Puffer_Fish}{style="width:150px; height: 120px;"}} with descr & style
+ # {{wiki0:images/281px-Puffer_Fish_DSC01257.JPG}{}{style="width:150px; height: 120px;"}} with style
+   * HL=missing-link , non-existent WIKI file , opens as NEW WIKI file WITH EXTENSION in vim
+ # {{wiki0:images/281px-Puffer_Fish_DSC01257.JPG}{281px-Puffer_Fish}{style="width:150px; height: 120px;"}} with descr & style
    * HL=missing-link , non-existent WIKI file , opens as NEW WIKI file WITH EXTENSION in vim
 
 
