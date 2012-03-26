@@ -56,7 +56,7 @@ prefixes of a URL that end with a colon `:`
 
 In addition to standard web schemes (e.g. `http:`, `https:`, `ftp:`, etc.) the
 following special schemes are supported:
- # `wiki:` URLs to wiki pages specified without '.wiki' extension relative to the
+ # `wiki#:` URLs to wiki pages specified without '.wiki' extension relative to the
    current page
  # `diary:` URLs to diary pages specified without '.wiki' extension
  # `local:` URLs to local resources specified with extension relative to the
@@ -65,7 +65,7 @@ following special schemes are supported:
    relative to the root of the #-identified wiki
  # `file:` URLs to local resources specified with extension via absolute paths
  
-Schemeless URLs are equivalent to wiki:URLs except when converted to Html.  For
+Schemeless URLs are equivalent to wiki#:URLs except when converted to Html.  For
 Html, schemeless links translate to plain relative path links (nearly verbatim
 "relpath/wikifile.html"), while `wiki#:`, `local#:`, and `diary#:` prepend
 absolute paths e.g. file:///abs_path_to_htmlJ/relpath/wikiname.html
@@ -313,7 +313,7 @@ Note *8*: Only works if vimwiki-option `incl_separator == '|'`
 
 === d) {{-Wiki-Include Links To Local URLs ===
 
- # Schemeless URLs, or those with the "wiki:" scheme, appends an `.html`
+ # Schemeless URLs, or those with the "wiki#:" scheme, appends an `.html`
    extension
    * In other words, don't try this: `{{../images/vimwiki_logo.png}}` (*4*)
  # URLs with the `local:` scheme specify resources with paths relative current
