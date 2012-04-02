@@ -1680,31 +1680,6 @@ Default: 'Vimwiki'
 
 
 ------------------------------------------------------------------------------
-*g:vimwiki_stripsym*
-
-Change strip symbol -- in Windows you cannot use /*?<>:" in filenames, so
-vimwiki replaces them with a neutral symbol (_ is default): >
-    let g:vimwiki_stripsym = '_'
-
-You can change it to a <space> for example: >
-    let g:vimwiki_stripsym = ' '
-
-
-------------------------------------------------------------------------------
-*g:vimwiki_badsyms*
-
-If you do not like spaces in filenames (as some vimwiki users do), you can set
-up bad symbols to include spaces, so that they are also converted:
-|g:vimwiki_stripsym|: >
-    let g:vimwiki_badsyms = ' '
-    
-Now files for all [[links with spaces]] would be created like
-'links_with_spaces'.
-
-This option is a complement one to |g:vimwiki_stripsym|.
-
-
-------------------------------------------------------------------------------
 *g:vimwiki_listsyms*
 
 String of 5 symbols for list items with checkboxes.
@@ -2094,6 +2069,7 @@ Vim plugins: http://www.vim.org/scripts/script.php?script_id=2226
 14. Changelog                                              *vimwiki-changelog*
 
 1.3 dev~
+    * Options g:vimwiki_badsyms and g:vimwiki_stripsym are removed.
     * CameCased links are off by default! Check |g:vimwiki_camel_case| to turn
       it on.
     * Highlighting nonexisted links are off by default! Check
