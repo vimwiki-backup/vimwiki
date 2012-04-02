@@ -1329,19 +1329,6 @@ function! s:normalize_link_syntax_n() " {{{
     return
   endif
 
-  " try Weblink
-  let lnk = s:matchstr_at_cursor(g:vimwiki_rxWeblink)
-  if !empty(lnk)
-    let sub = s:normalize_link(lnk,
-          \ g:vimwiki_rxWeblinkMatchUrl, g:vimwiki_rxWeblinkMatchDescr,
-          \ g:vimwiki_web_template)
-    call s:replacestr_at_cursor(g:vimwiki_rxWeblink, sub)
-    if g:vimwiki_debug > 1
-      echomsg "WebLink: ".lnk." Sub: ".sub
-    endif
-    return
-  endif
-  
   " try Image link
   let lnk = s:matchstr_at_cursor(g:vimwiki_rxImagelink)
   if !empty(lnk)
@@ -1382,10 +1369,7 @@ function! s:normalize_link_syntax_v() " {{{
 
   let wiki_link_at_cursor = s:matchstr_at_cursor(g:vimwiki_rxWikiLink)
   let wiki_incl_at_cursor = s:matchstr_at_cursor(g:vimwiki_rxWikiIncl)
-  let web_link_at_cursor = s:matchstr_at_cursor(g:vimwiki_rxWeblink1)
   let image_link_at_cursor = s:matchstr_at_cursor(g:vimwiki_rxImagelink)
-  " let url_at_cursor = s:matchstr_at_cursor(g:vimwiki_rxWeblinkUrl)
-  let url_at_cursor = s:matchstr_at_cursor(g:vimwiki_rxWeblink0)
   let word_at_cursor = s:matchstr_at_cursor(g:vimwiki_rxWikiLinkUrl)
 
   try
@@ -1405,6 +1389,7 @@ function! s:normalize_link_syntax_v() " {{{
       endif
     endif
     let done = empty(wiki_link_at_cursor) ? done : 1
+
     " try WikiIncl - substituting link_at_cursor, not buffer @"
     if !done && visual_selection =~ g:vimwiki_rxWikiLink
       " call setreg('"', v_prefix. s:normalize_link(wiki_link_at_cursor,
@@ -1415,16 +1400,7 @@ function! s:normalize_link_syntax_v() " {{{
       endif
     endif
     let done = empty(wiki_incl_at_cursor) ? done : 1
-    " try Weblink - substituting link_at_cursor, not buffer @"
-    if !done && visual_selection =~ g:vimwiki_rxWeblink1
-      call setreg('"', v_prefix. s:normalize_link(web_link_at_cursor, 
-            \ g:vimwiki_rxWeblinkMatchUrl1, g:vimwiki_rxWeblinkMatchDescr1, 
-            \ g:vimwiki_web_template). v_suffix, 'v')
-      if g:vimwiki_debug > 1
-        echomsg 'Weblink: '.visual_selection.' Sub: '.@"
-      endif
-    endif
-    let done = empty(web_link_at_cursor) ? done : 1
+
     " try Imagelink - substituting link_at_cursor, not buffer @"
     if !done && visual_selection =~ g:vimwiki_rxImagelink
       call setreg('"', v_prefix. s:normalize_imagelink(image_link_at_cursor,
@@ -1435,17 +1411,7 @@ function! s:normalize_link_syntax_v() " {{{
       endif
     endif
     let done = empty(image_link_at_cursor) ? done : 1
-    " try Url - substituting link_at_cursor, not buffer @"
-    " if !done && visual_selection =~ g:vimwiki_rxWeblinkUrl
-    if !done && visual_selection =~ g:vimwiki_rxWeblink0
-      call setreg('"', v_prefix. s:normalize_link(url_at_cursor, 
-            \ g:vimwiki_rxWeblinkMatchUrl0, g:vimwiki_rxWeblinkMatchDescr0, 
-            \ g:vimwiki_web_template). v_suffix, 'v')
-      if g:vimwiki_debug > 1
-        echomsg 'Raw Url: '.visual_selection.' Sub: '.@"
-      endif
-    endif
-    let done = empty(url_at_cursor) ? done : 1
+
     " try WikiLinkUrl (any characters except separators)
     if !done && visual_selection =~ g:vimwiki_rxWikiLinkUrl
       call setreg('"', v_prefix. s:normalize_link(@", 
