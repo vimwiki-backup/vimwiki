@@ -8,9 +8,6 @@ if exists("g:loaded_vimwiki_auto") || &cp
 endif
 let g:loaded_vimwiki_auto = 1
 
-"FIXME TODO everyone is forced into this?
-let s:badsymbols = '['.g:vimwiki_badsyms.g:vimwiki_stripsym.'<>|?*:"]'
-
 " MISC helper functions {{{
 
 function! vimwiki#base#reset_wiki_state(...) "{{{ initialize wiki options and
@@ -110,36 +107,12 @@ function! vimwiki#base#mkdir(path, ...) "{{{
 endfunction
 " }}}
 
-function! vimwiki#base#safe_link(link) "{{{
-  " handling Windows absolute paths
-  if a:link =~ '^[[:alpha:]]:[/\\].*'
-    let link_start = a:link[0 : 2]
-    let link = a:link[3 : ]
-  else
-    let link_start = ''
-    let link = a:link
-  endif
-  let link = substitute(link, s:badsymbols, g:vimwiki_stripsym, 'g')
-  return link_start.link
-endfunction
-"}}}
-
-function! vimwiki#base#unsafe_link(string) "{{{
-  if len(g:vimwiki_stripsym) > 0
-    return substitute(a:string, g:vimwiki_stripsym, s:badsymbols, 'g')
-  else
-    return a:string
-  endif
-endfunction
-"}}}
-
 function! vimwiki#base#file_pattern(files) "{{{ get search regex from glob() string
   " FIXME needless complications ensue just to support silly "filenames" which
   " some filesystems may not handle well; also nonstandard paths
   " Change / to [/\\] to allow "Windows paths" 
   let os_p2 = '[/\\\\]'   "in the end, only [/\\] will survive in regexp
   let pattern = vimwiki#base#branched_pattern(a:files,"\n")
-  let pattern = vimwiki#base#unsafe_link(pattern)    "XXX  ???
   let pattern = substitute(pattern, '/', os_p2, "g")   "XXX  ???
   let pattern = escape(pattern, '~&$.*')       "special chars for search
   return pattern
@@ -205,7 +178,6 @@ function! vimwiki#base#resolve_scheme(lnk, as_html) " {{{
   let html_path = 0
   let diary_rel_path = 0
   let wiki_subdirectory = 0
-  let make_link_safe = 0
   let wiki_extension = 0
   let wiki_directory = 0
   if scheme =~ 'wiki*'
@@ -213,7 +185,6 @@ function! vimwiki#base#resolve_scheme(lnk, as_html) " {{{
     let add_path = 1
     let html_path = 1
     let wiki_subdirectory = 1
-    let make_link_safe = 1
     let wiki_extension = 1
     let wiki_directory = 1
   elseif scheme =~ 'diary*'
@@ -268,9 +239,6 @@ function! vimwiki#base#resolve_scheme(lnk, as_html) " {{{
   if wiki_subdirectory && idx == g:vimwiki_current_idx
     let subdir = g:vimwiki_current_subdir
   endif
-
-  " special chars
-  let lnk = (make_link_safe ? vimwiki#base#safe_link(lnk) : lnk)
 
   " extension
   if wiki_extension
@@ -481,11 +449,12 @@ function! s:cursor(lnum, cnum) "{{{
 endfunction "}}}
 
 function! s:filename(link) "{{{
-  let result = vimwiki#base#safe_link(a:link)
+  " TODO: make it g:vimwiki_rxSep aware
+  let result = a:link
   if a:link =~ '|'
-    let result = vimwiki#base#safe_link(split(a:link, '|')[0])
+    let result = split(a:link, '|')[0]
   elseif a:link =~ ']['
-    let result = vimwiki#base#safe_link(split(a:link, '][')[0])
+    let result = split(a:link, '][')[0]
   endif
   return result
 endfunction
@@ -579,7 +548,7 @@ function! s:strip_word(word) "{{{
       let w = split(w, "][")[0]
     endif
 
-    let result = vimwiki#base#safe_link(w)
+    let result = w
   endif
   return result
 endfunction
@@ -645,7 +614,7 @@ function! s:update_wiki_links_dir(dir, old_fname, new_fname) " {{{
   endif
 
   if !s:is_wiki_word(old_fname)
-    let old_fname_r = '\[\[\zs'.vimwiki#base#unsafe_link(old_fname).
+    let old_fname_r = '\[\[\zs'.old_fname.
           \ '\ze\%(|.*\)\?\%(\]\[.*\)\?\]\]'
   else
     let old_fname_r = '!\@<!\<'.old_fname.'\>'
