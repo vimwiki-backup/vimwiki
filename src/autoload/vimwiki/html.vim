@@ -209,12 +209,6 @@ function! s:save_vimwiki_buffer() "{{{
   endif
 endfunction "}}}
 
-function! s:trim(string) "{{{
-  let res = substitute(a:string, '^\s\+', '', '')
-  let res = substitute(res, '\s\+$', '', '')
-  return res
-endfunction "}}}
-
 function! s:get_html_toc(toc_list) "{{{
   " toc_list is list of [level, header_text, header_id]
   " ex: [[1, "Header", "toc1"], [2, "Header2", "toc2"], ...]
@@ -1054,7 +1048,7 @@ function! s:process_tag_h(line, id) "{{{
       let h_part .= '>'
     endif
 
-    let h_text = s:trim(matchstr(line, g:vimwiki_rxHeader))
+    let h_text = vimwiki#u#trim(matchstr(line, g:vimwiki_rxHeader))
 
     if g:vimwiki_html_header_numbering
       let num = matchstr(h_number, 
