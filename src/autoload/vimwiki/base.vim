@@ -442,12 +442,6 @@ function! vimwiki#base#get_links(pat) "{{{ return string-list for files
   return globlinks
 endfunction "}}}
 
-" Builtin cursor doesn't work right with unicode characters.
-function! s:cursor(lnum, cnum) "{{{
-    exe a:lnum
-    exe 'normal! 0'.a:cnum.'|'
-endfunction "}}}
-
 function! s:filename(link) "{{{
   " TODO: make it g:vimwiki_rxSep aware
   let result = a:link
@@ -1081,7 +1075,7 @@ function! vimwiki#base#TO_table_col(inner, visual) "{{{
 
     if firsttime
       " place cursor to the top row of the table
-      call s:cursor(t_rows[0][0], virtcol('.'))
+      call vimwiki#u#cursor(t_rows[0][0], virtcol('.'))
       " do not accept the match at cursor position if cursor is next to column
       " separator of the table separator (^ is a cursor):
       " |-----^-+-------|
@@ -1126,7 +1120,7 @@ function! vimwiki#base#TO_table_col(inner, visual) "{{{
       normal! h
     endif
     " expand selection to the bottom line of the table
-    call s:cursor(t_rows[-1][0], virtcol('.'))
+    call vimwiki#u#cursor(t_rows[-1][0], virtcol('.'))
     let sel_end = getpos('.')
 
     call setpos('.', sel_start)
@@ -1135,7 +1129,7 @@ function! vimwiki#base#TO_table_col(inner, visual) "{{{
 
   else
     " place cursor to the top row of the table
-    call s:cursor(t_rows[0][0], virtcol('.'))
+    call vimwiki#u#cursor(t_rows[0][0], virtcol('.'))
     " do not accept the match at cursor position if cursor is next to column
     " separator of the table separator (^ is a cursor):
     " |-----^-+-------|
@@ -1174,7 +1168,7 @@ function! vimwiki#base#TO_table_col(inner, visual) "{{{
       normal! h
     endif
     " expand selection to the bottom line of the table
-    call s:cursor(t_rows[-1][0], virtcol('.'))
+    call vimwiki#u#cursor(t_rows[-1][0], virtcol('.'))
   endif
 endfunction "}}}
 " }}}
