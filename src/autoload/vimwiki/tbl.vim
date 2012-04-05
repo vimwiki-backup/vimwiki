@@ -121,7 +121,7 @@ function! s:create_row_sep(cols) "{{{
   return row
 endfunction "}}}
 
-function! s:get_cells(line) "{{{
+function! vimwiki#tbl#get_cells(line) "{{{
   let result = []
   let cell = ''
   let quote = ''
@@ -175,7 +175,7 @@ function! s:get_cells(line) "{{{
 endfunction "}}}
 
 function! s:col_count(lnum) "{{{
-  return len(s:get_cells(getline(a:lnum)))
+  return len(vimwiki#tbl#get_cells(getline(a:lnum)))
 endfunction "}}}
 
 function! s:get_indent(lnum) "{{{
@@ -238,7 +238,7 @@ function! s:get_cell_max_lens(lnum) "{{{
     if s:is_separator(row)
       continue
     endif
-    let cells = s:get_cells(row)
+    let cells = vimwiki#tbl#get_cells(row)
     for idx in range(len(cells))
       let value = cells[idx]
       if has_key(max_lens, idx)
@@ -302,7 +302,7 @@ endfunction "}}}
 
 function! s:fmt_row(line, max_lens, col1, col2) "{{{
   let new_line = s:rxSep
-  let cells = s:get_cells(a:line)
+  let cells = vimwiki#tbl#get_cells(a:line)
   for idx in range(len(cells))
     if idx == a:col1
       let idx = a:col2
@@ -355,7 +355,7 @@ function! s:kbd_create_new_row(cols, goto_first) "{{{
     let cmd .= ":call search('\\(".s:rxSep."\\)\\zs', 'bc', line('.'))\<CR>"
   endif
   let cmd .= "a"
-  "
+
   return cmd
 endfunction "}}}
 
@@ -388,10 +388,18 @@ function! vimwiki#tbl#goto_next_col() "{{{
     let ch = matchstr(line, '.', idx)
     if state == 'NONE'
       if ch == '|'
-        let state = 'CELL'
+        let state = 'CELL_START'
       endif
+    elseif state == 'CELL_START'
+      if idx >= curcol
+        let state = 'FOUND'
+        break
+      endif
+      let state = 'CELL'
     elseif state == 'CELL'
-      if ch == '[' || ch == '{'
+      if ch == '|'
+        let state = 'CELL_START'
+      elseif ch == '[' || ch == '{'
         let state = 'BEFORE_QUOTE_START'
       endif
     elseif state == 'BEFORE_QUOTE_START'
@@ -409,18 +417,10 @@ function! vimwiki#tbl#goto_next_col() "{{{
         let state = 'CELL'
       endif
     endif
-
-    " echomsg state ch idx curcol
-
-    if state == 'CELL' && ch == '|' && (idx) >= curcol
-      " found next cell here...
-      break
-    endif
-                             
   endfor
 
-  if (idx) >= curcol
-    call vimwiki#u#cursor(line('.'), idx+2)
+  if state == 'FOUND'
+    call vimwiki#u#cursor(line('.'), idx+1)
   endif
 endfunction "}}}
 
@@ -510,21 +510,12 @@ function! vimwiki#tbl#kbd_cr() "{{{
   endif
 
   if s:is_separator(getline(lnum+1)) || !s:is_table(getline(lnum+1))
-    let cols = len(s:get_cells(getline(lnum)))
+    let cols = len(vimwiki#tbl#get_cells(getline(lnum)))
     return s:kbd_create_new_row(cols, 0)
   else
     return s:kbd_goto_next_row()
   endif
 endfunction "}}}
-
-"" call is_separator_tail(line) from kbd_[shift_]tab
-"" s:is_separator_tail(line)
-
-"  let line = getline(a:lnum)
-"  if s:is_separator(line)
-"    return 1
-"  endif
-
 
 function! vimwiki#tbl#kbd_tab() "{{{
   let lnum = line('.')
@@ -536,7 +527,7 @@ function! vimwiki#tbl#kbd_tab() "{{{
   let is_sep = s:is_separator_tail(getline(lnum))
   "echomsg "DEBUG kbd_tab> last=".last.", is_sep=".is_sep
   if (is_sep || last) && !s:is_table(getline(lnum+1))
-    let cols = len(s:get_cells(getline(lnum)))
+    let cols = len(vimwiki#tbl#get_cells(getline(lnum)))
     return s:kbd_create_new_row(cols, 1)
   endif
   return s:kbd_goto_next_col(is_sep || last)

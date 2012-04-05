@@ -1124,7 +1124,8 @@ function! s:process_tag_table(line, table) "{{{
     call extend(table, s:table_add_row(a:table, a:line))
 
     let processed = 1
-    let cells = split(a:line, vimwiki#tbl#cell_splitter(), 1)[1: -2]
+    " let cells = split(a:line, vimwiki#tbl#cell_splitter(), 1)[1: -2]
+    let cells = vimwiki#tbl#get_cells(a:line)
     call map(cells, 's:table_empty_cell(v:val)')
     call extend(table[-1], cells)
   else
