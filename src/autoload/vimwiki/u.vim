@@ -17,7 +17,7 @@ endfunction "}}}
 
 " Builtin cursor doesn't work right with unicode characters.
 function! vimwiki#u#cursor(lnum, cnum) "{{{
-    exe a:lnum
-    exe 'normal! 0'.a:cnum.'|'
+  exe a:lnum
+  exe 'normal! 0'.a:cnum.'|'
 endfunction "}}}
 
