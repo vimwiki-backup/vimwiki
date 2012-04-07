@@ -287,7 +287,7 @@ NORMAL MODE                                           *vimwiki-local-mappings*
                         *vimwiki_+*
 +                       Normalize link syntax: E.g. Add placeholder text to
                         Wiki- or Weblinks that are missing descriptions.
-                        Convert raw URLs into Web Links.  Convert words into
+                        Convert raw URLs into Wikilinks.  Convert words into
                         Wikilinks.  Can be activated in normal mode with the
                         cursor over a word or link.
 
@@ -550,51 +550,8 @@ Wikilinks~
 Link with spaces in it: >
   [[This is a link]]
 or: >
-  [[This is a link source][Description of the link]]
+  [[This is a link source|Description of the link]]
 
-The separator is customizable, using |g:vimwiki_link_separator| in your chosen
-syntax file; the prefix / suffix pair "[[", "]]" is not.
-
-
-Templated Weblinks~
-
-For backwards compatibility with the default syntax of Vimwiki V1.2, the
-web_template is set accordingly.
-
-Link with description: >
-  [http://habamax.ru/blog habamax home page]
-  [mailto:habamax@gmail.com Drop a line to Maxim Kim]
-
-To customize, see |g:vimwiki_web_template| in your chosen syntax file.
-
-Templated Imagelinks~
-
-For image links, backwards compatibility with Vimwiki V1.2 is harder to
-maintain.  Instead, the default syntax replaces "[[" and "]]" delimiters with
-"{" and "}".
-
-Image: >
-  {http://helloworld.com/blabla.jpg||}
-
-Image with alternate text: >
-  {http://helloworld.com/blabla.jpg|cool stuff|}
-
-Image with alternate text and style: >
-  {http://helloworld.com/blabla.jpg|cool stuff|width:150px; height: 120px;}
-
-Image with style, but without alternate text: >
-  {http://helloworld.com/blabla.jpg||width:150px; height: 120px;}
-
-Note: For templated imagelinks, the separators must be present even if the
-alternate text or style is empty.
-
-Note: For templated imagelinks, the third argument currently only accepts
-style parameters, unlink {{-links.
-
-To customize, see |g:vimwiki_image_template| in your chosen syntax file.
-
-A newer, alternative syntax for adding images to Html is to use wiki-include 
-links.  See |vimwiki-syntax-transclude|.
 
 Raw URLs~
 
@@ -952,9 +909,6 @@ Transclusion, or Wiki-Include, Links~
 A wikilink that uses "{{" and "}}" delims signifies content that is to be
 included into the Html output, rather than referenced via hyperlink.  
 
-The separator is customizable using |g:vimwiki_incl_separator| in your chosen
-syntax file; the prefix / suffix pair "{{", "}}" is not.
-
 The primary purpose for wiki-include links is to include images.  Image URLs
 may use any of the supported schemes, may be absolute or relative, and need
 not end with an extension.
@@ -965,19 +919,19 @@ or from a universal URL: >
   {{http://vimwiki.googlecode.com/hg/images/vimwiki_logo.png}}
 
 {{-Wiki-include link to an image with alternate text: >
-  {{http://vimwiki.googlecode.com/hg/images/vimwiki_logo.png}{Vimwiki}}
+  {{http://vimwiki.googlecode.com/hg/images/vimwiki_logo.png|Vimwiki}}
 in HTML: >
   <img src="http://vimwiki.googlecode.com/hg/images/vimwiki_logo.png" 
   alt="Vimwiki"/>
 
 {{-Wiki-include link to an image with alternate text and some style: >
-  {{http://.../vimwiki_logo.png}{cool stuff}{style="width:150px; height: 120px;"}}
+  {{http://.../vimwiki_logo.png|cool stuff|style="width:150px; height: 120px;"}}
 in HTML: >
   <img src="http://vimwiki.googlecode.com/hg/images/vimwiki_logo.png" 
   alt="cool stuff" style="width:150px; height:120px"/>
 
 {{-Wiki-include link to an image _without_ alternate text and css class: >
-  {{http://.../vimwiki_logo.png}{}{class="center flow blabla"}}
+  {{http://.../vimwiki_logo.png||class="center flow blabla"}}
 in HTML: >
   <img src="http://vimwiki.googlecode.com/hg/images/vimwiki_logo.png" 
   alt="" class="center flow blabla"/>
@@ -1785,7 +1739,7 @@ A trial feature allows you to supply your own handler for wiki-include links.
 The handler should return the empty string when it does not recognize or
 cannot otherwise convert the link.  A customized handler might look like this: >
 
-  " Convert {{URL}{#}{ID}} -> URL#ID
+  " Convert {{URL|#|ID}} -> URL#ID
   function! VimwikiWikiIncludeHandler(value) "{{{
     let str = a:value
 
@@ -2115,23 +2069,13 @@ Vim plugins: http://www.vim.org/scripts/script.php?script_id=2226
     * Issue 283: Directory indexes broken.
 
 
-    * REMOVED: [[-Wikilinks with '|'-separator.  However, the separator can be
-      configured.  See customization options |g:vimwiki_link_separator| and
-      |g:vimwiki_incl_separator| in your chosen syntax file.
-    * REMOVED: Markdown and Textile links.  However, the format of weblinks
-      can be configured.  See variables |g:vimwiki_web_template| and
-      |g:vimwiki_image_template| in your chosen syntax file.
+    * REMOVED: Markdown and Textile links.
     * REMOVED: Plain image links have been removed
       e.g. http://someaddr.com/picture.jpg
     * REMOVED: [[-Image links, that were identified by image extension in
       Vimwiki V1.2.  These syntaxes may be upgraded to V1.3 by replacing
       [[-delims with either {-delims or {{-delims
 
-    * NEW: Templated/Customizable Weblinks.  See |vimwiki-syntax-links|
-      and |g:vimwiki_web_template|.  Default syntax web_template = [URL DESCR]
-    * NEW: Templated/Customizable Imagelinks.  See |vimwiki-syntax-links|
-      and |g:vimwiki_image_template|.  
-      Default syntax image_template = {URL\|DESCR\|STYLE} (w/o backslashes)
     * NEW: {{-Wiki-include links "transclude" URL contents into Html, rather
       than reference contents via hyperlink.  See |vimwiki-syntax-transclude|.
     * NEW: Default VimwikiWikiIncludeHandler transcludes all URLs as images,

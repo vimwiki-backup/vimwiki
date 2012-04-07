@@ -4,12 +4,12 @@
  # [[PageTwo]] 
  # [[PageThree]] 
 
-= Wikilinks With ][-Separator =
+= Wikilinks With |-Separator =
 
-These syntaxes only work when 'link_separator' == ']['
+These syntaxes only work when 'link_separator' == '|'
 
- # [[PageTwo][Page Two]]
- # [[PageThree][Page Three]] 
+ # [[PageTwo|Page Two]]
+ # [[PageThree|Page Three]] 
 
 = Wikilinks To Local Resources =
 

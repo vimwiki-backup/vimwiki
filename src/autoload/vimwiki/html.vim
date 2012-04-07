@@ -363,7 +363,7 @@ endfunction "}}}
 
 
 "{{{ v1.3 links
-"   match n-th ARG within {{URL}[{ARG1}{ARG2}{...}]} " {{{
+"   match n-th ARG within {{URL[|ARG1|ARG2|...]}} " {{{
 " *c,d,e),...
 "function! VimwikiWikiInclMatchArg(nn_index)
 function! vimwiki#html#incl_match_arg(nn_index)
@@ -394,18 +394,8 @@ function! vimwiki#html#linkify_image(src, descr, verbatim_str) "{{{
   return '<img'.src_str.descr_str.verbatim_str.' />'
 endfunction "}}}
 
-function! s:tag_imagelink(value) "{{{
-  let str = a:value
-  let url = matchstr(str, g:vimwiki_rxImagelinkMatchUrl)
-  let descr = matchstr(str, g:vimwiki_rxImagelinkMatchDescr)
-  let style = matchstr(str, g:vimwiki_rxImagelinkMatchStyle)
-  let verbatim_str = (style != '' ? 'style="'.style.'"' : '')
-  let line = vimwiki#html#linkify_image(url, descr, verbatim_str)
-  return line
-endfunction "}}}
-
 function! s:tag_weblink(value) "{{{
-  "  Weblink Template -> <a href="url">descr</a>
+  " Weblink Template -> <a href="url">descr</a>
   let str = a:value
   let url = matchstr(str, g:vimwiki_rxWeblinkMatchUrl)
   let descr = matchstr(str, g:vimwiki_rxWeblinkMatchDescr)
@@ -414,10 +404,10 @@ function! s:tag_weblink(value) "{{{
 endfunction "}}}
 
 function! s:tag_wikiincl(value) "{{{
-  " {{imgurl}{arg1}{arg2}}    -> ???
+  " {{imgurl|arg1|arg2}}    -> ???
   " {{imgurl}}                -> <img src="imgurl"/>
-  " {{imgurl}{descr}{style="A"}} -> <img src="imgurl" alt="descr" style="A" />
-  " {{imgurl}{descr}{class="B"}} -> <img src="imgurl" alt="descr" class="B" />
+  " {{imgurl|descr|style="A"}} -> <img src="imgurl" alt="descr" style="A" />
+  " {{imgurl|descr|class="B"}} -> <img src="imgurl" alt="descr" class="B" />
   let str = a:value
   if match(str, g:vimwiki_wikiword_escape_prefix) == 0
     return a:value[len(g:vimwiki_wikiword_escape_prefix):]
@@ -446,10 +436,10 @@ endfunction "}}}
 
 function! s:tag_wikilink(value) "{{{
   " [[url]]                -> <a href="url.html">url</a>
-  " [[url][descr]]         -> <a href="url.html">descr</a>
-  " [[url][{{...}}]]        -> <a href="url.html"> ... </a>
-  " [[fileurl.ext][descr]] -> <a href="fileurl.ext">descr</a>
-  " [[dirurl/][descr]]     -> <a href="dirurl/index.html">descr</a>
+  " [[url|descr]]         -> <a href="url.html">descr</a>
+  " [[url|{{...}}]]        -> <a href="url.html"> ... </a>
+  " [[fileurl.ext|descr]] -> <a href="fileurl.ext">descr</a>
+  " [[dirurl/|descr]]     -> <a href="dirurl/index.html">descr</a>
   let str = a:value
   if match(str, g:vimwiki_wikiword_escape_prefix) == 0
     return a:value[len(g:vimwiki_wikiword_escape_prefix):]
@@ -587,7 +577,6 @@ function! s:process_tags_links(line) " {{{
   let line = a:line
   let line = s:make_tag(line, g:vimwiki_rxWikiLink, 's:tag_wikilink')
   let line = s:make_tag(line, g:vimwiki_rxWikiIncl, 's:tag_wikiincl')
-  let line = s:make_tag(line, g:vimwiki_rxImagelink, 's:tag_imagelink')
   let line = s:make_tag(line, g:vimwiki_rxWeblink, 's:tag_weblink')
   return line
 endfunction " }}}
