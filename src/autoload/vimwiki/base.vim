@@ -604,8 +604,6 @@ function! s:update_wiki_links_dir(dir, old_fname, new_fname) " {{{
 
   " try WikiLink
   " try WikiIncl
-  " try Weblink
-  " try Imagelink
   if !s:is_wiki_word(new_fname) && s:is_wiki_word(old_fname)
     let new_fname_r = '[['.new_fname.']]'
   endif
@@ -748,12 +746,12 @@ endfunction "}}}
 
 " WIKI link following functions {{{
 function! vimwiki#base#find_next_link() "{{{
-  call s:search_word(g:vimwiki_rxWikiLink.'\|'.g:vimwiki_rxWikiIncl.'\|'.g:vimwiki_rxWeblink.'\|'.g:vimwiki_rxImagelink, '')
+  call s:search_word(g:vimwiki_rxWikiLink.'\|'.g:vimwiki_rxWikiIncl.'\|'.g:vimwiki_rxWeblink, '')
 endfunction
 " }}}
 
 function! vimwiki#base#find_prev_link() "{{{
-  call s:search_word(g:vimwiki_rxWikiLink.'\|'.g:vimwiki_rxWikiIncl.'\|'.g:vimwiki_rxWeblink.'\|'.g:vimwiki_rxImagelink, 'b')
+  call s:search_word(g:vimwiki_rxWikiLink.'\|'.g:vimwiki_rxWikiIncl.'\|'.g:vimwiki_rxWeblink, 'b')
 endfunction
 " }}}
 
@@ -785,13 +783,6 @@ function! vimwiki#base#follow_link(split, ...) "{{{
   " try Weblink
   let lnk = matchstr(s:matchstr_at_cursor(g:vimwiki_rxWeblink),
         \ g:vimwiki_rxWeblinkMatchUrl)
-  if lnk != ""
-    call VimwikiWeblinkHandler(lnk)
-    return
-  endif
-  " try Imagelink
-  let lnk = matchstr(s:matchstr_at_cursor(g:vimwiki_rxImagelink),
-        \ g:vimwiki_rxImagelinkMatchUrl)
   if lnk != ""
     call VimwikiWeblinkHandler(lnk)
     return
@@ -1293,13 +1284,6 @@ function! s:normalize_link(str, rxUrl, rxDesc, template) " {{{
   return lnk
 endfunction " }}}
 
-function! s:normalize_imagelink(str, rxUrl, rxDesc, rxStyle, template) "{{{
-  let lnk = s:normalize_link(a:str, a:rxUrl, a:rxDesc, a:template)
-  let style = matchstr(str, a:rxStyle)
-  let lnk = substitute(lnk, '__LinkStyle__', style, '')
-  return lnk
-endfunction " }}}
-
 function! s:normalize_link_syntax_n() " {{{
   let lnum = line('.')
 
@@ -1326,19 +1310,6 @@ function! s:normalize_link_syntax_n() " {{{
     return
   endif
 
-  " try Image link
-  let lnk = s:matchstr_at_cursor(g:vimwiki_rxImagelink)
-  if !empty(lnk)
-    let sub = s:normalize_imagelink(lnk,
-          \ g:vimwiki_rxImagelinkMatchUrl, g:vimwiki_rxImagelinkMatchDescr,
-          \ g:vimwiki_rxImagelinkMatchStyle, g:vimwiki_image_template)
-    call s:replacestr_at_cursor(g:vimwiki_rxImagelink, sub)
-    if g:vimwiki_debug > 1
-      echomsg "ImageLink: ".lnk." Sub: ".sub
-    endif
-    return
-  endif
-  
   " try Word (any characters except separators)
   " rxWord is less permissive than rxWikiLinkUrl which is used in
   " normalize_link_syntax_v
@@ -1366,7 +1337,6 @@ function! s:normalize_link_syntax_v() " {{{
 
   let wiki_link_at_cursor = s:matchstr_at_cursor(g:vimwiki_rxWikiLink)
   let wiki_incl_at_cursor = s:matchstr_at_cursor(g:vimwiki_rxWikiIncl)
-  let image_link_at_cursor = s:matchstr_at_cursor(g:vimwiki_rxImagelink)
   let word_at_cursor = s:matchstr_at_cursor(g:vimwiki_rxWikiLinkUrl)
 
   try
@@ -1397,17 +1367,6 @@ function! s:normalize_link_syntax_v() " {{{
       endif
     endif
     let done = empty(wiki_incl_at_cursor) ? done : 1
-
-    " try Imagelink - substituting link_at_cursor, not buffer @"
-    if !done && visual_selection =~ g:vimwiki_rxImagelink
-      call setreg('"', v_prefix. s:normalize_imagelink(image_link_at_cursor,
-            \ g:vimwiki_rxImagelinkMatchUrl, g:vimwiki_rxImagelinkMatchDescr, 
-            \ g:vimwiki_rxImagelinkMatchStyle, g:vimwiki_image_template). v_suffix, 'v')
-      if g:vimwiki_debug > 1
-        echomsg 'Image: '.visual_selection.' Sub: '.@"
-      endif
-    endif
-    let done = empty(image_link_at_cursor) ? done : 1
 
     " try WikiLinkUrl (any characters except separators)
     if !done && visual_selection =~ g:vimwiki_rxWikiLinkUrl

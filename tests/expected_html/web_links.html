@@ -7,8 +7,6 @@
 <li><a href="#toc_0.1.2">Several on a line</a>
 <li><a href="#toc_0.1.3">Examples of URIs</a>
 </ul>
-<li><a href="#toc_0.2">Bracketed Weblinks</a>
-<li><a href="#toc_0.3">Markdown Weblinks</a>
 </ul>
 </ul>
 </div>
@@ -137,111 +135,6 @@ hjkl<a href="http://www.abc.com/koko#lili">http://www.abc.com/koko#lili</a>   ? 
 
 <li>
    <a href="ldap://[2001:db8::7]/c=GB?objectClass?one">ldap://[2001:db8::7]/c=GB?objectClass?one</a>      <em>Working!</em>
-
-</ol>
-
-
-<h2 id="toc_0.2">Bracketed Weblinks</h2>
-<p>
-<code>[URL DESCRIPTION]</code> or <code>[URL ]</code>?
-</p>
-<pre>
-# [http://en.wikipedia.org/wiki/Vim_(text_editor) Vim]
-# [http://en.wikipedia.org/wiki/Vim_(text_editor) (Vim)]
-# [http://en.wikipedia.org/wiki/Vim_(text_editor) http://what?]
-# [http://en.wikipedia.org/wiki/Vim_(text_editor)]
-# [http://en.wikipedia.org/wiki/Vim_(text_editor) ]
-# [http://en.wikipedia.org/wiki/Vim]
-# [http://en.wikipedia.org/wiki/Vim  ]
-# [http://en.wikipedia.org/wiki/Vim  ][doi:10.1000/182 This Document]
-# [http://en.wikipedia.org/wiki/Vim_(text_editor) http://what?] [http://en.wikipedia.org/wiki/Vim  ][doi:10.1000/182 This Document]
-# [doi:10.1000/182 This Document]
-# [telnet://192.0.2.16:80/  local server]
-# [git://github.com/gitster/git.git  Gitster]
-# [urn:oasis:names:specification:docbook:dtd:xml:4.1.2  abstract]
-# [ldap://[2001:db8::7]/c=GB?objectClass?one      _Fixed now!_]
-</pre>
-
-<ol>
-<li>
-<a href="http://en.wikipedia.org/wiki/Vim_(text_editor)">Vim</a>
-
-<li>
-<a href="http://en.wikipedia.org/wiki/Vim_(text_editor)">(Vim)</a>
-
-<li>
-<a href="http://en.wikipedia.org/wiki/Vim_(text_editor)">http://what?</a>
-
-<li>
-[http://en.wikipedia.org/wiki/Vim_(text_editor)] <span class="todo">TODO:</span> trailing-\s-reqmt (high priority)!
-
-<li>
-<a href="http://en.wikipedia.org/wiki/Vim_(text_editor)">http://en.wikipedia.org/wiki/Vim_(text_editor)</a>
-
-<li>
-[http://en.wikipedia.org/wiki/Vim] <span class="todo">TODO:</span> trailing-\s-reqmt (high priority)!
-
-<li>
-<a href="http://en.wikipedia.org/wiki/Vim">http://en.wikipedia.org/wiki/Vim</a>
-
-<li>
-<a href="http://en.wikipedia.org/wiki/Vim">http://en.wikipedia.org/wiki/Vim</a><a href="doi:10.1000/182">This Document</a>
-
-<li>
-<a href="http://en.wikipedia.org/wiki/Vim_(text_editor)">http://what?</a> <a href="http://en.wikipedia.org/wiki/Vim">http://en.wikipedia.org/wiki/Vim</a><a href="doi:10.1000/182">This Document</a>
-
-<li>
-<a href="doi:10.1000/182">This Document</a>
-
-<li>
-<a href="telnet://192.0.2.16:80/">local server</a>
-
-<li>
-<a href="git://github.com/gitster/git.git">Gitster</a>
-
-<li>
-<a href="urn:oasis:names:specification:docbook:dtd:xml:4.1.2">abstract</a>
-
-<li>
-<a href="ldap://[2001:db8::7]/c=GB?objectClass?one">_Fixed now!_</a>
-
-</ol>
-
-
-<h2 id="toc_0.3">Markdown Weblinks</h2>
-<p>
-<code>[DESCRIPTION](URL)</code>
-</p>
-<pre>
-# http://code.google.com/p/vimwiki/wiki/NormalizeLinkSyntax
-# [github.com](http://github.com)
-# [github.com](http://github.com)(what to do here?)
-# (and this link [github.com](http://github.com))
-# [and other links like [github.com](http://github.com)] what to do here?
-# [Vim (text_editor)](http://en.wikipedia.org/wiki/Vim_(text_editor))
-# (and this link [Vim (text_editor)](http://en.wikipedia.org/wiki/Vim_(text_editor)))
-</pre>
-<ol>
-<li>
-<a href="http://code.google.com/p/vimwiki/wiki/NormalizeLinkSyntax">http://code.google.com/p/vimwiki/wiki/NormalizeLinkSyntax</a>
-
-<li>
-[github.com](http://github.com)
-
-<li>
-[github.com](http://github.com)(what to do here?)
-
-<li>
-(and this link [github.com](http://github.com))
-
-<li>
-[and other links like [github.com](http://github.com)] what to do here?
-
-<li>
-[Vim (text_editor)](http://en.wikipedia.org/wiki/Vim_(text_editor))
-
-<li>
-(and this link [Vim (text_editor)](http://en.wikipedia.org/wiki/Vim_(text_editor)))
 
 </ol>
 
