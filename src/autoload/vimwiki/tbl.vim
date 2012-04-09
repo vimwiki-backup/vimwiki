@@ -128,9 +128,9 @@ function! vimwiki#tbl#get_cells(line) "{{{
   let state = 'NONE'
 
   " 'Simple' FSM
-  for idx in range(strwidth(a:line))
+  for idx in range(strlen(a:line))
     " The only way I know Vim can do Unicode...
-    let ch = matchstr(a:line, '.', idx)
+    let ch = a:line[idx]
     if state == 'NONE'
       if ch == '|'
         let state = 'CELL'
@@ -382,10 +382,10 @@ function! vimwiki#tbl#goto_next_col() "{{{
   let line = getline(line('.'))
   let state = 'NONE'
 
+  " TODO: doesn't work with unicode string!!!
   " 'Simple' FSM
-  for idx in range(strwidth(line))
-    " The only way I know Vim can do Unicode...
-    let ch = matchstr(line, '.', idx)
+  for idx in range(strlen(line))
+    let ch = line[idx]
     if state == 'NONE'
       if ch == '|'
         let state = 'CELL_START'
@@ -443,8 +443,8 @@ function! vimwiki#tbl#goto_prev_col() "{{{
   let secondmatch = 0
 
   " 'Simple' FSM
+  " TODO: doesn't work with unicode string!!!
   for idx in range(strwidth(line), 0, -1)
-    " The only way I know Vim can do Unicode...
     let ch = matchstr(line, '.', idx)
     if state == 'NONE'
       if ch == '|'
