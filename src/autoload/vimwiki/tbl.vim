@@ -377,51 +377,18 @@ endfunction "}}}
 
 " Used in s:kbd_goto_next_col
 function! vimwiki#tbl#goto_next_col() "{{{
-  "TODO: very similar to get_cells...
   let curcol = virtcol('.')
-  let line = getline(line('.'))
-  let state = 'NONE'
-
-  " TODO: doesn't work with unicode string!!!
-  " 'Simple' FSM
-  for idx in range(strlen(line))
-    let ch = line[idx]
-    if state == 'NONE'
-      if ch == '|'
-        let state = 'CELL_START'
-      endif
-    elseif state == 'CELL_START'
-      if idx >= curcol
-        let state = 'FOUND'
-        break
-      endif
-      let state = 'CELL'
-    elseif state == 'CELL'
-      if ch == '|'
-        let state = 'CELL_START'
-      elseif ch == '[' || ch == '{'
-        let state = 'BEFORE_QUOTE_START'
-      endif
-    elseif state == 'BEFORE_QUOTE_START'
-      if ch == '[' || ch == '{'
-        let state = 'QUOTE'
-      else
-        let state = 'CELL'
-      endif
-    elseif state == 'QUOTE'
-      if ch == ']' || ch == '}'
-        let state = 'BEFORE_QUOTE_END'
-      endif
-    elseif state == 'BEFORE_QUOTE_END'
-      if ch == ']' || ch == '}'
-        let state = 'CELL'
-      endif
+  let lnum = line('.')
+  let newcol = s:get_indent(lnum)
+  let max_lens = s:get_cell_max_lens(lnum)
+  for cell_len in values(max_lens)
+    if newcol >= curcol-1
+      break
     endif
+    let newcol += cell_len + 3 " +3 == 2 spaces + 1 separator |<space>...<space>
   endfor
-
-  if state == 'FOUND'
-    call vimwiki#u#cursor(line('.'), idx+1)
-  endif
+  let newcol += 2 " +2 == 1 separator + 1 space |<space
+  call vimwiki#u#cursor(lnum, newcol)
 endfunction "}}}
 
 function! s:kbd_goto_next_col(jumpdown) "{{{
@@ -436,54 +403,25 @@ endfunction "}}}
 
 " Used in s:kbd_goto_prev_col
 function! vimwiki#tbl#goto_prev_col() "{{{
-  "TODO: very similar to get_cells...
   let curcol = virtcol('.')
-  let line = getline(line('.'))
-  let state = 'NONE'
-  let secondmatch = 0
-
-  " 'Simple' FSM
-  " TODO: doesn't work with unicode string!!!
-  for idx in range(strwidth(line), 0, -1)
-    let ch = matchstr(line, '.', idx)
-    if state == 'NONE'
-      if ch == '|'
-        let state = 'CELL'
-      endif
-    elseif state == 'CELL'
-      if ch == ']' || ch == '}'
-        let state = 'BEFORE_QUOTE_START'
-      endif
-    elseif state == 'BEFORE_QUOTE_START'
-      if ch == ']' || ch == '}'
-        let state = 'QUOTE'
-      else
-        let state = 'CELL'
-      endif
-    elseif state == 'QUOTE'
-      if ch == '[' || ch == '{'
-        let state = 'BEFORE_QUOTE_END'
-      endif
-    elseif state == 'BEFORE_QUOTE_END'
-      if ch == '[' || ch == '{'
-        let state = 'CELL'
-      endif
+  let lnum = line('.')
+  let newcol = s:get_indent(lnum)
+  let max_lens = s:get_cell_max_lens(lnum)
+  let prev_cell_len = 0
+  echom string(max_lens) 
+  for cell_len in values(max_lens)
+    let delta = cell_len + 3 " +3 == 2 spaces + 1 separator |<space>...<space>
+    if newcol + delta > curcol-1
+      let newcol -= (prev_cell_len + 3) " +3 == 2 spaces + 1 separator |<space>...<space>
+      break
+    elseif newcol + delta == curcol-1
+      break
     endif
-
-    if state == 'CELL' && ch == '|' && idx <= curcol
-      if secondmatch
-        " found prev cell here with the second cell match...
-        break
-      else
-        let secondmatch = 1
-      endif
-    endif
-                             
+    let prev_cell_len = cell_len
+    let newcol += delta
   endfor
-
-  if idx <= curcol
-    call vimwiki#u#cursor(line('.'), idx+2)
-  endif
+  let newcol += 2 " +2 == 1 separator + 1 space |<space
+  call vimwiki#u#cursor(lnum, newcol)
 endfunction "}}}
 
 function! s:kbd_goto_prev_col(jumpup) "{{{
