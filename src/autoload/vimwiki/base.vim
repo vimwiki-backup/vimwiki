@@ -49,7 +49,7 @@ endfunction "}}}
 function! vimwiki#base#recall_wiki_state() "{{{ try loading wiki options
   "   previously saved to buffer state, return 0 if cache is incomplete
   " ['key', value] pairs
-  if !exists(g:vimwiki_current_keys)
+  if !exists('g:vimwiki_current_keys')
     return 0
   endif
   for kk in keys(g:vimwiki_current_keys)
