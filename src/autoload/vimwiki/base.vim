@@ -1288,15 +1288,15 @@ function! s:normalize_link(str, rxUrl, rxDesc, template) " {{{
   if descr == ""
     let descr = s:clean_url(url)
   endif
-  let lnk = substitute(template, '__LinkDescription__', descr, '')
-  let lnk = substitute(lnk, '__LinkUrl__', url, '')
+  let lnk = substitute(template, '__LinkDescription__', '\="'.descr.'"', '')
+  let lnk = substitute(lnk, '__LinkUrl__', '\="'.url.'"', '')
   return lnk
 endfunction " }}}
 
 function! s:normalize_imagelink(str, rxUrl, rxDesc, rxStyle, template) "{{{
   let lnk = s:normalize_link(a:str, a:rxUrl, a:rxDesc, a:template)
   let style = matchstr(str, a:rxStyle)
-  let lnk = substitute(lnk, '__LinkStyle__', style, '')
+  let lnk = substitute(lnk, '__LinkStyle__', '\="'.style.'"', '')
   return lnk
 endfunction " }}}
 
