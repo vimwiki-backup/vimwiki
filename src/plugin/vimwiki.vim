@@ -52,7 +52,7 @@ function! s:find_wiki(path) "{{{
   " an orphan page has been detected
 endfunction "}}}
 
-function! s:setup_buffer_leave()"{{{
+function! s:setup_buffer_leave() "{{{
   if &filetype == 'vimwiki'
     " cache global vars of current state XXX: SLOW!?
     call vimwiki#base#cache_wiki_state()
@@ -62,7 +62,7 @@ function! s:setup_buffer_leave()"{{{
   if g:vimwiki_menu != ""
     exe 'nmenu disable '.g:vimwiki_menu.'.Table'
   endif
-endfunction"}}}
+endfunction "}}}
 
 function! s:setup_filetype() "{{{
   let time0 = reltime()  " start the clock  "XXX
@@ -152,6 +152,13 @@ function! s:setup_buffer_enter() "{{{
   endif
   "let time2 = vimwiki#base#time(time0)  "XXX
   call VimwikiLog_extend('timing',['plugin:setup_buffer_enter:time1',time1])
+endfunction "}}}
+
+function! s:setup_buffer_reenter() "{{{
+  if !vimwiki#base#recall_wiki_state()
+    " Do not repeat work of s:setup_buffer_enter() and s:setup_filetype()
+    " Once should be enough ...
+  endif
 endfunction "}}}
 
 function! s:setup_cleared_syntax() "{{{ highlight groups that get cleared
@@ -384,6 +391,7 @@ augroup end
 augroup vimwiki
   autocmd!
   for ext in keys(extensions)
+    exe 'autocmd BufEnter *'.ext.' call s:setup_buffer_reenter()'
     exe 'autocmd BufWinEnter *'.ext.' call s:setup_buffer_enter()'
     exe 'autocmd BufLeave,BufHidden *'.ext.' call s:setup_buffer_leave()'
     exe 'autocmd BufNewFile,BufRead, *'.ext.' call s:setup_filetype()'
