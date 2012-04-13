@@ -133,31 +133,31 @@ let g:vimwiki_WikiLinkTemplate2 = g:vimwiki_rxWikiLinkPrefix . '__LinkUrl__'.
       \ g:vimwiki_rxWikiLinkSuffix
 "
 let magic_chars = '.*[]\^$'
-let exclude_chars = g:vimwiki_rxWikiLinkPrefix.g:vimwiki_rxWikiLinkSeparator.
-      \ g:vimwiki_rxWikiLinkSuffix
+" let exclude_chars = g:vimwiki_rxWikiLinkPrefix.g:vimwiki_rxWikiLinkSeparator.
+      " \ g:vimwiki_rxWikiLinkSuffix
+let exclude_chars = g:vimwiki_rxWikiLinkPrefix.g:vimwiki_rxWikiLinkSuffix
 let exclude_chars = s:get_unique_chars(exclude_chars)
 let valid_chars = '[^'.escape(exclude_chars, magic_chars).']'
 "
 let g:vimwiki_rxWikiLinkPrefix = escape(g:vimwiki_rxWikiLinkPrefix, magic_chars)
 let g:vimwiki_rxWikiLinkSuffix = escape(g:vimwiki_rxWikiLinkSuffix, magic_chars)
 let g:vimwiki_rxWikiLinkSeparator = escape(g:vimwiki_rxWikiLinkSeparator, magic_chars)
-let g:vimwiki_rxWikiLinkSeparatorOpt = '\%('.g:vimwiki_rxWikiLinkSeparator.'\)\?'
-let g:vimwiki_rxWikiLinkUrl = valid_chars.'\+'
+let g:vimwiki_rxWikiLinkUrl = valid_chars.'\{-}'
 let g:vimwiki_rxWikiLinkDescr = valid_chars.'*'
 "
-" 1. [[URL]], or [[URL][DESCRIPTION]]
-" 1a) match [[URL][DESCRIPTION]]
+" 1. [[URL]], or [[URL|DESCRIPTION]]
+" 1a) match [[URL|DESCRIPTION]]
 let g:vimwiki_rxWikiLink = g:vimwiki_rxWikiLinkPrefix.
-      \ g:vimwiki_rxWikiLinkUrl. g:vimwiki_rxWikiLinkSeparatorOpt.
-      \ g:vimwiki_rxWikiLinkDescr. g:vimwiki_rxWikiLinkSuffix
-" 1b) match URL within [[URL][DESCRIPTION]]
+      \ g:vimwiki_rxWikiLinkUrl.'\%('.g:vimwiki_rxWikiLinkSeparator.
+      \ g:vimwiki_rxWikiLinkDescr.'\)\?'.g:vimwiki_rxWikiLinkSuffix
+" 1b) match URL within [[URL|DESCRIPTION]]
 let g:vimwiki_rxWikiLinkMatchUrl = g:vimwiki_rxWikiLinkPrefix.
-      \ '\zs'. g:vimwiki_rxWikiLinkUrl. '\ze'. g:vimwiki_rxWikiLinkSeparatorOpt.
-      \ g:vimwiki_rxWikiLinkDescr. g:vimwiki_rxWikiLinkSuffix
-" 1c) match DESCRIPTION within [[URL][DESCRIPTION]]
+      \ '\zs'. g:vimwiki_rxWikiLinkUrl.'\ze\%('. g:vimwiki_rxWikiLinkSeparator.
+      \ g:vimwiki_rxWikiLinkDescr.'\)\?'.g:vimwiki_rxWikiLinkSuffix
+" 1c) match DESCRIPTION within [[URL|DESCRIPTION]]
 let g:vimwiki_rxWikiLinkMatchDescr = g:vimwiki_rxWikiLinkPrefix.
-      \ g:vimwiki_rxWikiLinkUrl. g:vimwiki_rxWikiLinkSeparatorOpt.
-      \ '\zs'. g:vimwiki_rxWikiLinkDescr. '\ze'. g:vimwiki_rxWikiLinkSuffix
+      \ g:vimwiki_rxWikiLinkUrl.g:vimwiki_rxWikiLinkSeparator.'\%('.
+      \ '\zs'. g:vimwiki_rxWikiLinkDescr. '\ze\)\?'. g:vimwiki_rxWikiLinkSuffix
 " *. wikilink or wikiword WARNING: g:vimwiki_camel_case may be deprecated
 if g:vimwiki_camel_case
   " *a) match ANY wikilink or wikiword
