@@ -1643,7 +1643,7 @@ E.g.: >
 
 The existence of a mapping from an extension to a syntax is sufficient to
 register the extension for the creation of a temporary wiki, when
-*g:vimwiki_global_ext* equals 1.
+g:vimwiki_global_ext equals 1.
 
 Default: {}
 
