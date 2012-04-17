@@ -1287,7 +1287,7 @@ You can also create wikis as separate |Dictionary|s. >
 
 <
 
-PER WIKI OPTIONS                                       *viwmiki-local-options*
+PER WIKI OPTIONS                                       *vimwiki-local-options*
 
 
 *vimwiki-option-path*
@@ -1629,6 +1629,23 @@ to make it local to vimwiki paths listed in g:vimwiki_list. So other text
 files wouldn't be treated as wiki pages.
 
 Default: 1
+
+
+------------------------------------------------------------------------------
+*g:vimwiki_ext2syntax*
+
+A map listing the default syntax to associate with a given wiki extension.
+
+E.g.: >
+  let g:vimwiki_ext2syntax = {'md': 'markdown', 
+                  \ 'mkd': 'markdown', 
+                  \ 'wiki': 'default'}
+
+The existence of a mapping from an extension to a syntax is sufficient to
+register the extension for the creation of a temporary wiki, when
+*g:vimwiki_global_ext* equals 1.
+
+Default: {}
 
 
 ------------------------------------------------------------------------------

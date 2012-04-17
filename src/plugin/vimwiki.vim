@@ -81,7 +81,13 @@ function! s:setup_filetype() "{{{
   " extension(s) to be global -- Add new wiki.
   if idx == -1
     let ext = '.'.expand('%:e')
-    call add(g:vimwiki_list, {'path': path, 'ext': ext, 'temp': 1})
+    " lookup syntax using g:vimwiki_ext2syntax
+    if has_key(g:vimwiki_ext2syntax, ext)
+      let syn = g:vimwiki_ext2syntax[ext]
+    else
+      let syn = s:vimwiki_defaults.syntax
+    endif
+    call add(g:vimwiki_list, {'path': path, 'ext': ext, 'syntax': syn, 'temp': 1})
     let idx = len(g:vimwiki_list) - 1
   endif
   " initialize and cache global vars of current state
@@ -112,10 +118,16 @@ function! s:setup_buffer_enter() "{{{
     endif
 
     " The buffer's file is not in the path and user *does* want his wiki
-    " extension to be global -- Add new wiki.
+    " extension(s) to be global -- Add new wiki.
     if idx == -1
       let ext = '.'.expand('%:e')
-      call add(g:vimwiki_list, {'path': path, 'ext': ext, 'temp': 1})
+      " lookup syntax using g:vimwiki_ext2syntax
+      if has_key(g:vimwiki_ext2syntax, ext)
+        let syn = g:vimwiki_ext2syntax[ext]
+      else
+        let syn = s:vimwiki_defaults.syntax
+      endif
+      call add(g:vimwiki_list, {'path': path, 'ext': ext, 'syntax': syn, 'temp': 1})
       let idx = len(g:vimwiki_list) - 1
     endif
     " initialize and cache global vars of current state
@@ -346,6 +358,7 @@ call s:default('fold_trailing_empty_lines', 0)
 call s:default('fold_lists', 0)
 call s:default('menu', 'Vimwiki')
 call s:default('global_ext', 1)
+call s:default('ext2syntax', {}) " syntax map keyed on extension
 call s:default('hl_headers', 0)
 call s:default('hl_cb_checked', 0)
 call s:default('camel_case', 0)
@@ -390,6 +403,10 @@ for wiki in g:vimwiki_list
   else
     let extensions['.wiki'] = 1
   endif
+endfor
+" append map g:vimwiki_ext2syntax
+for ext in keys(g:vimwiki_ext2syntax)
+  let extensions[ext] = 1
 endfor
 
 augroup filetypedetect
