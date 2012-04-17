@@ -10,17 +10,21 @@ let g:loaded_vimwiki_auto = 1
 
 " MISC helper functions {{{
 
-function! vimwiki#base#reset_wiki_state(...) "{{{ initialize wiki options and
-  " additional ['key', value] pairs. E.g. reset_wiki_state(['idx', 0]) sets:
-  "   let g:vimwiki_current_idx = 0 " current value
+function! vimwiki#base#reset_wiki_state(...) "{{{ Initialize wiki options and
+  " additional ['key', value] pairs, globally.  Also cache their values 
+  " in buffer local variables.  E.g. reset_wiki_state(['idx', 0]) sets:
+  "   let g:vimwiki_current_idx = 0 " for quick lookup
   "   let b:vimwiki_idx = 0         " buffer-cached value
-  " ['key', value] pairs
+  " in addition to the per-wiki options:
+  "   let g:vimwiki_current_path = '...' " for quick lookup
+  "   let b:vimwiki_path = '...'         " buffer-cached value
+  "   etc.
   let g:vimwiki_current_keys = {}
   for keyval_pair in a:000
     let g:vimwiki_current_keys[keyval_pair[0]] = 1
     let g:vimwiki_current_{keyval_pair[0]} = keyval_pair[1]
   endfor
-  " wiki options
+  " load current wiki options
   let option_dict = VimwikiGetOptions()
   for kk in keys(option_dict)
     let g:vimwiki_current_{kk} = option_dict[kk]
@@ -29,8 +33,13 @@ function! vimwiki#base#reset_wiki_state(...) "{{{ initialize wiki options and
   call vimwiki#base#cache_wiki_state()
 endfunction "}}}
 
-function! vimwiki#base#cache_wiki_state() "{{{ cache wiki options and state
-  " ['key', value] pairs
+function! vimwiki#base#cache_wiki_state() "{{{ Cache wiki options and
+  " additional ['key', value] pairs, using buffer local variables.
+  " E.g. cache_wiki_state(['idx', 0]) sets:
+  "   let b:vimwiki_idx = 0         " buffer-cached value
+  " in addition to the per-wiki options:
+  "   let b:vimwiki_path = '...'         " buffer-cached value
+  "   etc.
   for kk in keys(g:vimwiki_current_keys)
     if !exists('g:vimwiki_current_'.kk) && g:vimwiki_debug
       echo "[Vimwiki Internal Error]: Missing global state variable: 'g:vimwiki_current_".kk."'"
