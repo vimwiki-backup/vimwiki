@@ -1645,6 +1645,9 @@ The existence of a mapping from an extension to a syntax is sufficient to
 register the extension for the creation of a temporary wiki, when
 g:vimwiki_global_ext equals 1.
 
+The creation of two temporary wikis with different extensions (and possibly
+different syntaxes) in the same directory is not currently possible.
+
 Default: {}
 
 
