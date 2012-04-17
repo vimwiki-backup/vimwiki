@@ -38,6 +38,7 @@ function! s:path_common_pfx(path1, path2) "{{{
 endfunction "}}}
 
 function! s:find_wiki(path) "{{{
+  " XXX: find_wiki() does not (yet) take into consideration the ext
   let path = vimwiki#base#path_norm(vimwiki#base#chomp_slash(a:path))
   let idx = 0
   while idx < len(g:vimwiki_list)
@@ -68,7 +69,7 @@ function! s:setup_filetype() "{{{
   let time0 = reltime()  " start the clock  "XXX
   " Find what wiki current buffer belongs to.
   let path = expand('%:p:h')
-  let ext = '.'.expand('%:e')
+  " XXX: find_wiki() does not (yet) take into consideration the ext
   let idx = s:find_wiki(path)
 
   if idx == -1 && g:vimwiki_global_ext == 0
@@ -76,6 +77,13 @@ function! s:setup_filetype() "{{{
   endif
   "XXX when idx = -1? (an orphan page has been detected)
 
+  " The buffer's file is not in the path and user *does* want his wiki
+  " extension(s) to be global -- Add new wiki.
+  if idx == -1
+    let ext = '.'.expand('%:e')
+    call add(g:vimwiki_list, {'path': path, 'ext': ext, 'temp': 1})
+    let idx = len(g:vimwiki_list) - 1
+  endif
   " initialize and cache global vars of current state
   call vimwiki#base#reset_wiki_state(['idx', idx], 
         \ ['subdir', vimwiki#base#current_subdir()])
@@ -94,7 +102,7 @@ function! s:setup_buffer_enter() "{{{
     " buffer's path and ext.
     " Else set g:vimwiki_current_idx to that wiki index.
     let path = expand('%:p:h')
-    let ext = '.'.expand('%:e')
+    " XXX: find_wiki() does not (yet) take into consideration the ext
     let idx = s:find_wiki(path)
 
     " The buffer's file is not in the path and user *does NOT* want his wiki
@@ -106,6 +114,7 @@ function! s:setup_buffer_enter() "{{{
     " The buffer's file is not in the path and user *does* want his wiki
     " extension to be global -- Add new wiki.
     if idx == -1
+      let ext = '.'.expand('%:e')
       call add(g:vimwiki_list, {'path': path, 'ext': ext, 'temp': 1})
       let idx = len(g:vimwiki_list) - 1
     endif
