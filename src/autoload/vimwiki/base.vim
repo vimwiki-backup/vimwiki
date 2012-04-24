@@ -246,7 +246,7 @@ function! vimwiki#base#resolve_scheme(lnk, as_html) " {{{
       endif
     endif
     " default link for directories
-    if wiki_directory && vimwiki#base#is_link_to_dir(lnk)
+    if wiki_directory && vimwiki#u#is_link_to_dir(lnk)
       let ext = (g:vimwiki_dir_link != '' ? g:vimwiki_dir_link. ext : '')
     endif
   endif
@@ -530,15 +530,6 @@ function! s:strip_word(word) "{{{
   return result
 endfunction
 " }}}
-
-function! vimwiki#base#is_link_to_dir(link) "{{{
-  " Check if link is to a directory.
-  " It should be ended with \ or /.
-  if a:link =~ '.\+[/\\]$'
-    return 1
-  endif
-  return 0
-endfunction " }}}
 
 function! s:print_wiki_list() "{{{
   let idx = 0

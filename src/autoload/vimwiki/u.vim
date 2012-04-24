@@ -42,3 +42,13 @@ function! vimwiki#u#path_norm(path) "{{{
   " ensure that we are not fooled by a symbolic link
   return resolve(path)
 endfunction "}}}
+
+function! vimwiki#u#is_link_to_dir(link) "{{{
+  " Check if link is to a directory.
+  " It should be ended with \ or /.
+  if a:link =~ '.\+[/\\]$'
+    return 1
+  endif
+  return 0
+endfunction " }}}
+
