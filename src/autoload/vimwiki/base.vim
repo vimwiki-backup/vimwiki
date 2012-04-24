@@ -255,8 +255,7 @@ function! vimwiki#base#resolve_scheme(lnk, as_html) " {{{
   let path = substitute(path, '/\+', '/', 'g')
   let subdir = substitute(subdir, '/\+', '/', 'g')
   let lnk = substitute(lnk, '/\+', '/', 'g')
-  " is there a better way?
-  if has('win16') || has('win32') || has('win64')
+  if vimwiki#u#is_windows()
     let lnk = substitute(lnk, '^/\ze[[:alpha:]]:', '', '')
   endif
 
