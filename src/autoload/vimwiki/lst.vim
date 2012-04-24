@@ -58,7 +58,7 @@ endfunction "}}}
 " Get level of the list item.
 function! s:get_level(lnum) "{{{
   if VimwikiGet('syntax') == 'media'
-    let level = vimwiki#base#count_first_sym(getline(a:lnum))
+    let level = vimwiki#u#count_first_sym(getline(a:lnum))
   else
     let level = indent(a:lnum)
   endif
