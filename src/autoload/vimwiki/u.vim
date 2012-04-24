@@ -52,3 +52,8 @@ function! vimwiki#u#is_link_to_dir(link) "{{{
   return 0
 endfunction " }}}
 
+function! vimwiki#u#count_first_sym(line) "{{{
+  let first_sym = matchstr(a:line, '\S')
+  return len(matchstr(a:line, first_sym.'\+'))
+endfunction "}}}
+

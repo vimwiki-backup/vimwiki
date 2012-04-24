@@ -426,6 +426,18 @@ function! vimwiki#base#get_links(pat) "{{{ return string-list for files
   return globlinks
 endfunction "}}}
 
+function! vimwiki#base#edit_file(command, filename) "{{{
+  let fname = escape(a:filename, '% ')
+  let dir = fnamemodify(a:filename, ":p:h")
+  if vimwiki#base#mkdir(dir, 1)
+    execute a:command.' '.fname
+  else
+    echom ' '
+    echom 'Vimwiki: Unable to edit file in non-existent directory: '.dir
+  endif
+endfunction
+" }}}
+
 function! s:filename(link) "{{{
   " TODO: make it g:vimwiki_rxSep aware
   let result = a:link
@@ -442,18 +454,6 @@ function! s:is_wiki_word(str) "{{{
     return 1
   endif
   return 0
-endfunction
-" }}}
-
-function! vimwiki#base#edit_file(command, filename) "{{{
-  let fname = escape(a:filename, '% ')
-  let dir = fnamemodify(a:filename, ":p:h")
-  if vimwiki#base#mkdir(dir, 1)
-    execute a:command.' '.fname
-  else
-    echom ' '
-    echom 'Vimwiki: Unable to edit file in non-existent directory: '.dir
-  endif
 endfunction
 " }}}
 
@@ -655,17 +655,6 @@ function! s:open_wiki_buffer(item) "{{{
     call setbufvar(a:item[0], "vimwiki_prev_link", a:item[1])
   endif
 endfunction " }}}
-
-function! vimwiki#base#hl_exists(hl) "{{{
-  if !hlexists(a:hl)
-    return 0
-  endif
-  redir => hlstatus
-  exe "silent hi" a:hl
-  redir END
-  return (hlstatus !~ "cleared")
-endfunction
-"}}}
 
 function! vimwiki#base#nested_syntax(filetype, start, end, textSnipHl) abort "{{{
 " From http://vim.wikia.com/wiki/VimTip857
@@ -934,7 +923,7 @@ function! vimwiki#base#TO_header(inner, visual) "{{{
   let block_start = line(".")
   let advance = 0
 
-  let level = vimwiki#base#count_first_sym(getline('.'))
+  let level = vimwiki#u#count_first_sym(getline('.'))
 
   let is_header_selected = sel_start == block_start 
         \ && sel_start != sel_end
@@ -1147,11 +1136,6 @@ endfunction "}}}
 " }}}
 
 " HEADER functions {{{
-function! vimwiki#base#count_first_sym(line) "{{{
-  let first_sym = matchstr(a:line, '\S')
-  return len(matchstr(a:line, first_sym.'\+'))
-endfunction "}}}
-
 function! vimwiki#base#AddHeaderLevel() "{{{
   let lnum = line('.')
   let line = getline(lnum)
@@ -1161,7 +1145,7 @@ function! vimwiki#base#AddHeaderLevel() "{{{
   endif
 
   if line =~ g:vimwiki_rxHeader
-    let level = vimwiki#base#count_first_sym(line)
+    let level = vimwiki#u#count_first_sym(line)
     if level < 6
       if g:vimwiki_symH
         let line = substitute(line, '\('.rxHdr.'\+\).\+\1', rxHdr.'&'.rxHdr, '')
@@ -1189,7 +1173,7 @@ function! vimwiki#base#RemoveHeaderLevel() "{{{
   endif
 
   if line =~ g:vimwiki_rxHeader
-    let level = vimwiki#base#count_first_sym(line)
+    let level = vimwiki#u#count_first_sym(line)
     let old = repeat(rxHdr, level)
     let new = repeat(rxHdr, level - 1)
 
@@ -1212,7 +1196,7 @@ function! vimwiki#base#RemoveHeaderLevel() "{{{
   endif
 endfunction
 " }}}
-
+"}}}
 
 " LINK functions {{{
 function! vimwiki#base#apply_template(template, rxUrl, rxDesc, rxStyle) "{{{

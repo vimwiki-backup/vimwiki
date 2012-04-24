@@ -1018,7 +1018,7 @@ function! s:process_tag_h(line, id) "{{{
   let h_id = ''
 
   if a:line =~ g:vimwiki_rxHeader
-    let h_level = vimwiki#base#count_first_sym(a:line)
+    let h_level = vimwiki#u#count_first_sym(a:line)
   endif
   if h_level > 0
     let a:id[h_level] += 1
