@@ -21,3 +21,24 @@ function! vimwiki#u#cursor(lnum, cnum) "{{{
   exe 'normal! 0'.a:cnum.'|'
 endfunction "}}}
 
+function! vimwiki#u#is_windows() "{{{
+  return has("win32") || has("win64") || has("win95") || has("win16")
+endfunction "}}}
+
+function! vimwiki#u#chomp_slash(str) "{{{
+  return substitute(a:str, '[/\\]\+$', '', '')
+endfunction "}}}
+
+function! vimwiki#u#time(starttime) "{{{
+  " measure the elapsed time and cut away miliseconds and smaller
+  return matchstr(reltimestr(reltime(a:starttime)),'\d\+\(\.\d\d\)\=')
+endfunction "}}}
+
+function! vimwiki#u#path_norm(path) "{{{
+  " /-slashes
+  let path = substitute(a:path, '\', '/', 'g')
+  " treat multiple consecutive slashes as one path separator
+  let path = substitute(path, '/\+', '/', 'g')
+  " ensure that we are not fooled by a symbolic link
+  return resolve(path)
+endfunction "}}}

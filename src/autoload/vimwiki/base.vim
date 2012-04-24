@@ -83,31 +83,13 @@ function! vimwiki#base#recall_wiki_state() "{{{ try loading wiki options
   return 1
 endfunction "}}}
 
-function! vimwiki#base#time(starttime) "{{{
-  " measure the elapsed time and cut away miliseconds and smaller
-  return matchstr(reltimestr(reltime(a:starttime)),'\d\+\(\.\d\d\)\=')
-endfunction "}}}
-
-function! vimwiki#base#chomp_slash(str) "{{{
-  return substitute(a:str, '[/\\]\+$', '', '')
-endfunction "}}}
-
-function! vimwiki#base#path_norm(path) "{{{
-  " /-slashes
-  let path = substitute(a:path, '\', '/', 'g')
-  " treat multiple consecutive slashes as one path separator
-  let path = substitute(path, '/\+', '/', 'g')
-  " ensure that we are not fooled by a symbolic link
-  return resolve(path)
-endfunction "}}}
-
 " If the optional argument 'confirm' == 1 is provided,
 " vimwiki#base#mkdir will ask before creating a directory 
 function! vimwiki#base#mkdir(path, ...) "{{{
   let path = expand(a:path)
   if !isdirectory(path) && exists("*mkdir")
-    let path = vimwiki#base#chomp_slash(path)
-    if s:is_windows() && !empty(g:vimwiki_w32_dir_enc)
+    let path = vimwiki#u#chomp_slash(path)
+    if vimwiki#u#is_windows() && !empty(g:vimwiki_w32_dir_enc)
       let path = iconv(path, &enc, g:vimwiki_w32_dir_enc)
     endif
     if a:0 && a:1 && tolower(input("Vimwiki: Make new directory: ".path."\n [Y]es/[n]o? ")) !~ "y"
@@ -389,15 +371,6 @@ function! vimwiki#base#backlinks() "{{{
           \ escape(VimwikiGet('path').'**/*'.VimwikiGet('ext'), ' ')
 endfunction "}}}
 
-function! s:is_windows() "{{{
-  return has("win32") || has("win64") || has("win95") || has("win16")
-endfunction "}}}
-
-function! s:is_path_absolute(path) "{{{
-  return a:path =~ '^/.*' || a:path =~ '^[[:alpha:]]:[/\\].*'
-endfunction "}}}
-
-"TODO
 function! vimwiki#base#get_links(pat) "{{{ return string-list for files
   " in the current wiki matching the pattern "pat"
   " search all wiki files (or directories) in wiki 'path' and its subdirs.
@@ -414,7 +387,7 @@ function! vimwiki#base#get_links(pat) "{{{ return string-list for files
   let time1 = reltime()  " start the clock  XXX
   "save pwd, do lcd %:h, restore old pwd; getcwd()
   let globlinks = "\n".glob(VimwikiGet('path').search_dirs.a:pat,1)."\n"
-  let time2 = vimwiki#base#time(time1)  " XXX
+  let time2 = vimwiki#u#time(time1)  " XXX
 
   " change to the directory of the current file
   let orig_pwd = getcwd()
@@ -449,7 +422,7 @@ function! vimwiki#base#get_links(pat) "{{{ return string-list for files
 
   " Remove trailing slashes.  XXX ?
   "call map(links, 'substitute(v:val, "[/\\\\]*$", "", "g")')
-  "let time3 = vimwiki#base#time(time1)  "XXX
+  "let time3 = vimwiki#u#time(time1)  "XXX
   call VimwikiLog_extend('timing',['base:afterglob('.len(split(globlinks, '\n')).')',time2])
   return globlinks
 endfunction "}}}
@@ -459,8 +432,6 @@ function! s:filename(link) "{{{
   let result = a:link
   if a:link =~ '|'
     let result = split(a:link, '|')[0]
-  elseif a:link =~ ']['
-    let result = split(a:link, '][')[0]
   endif
   return result
 endfunction
