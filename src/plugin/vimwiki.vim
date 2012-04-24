@@ -39,11 +39,11 @@ endfunction "}}}
 
 function! s:find_wiki(path) "{{{
   " XXX: find_wiki() does not (yet) take into consideration the ext
-  let path = vimwiki#base#path_norm(vimwiki#base#chomp_slash(a:path))
+  let path = vimwiki#u#path_norm(vimwiki#u#chomp_slash(a:path))
   let idx = 0
   while idx < len(g:vimwiki_list)
     let idx_path = expand(VimwikiGet('path', idx))
-    let idx_path = vimwiki#base#path_norm(vimwiki#base#chomp_slash(idx_path))
+    let idx_path = vimwiki#u#path_norm(vimwiki#u#chomp_slash(idx_path))
     if s:path_common_pfx(idx_path, path) == idx_path
       return idx
     endif
@@ -96,7 +96,7 @@ function! s:setup_filetype() "{{{
 
   unlet! b:vimwiki_fs_rescan
   set filetype=vimwiki
-  let time1 = vimwiki#base#time(time0)  "XXX
+  let time1 = vimwiki#u#time(time0)  "XXX
   call VimwikiLog_extend('timing',['plugin:setup_filetype:time1',time1])
 endfunction "}}}
 
@@ -151,7 +151,7 @@ function! s:setup_buffer_enter() "{{{
     endif
     let b:vimwiki_fs_rescan = 1
   endif
-  let time1 = vimwiki#base#time(time0)  "XXX
+  let time1 = vimwiki#u#time(time0)  "XXX
 
   " Settings foldmethod, foldexpr and foldtext are local to window. Thus in a
   " new tab with the same buffer folding is reset to vim defaults. So we
@@ -171,7 +171,7 @@ function! s:setup_buffer_enter() "{{{
   if g:vimwiki_menu != ""
     exe 'nmenu enable '.g:vimwiki_menu.'.Table'
   endif
-  "let time2 = vimwiki#base#time(time0)  "XXX
+  "let time2 = vimwiki#u#time(time0)  "XXX
   call VimwikiLog_extend('timing',['plugin:setup_buffer_enter:time1',time1])
 endfunction "}}}
 

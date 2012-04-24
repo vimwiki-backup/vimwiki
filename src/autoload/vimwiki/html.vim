@@ -1523,7 +1523,7 @@ function! vimwiki#html#Wiki2HTML(path_html, wikifile) "{{{
   endif
 
   " measure the elapsed time 
-  let time1 = vimwiki#base#time(starttime)  "XXX
+  let time1 = vimwiki#u#time(starttime)  "XXX
   call VimwikiLog_extend('html',[htmlfile,time1])
   "if g:vimwiki_debug
   "  echon "\r".htmlfile.' written (time: '.time1.'s)'
