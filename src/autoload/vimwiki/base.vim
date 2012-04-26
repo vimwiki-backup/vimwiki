@@ -1318,61 +1318,12 @@ function! s:normalize_link_syntax_v() " {{{
   let rt = getregtype('"')
   let done = 0
 
-  let wiki_link_at_cursor = s:matchstr_at_cursor(g:vimwiki_rxWikiLink)
-  let wiki_incl_at_cursor = s:matchstr_at_cursor(g:vimwiki_rxWikiIncl)
-  let image_link_at_cursor = s:matchstr_at_cursor(g:vimwiki_rxImagelink)
-  let word_at_cursor = s:matchstr_at_cursor(g:vimwiki_rxWikiLinkUrl)
-
   try
     norm! gvy
     let visual_selection = @"
-    let v_prefix = matchstr(visual_selection, '^\s*')
-    let v_suffix = matchstr(visual_selection, '.*\S\zs\s*$')
-    let visual_selection = substitute(visual_selection, '^\s*\(\S\(.*\S\)*\)\s*$', '\1', '')
+    let visual_selection = '[['.visual_selection.']]'
 
-    " try WikiLink - substituting link_at_cursor, not buffer @"
-    if !done && visual_selection =~ g:vimwiki_rxWikiLink
-      call setreg('"', v_prefix. s:normalize_link(wiki_link_at_cursor,
-            \ g:vimwiki_rxWikiLinkMatchUrl, g:vimwiki_rxWikiLinkMatchDescr,
-            \ g:vimwiki_WikiLinkTemplate2). v_suffix, 'v')
-      if g:vimwiki_debug > 1
-        echomsg 'WikiLink: '.visual_selection.' Sub: '.@"
-      endif
-    endif
-    let done = empty(wiki_link_at_cursor) ? done : 1
-
-    " try WikiIncl - substituting link_at_cursor, not buffer @"
-    if !done && visual_selection =~ g:vimwiki_rxWikiLink
-      " call setreg('"', v_prefix. s:normalize_link(wiki_link_at_cursor,
-      "       \ g:vimwiki_rxWikiLinkMatchUrl, g:vimwiki_rxWikiLinkMatchDescr,
-      "       \ g:vimwiki_WikiLinkTemplate2). v_suffix, 'v')
-      if g:vimwiki_debug > 1
-        echomsg 'WikiIncl: '.visual_selection.' Sub: '.visual_selection
-      endif
-    endif
-    let done = empty(wiki_incl_at_cursor) ? done : 1
-
-    " try Imagelink - substituting link_at_cursor, not buffer @"
-    if !done && visual_selection =~ g:vimwiki_rxImagelink
-      call setreg('"', v_prefix. s:normalize_imagelink(image_link_at_cursor,
-            \ g:vimwiki_rxImagelinkMatchUrl, g:vimwiki_rxImagelinkMatchDescr, 
-            \ g:vimwiki_rxImagelinkMatchStyle, g:vimwiki_image_template). v_suffix, 'v')
-      if g:vimwiki_debug > 1
-        echomsg 'Image: '.visual_selection.' Sub: '.@"
-      endif
-    endif
-    let done = empty(image_link_at_cursor) ? done : 1
-
-    " try WikiLinkUrl (any characters except separators)
-    if !done && visual_selection =~ g:vimwiki_rxWikiLinkUrl
-      call setreg('"', v_prefix. s:normalize_link(@", 
-            \ g:vimwiki_rxWikiLinkUrl, '', 
-            \ g:vimwiki_WikiLinkTemplate1). v_suffix, 'v')
-      if g:vimwiki_debug > 1
-        echomsg 'WikiLinkUrl: '.visual_selection.' Sub: '.@"
-      endif
-    endif
-    let done = empty(word_at_cursor) ? done : 1
+    call setreg('"', visual_selection, 'v')
 
     " paste result
     norm! `>pgvd
