@@ -1301,7 +1301,7 @@ function! s:normalize_link_syntax_n() " {{{
     let sub = s:normalize_link(lnk,
           \ g:vimwiki_rxWord, '',
           \ g:vimwiki_WikiLinkTemplate1)
-    call s:replacestr_at_cursor(lnk, sub)
+    call s:replacestr_at_cursor('\V'.lnk, sub)
     if g:vimwiki_debug > 1
       echomsg "Word: ".lnk." Sub: ".sub
     endif
