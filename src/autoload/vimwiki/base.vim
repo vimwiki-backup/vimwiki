@@ -448,15 +448,6 @@ function! s:filename(link) "{{{
 endfunction
 " }}}
 
-"TODO ?
-function! s:is_wiki_word(str) "{{{
-  if a:str =~ g:vimwiki_rxWikiWord && a:str !~ '[[:space:]\\/]'
-    return 1
-  endif
-  return 0
-endfunction
-" }}}
-
 function! s:search_word(wikiRx, cmd) "{{{
   let match_line = search(a:wikiRx, 's'.a:cmd)
   if match_line == 0
@@ -767,7 +758,7 @@ endfunction " }}}
 
 function! vimwiki#base#go_back_link() "{{{
   if exists("b:vimwiki_prev_link")
-    " go back to saved WikiWord
+    " go back to saved wiki link
     let prev_word = b:vimwiki_prev_link
     execute ":e ".substitute(prev_word[0], '\s', '\\\0', 'g')
     call setpos('.', prev_word[1])
@@ -782,7 +773,7 @@ endfunction "}}}
 
 function! vimwiki#base#delete_link() "{{{
   "" file system funcs
-  "" Delete WikiWord you are in from filesystem
+  "" Delete wiki link you are in from filesystem
   let val = input('Delete ['.expand('%').'] (y/n)? ', "")
   if val != 'y'
     return
@@ -798,14 +789,14 @@ function! vimwiki#base#delete_link() "{{{
   call vimwiki#base#go_back_link()
   execute "bdelete! ".escape(fname, " ")
 
-  " reread buffer => deleted WikiWord should appear as non-existent
+  " reread buffer => deleted wiki link should appear as non-existent
   if expand('%:p') != ""
     execute "e"
   endif
 endfunction "}}}
 
 function! vimwiki#base#rename_link() "{{{
-  "" Rename WikiWord, update all links to renamed WikiWord
+  "" Rename wiki link, update all links to renamed WikiWord
   let subdir = g:vimwiki_current_subdir
   let old_fname = subdir.expand('%:t')
 
@@ -846,7 +837,7 @@ function! vimwiki#base#rename_link() "{{{
           \ '". File with that name exist!'
     return
   endif
-  " rename WikiWord file
+  " rename wiki link file
   try
     echomsg "Renaming ".VimwikiGet('path').old_fname." to ".new_fname
     let res = rename(expand('%:p'), expand(new_fname))
