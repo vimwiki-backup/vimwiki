@@ -113,13 +113,6 @@ function! s:get_unique_chars(str) "{{{
 endfunction "}}}
 
 " LINKS: setup wikilink regexps {{{
-let wword = '\C\<\%(['.g:vimwiki_upper.']['.g:vimwiki_lower.']\+\)\{2,}\>'
-let g:vimwiki_wword = wword
-" 0. WikiWordURLs
-" 0a) match WikiWordURLs
-let g:vimwiki_rxWikiWord = g:vimwiki_wikiword_escape_prefix.'\@<!'.wword
-let g:vimwiki_rxNoWikiWord = g:vimwiki_wikiword_escape_prefix.wword
-"
 " TODO: put these in 'syntax/vimwiki_xxx.vim'
 let g:vimwiki_rxWikiLinkPrefix = '[['
 let g:vimwiki_rxWikiLinkSuffix = ']]'
@@ -158,14 +151,6 @@ let g:vimwiki_rxWikiLinkMatchUrl = g:vimwiki_rxWikiLinkPrefix.
 let g:vimwiki_rxWikiLinkMatchDescr = g:vimwiki_rxWikiLinkPrefix.
       \ g:vimwiki_rxWikiLinkUrl.g:vimwiki_rxWikiLinkSeparator.'\%('.
       \ '\zs'. g:vimwiki_rxWikiLinkDescr. '\ze\)\?'. g:vimwiki_rxWikiLinkSuffix
-" *. wikilink or wikiword WARNING: g:vimwiki_camel_case may be deprecated
-if g:vimwiki_camel_case
-  " *a) match ANY wikilink or wikiword
-  let g:vimwiki_rxWikiLink = g:vimwiki_rxWikiLink.'\|'. g:vimwiki_rxWikiWord
-  " *b) match URL wikilink or wikiword
-  let g:vimwiki_rxWikiLinkMatchUrl = g:vimwiki_rxWikiLinkMatchUrl.'\|'.
-        \ g:vimwiki_rxWikiWord
-endif
 " }}}
 
 " LINKS: setup of wikiincl regexps {{{
@@ -382,15 +367,7 @@ function! s:highlight_existing_links() "{{{
   let rxScheme = '\%(\%(wiki\|wiki'.g:vimwiki_current_idx.'\):\)\?'
 
     " a) match WikiWord WARNING: g:vimwiki_camel_case may be deprecated
-    if g:vimwiki_camel_case
-      "TODO filter only those that are CamelCase and in the present directory
-      let ccfiles = substitute(b:existing_wikifiles,"\n\\ze".g:vimwiki_wword."\n","\n#",'g') 
-      "let g:VimwikiLog.cc = ccfiles
-      let ccfiles = substitute(ccfiles,"\n[^#][^\n]*",'','g') 
-      let ccfiles = substitute(ccfiles,"\n\\zs#",'','g') 
-      let safe_ccfiles = vimwiki#base#file_pattern(ccfiles)
-      call s:add_target_syntax_ON(g:vimwiki_wikiword_escape_prefix.'\@<!\<'. safe_ccfiles. '\>', 'VimwikiLink')
-    endif
+    " removed
     " b) match [[URL]]
     let target = vimwiki#base#apply_template(g:vimwiki_WikiLinkTemplate1,
           \ rxScheme.safe_links, g:vimwiki_rxWikiLinkDescr, '')

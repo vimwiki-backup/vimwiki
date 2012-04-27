@@ -419,9 +419,6 @@ function! s:tag_wikiincl(value) "{{{
   " {{imgurl|descr|style="A"}} -> <img src="imgurl" alt="descr" style="A" />
   " {{imgurl|descr|class="B"}} -> <img src="imgurl" alt="descr" class="B" />
   let str = a:value
-  if match(str, g:vimwiki_wikiword_escape_prefix) == 0
-    return a:value[len(g:vimwiki_wikiword_escape_prefix):]
-  endif
   " custom transclusions
   let line = VimwikiWikiIncludeHandler(str)
   " otherwise, assume image transclusion
@@ -451,9 +448,6 @@ function! s:tag_wikilink(value) "{{{
   " [[fileurl.ext|descr]] -> <a href="fileurl.ext">descr</a>
   " [[dirurl/|descr]]     -> <a href="dirurl/index.html">descr</a>
   let str = a:value
-  if match(str, g:vimwiki_wikiword_escape_prefix) == 0
-    return a:value[len(g:vimwiki_wikiword_escape_prefix):]
-  endif
   let url = matchstr(str, g:vimwiki_rxWikiLinkMatchUrl)
   let descr = matchstr(str, g:vimwiki_rxWikiLinkMatchDescr)
   let descr = (substitute(descr,'^\s*\(.*\)\s*$','\1','') != '' ? descr : url)
@@ -473,16 +467,6 @@ function! s:tag_wikilink(value) "{{{
 endfunction "}}}
 "}}} v1.3 links
 
-
-function! s:tag_no_wikiword_link(value) "{{{
-  echomsg "tag_no_wikiword_link: ".a:value
-
-  if a:value[0] =~ g:vimwiki_wikiword_escape_prefix
-    return a:value[1:]
-  else
-    return a:value
-  endif
-endfunction "}}}
 
 function! s:tag_remove_internal_link(value) "{{{
   let value = s:mid(a:value, 2)
@@ -571,7 +555,6 @@ endfunction " }}}
 
 function! s:process_tags_typefaces(line) "{{{
   let line = a:line
-  let line = s:make_tag(line, g:vimwiki_rxNoWikiWord, 's:tag_no_wikiword_link')
   let line = s:make_tag(line, g:vimwiki_rxItalic, 's:tag_em')
   let line = s:make_tag(line, g:vimwiki_rxBold, 's:tag_strong')
   let line = s:make_tag(line, g:vimwiki_rxTodo, 's:tag_todo')

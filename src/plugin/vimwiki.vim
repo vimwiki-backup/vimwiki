@@ -342,15 +342,6 @@ let s:vimwiki_defaults.custom_wiki2html = ''
 
 " DEFAULT options {{{
 call s:default('list', [s:vimwiki_defaults])
-if &encoding == 'utf-8'
-  call s:default('upper', 'A-Z\u0410-\u042f')
-  call s:default('lower', 'a-z\u0430-\u044f')
-else
-  call s:default('upper', 'A-Z')
-  call s:default('lower', 'a-z')
-endif
-call s:default('stripsym', '_')
-call s:default('badsyms', '')
 call s:default('auto_checkbox', 1)
 call s:default('use_mouse', 0)
 call s:default('folding', 0)
@@ -361,7 +352,6 @@ call s:default('global_ext', 1)
 call s:default('ext2syntax', {}) " syntax map keyed on extension
 call s:default('hl_headers', 0)
 call s:default('hl_cb_checked', 0)
-call s:default('camel_case', 0)
 call s:default('list_ignore_newline', 1)
 call s:default('listsyms', ' .oOX')
 call s:default('use_calendar', 1)
@@ -379,8 +369,6 @@ call s:default('conceallevel', 2)
 call s:default('url_mingain', 12)
 call s:default('url_maxsave', 15)
 call s:default('debug', 0)
-
-call s:default('wikiword_escape_prefix', '!')
 
 call s:default('diary_months', 
       \ {
