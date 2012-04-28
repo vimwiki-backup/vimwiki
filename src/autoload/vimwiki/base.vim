@@ -563,20 +563,8 @@ function! s:update_wiki_links_dir(dir, old_fname, new_fname) " {{{
   let old_fname_r = old_fname
   let new_fname_r = new_fname
 
-  " try WikiLink
-  " try WikiIncl
-  " try Weblink
-  " try Imagelink
-  if !s:is_wiki_word(new_fname) && s:is_wiki_word(old_fname)
-    let new_fname_r = '[['.new_fname.']]'
-  endif
-
-  if !s:is_wiki_word(old_fname)
-    let old_fname_r = '\[\[\zs'.old_fname.
-          \ '\ze\%(|.*\)\?\%(\]\[.*\)\?\]\]'
-  else
-    let old_fname_r = '!\@<!\<'.old_fname.'\>'
-  endif
+  let old_fname_r = '\[\[\zs'.old_fname.
+        \ '\ze\%(|.*\)\?\]\]'
 
   let files = split(glob(VimwikiGet('path').a:dir.'*'.VimwikiGet('ext')), '\n')
   for fname in files
