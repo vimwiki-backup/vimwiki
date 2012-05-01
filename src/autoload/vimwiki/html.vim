@@ -362,10 +362,9 @@ endfunction "}}}
 "endfunction "}}}
 
 
-"{{{ v1.3 links
-"   match n-th ARG within {{URL}[{ARG1}{ARG2}{...}]} " {{{
+"{{{ v2.0 links
+"   match n-th ARG within {{URL[|ARG1|ARG2|...]}} " {{{
 " *c,d,e),...
-"function! VimwikiWikiInclMatchArg(nn_index)
 function! vimwiki#html#incl_match_arg(nn_index)
   let rx = g:vimwiki_rxWikiInclPrefix. g:vimwiki_rxWikiInclUrl
   let rx = rx. repeat(g:vimwiki_rxWikiInclSeparator. g:vimwiki_rxWikiInclArg, a:nn_index-1)
@@ -394,18 +393,8 @@ function! vimwiki#html#linkify_image(src, descr, verbatim_str) "{{{
   return '<img'.src_str.descr_str.verbatim_str.' />'
 endfunction "}}}
 
-function! s:tag_imagelink(value) "{{{
-  let str = a:value
-  let url = matchstr(str, g:vimwiki_rxImagelinkMatchUrl)
-  let descr = matchstr(str, g:vimwiki_rxImagelinkMatchDescr)
-  let style = matchstr(str, g:vimwiki_rxImagelinkMatchStyle)
-  let verbatim_str = (style != '' ? 'style="'.style.'"' : '')
-  let line = vimwiki#html#linkify_image(url, descr, verbatim_str)
-  return line
-endfunction "}}}
-
 function! s:tag_weblink(value) "{{{
-  "  Weblink Template -> <a href="url">descr</a>
+  " Weblink Template -> <a href="url">descr</a>
   let str = a:value
   let url = matchstr(str, g:vimwiki_rxWeblinkMatchUrl)
   let descr = matchstr(str, g:vimwiki_rxWeblinkMatchDescr)
@@ -570,7 +559,6 @@ function! s:process_tags_links(line) " {{{
   let line = a:line
   let line = s:make_tag(line, g:vimwiki_rxWikiLink, 's:tag_wikilink')
   let line = s:make_tag(line, g:vimwiki_rxWikiIncl, 's:tag_wikiincl')
-  let line = s:make_tag(line, g:vimwiki_rxImagelink, 's:tag_imagelink')
   let line = s:make_tag(line, g:vimwiki_rxWeblink, 's:tag_weblink')
   return line
 endfunction " }}}
