@@ -285,7 +285,7 @@ NORMAL MODE                                           *vimwiki-local-mappings*
                         *vimwiki_+*
 +                       Normalize link syntax: E.g. Add placeholder text to
                         Wiki- or Weblinks that are missing descriptions.
-                        Convert raw URLs into Web Links.  Convert words into
+                        Convert raw URLs into Wikilinks.  Convert words into
                         Wikilinks.  Can be activated in normal mode with the
                         cursor over a word or link.
 
@@ -533,47 +533,6 @@ or: >
 
 The separator is customizable, using |g:vimwiki_link_separator| in your chosen
 syntax file; the prefix / suffix pair "[[", "]]" is not.
-
-
-Templated Weblinks~
-
-For backwards compatibility with the default syntax of Vimwiki V1.2, the
-web_template is set accordingly.
-
-Link with description: >
-  [http://code.google.com/p/vimwiki vimwiki home page]
-  [mailto:habamax@gmail.com Drop a line to Maxim Kim]
-
-To customize, see |g:vimwiki_web_template| in your chosen syntax file.
-
-Templated Imagelinks~
-
-For image links, backwards compatibility with Vimwiki V1.2 is harder to
-maintain.  Instead, the default syntax replaces "[[" and "]]" delimiters with
-"{" and "}".
-
-Image: >
-  {http://helloworld.com/blabla.jpg||}
-
-Image with alternate text: >
-  {http://helloworld.com/blabla.jpg|cool stuff|}
-
-Image with alternate text and style: >
-  {http://helloworld.com/blabla.jpg|cool stuff|width:150px; height: 120px;}
-
-Image with style, but without alternate text: >
-  {http://helloworld.com/blabla.jpg||width:150px; height: 120px;}
-
-Note: For templated imagelinks, the separators must be present even if the
-alternate text or style is empty.
-
-Note: For templated imagelinks, the third argument currently only accepts
-style parameters, unlike {{-links.
-
-To customize, see |g:vimwiki_image_template| in your chosen syntax file.
-
-A newer, alternative syntax for adding images to Html is to use wiki-include 
-links.  See |vimwiki-syntax-transclude|.
 
 Raw URLs~
 
@@ -927,9 +886,6 @@ Transclusion, or Wiki-Include, Links~
 
 A wikilink that uses "{{" and "}}" delims signifies content that is to be
 included into the Html output, rather than referenced via hyperlink.  
-
-The separator is customizable using |g:vimwiki_incl_separator| in your chosen
-syntax file; the prefix / suffix pair "{{", "}}" is not.
 
 The primary purpose for wiki-include links is to include images.  Image URLs
 may use any of the supported schemes, may be absolute or relative, and need
@@ -2046,6 +2002,25 @@ Vim plugins: http://www.vim.org/scripts/script.php?script_id=2226
     * Highlighting nonexisted links are off by default! Check
       |vimwiki-option-maxhi| to turn it on.
     * REMOVED: g:vimwiki_image_exts and g:vimwiki_file_exts options.
+    * REMOVED: Markdown and Textile links.
+    * REMOVED: Plain image links have been removed
+      e.g. http://someaddr.com/picture.jpg
+    * REMOVED: [[-Image links, that were identified by image extension in
+      Vimwiki V1.2.  These syntaxes may be upgraded to V2.0 by replacing
+      [[-delims with either {-delims or {{-delims
+    * NEW: {{-Wiki-include links "transclude" URL contents into Html, rather
+      than reference contents via hyperlink.  See |vimwiki-syntax-transclude|.
+    * NEW: Default VimwikiWikiIncludeHandler transcludes all URLs as images,
+      with optional style parameters.  See |vimwiki-syntax-transclude|.
+    * NEW: Customizable {{-Wiki-include handler. See |VimwikiWikiIncludeHandler|
+    * NEW: Image links have been re-implemented using {{-Transclusion.  See
+      |vimwiki-syntax-transclude|.
+    * NEW: Thumbnail links are now specified using {{-Transclusion as a
+      description for a wikilink.  See |vimwiki-syntax-thumbnails|.
+    * NEW: Interwiki schemes, and several additional schemes, have been 
+      introduced.  See |vimwiki-syntax-schemes|.
+    * NEW: '+'-Cmd to create and normalize links.  See |vimwiki_+|.
+
 
     * Issue 225: handling of HTML tags in code and block code
     * Issue 275 and 96: web links with parentheses or near parentheses or
@@ -2082,36 +2057,6 @@ Vim plugins: http://www.vim.org/scripts/script.php?script_id=2226
       used before to switch table mappings. 
     * Issue 283: Directory indexes broken.
 
-
-    * REMOVED: [[-Wikilinks with '|'-separator.  However, the separator can be
-      configured.  See customization options |g:vimwiki_link_separator| and
-      |g:vimwiki_incl_separator| in your chosen syntax file.
-    * REMOVED: Markdown and Textile links.  However, the format of weblinks
-      can be configured.  See variables |g:vimwiki_web_template| and
-      |g:vimwiki_image_template| in your chosen syntax file.
-    * REMOVED: Plain image links have been removed
-      e.g. http://someaddr.com/picture.jpg
-    * REMOVED: [[-Image links, that were identified by image extension in
-      Vimwiki V1.2.  These syntaxes may be upgraded to V1.3 by replacing
-      [[-delims with either {-delims or {{-delims
-
-    * NEW: Templated/Customizable Weblinks.  See |vimwiki-syntax-links|
-      and |g:vimwiki_web_template|.  Default syntax web_template = [URL DESCR]
-    * NEW: Templated/Customizable Imagelinks.  See |vimwiki-syntax-links|
-      and |g:vimwiki_image_template|.  
-      Default syntax image_template = {URL\|DESCR\|STYLE} (w/o backslashes)
-    * NEW: {{-Wiki-include links "transclude" URL contents into Html, rather
-      than reference contents via hyperlink.  See |vimwiki-syntax-transclude|.
-    * NEW: Default VimwikiWikiIncludeHandler transcludes all URLs as images,
-      with optional style parameters.  See |vimwiki-syntax-transclude|.
-    * NEW: Customizable {{-Wiki-include handler. See |VimwikiWikiIncludeHandler|
-    * NEW: Image links have been re-implemented using {{-Transclusion.  See
-      |vimwiki-syntax-transclude|.
-    * NEW: Thumbnail links are now specified using {{-Transclusion as a
-      description for a wikilink.  See |vimwiki-syntax-thumbnails|.
-    * NEW: Interwiki schemes, and several additional schemes, have been 
-      introduced.  See |vimwiki-syntax-schemes|.
-    * NEW: '+'-Cmd to create and normalize links.  See |vimwiki_+|.
 
 
 1.2~
