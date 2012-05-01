@@ -158,11 +158,11 @@ function! vimwiki#base#resolve_scheme(lnk, as_html) " {{{
   let path = ''
   let subdir = ''
   let ext = ''
-  if !(scheme =~ 'wiki*' || scheme =~ 'diary*' || scheme =~ 'local*' 
+  if !(scheme =~ 'wiki.*' || scheme =~ 'diary' || scheme =~ 'local' 
         \ || scheme =~ 'file')
     return [scheme, path, subdir, lnk, ext, scheme.':'.lnk]
   endif
-  "
+  
   " schemes below here resolve to the local filesystem, although 'file:///' 
   " is omitted when the schemeless syntax is used
   "
@@ -174,19 +174,19 @@ function! vimwiki#base#resolve_scheme(lnk, as_html) " {{{
   let wiki_subdirectory = 0
   let wiki_extension = 0
   let wiki_directory = 0
-  if scheme =~ 'wiki*'
+  if scheme =~ 'wiki.*'
     let numbered_scheme = 1
     let add_path = 1
     let html_path = 1
     let wiki_subdirectory = 1
     let wiki_extension = 1
     let wiki_directory = 1
-  elseif scheme =~ 'diary*'
+  elseif scheme =~ 'diary'
     let add_path = 1
     let html_path = 1
     let diary_rel_path = 1
     let wiki_extension = 1
-  elseif scheme =~ 'local*'
+  elseif scheme =~ 'local'
     let add_path = 1
     "XXX: local-schemes work like wiki-schemes with regards to subdirs
     let wiki_subdirectory = 1
@@ -251,6 +251,13 @@ function! vimwiki#base#resolve_scheme(lnk, as_html) " {{{
     endif
   endif
 
+  if scheme =~ 'file'
+    let lnk = substitute(lnk, '^/*', '', '')
+    let path = '/'.fnamemodify(lnk, ":p:h").'/'
+    let lnk = fnamemodify(lnk, ":p:t")
+    let subdir = ''
+  endif
+
   " remove repeated /'s
   let path = substitute(path, '/\+', '/', 'g')
   let subdir = substitute(subdir, '/\+', '/', 'g')
@@ -262,14 +269,11 @@ function! vimwiki#base#resolve_scheme(lnk, as_html) " {{{
   " construct url from parts
   if is_schemeless && a:as_html
     let scheme = ''
-    " Stu had the following: 
-    "let url = subdir.lnk.ext
-    " Tomas had the following: 
     let url = lnk.ext
   else
     " ensure there are three slashes after 'file:'
     let url = 'file:///'.path.subdir.lnk.ext
-    let url = substitute(url, '^file:/*', 'file:///', '')
+    let url = substitute(url, '^file://*', 'file:///', '')
   endif
 
   " result
