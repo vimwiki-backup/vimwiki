@@ -266,33 +266,18 @@ if !exists("*VimwikiWeblinkHandler") "{{{
       execute 'silent !xdg-open ' . shellescape(a:weblink, 1)
     endfunction
     let success = 0
-    " check win32/macunix/? 
     try 
-      if has("win32")
+      if vimwiki#u#is_windows()
         call s:win32_handler(a:weblink)
         return
-      endif
-      if has("macunix")
+      elseif has("macunix")
         call s:macunix_handler(a:weblink)
         return
-      endif
-    endtry
-    " check executable
-    try
-      if executable('start')
-        call s:win32_handler(a:weblink)
-        return
-      endif
-      if executable('open')
-        call s:macunix_handler(a:weblink)
-        return
-      endif
-      if executable('xdg-open')
+      else
         call s:linux_handler(a:weblink)
         return
       endif
     endtry
-
     echomsg 'Default Vimwiki Weblink Handler was unable to open the HTML file!'
   endfunction
 endif "}}}
