@@ -1995,10 +1995,12 @@ Vim plugins: http://www.vim.org/scripts/script.php?script_id=2226
 
 2.0 dev~
     * REMOVED: Links of type [[link][desc]].
-    * REMOVED: Options g:vimwiki_badsyms and g:vimwiki_stripsym.
-    * REMOVED: CameCased links. Check
+    * REMOVED: [http://link description] type of links. Use
+    * [[http://link|description]] instead.
+    * REMOVED: CamelCased links. Use [[link]] instead. Check
       http://code.google.com/p/vimwiki/howtosemiautolinkoldcamelcased
       TODO: add wiki page.
+    * REMOVED: Options g:vimwiki_badsyms and g:vimwiki_stripsym.
     * Highlighting nonexisted links are off by default! Check
       |vimwiki-option-maxhi| to turn it on.
     * REMOVED: g:vimwiki_image_exts and g:vimwiki_file_exts options.
