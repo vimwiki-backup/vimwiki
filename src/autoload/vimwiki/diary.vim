@@ -66,13 +66,6 @@ fun! s:get_month_name(month) "{{{
   return g:vimwiki_diary_months[str2nr(a:month)]
 endfun "}}}
 
-function! s:trim(string) "{{{
-  let res = substitute(a:string, '^\s\+', '', '')
-  let res = substitute(res, '\s\+$', '', '')
-  return res
-endfunction "}}}
-
-
 fun! s:read_captions(files) "{{{
   let result = {}
   for fl in a:files
@@ -82,7 +75,7 @@ fun! s:read_captions(files) "{{{
     if filereadable(fl)
       for line in readfile(fl, '', g:vimwiki_max_scan_for_caption)
         if line =~ g:vimwiki_rxHeader && !has_key(result, fl_key)
-          let result[fl_key] = s:trim(matchstr(line, g:vimwiki_rxHeader))
+          let result[fl_key] = vimwiki#u#trim(matchstr(line, g:vimwiki_rxHeader))
         endif
       endfor
     endif
@@ -182,94 +175,87 @@ fun! s:format_diary(...) "{{{
   return result
 endfun "}}}
 
-function! s:get_file_contents(fname) "{{{
-  " read contents of diary index into buffer
-  let fname = expand(a:fname)
-  let lines = []
-  if bufnr(fname) == -1
-    let lines = readfile(fname)
-  else
-    let lines = getbufline(bufnr(fname), 1, '$')
-  endif
-  return lines
-endfunction "}}}
+" function! s:get_file_contents(fname) "{{{
+  " " read contents of diary index into buffer
+  " let fname = expand(a:fname)
+  " let lines = []
+  " if bufnr(fname) == -1
+    " let lines = readfile(fname)
+  " else
+    " let lines = getbufline(bufnr(fname), 1, '$')
+  " endif
+  " return lines
+" endfunction "}}}
 
-function! s:set_file_contents(fname, lines) "{{{
-  " save contents of diary index with lines
-  let fname = expand(a:fname)
-  if bufnr(fname) == -1
-    call writefile(a:lines, fname)
-  else
-    exe 'buffer '.bufnr(fname)
-    if !&readonly
-      1,$delete _
-      call append(1, a:lines)
-      1,1delete _
-    endif
-  endif
-endfunction "}}}
+" function! s:set_file_contents(fname, lines) "{{{
+  " " save contents of diary index with lines
+  " let fname = expand(a:fname)
+  " if bufnr(fname) == -1
+    " call writefile(a:lines, fname)
+  " else
+    " exe 'buffer '.bufnr(fname)
+    " if !&readonly
+      " 1,$delete _
+      " call append(1, a:lines)
+      " 1,1delete _
+    " endif
+  " endif
+" endfunction "}}}
 
-function! s:set_diary_section(lines, diary_lines) "{{{
-  " remove diary section
-  let lines = a:lines
-  let ln_start = match(lines, substitute(g:vimwiki_rxH1_Template, '__Header__', VimwikiGet('diary_header'), ''))
-  let ln_end = match(lines, g:vimwiki_rxH1, ln_start+1)
+" function! s:set_diary_section(lines, diary_lines) "{{{
+  " " remove diary section
+  " let lines = a:lines
+  " let ln_start = match(lines, substitute(g:vimwiki_rxH1_Template, '__Header__', VimwikiGet('diary_header'), ''))
+  " let ln_end = match(lines, g:vimwiki_rxH1, ln_start+1)
 
-  if ln_end < 0
-    let ln_end = len(lines)
-  endif
+  " if ln_end < 0
+    " let ln_end = len(lines)
+  " endif
 
-  if ln_start > -1
-    call remove(lines, ln_start, ln_end-1)
-  endif
+  " if ln_start > -1
+    " call remove(lines, ln_start, ln_end-1)
+  " endif
 
-  if ln_start < 0
-    let ln_start = 0
-  endif
+  " if ln_start < 0
+    " let ln_start = 0
+  " endif
 
-  call extend(lines, a:diary_lines, ln_start)
+  " call extend(lines, a:diary_lines, ln_start)
 
-endfunction "}}}
+" endfunction "}}}
 
-function! s:add_link(diaryfile, newlink) "{{{
-  let fname = expand(a:diaryfile)
-  if filereadable(fname)
-    let lines = s:get_file_contents(fname)
-  else
-    let lines = []
-  endif
+" function! s:add_link(diaryfile, newlink) "{{{
+  " let fname = expand(a:diaryfile)
+  " if filereadable(fname)
+    " let lines = s:get_file_contents(fname)
+  " else
+    " let lines = []
+  " endif
 
-  call s:set_diary_section(lines, s:format_diary(a:newlink))
+  " call s:set_diary_section(lines, s:format_diary(a:newlink))
 
-  call s:set_file_contents(fname, lines)
-endfunction "}}}
+  " call s:set_file_contents(fname, lines)
+" endfunction "}}}
 
-function! s:make_date_link(...) "{{{
-  if a:0
-    let newlink = a:1
-  else
-    let newlink = s:diary_date_link()
-  endif
-  call s:add_link(s:diary_index(), newlink)
-  return newlink
-endfunction "}}}
+" function! s:make_date_link(...) "{{{
+  " if a:0
+    " let newlink = a:1
+  " else
+    " let newlink = s:diary_date_link()
+  " endif
+  " call s:add_link(s:diary_index(), newlink)
+  " return newlink
+" endfunction "}}}
 
 function! vimwiki#diary#make_note(index, ...) "{{{
-  " XXX: prevent auto_export of index, issue:293
-  let prev_auto_export = VimwikiGet('auto_export')
-  call VimwikiSet('auto_export', 0)
-  " XXX: force loading of appropriate syntax to avoid issue:290
-  call vimwiki#diary#goto_index(a:index)
-  "call vimwiki#base#select(a:index)
+  call vimwiki#base#select(a:index)
   call vimwiki#base#mkdir(VimwikiGet('path').VimwikiGet('diary_rel_path'))
   if a:0
-    let link = 'diary:'.s:make_date_link(a:1)
+    let link = 'diary:'.a:1
   else
-    let link = 'diary:'.s:make_date_link()
+    let link = 'diary:'.s:diary_date_link()
   endif
-  call vimwiki#base#open_link(':e ', link, s:diary_index())
-  " XXX: prevent auto_export of index, issue:293
-  call VimwikiSet('auto_export', prev_auto_export)
+  call vimwiki#base#open_link(':e ', link, s:diary_index(), 1)
 endfunction "}}}
 
 function! vimwiki#diary#goto_index(index) "{{{
