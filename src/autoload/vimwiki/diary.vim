@@ -255,7 +255,7 @@ function! vimwiki#diary#make_note(index, ...) "{{{
   else
     let link = 'diary:'.s:diary_date_link()
   endif
-  call vimwiki#base#open_link(':e ', link, s:diary_index(), 1)
+  call vimwiki#base#open_link(':e ', link, s:diary_index())
 endfunction "}}}
 
 function! vimwiki#diary#goto_index(index) "{{{
