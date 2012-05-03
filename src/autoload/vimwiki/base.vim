@@ -281,6 +281,9 @@ function! vimwiki#base#resolve_scheme(lnk, as_html) " {{{
 endfunction "}}}
 
 function! vimwiki#base#open_link(cmd, link, ...) "{{{
+  if &ft == ""
+    let &ft = "vimwiki"
+  endif
   " resolve url
   let [scheme, path, subdir, lnk, ext, url] = 
         \ vimwiki#base#resolve_scheme(a:link, 0)
@@ -313,13 +316,10 @@ function! vimwiki#base#open_link(cmd, link, ...) "{{{
   if use_weblink_handler
     call VimwikiWeblinkHandler(url)
   else
-    " rm duplicate /-chars
+    " TODO: rm duplicate /-chars, use utility function from u.vim
     call vimwiki#base#edit_file(a:cmd, 
-          \ substitute(path.subdir.lnk.ext, '^/\+', '/', ''))
-  endif
-  " save previous link
-  if update_prev_link && exists('vimwiki_prev_link')
-    let b:vimwiki_prev_link = vimwiki_prev_link
+          \ substitute(path.subdir.lnk.ext, '^/\+', '/', ''),
+          \ vimwiki_prev_link, update_prev_link)
   endif
 endfunction
 " }}}
@@ -328,11 +328,8 @@ function! vimwiki#base#select(wnum)"{{{
   if a:wnum < 1 || a:wnum > len(g:vimwiki_list)
     return
   endif
-  if &ft == 'vimwiki'
-    " initialize buffer vars with current state (including current_idx, etc)
-    call vimwiki#base#cache_wiki_state()
-  endif
   let g:vimwiki_current_idx = a:wnum - 1
+  call vimwiki#base#reset_wiki_state()
 endfunction
 " }}}
 
@@ -430,7 +427,7 @@ function! vimwiki#base#get_links(pat) "{{{ return string-list for files
   return globlinks
 endfunction "}}}
 
-function! vimwiki#base#edit_file(command, filename) "{{{
+function! vimwiki#base#edit_file(command, filename, ...) "{{{
   let fname = escape(a:filename, '% ')
   let dir = fnamemodify(a:filename, ":p:h")
   if vimwiki#base#mkdir(dir, 1)
@@ -438,6 +435,11 @@ function! vimwiki#base#edit_file(command, filename) "{{{
   else
     echom ' '
     echom 'Vimwiki: Unable to edit file in non-existent directory: '.dir
+  endif
+
+  " save previous link
+  if a:0 && a:2
+    let b:vimwiki_prev_link = a:1
   endif
 endfunction
 " }}}

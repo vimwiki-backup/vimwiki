@@ -440,7 +440,9 @@ nnoremap <silent><buffer> <Plug>VimwikiRemoveHeaderLevel :
 if VimwikiGet('auto_export')
   " Automatically generate HTML on page write.
   augroup vimwiki
-    au BufWritePost <buffer> Vimwiki2HTML
+    au BufWritePost <buffer> 
+      \ call vimwiki#html#Wiki2HTML(expand(g:vimwiki_current_path_html),
+      \                             expand('%'))
   augroup END
 endif
 
