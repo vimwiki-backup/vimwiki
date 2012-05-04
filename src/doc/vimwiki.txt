@@ -203,6 +203,13 @@ NORMAL MODE                                           *vimwiki-local-mappings*
                         To remap: >
                         :nmap <Leader>wcc <Plug>Vimwiki2HTMLBrowse
 <
+                        *vimwiki_<Leader>w<Leader>i*
+<Leader>w<Leader>i      Update diary section (delete old, insert new)
+                        Works only for diary index file.
+                        Maps to |:VimwikiDiaryGenerateLinks|
+                        To remap: >
+                        :nmap <Leader>wcr <Plug>VimwikiDiaryGenerateLinks
+<
                         *vimwiki_<CR>*
 <CR>                    Follow/create wiki link (create target wiki page if
                         needed).
@@ -486,6 +493,9 @@ ic                      An inner column in a table.
 
 *:VimwikiGenerateLinks*
     Insert all available links into current buffer.
+
+*:VimwikiDiaryGenerateLinks*
+    Delete old, insert new diary section into diary index file.
 
 *:VimwikiDiaryNextDay*
     Open next day diary link if available.
@@ -1122,31 +1132,14 @@ To indent table indent the first row. Then format it with 'gqq'.
 
 The diary helps you make daily notes. You can easily add information into
 vimwiki that should be sorted out later. Just hit <Leader>w<Leader>w to create
-new daily note with name based on current date. The link to this newly created
-file is added to a diary wiki file.
+new daily note with name based on current date.
 
-Usage example with default settings: >
-  Consider today is 2011-12-08.
+To generate diary section with all available links one can use
+|:VimwikiDiaryGenerateLinks| or <Leader>w<Leader>i .
 
-  Hit \w\w .
-  ~/vimwiki/diary.wiki is created.
+Note: it works only for diary index file.
 
-  Following lines are added to ~/vimwiki/diary/diary.wiki :
-    = Diary =
-
-    == 2011 ==
-
-    === December ===
-        * [[2011-12-08]]
-
-
-  ~/vimwiki/diary/2011-12-08.wiki is created.
-  You are ready to add your information there.
-  -------------------------------------------
-
-  On the next day.
-  Hit \w\w .
-
+Example of diary section: >
     = Diary =
 
     == 2011 ==
@@ -1156,9 +1149,6 @@ Usage example with default settings: >
         * [[2011-12-08]]
 
 
-  ~/vimwiki/diary/2011-12-09.wiki is created.
-  You are ready to add your information there.
->
 See |g:vimwiki_diary_months| if you would like to rename months.
 
 
@@ -1994,6 +1984,8 @@ Vim plugins: http://www.vim.org/scripts/script.php?script_id=2226
 14. Changelog                                              *vimwiki-changelog*
 
 2.0 dev~
+    * Diary index page is no more autoregenerated. Use
+      |:VimwikiDiaryGenerateLinks| command to update diary section.
     * REMOVED: Links of type [[link][desc]].
     * REMOVED: [http://link description] type of links. Use
       [[http://link|description]] instead.
