@@ -413,11 +413,14 @@ command! -count VimwikiTabIndex tabedit <bar>
       \ call vimwiki#base#goto_index(v:count1)
 
 command! -count VimwikiDiaryIndex
-      \ call vimwiki#diary#goto_index(v:count1)
+      \ call vimwiki#diary#goto_diary_index(v:count1)
 command! -count VimwikiMakeDiaryNote
       \ call vimwiki#diary#make_note(v:count1)
 command! -count VimwikiTabMakeDiaryNote tabedit <bar>
       \ call vimwiki#diary#make_note(v:count1)
+
+command! VimwikiDiaryGenerateLinks
+      \ call vimwiki#diary#generate_diary_section()
 "}}}
 
 " MAPPINGS {{{
@@ -440,6 +443,11 @@ if !hasmapto('<Plug>VimwikiDiaryIndex')
   nmap <silent><unique> <Leader>wi <Plug>VimwikiDiaryIndex
 endif
 nnoremap <unique><script> <Plug>VimwikiDiaryIndex :VimwikiDiaryIndex<CR>
+
+if !hasmapto('<Plug>VimwikiDiaryGenerateLinks')
+  nmap <silent><unique> <Leader>w<Leader>i <Plug>VimwikiDiaryGenerateLinks
+endif
+nnoremap <unique><script> <Plug>VimwikiDiaryGenerateLinks :VimwikiDiaryGenerateLinks<CR>
 
 if !hasmapto('<Plug>VimwikiMakeDiaryNote')
   nmap <silent><unique> <Leader>w<Leader>w <Plug>VimwikiMakeDiaryNote
