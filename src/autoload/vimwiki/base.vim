@@ -147,7 +147,7 @@ function! vimwiki#base#current_subdir()"{{{
   return vimwiki#base#subdir(VimwikiGet('path'), expand('%:p'))
 endfunction"}}}
 
-function! vimwiki#base#resolve_scheme(lnk, as_html) " {{{
+function! vimwiki#base#resolve_scheme_old(lnk, as_html) " {{{
   " schemeless
   let lnk = a:lnk
   let is_schemeless = lnk !~ g:vimwiki_rxSchemeUrl
@@ -185,6 +185,7 @@ function! vimwiki#base#resolve_scheme(lnk, as_html) " {{{
     let add_path = 1
     let html_path = 1
     let diary_rel_path = 1
+    let wiki_subdirectory = 1
     let wiki_extension = 1
   elseif scheme =~ 'local'
     let add_path = 1
@@ -234,6 +235,9 @@ function! vimwiki#base#resolve_scheme(lnk, as_html) " {{{
     let subdir = g:vimwiki_current_subdir
   endif
 
+  " echom "p" path
+  " echom "s" subdir
+
   " extension
   if wiki_extension
     if a:as_html
@@ -258,6 +262,13 @@ function! vimwiki#base#resolve_scheme(lnk, as_html) " {{{
     let subdir = ''
   endif
 
+  " if scheme =~ 'diary'
+    " let lnk = substitute(lnk, '^/*', '', '')
+    " let path = '/'.fnamemodify(lnk, ":p:h").'/'
+    " let lnk = fnamemodify(lnk, ":p:t")
+    " let subdir = ''
+  " endif
+
   " remove repeated /'s
   let path = substitute(path, '/\+', '/', 'g')
   let subdir = substitute(subdir, '/\+', '/', 'g')
@@ -280,6 +291,107 @@ function! vimwiki#base#resolve_scheme(lnk, as_html) " {{{
   return [scheme, path, subdir, lnk, ext, url]
 endfunction "}}}
 
+function! vimwiki#base#resolve_scheme(lnk, as_html) " {{{
+  " if link is schemeless add wikiN: scheme
+  let lnk = a:lnk
+  let is_schemeless = lnk !~ g:vimwiki_rxSchemeUrl
+  let lnk = (is_schemeless  ? 'wiki'.g:vimwiki_current_idx.':'.lnk : lnk)
+  
+  " Get scheme
+  let scheme = matchstr(lnk, g:vimwiki_rxSchemeUrlMatchScheme)
+  " Get link (without scheme)
+  let lnk = matchstr(lnk, g:vimwiki_rxSchemeUrlMatchUrl)
+  let path = ''
+  let subdir = ''
+  let ext = ''
+
+  " do nothing if scheme is unknown to vimwiki
+  if !(scheme =~ 'wiki.*' || scheme =~ 'diary' || scheme =~ 'local' 
+        \ || scheme =~ 'file')
+    return [scheme, path, subdir, lnk, ext, scheme.':'.lnk]
+  endif
+
+  " scheme behaviors
+  if scheme =~ 'wiki\d\+'
+    let idx = eval(matchstr(scheme, '\D\+\zs\d\+\ze'))
+    if idx < 0 || idx >= len(g:vimwiki_list)
+      echom 'Vimwiki Error: Numbered scheme refers to a non-existent wiki!'
+      return ['','','','','','']
+    endif
+
+    if a:as_html
+      if idx == g:vimwiki_current_idx
+        let path = g:vimwiki_current_path_html
+      else
+        let path = VimwikiGet('path_html', idx)
+      endif
+    else
+      if idx == g:vimwiki_current_idx
+        let path = ''
+      else
+        let path = VimwikiGet('path', idx)
+      endif
+    endif
+
+    let subdir = g:vimwiki_current_subdir
+
+    if a:as_html
+      let ext = '.html'
+    else
+      if idx == g:vimwiki_current_idx
+        let ext = g:vimwiki_current_ext
+      else
+        let ext = VimwikiGet('ext', idx)
+      endif
+    endif
+
+    " default link for directories
+    if vimwiki#u#is_link_to_dir(lnk)
+      let ext = (g:vimwiki_dir_link != '' ? g:vimwiki_dir_link. ext : '')
+    endif
+  elseif scheme =~ 'diary'
+    let path = substitute(g:vimwiki_current_subdir, '[^/\.]\+/', '../', 'g')
+    let subdir = g:vimwiki_current_diary_rel_path
+    if a:as_html
+      let ext = '.html'
+    else
+      let ext = g:vimwiki_current_ext
+    endif
+  elseif scheme =~ 'local'
+    let path = ''
+    let subdir = g:vimwiki_current_subdir
+  elseif scheme =~ 'file'
+    let lnk = substitute(lnk, '^/*', '', '')
+    if a:as_html
+      let path = 'file:///'.fnamemodify(lnk, ":p:h").'/'
+    else
+      let path = fnamemodify(lnk, ":p:h").'/'
+    endif
+    let lnk = fnamemodify(lnk, ":p:t")
+    let subdir = ''
+  endif
+
+  " remove repeated /'s
+  let path = substitute(path, '\%(file://\)\?\zs'.'/\+', '/', 'g')
+  let subdir = substitute(subdir, '/\+', '/', 'g')
+  let lnk = substitute(lnk, '/\+', '/', 'g')
+  if vimwiki#u#is_windows()
+    let lnk = substitute(lnk, '^/\ze[[:alpha:]]:', '', '')
+  endif
+
+  " construct url from parts
+  if is_schemeless && a:as_html
+    let scheme = ''
+    let url = lnk.ext
+  else
+    " ensure there are three slashes after 'file:'
+    let url = path.subdir.lnk.ext
+  endif
+
+  " result
+  return [scheme, path, subdir, lnk, ext, url]
+endfunction "}}}
+
 function! vimwiki#base#open_link(cmd, link, ...) "{{{
   if &ft == ""
     let &ft = "vimwiki"
@@ -293,14 +405,15 @@ function! vimwiki#base#open_link(cmd, link, ...) "{{{
   endif
   let update_prev_link = (
         \ scheme == '' || 
-        \ scheme =~ 'wiki*' || 
-        \ scheme =~ 'diary*' ? 1 : 0)
+        \ scheme =~ 'wiki' || 
+        \ scheme =~ 'diary' ? 1 : 0)
   let use_weblink_handler = (
         \ scheme == '' || 
-        \ scheme =~ 'wiki*' || 
-        \ scheme =~ 'diary*' || 
-        \ scheme =~ 'local*' || 
+        \ scheme =~ 'wiki' || 
+        \ scheme =~ 'diary' || 
+        \ scheme =~ 'local' || 
         \ scheme =~ 'file' ? 0 : 1)
+  let vimwiki_prev_link = []
   " update previous link for wiki pages
   if update_prev_link
     if a:0
@@ -316,9 +429,7 @@ function! vimwiki#base#open_link(cmd, link, ...) "{{{
   if use_weblink_handler
     call VimwikiWeblinkHandler(url)
   else
-    " TODO: rm duplicate /-chars, use utility function from u.vim
-    call vimwiki#base#edit_file(a:cmd, 
-          \ substitute(path.subdir.lnk.ext, '^/\+', '/', ''),
+    call vimwiki#base#edit_file(a:cmd, url,
           \ vimwiki_prev_link, update_prev_link)
   endif
 endfunction
