@@ -183,7 +183,7 @@ function! vimwiki#base#resolve_scheme(lnk, as_html) " {{{
       endif
     else
       if idx == g:vimwiki_current_idx
-        let path = ''
+        let path = g:vimwiki_current_path
       else
         let path = VimwikiGet('path', idx)
       endif
