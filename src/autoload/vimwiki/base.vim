@@ -248,13 +248,14 @@ function! vimwiki#base#resolve_scheme(lnk, as_html) " {{{
       let ext = (g:vimwiki_dir_link != '' ? g:vimwiki_dir_link. ext : '')
     endif
   elseif scheme =~ 'diary'
-    let path = substitute(g:vimwiki_current_subdir, '[^/\.]\+/', '../', 'g')
-    let subdir = g:vimwiki_current_diary_rel_path
     if a:as_html
+      let path = substitute(g:vimwiki_current_subdir, '[^/\.]\+/', '../', 'g')
       let ext = '.html'
     else
+      let path = g:vimwiki_current_path
       let ext = g:vimwiki_current_ext
     endif
+    let subdir = g:vimwiki_current_diary_rel_path
   elseif scheme =~ 'local'
     let path = ''
     let subdir = g:vimwiki_current_subdir
