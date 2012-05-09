@@ -263,6 +263,7 @@ function! vimwiki#base#resolve_scheme(lnk, as_html) " {{{
     if a:as_html
       let path = 'file:///'.fnamemodify(lnk, ":p:h").'/'
     else
+      " TODO: FIX HERE
       let path = fnamemodify(lnk, ":p:h").'/'
     endif
     let lnk = fnamemodify(lnk, ":p:t")
