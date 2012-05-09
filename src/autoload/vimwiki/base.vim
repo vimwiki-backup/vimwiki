@@ -83,6 +83,48 @@ function! vimwiki#base#recall_wiki_state() "{{{ try loading wiki options
   return 1
 endfunction "}}}
 
+function! vimwiki#base#print_wiki_state() "{{{ print wiki options
+  "   and buffer state variables
+  let b_width = 24
+  let g_width = 16
+  " ['key', value] pairs
+  echo "--- Internal Wiki State ---"
+  " wiki options
+  echo "- Options -"
+  for kk in VimwikiGetOptionNames()
+    if !exists('b:vimwiki_'.kk)
+      echo "  'b:vimwiki_".kk."': n/a"
+    else
+      echo "  'b:vimwiki_".kk."': ".repeat(' ', b_width-len(kk)).
+            \ string(b:vimwiki_{kk})
+    endif
+    if !exists('g:vimwiki_current_'.kk)
+      echo "  'g:vimwiki_current_".kk."': n/a"
+    else
+      echo "  'g:vimwiki_current_".kk."': ".repeat(' ', g_width-len(kk)).
+            \ string(g:vimwiki_current_{kk})
+    endif
+  endfor
+  if !exists('g:vimwiki_current_keys')
+    return 0
+  endif
+  echo "- Cached Variables -"
+  for kk in keys(g:vimwiki_current_keys)
+    if !exists('b:vimwiki_'.kk)
+      echo "  'b:vimwiki_".kk."': n/a"
+    else
+      echo "  'b:vimwiki_".kk."': ".repeat(' ', b_width-len(kk)).
+            \ string(b:vimwiki_{kk})
+    endif
+    if !exists('g:vimwiki_current_'.kk)
+      echo "  'g:vimwiki_current_".kk."': n/a"
+    else
+      echo "  'g:vimwiki_current_".kk."': ".repeat(' ', g_width-len(kk)).
+            \ string(g:vimwiki_current_{kk})
+    endif
+  endfor
+endfunction "}}}
+
 " If the optional argument 'confirm' == 1 is provided,
 " vimwiki#base#mkdir will ask before creating a directory 
 function! vimwiki#base#mkdir(path, ...) "{{{
@@ -143,8 +185,8 @@ function! vimwiki#base#subdir(path, filename)"{{{
   return res
 endfunction"}}}
 
-function! vimwiki#base#current_subdir()"{{{
-  return vimwiki#base#subdir(VimwikiGet('path'), expand('%:p'))
+function! vimwiki#base#current_subdir(idx)"{{{
+  return vimwiki#base#subdir(VimwikiGet('path', a:idx), expand('%:p'))
 endfunction"}}}
 
 function! vimwiki#base#resolve_scheme(lnk, as_html) " {{{
