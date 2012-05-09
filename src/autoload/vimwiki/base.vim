@@ -259,16 +259,16 @@ function! vimwiki#base#resolve_scheme(lnk, as_html) " {{{
     let path = ''
     let subdir = g:vimwiki_current_subdir
   elseif scheme =~ 'file'
-    let lnk = substitute(lnk, '^/*', '', '')
+    let lnk = substitute(lnk, '^//', '', '')
     if a:as_html
-      let path = 'file:///'.fnamemodify(lnk, ":p:h").'/'
+      let path = 'file://'.fnamemodify(lnk, ":p:h").'/'
     else
-      " TODO: FIX HERE
       let path = fnamemodify(lnk, ":p:h").'/'
     endif
     let lnk = fnamemodify(lnk, ":p:t")
     let subdir = ''
   endif
+
 
   " remove repeated /'s
   let path = substitute(path, '\%(file://\)\?\zs'.'/\+', '/', 'g')
