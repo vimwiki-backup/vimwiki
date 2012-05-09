@@ -453,3 +453,7 @@ endif
 command! -buffer VimwikiPasteUrl call vimwiki#html#PasteUrl(expand('%'))
 command! -buffer VimwikiCatUrl call vimwiki#html#CatUrl(expand('%'))
 " }}}
+
+" DEBUGGING {{{
+command! VimwikiPrintWikiState call vimwiki#base#print_wiki_state()
+" }}}

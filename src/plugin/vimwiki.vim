@@ -12,6 +12,17 @@ let loaded_vimwiki = 1
 let s:old_cpo = &cpo
 set cpo&vim
 
+" Logging and performance instrumentation "{{{
+let g:VimwikiLog = {}
+let g:VimwikiLog.path = 0     " # of calls to VimwikiGet with path or path_html
+let g:VimwikiLog.subdir = 0   " # of calls to vimwiki#base#subdir()
+let g:VimwikiLog.timing = []  " various timing measurements
+let g:VimwikiLog.html = []    " html conversion timing
+function! VimwikiLog_extend(what,...)  "{{{
+  call extend(g:VimwikiLog[a:what],a:000)
+endfunction "}}}
+"}}}
+
 " HELPER functions {{{
 function! s:default(varname, value) "{{{
   if !exists('g:vimwiki_'.a:varname)
@@ -92,7 +103,7 @@ function! s:setup_filetype() "{{{
   endif
   " initialize and cache global vars of current state
   call vimwiki#base#reset_wiki_state(['idx', idx], 
-        \ ['subdir', vimwiki#base#current_subdir()])
+        \ ['subdir', vimwiki#base#current_subdir(idx)])
 
   unlet! b:vimwiki_fs_rescan
   set filetype=vimwiki
@@ -132,7 +143,7 @@ function! s:setup_buffer_enter() "{{{
     endif
     " initialize and cache global vars of current state
     call vimwiki#base#reset_wiki_state(['idx', idx], 
-          \ ['subdir', vimwiki#base#current_subdir()])
+          \ ['subdir', vimwiki#base#current_subdir(idx)])
 
   endif
 
@@ -484,17 +495,6 @@ function! s:build_table_menu(topmenu)
   exe 'nmenu '.a:topmenu.'.Table.Move\ column\ right<tab><A-Right> :VimwikiTableMoveColumnRight<CR>'
   exe 'nmenu disable '.a:topmenu.'.Table'
 endfunction
-
-" Logging and performance instrumentation "{{{
-let g:VimwikiLog = {}
-let g:VimwikiLog.path = 0     " # of calls to VimwikiGet with path or path_html
-let g:VimwikiLog.subdir = 0   " # of calls to vimwiki#base#subdir()
-let g:VimwikiLog.timing = []  " various timing measurements
-let g:VimwikiLog.html = []    " html conversion timing
-function! VimwikiLog_extend(what,...)  "{{{
-  call extend(g:VimwikiLog[a:what],a:000)
-endfunction "}}}
-"}}}
 
 "XXX make sure anything below does not cause autoload/base to be loaded
 if !empty(g:vimwiki_menu)
