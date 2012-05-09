@@ -88,6 +88,7 @@ function! s:setup_filetype() "{{{
   endif
   "XXX when idx = -1? (an orphan page has been detected)
 
+  "TODO: refactor (same code in setup_buffer_enter)
   " The buffer's file is not in the path and user *does* want his wiki
   " extension(s) to be global -- Add new wiki.
   if idx == -1
@@ -128,6 +129,7 @@ function! s:setup_buffer_enter() "{{{
       return
     endif
 
+    "TODO: refactor (same code in setup_filetype)
     " The buffer's file is not in the path and user *does* want his wiki
     " extension(s) to be global -- Add new wiki.
     if idx == -1
