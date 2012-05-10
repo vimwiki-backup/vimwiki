@@ -35,16 +35,17 @@ setlocal isfname-=[,]
 
 " Autocreate list items {{{
 " for list items, and list items with checkboxes
+setlocal formatoptions+=tnro
+setlocal formatoptions-=cq
 if VimwikiGet('syntax') == 'default'
   setl comments=b:*,b:#,b:-
   setl formatlistpat=^\\s*[*#-]\\s*
+elseif VimwikiGet('syntax') == 'markdown'
+  setlocal comments=fb:*,fb:-,fb:+,nb:> commentstring=\ >\ %s
+  setlocal formatlistpat=^\\s*\\d\\+\\.\\s\\+\\\|^[-*+]\\s\\+j
 else
   setl comments=n:*,n:#
 endif
-" setlocal formatoptions=tnro
-setlocal formatoptions+=tnro
-setlocal formatoptions-=c
-setlocal formatoptions-=q
 
 if !empty(&langmap)
   " Valid only if langmap is a comma separated pairs of chars
