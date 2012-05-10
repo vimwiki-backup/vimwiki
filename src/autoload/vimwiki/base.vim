@@ -385,7 +385,12 @@ endfunction "}}}
 function! vimwiki#base#get_links(pat) "{{{ return string-list for files
   " in the current wiki matching the pattern "pat"
   " search all wiki files (or directories) in wiki 'path' and its subdirs.
-  let subdir = g:vimwiki_current_subdir
+
+  " XXX: 
+  " if maxhi = 1 and <leader>w<leader>w before loading any vimwiki file
+  " cached g:vimwiki_current_subdir is not set up
+  let subdir = exists("g:vimwiki_current_subdir") ? g:vimwiki_current_subdir : ''
+
   let invsubdir = substitute(subdir,'[^/]\+','..','g')
   " if current wiki is temporary -- was added by an arbitrary wiki file then do
   " not search wiki files in subdirectories. Or it would hang the system if
@@ -402,7 +407,7 @@ function! vimwiki#base#get_links(pat) "{{{ return string-list for files
 
   " change to the directory of the current file
   let orig_pwd = getcwd()
-  lcd! %:h
+  lcd! %:p:h
   " all path are relative to the current file's location 
   let globlinks = "\n".glob(invsubdir.search_dirs.a:pat,1)."\n"
   " remove extensions
