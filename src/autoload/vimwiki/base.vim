@@ -382,6 +382,7 @@ function! vimwiki#base#backlinks() "{{{
           \ escape(VimwikiGet('path').'**/*'.VimwikiGet('ext'), ' ')
 endfunction "}}}
 
+" XXX: this function should be reimplemented (?)
 function! vimwiki#base#get_links(pat) "{{{ return string-list for files
   " in the current wiki matching the pattern "pat"
   " search all wiki files (or directories) in wiki 'path' and its subdirs.
@@ -403,11 +404,17 @@ function! vimwiki#base#get_links(pat) "{{{ return string-list for files
   let time1 = reltime()  " start the clock  XXX
   "save pwd, do lcd %:h, restore old pwd; getcwd()
   let globlinks = "\n".glob(VimwikiGet('path').search_dirs.a:pat,1)."\n"
+
   let time2 = vimwiki#u#time(time1)  " XXX
 
   " change to the directory of the current file
   let orig_pwd = getcwd()
-  lcd! %:p:h
+  if expand("%") == '' " calling from the empty buffer? 
+    " what about 2<leader>w<leader>w ???
+    exe 'lcd! '.VimwikiGet('path') 
+  else
+    lcd! %:p:h
+  endif
   " all path are relative to the current file's location 
   let globlinks = "\n".glob(invsubdir.search_dirs.a:pat,1)."\n"
   " remove extensions
