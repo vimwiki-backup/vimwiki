@@ -260,8 +260,12 @@ function! vimwiki#base#resolve_scheme(lnk, as_html) " {{{
     let path = ''
     let subdir = g:vimwiki_current_subdir
   elseif scheme =~ 'file'
-    let lnk = substitute(lnk, '^//', '', '')
+    " RM repeated leading "/"'s within a link
+    let lnk = substitute(lnk, '^/*', '/', '')
+    " convert "/~..." into "~..." for fnamemodify
+    let lnk = substitute(lnk, '^/\~', '\~', '')
     if a:as_html
+      " prepend browser-specific file: scheme
       let path = 'file://'.fnamemodify(lnk, ":p:h").'/'
     else
       let path = fnamemodify(lnk, ":p:h").'/'
