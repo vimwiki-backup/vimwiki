@@ -2001,7 +2001,7 @@ Vim plugins: http://www.vim.org/scripts/script.php?script_id=2226
       e.g. http://someaddr.com/picture.jpg
     * REMOVED: [[-Image links, that were identified by image extension in
       Vimwiki V1.2.  These syntaxes may be upgraded to V2.0 by replacing
-      [[-delims with either {-delims or {{-delims
+      [[-delims with {{-delims
     * NEW: {{-Wiki-include links "transclude" URL contents into Html, rather
       than reference contents via hyperlink.  See |vimwiki-syntax-transclude|.
     * NEW: Default VimwikiWikiIncludeHandler transcludes all URLs as images,
