@@ -297,7 +297,7 @@ function! vimwiki#base#resolve_scheme(lnk, as_html) " {{{
 endfunction "}}}
 
 function! vimwiki#base#open_link(cmd, link, ...) "{{{
-  if &ft == ""
+  if &ft != "vimwiki"
     let &ft = "vimwiki"
   endif
   " resolve url
@@ -391,12 +391,15 @@ function! vimwiki#base#get_links(pat) "{{{ return string-list for files
   " in the current wiki matching the pattern "pat"
   " search all wiki files (or directories) in wiki 'path' and its subdirs.
 
+  let time1 = reltime()  " start the clock  XXX
+
   " XXX: 
   " if maxhi = 1 and <leader>w<leader>w before loading any vimwiki file
   " cached g:vimwiki_current_subdir is not set up
   let subdir = exists("g:vimwiki_current_subdir") ? g:vimwiki_current_subdir : ''
 
   let invsubdir = substitute(subdir,'[^/]\+','..','g')
+
   " if current wiki is temporary -- was added by an arbitrary wiki file then do
   " not search wiki files in subdirectories. Or it would hang the system if
   " wiki file was created in $HOME or C:/ dirs.
@@ -405,20 +408,26 @@ function! vimwiki#base#get_links(pat) "{{{ return string-list for files
   else
     let search_dirs = '**/'
   endif
-  let time1 = reltime()  " start the clock  XXX
+  " let globlinks = "\n".glob(VimwikiGet('path').search_dirs.a:pat,1)."\n"
+  
   "save pwd, do lcd %:h, restore old pwd; getcwd()
-  let globlinks = "\n".glob(VimwikiGet('path').search_dirs.a:pat,1)."\n"
-
-  let time2 = vimwiki#u#time(time1)  " XXX
-
   " change to the directory of the current file
   let orig_pwd = getcwd()
-  if expand("%") == '' " calling from the empty buffer? 
-    " what about 2<leader>w<leader>w ???
-    exe 'lcd! '.VimwikiGet('path') 
+  
+  " calling from other than vimwiki file 
+  let path_base = vimwiki#u#path_norm(vimwiki#u#chomp_slash(VimwikiGet('path')))
+  let path_file = vimwiki#u#path_norm(vimwiki#u#chomp_slash(expand('%:p:h')))
+
+  " echom vimwiki#u#path_common_pfx(path_file, path_base)
+  " echom path_file
+  " echom path_base
+
+  if vimwiki#u#path_common_pfx(path_file, path_base) != path_base
+    exe 'lcd! '.path_base
   else
     lcd! %:p:h
   endif
+
   " all path are relative to the current file's location 
   let globlinks = "\n".glob(invsubdir.search_dirs.a:pat,1)."\n"
   " remove extensions
@@ -443,13 +452,11 @@ function! vimwiki#base#get_links(pat) "{{{ return string-list for files
       let globlinks .= "./\n"
     endif
   endif
-  "let g:VimwikiLog.globlinks = globlinks
+
   " restore the original working directory
   exe 'lcd! '.orig_pwd
 
-  " Remove trailing slashes.  XXX ?
-  "call map(links, 'substitute(v:val, "[/\\\\]*$", "", "g")')
-  "let time3 = vimwiki#u#time(time1)  "XXX
+  let time2 = vimwiki#u#time(time1)
   call VimwikiLog_extend('timing',['base:afterglob('.len(split(globlinks, '\n')).')',time2])
   return globlinks
 endfunction "}}}
