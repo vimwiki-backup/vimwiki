@@ -183,13 +183,44 @@ function! vimwiki#base#subdir(path, filename)"{{{
     let res = res.'/'
   endif
   return res
-endfunction"}}}
+endfunction "}}}
 
 function! vimwiki#base#current_subdir(idx)"{{{
   return vimwiki#base#subdir(VimwikiGet('path', a:idx), expand('%:p'))
 endfunction"}}}
 
+function vimwiki#base#setup_scheme_globals() "{{{
+  if exists("g:vimwiki_rxSchemeUrl")
+    return
+  endif
+
+  let g:vimwiki_web_schemes1 = 'http,https,file,ftp,gopher,telnet,nntp,ldap,'.
+        \ 'rsync,imap,pop,irc,ircs,cvs,svn,svn+ssh,git,ssh,fish,sftp'
+  let g:vimwiki_web_schemes2 = 'mailto,news,xmpp,sip,sips,doi,urn,tel'
+
+  let g:vimwiki_wiki_schemes = 'wiki\d\+'
+  let g:vimwiki_diary_schemes = 'diary'
+  let g:vimwiki_local_schemes = 'local'
+
+  let rxSchemes = '\%('. 
+        \ g:vimwiki_wiki_schemes.'\|'.
+        \ g:vimwiki_diary_schemes.'\|'.
+        \ g:vimwiki_local_schemes.'\|'.
+        \ join(split(g:vimwiki_web_schemes1, '\s*,\s*'), '\|').'\|'. 
+        \ join(split(g:vimwiki_web_schemes2, '\s*,\s*'), '\|').
+        \ '\)'
+
+  let g:vimwiki_rxSchemeUrl = rxSchemes.':.*'
+  let g:vimwiki_rxSchemeUrlMatchScheme = '\zs'.rxSchemes.'\ze:.*'
+  let g:vimwiki_rxSchemeUrlMatchUrl = rxSchemes.':\zs.*\ze'
+endfunction "}}}
+
 function! vimwiki#base#resolve_scheme(lnk, as_html) " {{{
+  " Scheme regexes should be defined even if syntax file is not loaded yet
+  " cause users should be able to <leader>w<leader>w without opening any
+  " vimwiki file first
+  call vimwiki#base#setup_scheme_globals()
+
   " if link is schemeless add wikiN: scheme
   let lnk = a:lnk
   let is_schemeless = lnk !~ g:vimwiki_rxSchemeUrl
@@ -297,12 +328,21 @@ function! vimwiki#base#resolve_scheme(lnk, as_html) " {{{
 endfunction "}}}
 
 function! vimwiki#base#open_link(cmd, link, ...) "{{{
-  if &ft != "vimwiki"
-    let &ft = "vimwiki"
-  endif
-  " resolve url
-  let [scheme, path, subdir, lnk, ext, url] = 
-        \ vimwiki#base#resolve_scheme(a:link, 0)
+  " if called from the non-vimwiki file
+  " echom "HEEEERRRREEE"
+  " echom !exists("g:vimwiki_rxSchemeUrl")
+  " if !exists("g:vimwiki_rxSchemeUrl")
+    " let scheme = ''
+    " let path = ''
+    " let subdir = ''
+    " let lnk = a:link
+    " let ext = ''
+    " let url = a:link
+  " else
+    let [scheme, path, subdir, lnk, ext, url] = 
+          \ vimwiki#base#resolve_scheme(a:link, 0)
+  " endif
+
   if lnk == ''
     echom 'Vimwiki Error: Unable to resolve link!'
     return
