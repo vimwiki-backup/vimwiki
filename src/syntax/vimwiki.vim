@@ -22,29 +22,8 @@ let timescans = vimwiki#u#time(starttime)  "XXX
   " ...
   "endif
 
-
 " LINKS: assume this is common to all syntaxes "{{{
-" LINKS: Schemes and Interwikis {{{
-let g:vimwiki_web_schemes1 = 'http,https,file,ftp,gopher,telnet,nntp,ldap,'.
-      \ 'rsync,imap,pop,irc,ircs,cvs,svn,svn+ssh,git,ssh,fish,sftp'
-let g:vimwiki_web_schemes2 = 'mailto,news,xmpp,sip,sips,doi,urn,tel'
-
-let g:vimwiki_wiki_schemes = 'wiki\d\+'
-let g:vimwiki_diary_schemes = 'diary'
-let g:vimwiki_local_schemes = 'local'
-
-let rxSchemes = '\%('. 
-      \ g:vimwiki_wiki_schemes.'\|'.
-      \ g:vimwiki_diary_schemes.'\|'.
-      \ g:vimwiki_local_schemes.'\|'.
-      \ join(split(g:vimwiki_web_schemes1, '\s*,\s*'), '\|').'\|'. 
-      \ join(split(g:vimwiki_web_schemes2, '\s*,\s*'), '\|').
-      \ '\)'
-
-let g:vimwiki_rxSchemeUrl = rxSchemes.':.*'
-let g:vimwiki_rxSchemeUrlMatchScheme = '\zs'.rxSchemes.'\ze:.*'
-let g:vimwiki_rxSchemeUrlMatchUrl = rxSchemes.':\zs.*\ze'
-" }}}
+call vimwiki#base#setup_scheme_globals()
 
 " LINKS: WikiLinks  {{{
 " Words
@@ -226,7 +205,6 @@ function! s:add_target_syntax_OFF(target) " {{{
   execute prefix1. a:target. suffix1
 endfunction "}}}
 
-"TODO CamelCase
 function! s:highlight_existing_links() "{{{
   " Wikilink
   " Conditional highlighting that depends on the existence of a wiki file or
