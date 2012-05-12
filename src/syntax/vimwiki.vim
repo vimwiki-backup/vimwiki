@@ -23,8 +23,6 @@ let timescans = vimwiki#u#time(starttime)  "XXX
   "endif
 
 " LINKS: assume this is common to all syntaxes "{{{
-call vimwiki#base#setup_scheme_globals()
-
 " LINKS: WikiLinks  {{{
 " Words
 " - more permissive than '\<\w\+\>' which uses 'iskeyword' characters
