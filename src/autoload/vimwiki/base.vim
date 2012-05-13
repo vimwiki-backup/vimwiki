@@ -219,13 +219,13 @@ function! vimwiki#base#resolve_scheme(lnk, as_html) " {{{
 
     if a:as_html
       if idx == g:vimwiki_current_idx
-        let path = g:vimwiki_current_path_html
+        let path = VimwikiGet('path_html')
       else
         let path = VimwikiGet('path_html', idx)
       endif
     else
       if idx == g:vimwiki_current_idx
-        let path = g:vimwiki_current_path
+        let path = VimwikiGet('path')
       else
         let path = VimwikiGet('path', idx)
       endif
@@ -237,7 +237,7 @@ function! vimwiki#base#resolve_scheme(lnk, as_html) " {{{
       let ext = '.html'
     else
       if idx == g:vimwiki_current_idx
-        let ext = g:vimwiki_current_ext
+        let ext = VimwikiGet('ext')
       else
         let ext = VimwikiGet('ext', idx)
       endif
@@ -252,10 +252,10 @@ function! vimwiki#base#resolve_scheme(lnk, as_html) " {{{
       let path = substitute(g:vimwiki_current_subdir, '[^/\.]\+/', '../', 'g')
       let ext = '.html'
     else
-      let path = g:vimwiki_current_path
-      let ext = g:vimwiki_current_ext
+      let path = VimwikiGet('path')
+      let ext = VimwikiGet('ext')
     endif
-    let subdir = g:vimwiki_current_diary_rel_path
+    let subdir = VimwikiGet('diary_rel_path')
   elseif scheme =~ 'local'
     let path = ''
     let subdir = g:vimwiki_current_subdir
@@ -383,7 +383,6 @@ function! vimwiki#base#backlinks() "{{{
           \ escape(VimwikiGet('path').'**/*'.VimwikiGet('ext'), ' ')
 endfunction "}}}
 
-" XXX: this function should be reimplemented (?)
 function! vimwiki#base#get_links(pat) "{{{ return string-list for files
   " in the current wiki matching the pattern "pat"
   " search all wiki files (or directories) in wiki 'path' and its subdirs.
@@ -414,10 +413,6 @@ function! vimwiki#base#get_links(pat) "{{{ return string-list for files
   " calling from other than vimwiki file 
   let path_base = vimwiki#u#path_norm(vimwiki#u#chomp_slash(VimwikiGet('path')))
   let path_file = vimwiki#u#path_norm(vimwiki#u#chomp_slash(expand('%:p:h')))
-
-  " echom vimwiki#u#path_common_pfx(path_file, path_base)
-  " echom path_file
-  " echom path_base
 
   if vimwiki#u#path_common_pfx(path_file, path_base) != path_base
     exe 'lcd! '.path_base

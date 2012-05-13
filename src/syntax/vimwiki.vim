@@ -212,35 +212,31 @@ function! s:highlight_existing_links() "{{{
   " Wikilink Dirs set up upon BufEnter (see plugin/...)
   let safe_dirs = vimwiki#base#file_pattern(b:existing_wikidirs)
 
-  let rxScheme = '\%(\%(wiki\|wiki'.g:vimwiki_current_idx.'\):\)\?'
+  " match [[URL]]
+  let target = vimwiki#base#apply_template(g:vimwiki_WikiLinkTemplate1,
+        \ safe_links, g:vimwiki_rxWikiLinkDescr, '')
+  call s:add_target_syntax_ON(target, 'VimwikiLink')
+  " match [[URL|DESCRIPTION]]
+  let target = vimwiki#base#apply_template(g:vimwiki_WikiLinkTemplate2,
+        \ safe_links, g:vimwiki_rxWikiLinkDescr, '')
+  call s:add_target_syntax_ON(target, 'VimwikiLink')
 
-    " a) match WikiWord WARNING: g:vimwiki_camel_case may be deprecated
-    " removed
-    " b) match [[URL]]
-    let target = vimwiki#base#apply_template(g:vimwiki_WikiLinkTemplate1,
-          \ rxScheme.safe_links, g:vimwiki_rxWikiLinkDescr, '')
-    call s:add_target_syntax_ON(target, 'VimwikiLink')
-    " c) match [[URL|DESCRIPTION]]
-    let target = vimwiki#base#apply_template(g:vimwiki_WikiLinkTemplate2,
-          \ rxScheme.safe_links, g:vimwiki_rxWikiLinkDescr, '')
-    call s:add_target_syntax_ON(target, 'VimwikiLink')
-
-    " a) match {{URL}}
-    let target = vimwiki#base#apply_template(g:vimwiki_WikiInclTemplate1,
-          \ rxScheme.safe_links, g:vimwiki_rxWikiInclArgs, '')
-    call s:add_target_syntax_ON(target, 'VimwikiLink')
-    " b) match {{URL|...}}
-    let target = vimwiki#base#apply_template(g:vimwiki_WikiInclTemplate2,
-          \ rxScheme.safe_links, g:vimwiki_rxWikiInclArgs, '')
-    call s:add_target_syntax_ON(target, 'VimwikiLink')
-    " 1a) match [[DIRURL]]
-    let target = vimwiki#base#apply_template(g:vimwiki_WikiLinkTemplate1,
-          \ rxScheme.safe_dirs, g:vimwiki_rxWikiLinkDescr, '')
-    call s:add_target_syntax_ON(target, 'VimwikiLink')
-    " 2a) match [[DIRURL|DESCRIPTION]]
-    let target = vimwiki#base#apply_template(g:vimwiki_WikiLinkTemplate2,
-          \ rxScheme.safe_dirs, g:vimwiki_rxWikiLinkDescr, '')
-    call s:add_target_syntax_ON(target, 'VimwikiLink')
+  " match {{URL}}
+  let target = vimwiki#base#apply_template(g:vimwiki_WikiInclTemplate1,
+        \ safe_links, g:vimwiki_rxWikiInclArgs, '')
+  call s:add_target_syntax_ON(target, 'VimwikiLink')
+  " match {{URL|...}}
+  let target = vimwiki#base#apply_template(g:vimwiki_WikiInclTemplate2,
+        \ safe_links, g:vimwiki_rxWikiInclArgs, '')
+  call s:add_target_syntax_ON(target, 'VimwikiLink')
+  " match [[DIRURL]]
+  let target = vimwiki#base#apply_template(g:vimwiki_WikiLinkTemplate1,
+        \ safe_dirs, g:vimwiki_rxWikiLinkDescr, '')
+  call s:add_target_syntax_ON(target, 'VimwikiLink')
+  " match [[DIRURL|DESCRIPTION]]
+  let target = vimwiki#base#apply_template(g:vimwiki_WikiLinkTemplate2,
+        \ safe_dirs, g:vimwiki_rxWikiLinkDescr, '')
+  call s:add_target_syntax_ON(target, 'VimwikiLink')
 endfunction "}}}
 
 
@@ -268,32 +264,28 @@ endif
 call s:add_target_syntax_ON(g:vimwiki_rxWeblink, 'VimwikiTemplLink')
 
 " WikiLink
-" All remaining schemes except wiki: and wiki<idx>: where idx is index of
-" current wiki are highlighted automatically
-let other_wiki_schemes = filter(split(g:vimwiki_wiki_schemes, '\s*,\s*'), 
-          \ 'v:val !~ "\\%(wiki\\>\\|wiki'.g:vimwiki_current_idx.'\\>\\)"')
-let rxScheme = '\%('.
-      \ join(other_wiki_schemes, '\|'). '\|'.
-      \ join(split(g:vimwiki_diary_schemes, '\s*,\s*'), '\|'). '\|'.
-      \ join(split(g:vimwiki_local_schemes, '\s*,\s*'), '\|'). '\|'.
+" All remaining schemes are highlighted automatically
+let rxSchemes = '\%('. 
+      \ join(split(g:vimwiki_schemes, '\s*,\s*'), '\|').'\|'. 
       \ join(split(g:vimwiki_web_schemes1, '\s*,\s*'), '\|').
       \ '\):'
+
 " a) match [[nonwiki-scheme-URL]]
 let target = vimwiki#base#apply_template(g:vimwiki_WikiLinkTemplate1,
-      \ rxScheme.g:vimwiki_rxWikiLinkUrl, g:vimwiki_rxWikiLinkDescr, '')
+      \ rxSchemes.g:vimwiki_rxWikiLinkUrl, g:vimwiki_rxWikiLinkDescr, '')
 call s:add_target_syntax_ON(target, 'VimwikiLink')
 " b) match [[nonwiki-scheme-URL|DESCRIPTION]]
 let target = vimwiki#base#apply_template(g:vimwiki_WikiLinkTemplate2,
-      \ rxScheme.g:vimwiki_rxWikiLinkUrl, g:vimwiki_rxWikiLinkDescr, '')
+      \ rxSchemes.g:vimwiki_rxWikiLinkUrl, g:vimwiki_rxWikiLinkDescr, '')
 call s:add_target_syntax_ON(target, 'VimwikiLink')
 
 " a) match {{nonwiki-scheme-URL}}
 let target = vimwiki#base#apply_template(g:vimwiki_WikiInclTemplate1,
-      \ rxScheme.g:vimwiki_rxWikiInclUrl, g:vimwiki_rxWikiInclArgs, '')
+      \ rxSchemes.g:vimwiki_rxWikiInclUrl, g:vimwiki_rxWikiInclArgs, '')
 call s:add_target_syntax_ON(target, 'VimwikiLink')
 " b) match {{nonwiki-scheme-URL}[{...}]}
 let target = vimwiki#base#apply_template(g:vimwiki_WikiInclTemplate2,
-      \ rxScheme.g:vimwiki_rxWikiInclUrl, g:vimwiki_rxWikiInclArgs, '')
+      \ rxSchemes.g:vimwiki_rxWikiInclUrl, g:vimwiki_rxWikiInclArgs, '')
 call s:add_target_syntax_ON(target, 'VimwikiLink')
 
 " }}}

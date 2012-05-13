@@ -365,17 +365,13 @@ call s:default('current_idx', 0)
 " cause users should be able to <leader>w<leader>w without opening any
 " vimwiki file first
 " Scheme regexes {{{
+call s:default('schemes', 'wiki\d\+,diary,local')
 call s:default('web_schemes1', 'http,https,file,ftp,gopher,telnet,nntp,ldap,'.
         \ 'rsync,imap,pop,irc,ircs,cvs,svn,svn+ssh,git,ssh,fish,sftp')
 call s:default('web_schemes2', 'mailto,news,xmpp,sip,sips,doi,urn,tel')
-call s:default('wiki_schemes', 'wiki\d\+')
-call s:default('diary_schemes', 'diary')
-call s:default('local_schemes', 'local')
 
 let rxSchemes = '\%('. 
-      \ g:vimwiki_wiki_schemes.'\|'.
-      \ g:vimwiki_diary_schemes.'\|'.
-      \ g:vimwiki_local_schemes.'\|'.
+      \ join(split(g:vimwiki_schemes, '\s*,\s*'), '\|').'\|'. 
       \ join(split(g:vimwiki_web_schemes1, '\s*,\s*'), '\|').'\|'. 
       \ join(split(g:vimwiki_web_schemes2, '\s*,\s*'), '\|').
       \ '\)'
