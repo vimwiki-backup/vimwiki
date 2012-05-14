@@ -275,7 +275,9 @@ function! vimwiki#diary#goto_prev_day() "{{{
 endfunction "}}}
 
 function! vimwiki#diary#generate_diary_section() "{{{
-  if expand("%:p") == s:diary_index()
+  let current_file = vimwiki#u#path_norm(expand("%:p"))
+  let diary_file = vimwiki#u#path_norm(s:diary_index())
+  if  current_file == diary_file
     call s:delete_diary_section()
     call s:insert_diary_section()
   else
