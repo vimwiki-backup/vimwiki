@@ -234,6 +234,10 @@ exe 'command! -buffer -nargs=* VWS lvimgrep <args> '.
 
 command! -buffer -nargs=1 VimwikiGoto call vimwiki#base#goto("<args>")
 
+
+" list commands
+command! -buffer -nargs=* VimwikiListChangeLevel call vimwiki#lst#change_level(<f-args>)
+
 " table commands
 command! -buffer -nargs=* VimwikiTable call vimwiki#tbl#create(<f-args>)
 command! -buffer VimwikiTableAlignQ call vimwiki#tbl#align_or_cmd('gqq')
@@ -379,6 +383,12 @@ inoremap <buffer> <expr> <CR> <SID>CR()
 " List mappings
 nnoremap <buffer> o :<C-U>call vimwiki#lst#kbd_oO('o')<CR>
 nnoremap <buffer> O :<C-U>call vimwiki#lst#kbd_oO('O')<CR>
+nnoremap <buffer> gll :VimwikiListChangeLevel <<<CR>
+nnoremap <buffer> glm :VimwikiListChangeLevel<CR>
+nnoremap <buffer> gl* :VimwikiListChangeLevel >> *<CR>
+nnoremap <buffer> gl- :VimwikiListChangeLevel >> -<CR>
+nnoremap <buffer> gl# :VimwikiListChangeLevel >> #<CR>
+
 
 " Table mappings
 if g:vimwiki_table_mappings
