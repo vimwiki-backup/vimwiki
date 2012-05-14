@@ -378,3 +378,107 @@ function! vimwiki#lst#kbd_oO(cmd) "{{{
 
 endfunction "}}}
 
+function! vimwiki#lst#change_level(...) "{{{
+  " args
+  let is_symbol_specified = 0
+  if a:0 > 1
+    let cmd = a:1
+    let sym = a:2
+    let is_symbol_specified = 1
+  elseif a:0 == 1
+    let cmd = a:1
+    let sym = '*'
+  elseif a:0 == 0
+    let cmd = '>>'
+    let sym = '*'
+  endif
+  " preconditions
+  if cmd == '<<' && cmd == '>>'
+    return
+  endif
+  if sym.' ' !~ s:rx_cb_list_item() && sym.' ' !~ s:rx_list_item()
+    return
+  endif
+  " start parsing
+  let pos = 1
+  let lnum = line('.')
+  let line = getline('.')
+  if VimwikiGet('syntax') == 'media'
+    let level_incr = 1
+    let level_offset = -1
+    let indent = indent(lnum)
+    if line !~ s:rx_list_item()
+      let level = 0
+    else 
+      let level = s:get_level(lnum)
+      if level > 0 
+        let level = level + level_offset
+      endif
+    endif
+  else
+    let level_incr = &sw
+    let level_offset = 0
+    let indent = 0
+    let level = indent(lnum)   
+  endif
+  " remove prefix up to, but not including, last bullet symbol & content
+  let line = substitute(strpart(line, level+indent), '^\s*', '', '')
+  " parse list symbol
+  if line =~ s:rx_cb_list_item()
+    let li_bullet = substitute(matchstr(line, s:rx_list_item()).matchstr(line, s:rx_cb_list_item()), '\s*$', '', '')
+  elseif line =~ s:rx_list_item()
+    let li_bullet = substitute(matchstr(line, s:rx_list_item()), '\s*$', '', '')
+  else
+    let li_bullet = ''
+  endif
+  " parse symbol type
+  if len(li_bullet) > 0
+    let li_bullet0 = strpart(li_bullet,0,1)
+  else
+    let li_bullet0 = sym
+  endif
+  " parse content
+  let li_content = substitute(strpart(line, len(li_bullet)), '^\s*', '', '')
+  "
+  " change level
+  if cmd == '>>' && li_bullet != ''
+    let level = level + level_incr
+  endif
+  if cmd == '<<' 
+    let level = level - level_incr
+  endif
+  if level <= level_offset && li_bullet != '' && cmd == '<<'
+    let li_bullet = ''
+  endif
+  if level >= level_offset && li_bullet == '' && cmd == '>>'
+    let li_bullet = sym
+  endif
+  " this is optional ..
+  if level == 0 && li_bullet != '' && VimwikiGet('syntax') != 'media'
+    let level = 1
+  endif
+  " allow bullet symbol to change
+  if li_bullet != '' && is_symbol_specified == 1
+    let li_bullet = sym.strpart(li_bullet, 1)
+    let li_bullet0 = sym
+  endif
+  " compose bullet
+  if VimwikiGet('syntax') == 'media'
+    let line = repeat(li_bullet0, level).li_bullet
+    let li_indent = repeat(' ', indent)
+  else
+    let line = repeat(' ', level).li_bullet
+    let li_indent = ''
+  endif
+  let pos = len(line)
+  " append content
+  if pos > 0
+    let line = li_indent.line.' '.li_content
+    let pos = pos + 2 + indent
+  else
+    let line = li_indent.li_content
+    let pos = 1
+  endif
+  call setline(lnum, line)
+  call cursor(lnum, pos)
+endfunction "}}}
