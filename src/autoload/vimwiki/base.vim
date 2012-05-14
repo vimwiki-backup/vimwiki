@@ -470,16 +470,6 @@ function! vimwiki#base#edit_file(command, filename, ...) "{{{
 endfunction
 " }}}
 
-function! s:filename(link) "{{{
-  " TODO: make it g:vimwiki_rxSep aware
-  let result = a:link
-  if a:link =~ '|'
-    let result = split(a:link, '|')[0]
-  endif
-  return result
-endfunction
-" }}}
-
 function! s:search_word(wikiRx, cmd) "{{{
   let match_line = search(a:wikiRx, 's'.a:cmd)
   if match_line == 0
@@ -532,26 +522,6 @@ function! s:replacestr_at_cursor(wikiRX, sub) "{{{
     call setline(line('.'), newline)
   endif
 endf "}}}
-
-function! s:strip_word(word) "{{{
-  let result = a:word
-  if strpart(a:word, 0, 2) == "[["
-    " get rid of [[ and ]]
-    let w = strpart(a:word, 2, strlen(a:word)-4)
-
-    if w =~ '|'
-      " we want "link" from [[link|link desc]]
-      let w = split(w, "|")[0]
-    elseif w =~ ']['
-      " we want "link" from [[link][link desc]]
-      let w = split(w, "][")[0]
-    endif
-
-    let result = w
-  endif
-  return result
-endfunction
-" }}}
 
 function! s:print_wiki_list() "{{{
   let idx = 0
@@ -839,9 +809,13 @@ function! vimwiki#base#rename_link() "{{{
     return
   endif
 
+  let url = matchstr(new_link, g:vimwiki_rxWikiLinkMatchUrl)
+  if url != ''
+    let new_link = url
+  endif
+  
   let new_link = subdir.new_link
-  let new_link = s:strip_word(new_link)
-  let new_fname = VimwikiGet('path').s:filename(new_link).VimwikiGet('ext')
+  let new_fname = VimwikiGet('path').new_link.VimwikiGet('ext')
 
   " do not rename if word with such name exists
   let fname = glob(new_fname)
