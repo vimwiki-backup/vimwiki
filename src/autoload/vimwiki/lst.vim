@@ -501,16 +501,13 @@ function! vimwiki#lst#change_level(...) "{{{
     if VimwikiGet('syntax') == 'media'
       let sym_nest = sym
     endif
-  endif
-  if cmd == '>>' 
+  elseif cmd == '>>' 
     if cb_bullet == ''
       let cb_bullet = sym
-      let n_nesting = 0
     else
       let n_nesting = n_nesting + list_sw
     endif
-  endif
-  if cmd == '<<' 
+  elseif cmd == '<<' 
     let n_nesting = n_nesting - list_sw
     if VimwikiGet('syntax') == 'media'
       if n_nesting < 0
@@ -523,14 +520,17 @@ function! vimwiki#lst#change_level(...) "{{{
     endif
   endif
 
+  let n_nesting = max([0, n_nesting])
+
   if g:vimwiki_debug
     echomsg "SHIFT:"
     echomsg s:compose_list_item(n_indent, n_nesting, sym_nest, cb_bullet, li_content, '|')
   endif
 
+  " XXX: this is the code that adds the initial indent
   let add_nesting = VimwikiGet('syntax') != 'media'
   if n_indent + n_nesting*(add_nesting) < VimwikiGet('level_one_list_indent')
-    let n_indent = VimwikiGet('level_one_list_indent')
+    let n_indent = VimwikiGet('level_one_list_indent') - n_nesting*(add_nesting)
   endif
 
   if g:vimwiki_debug
