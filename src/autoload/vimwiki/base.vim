@@ -231,7 +231,12 @@ function! vimwiki#base#resolve_scheme(lnk, as_html) " {{{
       endif
     endif
 
-    let subdir = g:vimwiki_current_subdir
+    " For Issue 310. Otherwise current subdir is used for another wiki.
+    if idx == g:vimwiki_current_idx
+      let subdir = g:vimwiki_current_subdir
+    else
+      let subdir = ""
+    endif
 
     if a:as_html
       let ext = '.html'
