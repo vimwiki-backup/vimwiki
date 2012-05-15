@@ -471,6 +471,7 @@ function! vimwiki#lst#change_level(...) "{{{
   let cb_bullet = matchstr(li_bullet_and_content, s:rx_list_item()). 
         \ matchstr(li_bullet_and_content, s:rx_cb_list_item())
 
+  " XXX: it could be not unicode proof --> if checkboxes are set up with unicode syms
   " content
   let li_content = strpart(li_bullet_and_content, len(cb_bullet))
 
@@ -504,6 +505,7 @@ function! vimwiki#lst#change_level(...) "{{{
   if cmd == '>>' 
     if cb_bullet == ''
       let cb_bullet = sym
+      let n_nesting = 0
     else
       let n_nesting = n_nesting + list_sw
     endif
