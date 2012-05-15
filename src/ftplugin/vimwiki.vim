@@ -384,10 +384,20 @@ inoremap <buffer> <expr> <CR> <SID>CR()
 nnoremap <buffer> o :<C-U>call vimwiki#lst#kbd_oO('o')<CR>
 nnoremap <buffer> O :<C-U>call vimwiki#lst#kbd_oO('O')<CR>
 nnoremap <buffer> gll :VimwikiListChangeLevel <<<CR>
-nnoremap <buffer> glm :VimwikiListChangeLevel<CR>
-nnoremap <buffer> gl* :VimwikiListChangeLevel >> *<CR>
-nnoremap <buffer> gl- :VimwikiListChangeLevel >> -<CR>
-nnoremap <buffer> gl# :VimwikiListChangeLevel >> #<CR>
+nnoremap <buffer> glm :VimwikiListChangeLevel >><CR>
+nnoremap <buffer> gl* :VimwikiListChangeLevel *<CR>
+nnoremap <buffer> gl8 :VimwikiListChangeLevel *<CR>
+if VimwikiGet('syntax') == 'default'
+  nnoremap <buffer> gl- :VimwikiListChangeLevel -<CR>
+  nnoremap <buffer> gl# :VimwikiListChangeLevel #<CR>
+  nnoremap <buffer> gl3 :VimwikiListChangeLevel #<CR>
+elseif VimwikiGet('syntax') == 'markdown'
+  nnoremap <buffer> gl- :VimwikiListChangeLevel -<CR>
+  nnoremap <buffer> gl1 :VimwikiListChangeLevel 1.<CR>
+elseif VimwikiGet('syntax') == 'media'
+  nnoremap <buffer> gl# :VimwikiListChangeLevel #<CR>
+  nnoremap <buffer> gl3 :VimwikiListChangeLevel #<CR>
+endif
 
 
 " Table mappings

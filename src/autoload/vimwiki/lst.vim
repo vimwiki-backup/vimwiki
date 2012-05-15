@@ -378,107 +378,167 @@ function! vimwiki#lst#kbd_oO(cmd) "{{{
 
 endfunction "}}}
 
+function! s:default_symbol() "{{{
+  " TODO: initialize default symbol from syntax/vimwiki_xxx.vim
+  if VimwikiGet('syntax') == 'default'
+    return '-'
+  else
+    return '*'
+  endif
+endfunction "}}}
+
+function s:get_list_sw() "{{{
+  if VimwikiGet('syntax') == 'media'
+    return 1
+  else
+    return &sw
+  endif
+endfunction  "}}}
+
+function s:get_list_nesting_level(lnum) "{{{
+  if VimwikiGet('syntax') == 'media'
+    if getline(a:lnum) !~ s:rx_list_item()
+      let level = 0
+    else 
+      let level = vimwiki#u#count_first_sym(getline(a:lnum)) - 1
+      let level = level < 0 ? 0 : level
+    endif
+  else
+    let level = indent(a:lnum)   
+  endif
+  return level
+endfunction  "}}}
+
+function s:get_list_indent(lnum) "{{{
+  if VimwikiGet('syntax') == 'media'
+    return indent(a:lnum)
+  else
+    return 0
+  endif
+endfunction  "}}}
+
+function! s:compose_list_item(n_indent, n_nesting, sym_nest, sym_bullet, li_content, ...) "{{{
+  if a:0
+    let sep = a:1
+  else
+    let sep = ''
+  endif
+  let li_indent = repeat(' ', max([0,a:n_indent])).sep
+  let li_nesting = repeat(a:sym_nest, max([0,a:n_nesting])).sep
+  if len(a:sym_bullet) > 0
+    let li_bullet = a:sym_bullet.' '.sep
+  else
+    let li_bullet = ''.sep
+  endif
+  return li_indent.li_nesting.li_bullet.a:li_content
+endfunction "}}}
+
+function s:compose_cb_bullet(prev_cb_bullet, sym) "{{{
+  return a:sym.matchstr(a:prev_cb_bullet, '\S*\zs\s\+.*')
+endfunction "}}}
+
 function! vimwiki#lst#change_level(...) "{{{
-  " args
-  let is_symbol_specified = 0
-  if a:0 > 1
-    let cmd = a:1
-    let sym = a:2
-    let is_symbol_specified = 1
-  elseif a:0 == 1
-    let cmd = a:1
-    let sym = '*'
-  elseif a:0 == 0
-    let cmd = '>>'
-    let sym = '*'
+  let default_sym = s:default_symbol()
+  let cmd = '>>'
+  let sym = default_sym
+
+  " parse argument
+  if a:0
+    if a:1 != '<<' && a:1 != '>>'
+      let cmd = '--'
+      let sym = a:1
+    else
+      let cmd = a:1
+    endif
   endif
-  " preconditions
-  if cmd == '<<' && cmd == '>>'
-    return
-  endif
+  " is symbol valid
   if sym.' ' !~ s:rx_cb_list_item() && sym.' ' !~ s:rx_list_item()
     return
   endif
-  " start parsing
-  let pos = 1
+
+  " parsing setup
   let lnum = line('.')
   let line = getline('.')
+
+  let list_sw = s:get_list_sw()
+  let n_nesting = s:get_list_nesting_level(lnum)
+  let n_indent = s:get_list_indent(lnum)
+
+  " remove indent and nesting
+  let li_bullet_and_content = strpart(line, n_nesting + n_indent)
+
+  " list bullet and checkbox
+  let cb_bullet = matchstr(li_bullet_and_content, s:rx_list_item()). 
+        \ matchstr(li_bullet_and_content, s:rx_cb_list_item())
+
+  " content
+  let li_content = strpart(li_bullet_and_content, len(cb_bullet))
+
+  " trim
+  let cb_bullet = vimwiki#u#trim(cb_bullet)
+  let li_content = vimwiki#u#trim(li_content)
+
+  " nesting symbol
   if VimwikiGet('syntax') == 'media'
-    let level_incr = 1
-    let level_offset = -1
-    let indent = indent(lnum)
-    if line !~ s:rx_list_item()
-      let level = 0
-    else 
-      let level = s:get_level(lnum)
-      if level > 0 
-        let level = level + level_offset
-      endif
+    if len(cb_bullet) > 0
+      let sym_nest = cb_bullet[0]
+    else
+      let sym_nest = sym
     endif
   else
-    let level_incr = &sw
-    let level_offset = 0
-    let indent = 0
-    let level = indent(lnum)   
+    let sym_nest = ' '
   endif
-  " remove prefix up to, but not including, last bullet symbol & content
-  let line = substitute(strpart(line, level+indent), '^\s*', '', '')
-  " parse list symbol
-  if line =~ s:rx_cb_list_item()
-    let li_bullet = substitute(matchstr(line, s:rx_list_item()).matchstr(line, s:rx_cb_list_item()), '\s*$', '', '')
-  elseif line =~ s:rx_list_item()
-    let li_bullet = substitute(matchstr(line, s:rx_list_item()), '\s*$', '', '')
-  else
-    let li_bullet = ''
+
+  if g:vimwiki_debug
+    echomsg "PARSE: Sw [".list_sw."]"
+    echomsg s:compose_list_item(n_indent, n_nesting, sym_nest, cb_bullet, li_content, '|')
   endif
-  " parse symbol type
-  if len(li_bullet) > 0
-    let li_bullet0 = strpart(li_bullet,0,1)
-  else
-    let li_bullet0 = sym
-  endif
-  " parse content
-  let li_content = substitute(strpart(line, len(li_bullet)), '^\s*', '', '')
-  "
+
   " change level
-  if cmd == '>>' && li_bullet != ''
-    let level = level + level_incr
+  if cmd == '--' 
+    let cb_bullet = s:compose_cb_bullet(cb_bullet, sym)
+    if VimwikiGet('syntax') == 'media'
+      let sym_nest = sym
+    endif
+  endif
+  if cmd == '>>' 
+    if cb_bullet == ''
+      let cb_bullet = sym
+    else
+      let n_nesting = n_nesting + list_sw
+    endif
   endif
   if cmd == '<<' 
-    let level = level - level_incr
+    let n_nesting = n_nesting - list_sw
+    if VimwikiGet('syntax') == 'media'
+      if n_nesting < 0
+        let cb_bullet = ''
+      endif
+    else
+      if n_nesting < VimwikiGet('level_one_list_indent')
+        let cb_bullet = ''
+      endif
+    endif
   endif
-  if level <= level_offset && li_bullet != '' && cmd == '<<'
-    let li_bullet = ''
+
+  if g:vimwiki_debug
+    echomsg "SHIFT:"
+    echomsg s:compose_list_item(n_indent, n_nesting, sym_nest, cb_bullet, li_content, '|')
   endif
-  if level >= level_offset && li_bullet == '' && cmd == '>>'
-    let li_bullet = sym
+
+  let add_nesting = VimwikiGet('syntax') != 'media'
+  if n_indent + n_nesting*(add_nesting) < VimwikiGet('level_one_list_indent')
+    let n_indent = VimwikiGet('level_one_list_indent')
   endif
-  " this is optional ..
-  if level == 0 && li_bullet != '' && VimwikiGet('syntax') != 'media'
-    let level = 1
+
+  if g:vimwiki_debug
+    echomsg "INDENT:"
+    echomsg s:compose_list_item(n_indent, n_nesting, sym_nest, cb_bullet, li_content, '|')
   endif
-  " allow bullet symbol to change
-  if li_bullet != '' && is_symbol_specified == 1
-    let li_bullet = sym.strpart(li_bullet, 1)
-    let li_bullet0 = sym
-  endif
-  " compose bullet
-  if VimwikiGet('syntax') == 'media'
-    let line = repeat(li_bullet0, level).li_bullet
-    let li_indent = repeat(' ', indent)
-  else
-    let line = repeat(' ', level).li_bullet
-    let li_indent = ''
-  endif
-  let pos = len(line)
-  " append content
-  if pos > 0
-    let line = li_indent.line.' '.li_content
-    let pos = pos + 2 + indent
-  else
-    let line = li_indent.li_content
-    let pos = 1
-  endif
+
+  let line = s:compose_list_item(n_indent, n_nesting, sym_nest, cb_bullet, li_content)
+
+  " replace
   call setline(lnum, line)
-  call cursor(lnum, pos)
+  call cursor(lnum, match(line, s:rx_list_item().'\zs'))
 endfunction "}}}
