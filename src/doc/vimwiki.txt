@@ -869,9 +869,9 @@ The "wiki#:", "local:", and "diary:" schemes prepend absolute paths to the
 URLs: >
   file:///abs_path_to_html#/relpath/wikipage.html
 
-The detection of non-existent links when |vimwiki-option-maxhi| equals 1
-applies only to the current wiki (e.g. schemeless and "wiki#:" scheme).  All
-other "SCHEME:URL" links appear as regular links even if they do not exist.
+When |vimwiki-option-maxhi| equals 1, a distinct highlighting style is used to
+identify schemeless links whose targets are not found.  All other "SCHEME:URL"
+links appear as regular links even if they do not exist.
 
 
 Interwiki:~
