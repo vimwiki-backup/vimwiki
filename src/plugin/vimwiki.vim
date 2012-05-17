@@ -318,7 +318,7 @@ let s:vimwiki_defaults.diary_link_fmt = '%Y-%m-%d'
 " custom_wiki2html
 let s:vimwiki_defaults.custom_wiki2html = ''
 "
-let s:vimwiki_defaults.level_one_list_indent = &sw
+let s:vimwiki_defaults.list_margin = -1
 "}}}
 
 " DEFAULT options {{{

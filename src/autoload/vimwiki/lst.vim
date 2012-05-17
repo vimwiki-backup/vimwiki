@@ -387,6 +387,14 @@ function! s:default_symbol() "{{{
   endif
 endfunction "}}}
 
+function s:get_list_margin() "{{{
+  if VimwikiGet('list_margin') < 0
+    return &sw
+  else
+    return VimwikiGet('list_margin')
+  endif
+endfunction "}}}
+
 function s:get_list_sw() "{{{
   if VimwikiGet('syntax') == 'media'
     return 1
@@ -460,6 +468,7 @@ function! vimwiki#lst#change_level(...) "{{{
   let lnum = line('.')
   let line = getline('.')
 
+  let list_margin = s:get_list_margin()
   let list_sw = s:get_list_sw()
   let n_nesting = s:get_list_nesting_level(lnum)
   let n_indent = s:get_list_indent(lnum)
@@ -514,7 +523,7 @@ function! vimwiki#lst#change_level(...) "{{{
         let cb_bullet = ''
       endif
     else
-      if n_nesting < VimwikiGet('level_one_list_indent')
+      if n_nesting < list_margin
         let cb_bullet = ''
       endif
     endif
@@ -529,8 +538,8 @@ function! vimwiki#lst#change_level(...) "{{{
 
   " XXX: this is the code that adds the initial indent
   let add_nesting = VimwikiGet('syntax') != 'media'
-  if n_indent + n_nesting*(add_nesting) < VimwikiGet('level_one_list_indent')
-    let n_indent = VimwikiGet('level_one_list_indent') - n_nesting*(add_nesting)
+  if n_indent + n_nesting*(add_nesting) < list_margin
+    let n_indent = list_margin - n_nesting*(add_nesting)
   endif
 
   if g:vimwiki_debug

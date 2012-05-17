@@ -296,6 +296,28 @@ NORMAL MODE                                           *vimwiki-local-mappings*
                         Wikilinks.  Can be activated in normal mode with the
                         cursor over a word or link.
 
+                        *vimwiki_glm*
+glm                     Increase the indent of a single-line list item.
+
+                        *vimwiki_gll*
+gll                     Decrease the indent of a single-line list item.
+
+                        *vimwiki_glstar* *vimwiki_gl8*
+gl* or gl8              Switch or insert a "*" symbol.  Only available in
+                        supported syntaxes.
+
+                        *vimwiki_gl#* *vimwiki_gl3*
+gl# or gl3              Switch or insert a "#" symbol.  Only available in
+                        supported syntaxes.
+
+                        *vimwiki_gl-*
+gl-                     Switch or insert a "-" symbol.  Only available in
+                        supported syntaxes.
+
+                        *vimwiki_gl1*
+gl1                     Switch or insert a "1." symbol.  Only available in
+                        supported syntaxes.
+
                         *vimwiki_gqq*  *vimwiki_gww*
 gqq                     Format table. If you made some changes to a table
  or                     without swapping insert/normal modes this command
@@ -436,6 +458,12 @@ ic                      An inner column in a table.
 
 *:VimwikiToggleListItem*
     Toggle list item on/off (checked/unchecked)
+    See |vimwiki-todo-lists|.
+
+*:VimwikiListChangeLevel* CMD
+    Change the nesting level, or symbol, for a single-line list item.
+    CMD may be ">>" or "<<" to change the indentation of the item, or
+    one of the syntax-specific bullets: "*", "#", "1.", "-".
     See |vimwiki-todo-lists|.
 
 *:VimwikiSearch* /pattern/
@@ -1089,7 +1117,22 @@ between [ ] depends on the percentage of toggled child items (see also
 
 It is possible to toggle several list items using visual mode.
 
+The indentation and bullet symbols for list items can be manipulated using 
+several mappings.  Examples below demonstrate this behavior for the 'default'
+syntax and with |vimwiki-option-list_margin| = 1. >
 
+     Mapping    |      Input       |     Output       
+   ----------------------------------------------------
+       glm      |   ^item          |   ^ - item       
+       glm      |   ^     item     |   ^     - item   
+       gll      |   ^ - item       |   ^item          
+       glm      |   ^   # item     |   ^   item       
+       gl*      |   ^ item         |   ^ * item       
+       gl-      |   ^  item        |   ^  - item      
+       gl3      |   ^   item       |   ^   # item     
+
+See |vimwiki_gll|, |vimwiki_glm|, |vimwiki_glstar|, |vimwiki_gl8|
+|vimwiki_gl#|, |vimwiki_gl3|, |vimwiki_gl-|, |vimwiki_gl1|
 ==============================================================================
 9. Tables                                                     *vimwiki-tables*
 
@@ -1473,7 +1516,6 @@ Description~
 Sort links in a diary index page.
 
 
-
 *vimwiki-option-custom_wiki2html*
 ------------------------------------------------------------------------------
 Key               Default value~
@@ -1500,6 +1542,18 @@ For an example and further instructions, refer to the following script:
 
 To use the internal wiki2html converter, use an empty string (the default).
 
+
+*vimwiki-option-list_margin*
+------------------------------------------------------------------------------
+Key               Default value~
+list_margin       -1
+
+Description~
+Width of left-hand margin for lists.  When negative, the current |shiftwidth|
+is used.  This affects the behavior of the list manipulation commands
+|VimwikiListChangeLevel| and local mappings |vimwiki_gll|, |vimwiki_glm|,
+|vimwiki_glstar|, |vimwiki_gl8|, |vimwiki_gl#|, |vimwiki_gl3|,
+|vimwiki_gl-| and |vimwiki_gl1|. 
 
 
 
@@ -1982,6 +2036,9 @@ Vim plugins: http://www.vim.org/scripts/script.php?script_id=2226
 
 ==============================================================================
 14. Changelog                                              *vimwiki-changelog*
+
+?? dev~
+    * List manipulation command and mappings |vimwiki_glm|, |vimwiki_gll|, etc.
 
 2.0 dev~
     * Diary index page is no more autoregenerated. Use
