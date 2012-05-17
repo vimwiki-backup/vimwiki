@@ -2037,12 +2037,10 @@ Vim plugins: http://www.vim.org/scripts/script.php?script_id=2226
 ==============================================================================
 14. Changelog                                              *vimwiki-changelog*
 
-?? dev~
-    * List manipulation command and mappings |vimwiki_glm|, |vimwiki_gll|, etc.
-
 2.0 dev~
     * Diary index page is no more autoregenerated. Use
       |:VimwikiDiaryGenerateLinks| command to update diary section.
+    * List manipulation command and mappings |vimwiki_glm|, |vimwiki_gll|, etc.
     * REMOVED: Links of type [[link][desc]].
     * REMOVED: [http://link description] type of links. Use
       [[http://link|description]] instead.
