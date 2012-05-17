@@ -588,9 +588,9 @@ let nested = VimwikiGet('nested_syntaxes')
 if !empty(nested)
   for [hl_syntax, vim_syntax] in items(nested)
     call vimwiki#base#nested_syntax(vim_syntax, 
-          \ '^\s*{{{\%(.*[[:blank:][:punct:]]\)\?'.
+          \ '^\s*'.g:vimwiki_rxPreStart.'\%(.*[[:blank:][:punct:]]\)\?'.
           \ hl_syntax.'\%([[:blank:][:punct:]].*\)\?',
-          \ '^\s*}}}', 'VimwikiPre')
+          \ '^\s*'.g:vimwiki_rxPreEnd, 'VimwikiPre')
 "    call vimwiki#base#nested_syntax(vim_syntax, 
 "          \ '^\s*{{\$\%(.*[[:blank:][:punct:]]\)\?'.
 "          \ hl_syntax.'\%([[:blank:][:punct:]].*\)\?',
