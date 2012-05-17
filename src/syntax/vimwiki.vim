@@ -206,8 +206,8 @@ endfunction "}}}
 function! s:highlight_existing_links() "{{{
   " Wikilink
   " Conditional highlighting that depends on the existence of a wiki file or
-  " directory is only available for 'wiki#:' links
-  " links set up upon BufEnter (see plugin/...)
+  "   directory is only available for *schemeless* wiki links
+  " Links are set up upon BufEnter (see plugin/...)
   let safe_links = vimwiki#base#file_pattern(b:existing_wikifiles)
   " Wikilink Dirs set up upon BufEnter (see plugin/...)
   let safe_dirs = vimwiki#base#file_pattern(b:existing_wikidirs)
