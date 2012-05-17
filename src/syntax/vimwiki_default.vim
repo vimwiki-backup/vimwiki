@@ -68,13 +68,13 @@ let g:vimwiki_symH = 1
 " NEW! in v1.3
 " Link separators and templates (previously initialized together with per-wiki options)
 
-" wikilink, wikiincl separators (should not be the same)
+" wikilink, wikiincl separators
 let g:vimwiki_link_separator = '|'
 let g:vimwiki_incl_separator = '|'
 
-" web_template, image_template
-let g:vimwiki_web_template = '[__LinkUrl__ __LinkDescription__]'
-let g:vimwiki_image_template = '{__LinkUrl__|__LinkDescription__|__LinkStyle__}'
+" web_template, image_template (not used by default syntax)
+let g:vimwiki_web_template = ''
+let g:vimwiki_image_template = ''
 
 
 " <hr>, horizontal rule

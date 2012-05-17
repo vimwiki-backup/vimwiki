@@ -572,6 +572,23 @@ or: >
 The separator is customizable, using |g:vimwiki_link_separator| in your chosen
 syntax file; the prefix / suffix pair "[[", "]]" is not.
 
+
+Templated Weblinks~
+
+The weblink template |g:vimwiki_web_template| can be configured in your chosen
+syntax to support additional links; e.g. in vimwiki/syntax/vimwiki_markdown.vim
+
+Link with description: >
+  let g:vimwiki_web_template = '[__LinkDescription__](__LinkUrl__)'
+
+Templated Imagelinks~
+
+Similarly, |g:vimwiki_image_template| can be configured for additional image
+links; e.g. in vimwiki/syntax/vimwiki_markdown.vim 
+
+Image with description: >
+  let g:vimwiki_image_template = '![__LinkDescription__](__LinkUrl__)'
+
 Raw URLs~
 
 Raw URLs are also supported: >
