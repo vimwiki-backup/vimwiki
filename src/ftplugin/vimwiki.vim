@@ -206,18 +206,18 @@ command! -buffer Vimwiki2HTMLBrowse
 command! -buffer VimwikiAll2HTML
       \ call vimwiki#html#WikiAll2HTML(expand(g:vimwiki_current_path_html))
 
-command! -buffer VimwikiNextLink call vimwiki#base_{VimwikiGet('syntax')}#find_next_link()
-command! -buffer VimwikiPrevLink call vimwiki#base_{VimwikiGet('syntax')}#find_prev_link()
+command! -buffer VimwikiNextLink call vimwiki#base#find_next_link()
+command! -buffer VimwikiPrevLink call vimwiki#base#find_prev_link()
 command! -buffer VimwikiDeleteLink call vimwiki#base#delete_link()
 command! -buffer VimwikiRenameLink call vimwiki#base#rename_link()
-command! -buffer VimwikiFollowLink call vimwiki#base_{VimwikiGet('syntax')}#follow_link('nosplit')
+command! -buffer VimwikiFollowLink call vimwiki#base#follow_link('nosplit')
 command! -buffer VimwikiGoBackLink call vimwiki#base#go_back_link()
-command! -buffer VimwikiSplitLink call vimwiki#base_{VimwikiGet('syntax')}#follow_link('split')
-command! -buffer VimwikiVSplitLink call vimwiki#base_{VimwikiGet('syntax')}#follow_link('vsplit')
+command! -buffer VimwikiSplitLink call vimwiki#base#follow_link('split')
+command! -buffer VimwikiVSplitLink call vimwiki#base#follow_link('vsplit')
 
-command! -buffer -nargs=? VimwikiNormalizeLink call vimwiki#base_{VimwikiGet('syntax')}#normalize_link(<f-args>)
+command! -buffer -nargs=? VimwikiNormalizeLink call vimwiki#base#normalize_link(<f-args>)
 
-command! -buffer VimwikiTabnewLink call vimwiki#base_{VimwikiGet('syntax')}#follow_link('tabnew')
+command! -buffer VimwikiTabnewLink call vimwiki#base#follow_link('tabnew')
 
 command! -buffer -range VimwikiToggleListItem call vimwiki#lst#ToggleListItem(<line1>, <line2>)
 
@@ -255,7 +255,7 @@ command! -buffer VimwikiDiaryPrevDay call vimwiki#diary#goto_prev_day()
 if g:vimwiki_use_mouse
   nmap <buffer> <S-LeftMouse> <NOP>
   nmap <buffer> <C-LeftMouse> <NOP>
-  nnoremap <silent><buffer> <2-LeftMouse> :call vimwiki#base_{VimwikiGet('syntax')}#follow_link("nosplit", "\<lt>2-LeftMouse>")<CR>
+  nnoremap <silent><buffer> <2-LeftMouse> :call vimwiki#base#follow_link("nosplit", "\<lt>2-LeftMouse>")<CR>
   nnoremap <silent><buffer> <S-2-LeftMouse> <LeftMouse>:VimwikiSplitLink<CR>
   nnoremap <silent><buffer> <C-2-LeftMouse> <LeftMouse>:VimwikiVSplitLink<CR>
   nnoremap <silent><buffer> <RightMouse><LeftMouse> :VimwikiGoBackLink<CR>
