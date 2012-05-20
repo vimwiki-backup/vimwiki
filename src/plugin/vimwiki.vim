@@ -205,9 +205,11 @@ function! VimwikiGetOptions(...) "{{{
   return option_dict
 endfunction "}}}
 
-" return value of option for current wiki or if second parameter exists for
-" wiki with a given index.
-" XXX no call to vimwiki#base here or else the whole autoload/base gets loaded!
+" Return value of option for current wiki or if second parameter exists for
+"   wiki with a given index.
+" If the option is not found, it is assumed to have been previously cached in a
+"   buffer local dictionary, that acts as a cache.
+" If the option is not found in the buffer local dictionary, an error is thrown
 function! VimwikiGet(option, ...) "{{{
   let idx = a:0 == 0 ? g:vimwiki_current_idx : a:1
 
@@ -220,11 +222,16 @@ function! VimwikiGet(option, ...) "{{{
     let val = b:vimwiki_list[a:option]
   endif
 
+  " XXX no call to vimwiki#base here or else the whole autoload/base gets loaded!
   return val
 endfunction "}}}
 
-" set option for current wiki or if third parameter exists for
-" wiki with a given index.
+" Set option for current wiki or if third parameter exists for
+"   wiki with a given index.
+" If the option is not found or recognized (i.e. does not exist in
+"   s:vimwiki_defaults), it is saved in a buffer local dictionary, that acts
+"   as a cache.
+" If the option is not found in the buffer local dictionary, an error is thrown
 function! VimwikiSet(option, value, ...) "{{{
   let idx = a:0 == 0 ? g:vimwiki_current_idx : a:1
 
