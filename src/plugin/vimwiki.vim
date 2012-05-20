@@ -14,10 +14,12 @@ set cpo&vim
 
 " Logging and performance instrumentation "{{{
 let g:VimwikiLog = {}
-let g:VimwikiLog.path = 0     " # of calls to VimwikiGet with path or path_html
-let g:VimwikiLog.subdir = 0   " # of calls to vimwiki#base#subdir()
-let g:VimwikiLog.timing = []  " various timing measurements
-let g:VimwikiLog.html = []    " html conversion timing
+let g:VimwikiLog.path = 0           " # of calls to VimwikiGet with path or path_html
+let g:VimwikiLog.path_html = 0      " # of calls to path_html()
+let g:VimwikiLog.normalize_path = 0 " # of calls to normalize_path()
+let g:VimwikiLog.subdir = 0         " # of calls to vimwiki#base#subdir()
+let g:VimwikiLog.timing = []        " various timing measurements
+let g:VimwikiLog.html = []          " html conversion timing
 function! VimwikiLog_extend(what,...)  "{{{
   call extend(g:VimwikiLog[a:what],a:000)
 endfunction "}}}
@@ -85,8 +87,7 @@ function! s:setup_filetype() "{{{
     let idx = len(g:vimwiki_list) - 1
   endif
   " initialize and cache global vars of current state
-  call vimwiki#base#reset_wiki_state(['idx', idx], 
-        \ ['subdir', vimwiki#base#current_subdir(idx)])
+  call vimwiki#base#reset_wiki_state(idx)
 
   unlet! b:vimwiki_fs_rescan
   set filetype=vimwiki
@@ -126,8 +127,7 @@ function! s:setup_buffer_enter() "{{{
       let idx = len(g:vimwiki_list) - 1
     endif
     " initialize and cache global vars of current state
-    call vimwiki#base#reset_wiki_state(['idx', idx], 
-          \ ['subdir', vimwiki#base#current_subdir(idx)])
+    call vimwiki#base#reset_wiki_state(idx)
 
   endif
 
@@ -207,38 +207,37 @@ endfunction "}}}
 
 " return value of option for current wiki or if second parameter exists for
 " wiki with a given index.
+" XXX no call to vimwiki#base here or else the whole autoload/base gets loaded!
 function! VimwikiGet(option, ...) "{{{
   let idx = a:0 == 0 ? g:vimwiki_current_idx : a:1
-  if !has_key(g:vimwiki_list[idx], a:option) &&
-        \ has_key(s:vimwiki_defaults, a:option)
-    if a:option == 'path_html'
-      let g:vimwiki_list[idx][a:option] =
-            \VimwikiGet('path', idx)[:-2].'_html/'
-    else
-      let g:vimwiki_list[idx][a:option] =
-            \s:vimwiki_defaults[a:option]
-    endif
+
+  if has_key(g:vimwiki_list[idx], a:option)
+    let val = g:vimwiki_list[idx][a:option]
+  elseif has_key(s:vimwiki_defaults, a:option)
+    let val = s:vimwiki_defaults[a:option]
+    let g:vimwiki_list[idx][a:option] = val
+  else
+    let val = b:vimwiki_list[a:option]
   endif
 
-  " if path's ending is not a / or \
-  " then add it
-  if a:option == 'path' || a:option == 'path_html'
-    let g:VimwikiLog.path += 1  "XXX
-    let p = g:vimwiki_list[idx][a:option]
-    " resolve doesn't work quite right with symlinks ended with / or \
-    " XXX no call to vimwiki#base here or else the whole autoload/base gets loaded!
-    let p = resolve(expand(substitute(p, '[/\\]\+$', '', '')))
-    let g:vimwiki_list[idx][a:option] = p.'/'
-  endif
-
-  return g:vimwiki_list[idx][a:option]
+  return val
 endfunction "}}}
 
 " set option for current wiki or if third parameter exists for
 " wiki with a given index.
 function! VimwikiSet(option, value, ...) "{{{
   let idx = a:0 == 0 ? g:vimwiki_current_idx : a:1
-  let g:vimwiki_list[idx][a:option] = a:value
+
+  if has_key(s:vimwiki_defaults, a:option) || 
+        \ has_key(g:vimwiki_list[idx], a:option)
+    let g:vimwiki_list[idx][a:option] = a:value
+  elseif exists('b:vimwiki_list')
+    let b:vimwiki_list[a:option] = a:value
+  else
+    let b:vimwiki_list = {}
+    let b:vimwiki_list[a:option] = a:value
+  endif
+
 endfunction "}}}
 " }}}
 
@@ -288,7 +287,7 @@ endif "}}}
 " DEFAULT wiki {{{
 let s:vimwiki_defaults = {}
 let s:vimwiki_defaults.path = '~/vimwiki/'
-let s:vimwiki_defaults.path_html = '~/vimwiki_html/'
+let s:vimwiki_defaults.path_html = ''   " '' is replaced by derived path.'_html/'
 let s:vimwiki_defaults.css_name = 'style.css'
 let s:vimwiki_defaults.index = 'index'
 let s:vimwiki_defaults.ext = '.wiki'
