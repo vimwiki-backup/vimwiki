@@ -39,7 +39,9 @@ function! vimwiki#base#reset_wiki_state(idx) " {{{
   " update normalized path & path_html
   call VimwikiSet('path', s:normalize_path(VimwikiGet('path', a:idx)), a:idx)
   call VimwikiSet('path_html', s:normalize_path(s:path_html(a:idx)), a:idx)
+  "XXX: the next line should be fixed
   call VimwikiSet('subdir', vimwiki#base#current_subdir(a:idx), a:idx)
+
 
   " update cache
   call vimwiki#base#cache_wiki_state()
@@ -301,8 +303,7 @@ function! vimwiki#base#select(wnum)"{{{
   if a:wnum < 1 || a:wnum > len(g:vimwiki_list)
     return
   endif
-  let g:vimwiki_current_idx = a:wnum - 1
-  call vimwiki#base#reset_wiki_state(g:vimwiki_current_idx)
+  call vimwiki#base#reset_wiki_state(a:wnum - 1)
 endfunction
 " }}}
 
