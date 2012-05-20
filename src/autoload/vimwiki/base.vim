@@ -345,8 +345,10 @@ function! vimwiki#base#select(wnum)"{{{
   if a:wnum < 1 || a:wnum > len(g:vimwiki_list)
     return
   endif
-  let g:vimwiki_current_idx = a:wnum - 1
-  call vimwiki#base#reset_wiki_state()
+  let idx = a:wnum - 1
+  " initialize and cache global vars of current state
+  call vimwiki#base#reset_wiki_state(['idx', idx], 
+        \ ['subdir', vimwiki#base#current_subdir(idx)])
 endfunction
 " }}}
 
