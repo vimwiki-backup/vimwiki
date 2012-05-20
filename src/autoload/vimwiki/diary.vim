@@ -36,16 +36,19 @@ function! s:link_exists(lines, link) "{{{
   return link_exists
 endfunction "}}}
 
-function! s:diary_path() "{{{
-  return VimwikiGet('path').VimwikiGet('diary_rel_path')
+function! s:diary_path(...) "{{{
+  let idx = a:0 == 0 ? g:vimwiki_current_idx : a:1
+  return VimwikiGet('path', idx).VimwikiGet('diary_rel_path', idx)
 endfunction "}}}
 
-function! s:diary_index() "{{{
-  return s:diary_path().VimwikiGet('diary_index').VimwikiGet('ext')
+function! s:diary_index(...) "{{{
+  let idx = a:0 == 0 ? g:vimwiki_current_idx : a:1
+  return s:diary_path(idx).VimwikiGet('diary_index', idx).VimwikiGet('ext', idx)
 endfunction "}}}
 
-function! s:diary_date_link() "{{{
-  return s:get_date_link(VimwikiGet('diary_link_fmt'))
+function! s:diary_date_link(...) "{{{
+  let idx = a:0 == 0 ? g:vimwiki_current_idx : a:1
+  return s:get_date_link(VimwikiGet('diary_link_fmt', idx))
 endfunction "}}}
 
 function! s:get_position_links(link) "{{{
@@ -219,19 +222,21 @@ endfunction "}}}
 " Diary index stuff }}}
 
 function! vimwiki#diary#make_note(index, ...) "{{{
-  call vimwiki#base#select(a:index)
-  call vimwiki#base#mkdir(VimwikiGet('path').VimwikiGet('diary_rel_path'))
+  let idx = a:index
+  call vimwiki#base#mkdir(VimwikiGet('path', idx).VimwikiGet('diary_rel_path', idx))
   if a:0
     let link = 'diary:'.a:1
   else
-    let link = 'diary:'.s:diary_date_link()
+    let link = 'diary:'.s:diary_date_link(idx)
   endif
-  call vimwiki#base#open_link(':e ', link, s:diary_index())
+  call vimwiki#base#open_link(':e ', link, s:diary_index(idx))
+  call vimwiki#base#reset_wiki_state(idx)
 endfunction "}}}
 
 function! vimwiki#diary#goto_diary_index(index) "{{{
-  call vimwiki#base#select(a:index)
-  call vimwiki#base#edit_file(':e', s:diary_index())
+  let idx = a:index
+  call vimwiki#base#edit_file(':e', s:diary_index(idx))
+  call vimwiki#base#reset_wiki_state(idx)
 endfunction "}}}
 
 function! vimwiki#diary#goto_next_day() "{{{
