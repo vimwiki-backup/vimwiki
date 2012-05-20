@@ -302,7 +302,7 @@ function! vimwiki#base#select(wnum)"{{{
     return
   endif
   let g:vimwiki_current_idx = a:wnum - 1
-  call vimwiki#base#reset_wiki_state()
+  call vimwiki#base#reset_wiki_state(g:vimwiki_current_idx)
 endfunction
 " }}}
 
