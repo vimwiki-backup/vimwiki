@@ -35,7 +35,10 @@ function! vimwiki#base#reset_wiki_state(idx) " {{{
   call VimwikiSet('path', s:normalize_path(VimwikiGet('path', a:idx)), a:idx)
   call VimwikiSet('path_html', s:normalize_path(s:path_html(a:idx)), a:idx)
   " XXX: MUST BE CALLED FROM A CURRENT WIKI PAGE !!
-  call VimwikiSet('subdir', vimwiki#base#current_subdir(a:idx), a:idx)
+  let subdir = vimwiki#base#current_subdir(a:idx)
+  call VimwikiSet('subdir', subdir, a:idx)
+  call VimwikiSet('invsubdir', 
+        \ substitute(subdir, '[^/\.]\+/', '..', 'g'), a:idx)
 
   " update cache
   call vimwiki#base#cache_wiki_state()
@@ -208,7 +211,8 @@ function! vimwiki#base#resolve_scheme(lnk, as_html) " {{{
     endif
   elseif scheme =~ 'diary'
     if a:as_html
-      let path = substitute(VimwikiGet('subdir'), '[^/\.]\+/', '../', 'g')
+      " use cached value (save time when converting diary index!)
+      let path = VimwikiGet('invsubdir')
       let ext = '.html'
     else
       let path = VimwikiGet('path')
