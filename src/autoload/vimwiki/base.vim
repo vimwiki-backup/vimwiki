@@ -516,8 +516,10 @@ function! s:update_wiki_links_dir(dir, old_fname, new_fname) " {{{
   let old_fname_r = old_fname
   let new_fname_r = new_fname
 
-  let old_fname_r = '\[\[\zs'.old_fname.
-        \ '\ze\%(|.*\)\?\]\]'
+  let old_fname_r = vimwiki#base#apply_template(g:vimwiki_WikiLinkTemplate1, 
+          \ '\zs'.old_fname.'\ze', '.*', '').
+        \ '\|'. vimwiki#base#apply_template(g:vimwiki_WikiLinkTemplate2, 
+          \ '\zs'.old_fname.'\ze', '.*', '')
 
   let files = split(glob(VimwikiGet('path').a:dir.'*'.VimwikiGet('ext')), '\n')
   for fname in files
