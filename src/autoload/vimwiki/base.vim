@@ -99,10 +99,12 @@ function! vimwiki#base#file_pattern(files) "{{{ get search regex from glob() str
   " FIXME needless complications ensue just to support silly "filenames" which
   " some filesystems may not handle well; also nonstandard paths
   " Change / to [/\\] to allow "Windows paths" 
+  " TODO: Decide which characters are allowed & not-allowed in filenames.
+  "   - stu's opinion: allowed '~&.' , undecided '$', not-allowed '*'
   let os_p2 = '[/\\\\]'   "in the end, only [/\\] will survive in regexp
   let pattern = vimwiki#base#branched_pattern(a:files,"\n")
   let pattern = substitute(pattern, '/', os_p2, "g")   "XXX  ???
-  let pattern = escape(pattern, '~&$.*')       "special chars for search
+  let pattern = escape(pattern, '~$.*')       "special chars for search
   return pattern
 endfunction
 "}}}
@@ -405,7 +407,8 @@ function! vimwiki#base#get_links(pat) "{{{ return string-list for files
 endfunction "}}}
 
 function! vimwiki#base#edit_file(command, filename, ...) "{{{
-  let fname = escape(a:filename, '% ')
+  " XXX: Should we allow * in filenames!?
+  let fname = escape(a:filename, '% *')
   let dir = fnamemodify(a:filename, ":p:h")
   if vimwiki#base#mkdir(dir, 1)
     execute a:command.' '.fname
@@ -499,6 +502,7 @@ function! s:update_wiki_link(fname, old, new) " {{{
     if !has_updates && match(line, a:old) != -1
       let has_updates = 1
     endif
+    " XXX: any other characters to escape!?
     call add(dest, substitute(line, a:old, escape(a:new, "&"), "g"))
   endfor
   " add exception handling...
@@ -772,7 +776,7 @@ function! vimwiki#base#rename_link() "{{{
   let new_link = subdir.new_link
   let new_fname = VimwikiGet('path').new_link.VimwikiGet('ext')
 
-  " do not rename if word with such name exists
+  " do not rename if file with such name exists
   let fname = glob(new_fname)
   if fname != ''
     echomsg 'vimwiki: Cannot rename to "'.new_fname.
@@ -1132,21 +1136,22 @@ endfunction
 "}}}
 
 " LINK functions {{{
+" Construct a regular expression matching from template (with special
+"   characters properly escaped), by substituting rxUrl for __LinkUrl__, rxDesc
+"   for __LinkDescription__, and rxStyle for __LinkStyle__.  The three
+"   arguments rxUrl, rxDesc, and rxStyle are copied verbatim, without any
+"   special character escapes or substitutions.
 function! vimwiki#base#apply_template(template, rxUrl, rxDesc, rxStyle) "{{{
   let magic_chars = '.*[]\^$'
   let lnk = escape(a:template, magic_chars)
-  let escape_chars = '\'
-  let url = escape(a:rxUrl, escape_chars)
-  let descr = escape(a:rxDesc, escape_chars)
-  let style = escape(a:rxStyle, escape_chars)
   if a:rxUrl != ""
-    let lnk = substitute(lnk, '__LinkUrl__', url, '') 
+    let lnk = substitute(lnk, '__LinkUrl__', '\='."'".a:rxUrl."'", '') 
   endif
   if a:rxDesc != ""
-    let lnk = substitute(lnk, '__LinkDescription__', descr, '')
+    let lnk = substitute(lnk, '__LinkDescription__', '\='."'".a:rxDesc."'", '')
   endif
   if a:rxStyle != ""
-    let lnk = substitute(lnk, '__LinkStyle__', style, '')
+    let lnk = substitute(lnk, '__LinkStyle__', '\='."'".a:rxStyle."'", '')
   endif
   return lnk
 endfunction
@@ -1234,6 +1239,7 @@ function! s:normalize_link_syntax_v() " {{{
   try
     norm! gvy
     let visual_selection = @"
+    " TODO: make it rxAware
     let visual_selection = '[['.visual_selection.']]'
 
     call setreg('"', visual_selection, 'v')
