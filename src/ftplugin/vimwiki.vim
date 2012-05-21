@@ -68,14 +68,14 @@ function! VimwikiFoldLevel(lnum) "{{{
 
   " Header folding...
   if line =~ g:vimwiki_rxHeader
-    let n = vimwiki#base#count_first_sym(line)
+    let n = vimwiki#u#count_first_sym(line)
     return '>'.n
   endif
 
   let nnline = getline(a:lnum + 1)
 
   if nnline =~ g:vimwiki_rxHeader
-    let n = vimwiki#base#count_first_sym(nnline)
+    let n = vimwiki#u#count_first_sym(nnline)
     return '<'.n
   endif
 
@@ -124,7 +124,7 @@ function! s:get_base_level(lnum) "{{{
   let lnum = a:lnum - 1
   while lnum > 0
     if getline(lnum) =~ g:vimwiki_rxHeader
-      return vimwiki#base#count_first_sym(getline(lnum))
+      return vimwiki#u#count_first_sym(getline(lnum))
     endif
     let lnum -= 1
   endwhile
@@ -164,7 +164,7 @@ endfunction "}}}
 
 function! s:get_li_level(lnum) "{{{
   if VimwikiGet('syntax') == 'media'
-    let level = vimwiki#base#count_first_sym(getline(a:lnum))
+    let level = vimwiki#u#count_first_sym(getline(a:lnum))
   else
     let level = (indent(a:lnum) / &sw)
   endif
