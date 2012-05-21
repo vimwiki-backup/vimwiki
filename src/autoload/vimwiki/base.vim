@@ -10,118 +10,70 @@ let g:loaded_vimwiki_auto = 1
 
 " MISC helper functions {{{
 
-function! vimwiki#base#reset_wiki_state(...) "{{{ Initialize wiki options and
-  " additional ['key', value] pairs, globally.  Also cache their values 
-  " in buffer local variables.  E.g. reset_wiki_state(['idx', 0]) sets:
-  "   let g:vimwiki_current_idx = 0 " for quick lookup
-  "   let b:vimwiki_idx = 0         " buffer-cached value
-  " in addition to the per-wiki options:
-  "   let g:vimwiki_current_path = '...' " for quick lookup
-  "   let b:vimwiki_path = '...'         " buffer-cached value
-  "   etc.
-  let g:vimwiki_current_keys = {}
-  for keyval_pair in a:000
-    let g:vimwiki_current_keys[keyval_pair[0]] = 1
-    let g:vimwiki_current_{keyval_pair[0]} = keyval_pair[1]
-  endfor
-  " load current wiki options
-  let option_dict = VimwikiGetOptions()
-  for kk in keys(option_dict)
-    let g:vimwiki_current_{kk} = option_dict[kk]
-  endfor
+function s:normalize_path(path) "{{{
+  let g:VimwikiLog.normalize_path += 1  "XXX
+  " resolve doesn't work quite right with symlinks ended with / or \
+  return resolve(expand(substitute(a:path, '[/\\]\+$', '', ''))).'/'
+endfunction "}}}
+
+function s:path_html(idx) "{{{
+  let path_html = VimwikiGet('path_html', a:idx)
+  if !empty(path_html)
+    return path_html
+  else
+    let g:VimwikiLog.path_html += 1  "XXX
+    let path = VimwikiGet('path', a:idx)
+    return substitute(path, '[/\\]\+$', '', '').'_html/'
+  endif
+endfunction "}}}
+
+" MUST BE CALLED FROM A CURRENT WIKI PAGE !!
+function! vimwiki#base#reset_wiki_state(idx) " {{{
+  let g:vimwiki_current_idx = a:idx
+
+  " update normalized path & path_html
+  call VimwikiSet('path', s:normalize_path(VimwikiGet('path', a:idx)), a:idx)
+  call VimwikiSet('path_html', s:normalize_path(s:path_html(a:idx)), a:idx)
+  " XXX: MUST BE CALLED FROM A CURRENT WIKI PAGE !!
+  call VimwikiSet('subdir', vimwiki#base#current_subdir(a:idx), a:idx)
+
   " update cache
   call vimwiki#base#cache_wiki_state()
-endfunction "}}}
+endfunction " }}}
 
-function! vimwiki#base#cache_wiki_state() "{{{ Cache wiki options and
-  " additional ['key', value] pairs, using buffer local variables.
-  " E.g. cache_wiki_state(['idx', 0]) sets:
-  "   let b:vimwiki_idx = 0         " buffer-cached value
-  " in addition to the per-wiki options:
-  "   let b:vimwiki_path = '...'         " buffer-cached value
-  "   etc.
-  for kk in keys(g:vimwiki_current_keys)
-    if !exists('g:vimwiki_current_'.kk) && g:vimwiki_debug
-      echo "[Vimwiki Internal Error]: Missing global state variable: 'g:vimwiki_current_".kk."'"
-    endif
-    let b:vimwiki_{kk} = g:vimwiki_current_{kk}
-  endfor
-  " wiki options
-  for kk in VimwikiGetOptionNames()
-    if !exists('g:vimwiki_current_'.kk) && g:vimwiki_debug
-      echo "[Vimwiki Error]: Missing global state variable: 'g:vimwiki_current_".kk."'"
-    endif
-    let b:vimwiki_{kk} = g:vimwiki_current_{kk}
-  endfor
-endfunction "}}}
-
-function! vimwiki#base#recall_wiki_state() "{{{ try loading wiki options
-  "   previously saved to buffer state, return 0 if cache is incomplete
-  " ['key', value] pairs
-  if !exists('g:vimwiki_current_keys')
-    return 0
+function! vimwiki#base#cache_wiki_state() "{{{
+  if !exists('g:vimwiki_current_idx') && g:vimwiki_debug
+    echo "[Vimwiki Internal Error]: Missing global state variable: 'g:vimwiki_current_idx'"
   endif
-  for kk in keys(g:vimwiki_current_keys)
-    if !exists('b:vimwiki_'.kk) 
-      if g:vimwiki_debug
-        echo "[Vimwiki Internal Error]: Missing buffer state variable: 'b:vimwiki_".kk."'"
-      endif
-      return 0
-    endif
-    let g:vimwiki_current_{kk} = b:vimwiki_{kk}
-  endfor
-  " wiki options
-  for kk in VimwikiGetOptionNames()
-    if !exists('b:vimwiki_'.kk) 
-      if g:vimwiki_debug
-        echo "[Vimwiki Internal Error]: Missing buffer state variable: 'b:vimwiki_".kk."'"
-      endif
-      return 0
-    endif
-    let g:vimwiki_current_{kk} = b:vimwiki_{kk}
-  endfor
-  return 1
+  let b:vimwiki_idx = g:vimwiki_current_idx
 endfunction "}}}
+
+function! vimwiki#base#recall_wiki_state() "{{{
+  if !exists('b:vimwiki_idx')
+    if g:vimwiki_debug
+      echo "[Vimwiki Internal Error]: Missing buffer state variable: 'b:vimwiki_idx'"
+    endif
+    return 0
+  else
+    let g:vimwiki_current_idx = b:vimwiki_idx
+    return 1
+  endif
+endfunction
 
 function! vimwiki#base#print_wiki_state() "{{{ print wiki options
   "   and buffer state variables
-  let b_width = 24
-  let g_width = 16
-  " ['key', value] pairs
-  echo "--- Internal Wiki State ---"
-  " wiki options
-  echo "- Options -"
+  let g_width = 18
+  let b_width = 18
+  echo "- Wiki Options -"
   for kk in VimwikiGetOptionNames()
-    if !exists('b:vimwiki_'.kk)
-      echo "  'b:vimwiki_".kk."': n/a"
-    else
-      echo "  'b:vimwiki_".kk."': ".repeat(' ', b_width-len(kk)).
-            \ string(b:vimwiki_{kk})
-    endif
-    if !exists('g:vimwiki_current_'.kk)
-      echo "  'g:vimwiki_current_".kk."': n/a"
-    else
-      echo "  'g:vimwiki_current_".kk."': ".repeat(' ', g_width-len(kk)).
-            \ string(g:vimwiki_current_{kk})
-    endif
+      echo "  '".kk."': ".repeat(' ', g_width-len(kk)).string(VimwikiGet(kk))
   endfor
-  if !exists('g:vimwiki_current_keys')
-    return 0
+  if !exists('b:vimwiki_list')
+    return
   endif
   echo "- Cached Variables -"
-  for kk in keys(g:vimwiki_current_keys)
-    if !exists('b:vimwiki_'.kk)
-      echo "  'b:vimwiki_".kk."': n/a"
-    else
-      echo "  'b:vimwiki_".kk."': ".repeat(' ', b_width-len(kk)).
-            \ string(b:vimwiki_{kk})
-    endif
-    if !exists('g:vimwiki_current_'.kk)
-      echo "  'g:vimwiki_current_".kk."': n/a"
-    else
-      echo "  'g:vimwiki_current_".kk."': ".repeat(' ', g_width-len(kk)).
-            \ string(g:vimwiki_current_{kk})
-    endif
+  for kk in keys(b:vimwiki_list)
+    echo "  '".kk."': ".repeat(' ', b_width-len(kk)).string(b:vimwiki_list[kk])
   endfor
 endfunction "}}}
 
@@ -233,7 +185,7 @@ function! vimwiki#base#resolve_scheme(lnk, as_html) " {{{
 
     " For Issue 310. Otherwise current subdir is used for another wiki.
     if idx == g:vimwiki_current_idx
-      let subdir = g:vimwiki_current_subdir
+      let subdir = VimwikiGet('subdir')
     else
       let subdir = ""
     endif
@@ -254,7 +206,7 @@ function! vimwiki#base#resolve_scheme(lnk, as_html) " {{{
     endif
   elseif scheme =~ 'diary'
     if a:as_html
-      let path = substitute(g:vimwiki_current_subdir, '[^/\.]\+/', '../', 'g')
+      let path = substitute(VimwikiGet('subdir'), '[^/\.]\+/', '../', 'g')
       let ext = '.html'
     else
       let path = VimwikiGet('path')
@@ -263,7 +215,7 @@ function! vimwiki#base#resolve_scheme(lnk, as_html) " {{{
     let subdir = VimwikiGet('diary_rel_path')
   elseif scheme =~ 'local'
     let path = ''
-    let subdir = g:vimwiki_current_subdir
+    let subdir = VimwikiGet('subdir')
   elseif scheme =~ 'file'
     " RM repeated leading "/"'s within a link
     let lnk = substitute(lnk, '^/*', '/', '')
@@ -341,18 +293,6 @@ function! vimwiki#base#open_link(cmd, link, ...) "{{{
 endfunction
 " }}}
 
-function! vimwiki#base#select(wnum)"{{{
-  if a:wnum < 1 || a:wnum > len(g:vimwiki_list)
-    return
-  endif
-  let idx = a:wnum - 1
-  " initialize and cache global vars of current state
-  call vimwiki#base#reset_wiki_state(['idx', idx], 
-        \ ['subdir', vimwiki#base#current_subdir(idx)])
-endfunction
-" }}}
-
-
 function! vimwiki#base#generate_links() "{{{only get links from the current dir
   " change to the directory of the current file
   let orig_pwd = getcwd()
@@ -398,8 +338,12 @@ function! vimwiki#base#get_links(pat) "{{{ return string-list for files
 
   " XXX: 
   " if maxhi = 1 and <leader>w<leader>w before loading any vimwiki file
-  " cached g:vimwiki_current_subdir is not set up
-  let subdir = exists("g:vimwiki_current_subdir") ? g:vimwiki_current_subdir : ''
+  " cached 'subdir' is not set up
+  try
+    let subdir = VimwikiGet('subdir')
+  catch
+    let subdir = ''
+  endtry
 
   let invsubdir = substitute(subdir,'[^/]\+','..','g')
 
@@ -755,10 +699,12 @@ function! vimwiki#base#go_back_link() "{{{
   endif
 endfunction " }}}
 
-function! vimwiki#base#goto_index(index) "{{{
-  call vimwiki#base#select(a:index)
+function! vimwiki#base#goto_index(wnum) "{{{
+  let idx = a:wnum - 1
   call vimwiki#base#edit_file('e',
-        \ VimwikiGet('path').VimwikiGet('index').VimwikiGet('ext'))
+        \ VimwikiGet('path', idx).VimwikiGet('index', idx).
+        \ VimwikiGet('ext', idx))
+  call vimwiki#base#reset_wiki_state(idx)
 endfunction "}}}
 
 function! vimwiki#base#delete_link() "{{{
@@ -787,7 +733,7 @@ endfunction "}}}
 
 function! vimwiki#base#rename_link() "{{{
   "" Rename wiki link, update all links to renamed WikiWord
-  let subdir = g:vimwiki_current_subdir
+  let subdir = VimwikiGet('subdir')
   let old_fname = subdir.expand('%:t')
 
   " there is no file (new one maybe)
