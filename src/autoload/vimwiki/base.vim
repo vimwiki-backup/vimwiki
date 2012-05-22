@@ -37,8 +37,8 @@ function! vimwiki#base#reset_wiki_state(idx) " {{{
   " XXX: MUST BE CALLED FROM A CURRENT WIKI PAGE !!
   let subdir = vimwiki#base#current_subdir(a:idx)
   call VimwikiSet('subdir', subdir, a:idx)
-  call VimwikiSet('invsubdir', 
-        \ substitute(subdir, '[^/\.]\+/', '..', 'g'), a:idx)
+  call VimwikiSet('invsubdir', vimwiki#base#invsubdir(subdir), a:idx)
+  call VimwikiSet('url', vimwiki#html#get_wikifile_url(expand('%:p')), a:idx)
 
   " update cache
   call vimwiki#base#cache_wiki_state()
@@ -145,6 +145,10 @@ endfunction "}}}
 function! vimwiki#base#current_subdir(idx)"{{{
   return vimwiki#base#subdir(VimwikiGet('path', a:idx), expand('%:p'))
 endfunction"}}}
+
+function! vimwiki#base#invsubdir(subdir) " {{{
+  return substitute(a:subdir, '[^/\.]\+/', '..', 'g')
+endfunction
 
 function! vimwiki#base#resolve_scheme(lnk, as_html) " {{{
   " if link is schemeless add wikiN: scheme
