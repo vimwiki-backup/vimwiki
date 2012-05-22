@@ -710,6 +710,11 @@ function! vimwiki#base#go_back_link() "{{{
 endfunction " }}}
 
 function! vimwiki#base#goto_index(wnum) "{{{
+  if a:wnum > len(g:vimwiki_list)
+    echom "vimwiki: Wiki ".a:wnum." is not registered in g:vimwiki_list!"
+    return
+  endif
+
   let idx = a:wnum - 1
   call vimwiki#base#edit_file('e',
         \ VimwikiGet('path', idx).VimwikiGet('index', idx).

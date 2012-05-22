@@ -222,6 +222,11 @@ endfunction "}}}
 " Diary index stuff }}}
 
 function! vimwiki#diary#make_note(wnum, ...) "{{{
+  if a:wnum > len(g:vimwiki_list)
+    echom "vimwiki: Wiki ".a:wnum." is not registered in g:vimwiki_list!"
+    return
+  endif
+
   let idx = a:wnum - 1
   call vimwiki#base#mkdir(VimwikiGet('path', idx).VimwikiGet('diary_rel_path', idx))
   if a:0
@@ -234,6 +239,11 @@ function! vimwiki#diary#make_note(wnum, ...) "{{{
 endfunction "}}}
 
 function! vimwiki#diary#goto_diary_index(wnum) "{{{
+  if a:wnum > len(g:vimwiki_list)
+    echom "vimwiki: Wiki ".a:wnum." is not registered in g:vimwiki_list!"
+    return
+  endif
+
   let idx = a:wnum - 1
   call vimwiki#base#edit_file(':e', s:diary_index(idx))
   call vimwiki#base#reset_wiki_state(idx)
