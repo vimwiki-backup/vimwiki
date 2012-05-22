@@ -1529,12 +1529,16 @@ function! vimwiki#html#WikiAll2HTML(path_html) "{{{
 
   " temporarily adjust current_subdir global state variable
   let current_subdir = VimwikiGet('subdir')
+  let current_invsubdir = VimwikiGet('invsubdir')
 
   let wikifiles = split(glob(VimwikiGet('path').'**/*'.VimwikiGet('ext')), '\n')
   for wikifile in wikifiles
     let wikifile = fnamemodify(wikifile, ":p")
-    " temporarily adjust 'subdir' state variable
-    call VimwikiSet('subdir', vimwiki#base#subdir(VimwikiGet('path'), wikifile))
+
+    " temporarily adjust 'subdir' and 'invsubdir' state variables
+    let subdir = vimwiki#base#subdir(VimwikiGet('path'), wikifile)
+    call VimwikiSet('subdir', subdir)
+    call VimwikiSet('invsubdir', vimwiki#base#invsubdir(subdir))
 
     if !s:is_html_uptodate(wikifile)
       echomsg 'Processing '.wikifile
@@ -1546,6 +1550,7 @@ function! vimwiki#html#WikiAll2HTML(path_html) "{{{
   endfor
   " reset 'subdir' state variable
   call VimwikiSet('subdir', current_subdir)
+  call VimwikiSet('invsubdir', current_invsubdir)
 
   call s:create_default_CSS(path_html)
   echomsg 'Done!'
@@ -1558,17 +1563,17 @@ function! s:file_exists(fname) "{{{
 endfunction "}}}
 
 " uses VimwikiGet('path')
-function! s:get_wikifile_url(wikifile) "{{{
+function! vimwiki#html#get_wikifile_url(wikifile) "{{{
   return VimwikiGet('path_html').
     \ vimwiki#base#subdir(VimwikiGet('path'), a:wikifile).
     \ fnamemodify(a:wikifile, ":t:r").'.html'
 endfunction "}}}
 
 function! vimwiki#html#PasteUrl(wikifile) "{{{
-  execute 'r !echo file://'.s:get_wikifile_url(a:wikifile)
+  execute 'r !echo file://'.vimwiki#html#get_wikifile_url(a:wikifile)
 endfunction "}}}
 
 function! vimwiki#html#CatUrl(wikifile) "{{{
-  execute '!echo file://'.s:get_wikifile_url(a:wikifile)
+  execute '!echo file://'.vimwiki#html#get_wikifile_url(a:wikifile)
 endfunction "}}}
 "}}}
