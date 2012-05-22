@@ -72,15 +72,11 @@ function! VimwikiFoldLevel(lnum) "{{{
     return '>'.n
   endif
 
-  let nnline = getline(a:lnum + 1)
 
-  if nnline =~ g:vimwiki_rxHeader
-    let n = vimwiki#u#count_first_sym(nnline)
-    return '<'.n
-  endif
 
   " List item folding...
   if g:vimwiki_fold_lists
+    let nnline = getline(a:lnum + 1)
     let base_level = s:get_base_level(a:lnum)
     
     let rx_list_item = '\('.
@@ -96,8 +92,9 @@ function! VimwikiFoldLevel(lnum) "{{{
 
       if leveln > level
         return ">".(base_level+leveln-adj)
-      elseif (nnum-a:lnum) > 1 " check if multilined list item
-            \ (nline =~ rx_list_item || nnline !~ '^\s*$')
+      " check if multilined list item
+      elseif (nnum-a:lnum) > 1 
+            \ && nline =~ rx_list_item && nnline !~ '^\s*$'
         return ">".(base_level+level+1-adj)
       else
         return (base_level+level-adj)
