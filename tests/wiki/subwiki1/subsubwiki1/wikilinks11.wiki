@@ -26,3 +26,5 @@
  %% # [[wiki0:Path/To/Nowhere.txt]] : Always highlight local paths as links.  No .html extension added
  %% # [[local:../../headers.wiki]] : Highlighted as link
 
+= Diary Scheme =
+ # [[diary:2012-05-22]]
