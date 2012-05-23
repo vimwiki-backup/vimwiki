@@ -68,13 +68,13 @@ let g:vimwiki_symH = 0
 " NEW! in v1.3
 " Link separators and templates (previously initialized together with per-wiki options)
 
-" wikilink, wikiincl separators (should not be the same)
+" wikilink, wikiincl separators
 let g:vimwiki_link_separator = ']['
 let g:vimwiki_incl_separator = '}{'
 
 " web_template, image_template
 let g:vimwiki_web_template = '[__LinkDescription__](__LinkUrl__)'
-let g:vimwiki_image_template = '![__LinkDescription__](__LinkUrl__ __LinkStyle__)'
+let g:vimwiki_image_template = '![__LinkDescription__](__LinkUrl__)'
 
 
 " <hr>, horizontal rule
@@ -90,8 +90,8 @@ let g:vimwiki_rxListNumber = '^\s*[0-9]\+\.\s'
 let g:vimwiki_rxListDefine = '::\%(\s\|$\)'
 
 " Preformatted text
-let g:vimwiki_rxPreStart = '{{{'
-let g:vimwiki_rxPreEnd = '}}}'
+let g:vimwiki_rxPreStart = '```'
+let g:vimwiki_rxPreEnd = '```'
 
 " Math block
 let g:vimwiki_rxMathStart = '{{\$'
