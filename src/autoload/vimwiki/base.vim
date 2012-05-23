@@ -156,7 +156,7 @@ function! vimwiki#base#current_subdir(idx)"{{{
 endfunction"}}}
 
 function! vimwiki#base#invsubdir(subdir) " {{{
-  return substitute(a:subdir, '[^/\.]\+/', '..', 'g')
+  return substitute(a:subdir, '[^/\.]\+/', '../', 'g')
 endfunction
 
 function! vimwiki#base#resolve_scheme(lnk, as_html) " {{{
@@ -368,7 +368,8 @@ function! vimwiki#base#get_links(pat) "{{{ return string-list for files
     let subdir = ''
   endtry
 
-  let invsubdir = substitute(subdir,'[^/]\+','..','g')
+  " FIXED: was previously converting './' to '../'
+  let invsubdir = VimwikiGet('invsubdir')
 
   " if current wiki is temporary -- was added by an arbitrary wiki file then do
   " not search wiki files in subdirectories. Or it would hang the system if
