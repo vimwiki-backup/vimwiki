@@ -113,11 +113,13 @@ function! vimwiki#base#file_pattern(files) "{{{ Get search regex from glob()
   " Change / to [/\\] to allow "Windows paths" 
   " TODO: boundary cases ...
   "   e.g. "File$", "^File", "Fi]le", "Fi[le", "Fi\le", "Fi/le"
-  let os_p2 = '[/\\\\]'   "in the end, only [/\\] will survive in regexp
+  " XXX: (remove my comment if agreed) Maxim: with \V (very nomagic) boundary
+  " cases works for 1 and 2.
+  " 3, 4, 5 is not highlighted as links thus wouldn't be highlighted.
+  " 6 is a regular vimwiki link with subdirectory...
+  "
   let pattern = vimwiki#base#branched_pattern(a:files,"\n")
-  let pattern = substitute(pattern, '/', os_p2, "g")   "XXX  ???
-  let pattern = escape(pattern, '~$.*')       "special chars for search
-  return pattern
+  return '\V'.pattern
 endfunction
 "}}}
 
