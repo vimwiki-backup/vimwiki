@@ -430,7 +430,9 @@ function! vimwiki#base#edit_file(command, filename, ...) "{{{
   endif
 
   " save previous link
-  if a:0 && a:2
+  " a:1 -- previous vimwiki link to save
+  " a:2 -- should we update previous link
+  if a:0 && a:2 && len(a:1) > 0
     let b:vimwiki_prev_link = a:1
   endif
 endfunction
