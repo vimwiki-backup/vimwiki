@@ -98,12 +98,14 @@ function! vimwiki#base#mkdir(path, ...) "{{{
 endfunction
 " }}}
 
-function! vimwiki#base#file_pattern(files) "{{{ get search regex from glob() string
-  " FIXME needless complications ensue just to support silly "filenames" which
-  " some filesystems may not handle well; also nonstandard paths
+function! vimwiki#base#file_pattern(files) "{{{ Get search regex from glob()
+  " string. Aim to support *all* special characters, forcing the user to choose
+  "   names that are compatible with any external restrictions that they
+  "   encounter (e.g. filesystem, wiki conventions, other syntaxes, ...).
+  "   See: http://code.google.com/p/vimwiki/issues/detail?id=316
   " Change / to [/\\] to allow "Windows paths" 
-  " TODO: Decide which characters are allowed & not-allowed in filenames.
-  "   - stu's opinion: allowed '~&.' , undecided '$', not-allowed '*'
+  " TODO: boundary cases ...
+  "   e.g. "File$", "^File", "Fi]le", "Fi[le", "Fi\le", "Fi/le"
   let os_p2 = '[/\\\\]'   "in the end, only [/\\] will survive in regexp
   let pattern = vimwiki#base#branched_pattern(a:files,"\n")
   let pattern = substitute(pattern, '/', os_p2, "g")   "XXX  ???
