@@ -420,6 +420,13 @@ endfunction "}}}
 
 function! vimwiki#base#edit_file(command, filename, ...) "{{{
   " XXX: Should we allow * in filenames!?
+  " Maxim: It is allowed, escaping here is for vim to be able to open files
+  " which have that symbols.
+  " Try to remove * from escaping and open&save :
+  " [[testBLAfile]]...
+  " then
+  " [[test*file]]...
+  " you'll have E77: Too many file names
   let fname = escape(a:filename, '% *')
   let dir = fnamemodify(a:filename, ":p:h")
   if vimwiki#base#mkdir(dir, 1)
