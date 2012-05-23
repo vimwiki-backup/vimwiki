@@ -27,14 +27,21 @@ function s:path_html(idx) "{{{
   endif
 endfunction "}}}
 
-" MUST BE CALLED FROM A CURRENT WIKI PAGE !!
-function! vimwiki#base#reset_wiki_state(idx) " {{{
+function! vimwiki#base#validate_wiki_options(idx) " {{{ Validate wiki options
   let g:vimwiki_current_idx = a:idx
 
   " update normalized path & path_html
   call VimwikiSet('path', s:normalize_path(VimwikiGet('path', a:idx)), a:idx)
   call VimwikiSet('path_html', s:normalize_path(s:path_html(a:idx)), a:idx)
-  " XXX: MUST BE CALLED FROM A CURRENT WIKI PAGE !!
+
+  " update cache
+  call vimwiki#base#cache_wiki_state()
+endfunction " }}}
+
+function! vimwiki#base#reset_wiki_state(idx) " {{{ Init page-specific variables
+  let g:vimwiki_current_idx = a:idx
+
+  " The following state depends on the current active wiki page
   let subdir = vimwiki#base#current_subdir(a:idx)
   call VimwikiSet('subdir', subdir, a:idx)
   call VimwikiSet('invsubdir', vimwiki#base#invsubdir(subdir), a:idx)
@@ -735,6 +742,7 @@ function! vimwiki#base#goto_index(wnum) "{{{
   endif
 
   let idx = a:wnum - 1
+  call vimwiki#base#validate_wiki_options(idx)
   call vimwiki#base#edit_file('e',
         \ VimwikiGet('path', idx).VimwikiGet('index', idx).
         \ VimwikiGet('ext', idx))

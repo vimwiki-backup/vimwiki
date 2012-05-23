@@ -228,6 +228,7 @@ function! vimwiki#diary#make_note(wnum, ...) "{{{
   endif
 
   let idx = a:wnum - 1
+  call vimwiki#base#validate_wiki_options(idx)
   call vimwiki#base#mkdir(VimwikiGet('path', idx).VimwikiGet('diary_rel_path', idx))
   if a:0
     let link = 'diary:'.a:1
@@ -245,6 +246,7 @@ function! vimwiki#diary#goto_diary_index(wnum) "{{{
   endif
 
   let idx = a:wnum - 1
+  call vimwiki#base#validate_wiki_options(idx)
   call vimwiki#base#edit_file(':e', s:diary_index(idx))
   call vimwiki#base#reset_wiki_state(idx)
 endfunction "}}}
