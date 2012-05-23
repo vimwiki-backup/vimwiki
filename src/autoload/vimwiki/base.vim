@@ -318,11 +318,15 @@ function! vimwiki#base#generate_links() "{{{only get links from the current dir
   " let cur_link = expand('%:t:r')
   " call filter(links, 'v:val != cur_link')
   let links = split(globlinks,"\n")
-  call append(line('$'), '= Generated Links =')
+  call append(line('$'), substitute(g:vimwiki_rxH1_Template, '__Header__', 'Generated Links', ''))
+
   call sort(links)
 
+  let bullet = repeat(' ', vimwiki#lst#get_list_margin()).
+        \ vimwiki#lst#default_symbol().' '
   for link in links
-    call append(line('$'), '- [['.link.']]')
+    call append(line('$'), bullet.
+          \ substitute(g:vimwiki_WikiLinkTemplate1, '__LinkUrl__', link, ''))
   endfor
 endfunction " }}}
 
