@@ -378,7 +378,7 @@ function! vimwiki#lst#kbd_oO(cmd) "{{{
 
 endfunction "}}}
 
-function! s:default_symbol() "{{{
+function! vimwiki#lst#default_symbol() "{{{
   " TODO: initialize default symbol from syntax/vimwiki_xxx.vim
   if VimwikiGet('syntax') == 'default'
     return '-'
@@ -387,7 +387,7 @@ function! s:default_symbol() "{{{
   endif
 endfunction "}}}
 
-function s:get_list_margin() "{{{
+function vimwiki#lst#get_list_margin() "{{{
   if VimwikiGet('list_margin') < 0
     return &sw
   else
@@ -446,7 +446,7 @@ function s:compose_cb_bullet(prev_cb_bullet, sym) "{{{
 endfunction "}}}
 
 function! vimwiki#lst#change_level(...) "{{{
-  let default_sym = s:default_symbol()
+  let default_sym = vimwiki#lst#default_symbol()
   let cmd = '>>'
   let sym = default_sym
 
@@ -468,7 +468,7 @@ function! vimwiki#lst#change_level(...) "{{{
   let lnum = line('.')
   let line = getline('.')
 
-  let list_margin = s:get_list_margin()
+  let list_margin = vimwiki#lst#get_list_margin()
   let list_sw = s:get_list_sw()
   let n_nesting = s:get_list_nesting_level(lnum)
   let n_indent = s:get_list_indent(lnum)
