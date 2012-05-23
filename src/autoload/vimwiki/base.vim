@@ -33,6 +33,10 @@ function! vimwiki#base#validate_wiki_options(idx) " {{{ Validate wiki options
   " update normalized path & path_html
   call VimwikiSet('path', s:normalize_path(VimwikiGet('path', a:idx)), a:idx)
   call VimwikiSet('path_html', s:normalize_path(s:path_html(a:idx)), a:idx)
+  call VimwikiSet('template_path', 
+        \ s:normalize_path(VimwikiGet('template_path', a:idx)), a:idx)
+  call VimwikiSet('diary_rel_path', 
+        \ s:normalize_path(VimwikiGet('diary_rel_path', a:idx)), a:idx)
 
   " update cache
   call vimwiki#base#cache_wiki_state()
@@ -277,6 +281,9 @@ function! vimwiki#base#open_link(cmd, link, ...) "{{{
         \ vimwiki#base#resolve_scheme(a:link, 0)
 
   if lnk == ''
+    if g:vimwiki_debug
+      echom 'open_link: scheme='.scheme.', path='.path.', subdir='.subdir.', lnk='.lnk.', ext='.ext
+    endif
     echom 'Vimwiki Error: Unable to resolve link!'
     return
   endif

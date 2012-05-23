@@ -429,17 +429,17 @@ augroup END
 
 " COMMANDS {{{
 command! VimwikiUISelect call vimwiki#base#ui_select()
-command! -count VimwikiIndex
-      \ call vimwiki#base#goto_index(v:count1)
-command! -count VimwikiTabIndex tabedit <bar>
-      \ call vimwiki#base#goto_index(v:count1)
+command! -count=1 VimwikiIndex
+      \ call vimwiki#base#goto_index(<count>)
+command! -count=1 VimwikiTabIndex tabedit <bar>
+      \ call vimwiki#base#goto_index(<count>)
 
-command! -count VimwikiDiaryIndex
-      \ call vimwiki#diary#goto_diary_index(v:count1)
-command! -count VimwikiMakeDiaryNote
-      \ call vimwiki#diary#make_note(v:count1)
-command! -count VimwikiTabMakeDiaryNote tabedit <bar>
-      \ call vimwiki#diary#make_note(v:count1)
+command! -count=1 VimwikiDiaryIndex
+      \ call vimwiki#diary#goto_diary_index(<count>)
+command! -count=1 VimwikiMakeDiaryNote
+      \ call vimwiki#diary#make_note(<count>)
+command! -count=1 VimwikiTabMakeDiaryNote tabedit <bar>
+      \ call vimwiki#diary#make_note(<count>)
 
 command! VimwikiDiaryGenerateLinks
       \ call vimwiki#diary#generate_diary_section()
