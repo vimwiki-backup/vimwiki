@@ -468,8 +468,8 @@ endif
 
 " PASTE, CAT URL {{{
 " html commands
-command! -buffer VimwikiPasteUrl call vimwiki#html#PasteUrl(expand('%'))
-command! -buffer VimwikiCatUrl call vimwiki#html#CatUrl(expand('%'))
+command! -buffer VimwikiPasteUrl call vimwiki#html#PasteUrl(expand('%:p'))
+command! -buffer VimwikiCatUrl call vimwiki#html#CatUrl(expand('%:p'))
 " }}}
 
 " DEBUGGING {{{
