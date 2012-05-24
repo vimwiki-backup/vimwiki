@@ -373,12 +373,12 @@ function! vimwiki#base#get_links(pat) "{{{ return string-list for files
   " cached 'subdir' is not set up
   try
     let subdir = VimwikiGet('subdir')
+    " FIXED: was previously converting './' to '../'
+    let invsubdir = VimwikiGet('invsubdir')
   catch
     let subdir = ''
+    let invsubdir = ''
   endtry
-
-  " FIXED: was previously converting './' to '../'
-  let invsubdir = VimwikiGet('invsubdir')
 
   " if current wiki is temporary -- was added by an arbitrary wiki file then do
   " not search wiki files in subdirectories. Or it would hang the system if
