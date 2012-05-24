@@ -227,7 +227,13 @@ function! vimwiki#diary#make_note(wnum, ...) "{{{
     return
   endif
 
-  let idx = a:wnum - 1
+  " TODO: refactor it. base#goto_index uses the same
+  if a:wnum > 0
+    let idx = a:wnum - 1
+  else
+    let idx = 0
+  endif
+
   call vimwiki#base#validate_wiki_options(idx)
   call vimwiki#base#mkdir(VimwikiGet('path', idx).VimwikiGet('diary_rel_path', idx))
   if a:0
@@ -245,7 +251,13 @@ function! vimwiki#diary#goto_diary_index(wnum) "{{{
     return
   endif
 
-  let idx = a:wnum - 1
+  " TODO: refactor it. base#goto_index uses the same
+  if a:wnum > 0
+    let idx = a:wnum - 1
+  else
+    let idx = 0
+  endif
+
   call vimwiki#base#validate_wiki_options(idx)
   call vimwiki#base#edit_file(':e', s:diary_index(idx))
   call vimwiki#base#reset_wiki_state(idx)
