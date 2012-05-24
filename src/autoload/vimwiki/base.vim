@@ -751,7 +751,14 @@ function! vimwiki#base#goto_index(wnum) "{{{
     return
   endif
 
-  let idx = a:wnum - 1
+  " usually a:wnum is greater then 0 but with the following command it is == 0:
+  " vim -n -c "exe 'VimwikiIndex' | echo g:vimwiki_current_idx"
+  if a:wnum > 0
+    let idx = a:wnum - 1
+  else
+    let idx = 0
+  endif
+
   call vimwiki#base#validate_wiki_options(idx)
   call vimwiki#base#edit_file('e',
         \ VimwikiGet('path', idx).VimwikiGet('index', idx).

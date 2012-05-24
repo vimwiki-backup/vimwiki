@@ -429,17 +429,19 @@ augroup END
 
 " COMMANDS {{{
 command! VimwikiUISelect call vimwiki#base#ui_select()
+" XXX: why not using <count> instead of v:count1?
+" See Issue 324.
 command! -count=1 VimwikiIndex
-      \ call vimwiki#base#goto_index(<count>)
+      \ call vimwiki#base#goto_index(v:count1)
 command! -count=1 VimwikiTabIndex tabedit <bar>
-      \ call vimwiki#base#goto_index(<count>)
+      \ call vimwiki#base#goto_index(v:count1)
 
 command! -count=1 VimwikiDiaryIndex
-      \ call vimwiki#diary#goto_diary_index(<count>)
+      \ call vimwiki#diary#goto_diary_index(v:count1)
 command! -count=1 VimwikiMakeDiaryNote
-      \ call vimwiki#diary#make_note(<count>)
+      \ call vimwiki#diary#make_note(v:count1)
 command! -count=1 VimwikiTabMakeDiaryNote tabedit <bar>
-      \ call vimwiki#diary#make_note(<count>)
+      \ call vimwiki#diary#make_note(v:count1)
 
 command! VimwikiDiaryGenerateLinks
       \ call vimwiki#diary#generate_diary_section()
