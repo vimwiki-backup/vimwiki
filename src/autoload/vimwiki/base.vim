@@ -282,9 +282,9 @@ function! vimwiki#base#open_link(cmd, link, ...) "{{{
   let [scheme, path, subdir, lnk, ext, url] = 
         \ vimwiki#base#resolve_scheme(a:link, 0)
 
-  if lnk == ''
+  if url == ''
     if g:vimwiki_debug
-      echom 'open_link: scheme='.scheme.', path='.path.', subdir='.subdir.', lnk='.lnk.', ext='.ext
+      echom 'open_link: scheme='.scheme.', path='.path.', subdir='.subdir.', lnk='.lnk.', ext='.ext.', url='.url
     endif
     echom 'Vimwiki Error: Unable to resolve link!'
     return
