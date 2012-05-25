@@ -166,7 +166,6 @@ function! s:setup_buffer_enter() "{{{
     endif
 
   endif
-  call vimwiki#base#cache_wiki_state()
 
   " If you have
   "     au GUIEnter * VimwikiIndex
