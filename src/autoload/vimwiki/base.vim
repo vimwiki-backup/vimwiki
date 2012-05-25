@@ -28,7 +28,11 @@ function s:path_html(idx) "{{{
 endfunction "}}}
 
 function! vimwiki#base#validate_wiki_options(idx) " {{{ Validate wiki options
-  let g:vimwiki_current_idx = a:idx
+  " Only call this function *before* opening a wiki page.
+  "
+  " XXX: It's too early to update global / buffer variables, because they are
+  "  still needed in their existing state for s:setup_buffer_leave()
+  "" let g:vimwiki_current_idx = a:idx
 
   " update normalized path & path_html
   call VimwikiSet('path', s:normalize_path(VimwikiGet('path', a:idx)), a:idx)
@@ -38,11 +42,13 @@ function! vimwiki#base#validate_wiki_options(idx) " {{{ Validate wiki options
   call VimwikiSet('diary_rel_path', 
         \ s:normalize_path(VimwikiGet('diary_rel_path', a:idx)), a:idx)
 
-  " update cache
-  call vimwiki#base#cache_wiki_state()
+  " XXX: It's too early to update global / buffer variables, because they are
+  "  still needed in their existing state for s:setup_buffer_leave()
+  "" call vimwiki#base#cache_wiki_state()
 endfunction " }}}
 
 function! vimwiki#base#reset_wiki_state(idx) " {{{ Init page-specific variables
+  " Only call this function *after* opening a wiki page.
   let g:vimwiki_current_idx = a:idx
 
   " The following state depends on the current active wiki page
@@ -763,6 +769,10 @@ function! vimwiki#base#goto_index(wnum, ...) "{{{
     let cmd = 'tabedit'
   else
     let cmd = 'edit'
+  endif
+
+  if g:vimwiki_debug == 3
+    echom "--- Goto_index g:curr_idx=".g:vimwiki_current_idx." ww_idx=".idx.""
   endif
 
   call vimwiki#base#validate_wiki_options(idx)

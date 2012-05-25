@@ -48,10 +48,25 @@ function! s:find_wiki(path) "{{{
   " an orphan page has been detected
 endfunction "}}}
 
+
+function! s:vimwiki_idx() " {{{
+  if exists('b:vimwiki_idx')
+    return b:vimwiki_idx
+  else
+    return -1
+  endif
+endfunction " }}}
+
 function! s:setup_buffer_leave() "{{{
+  if g:vimwiki_debug ==3
+    echom "Setup_buffer_leave g:curr_idx=".g:vimwiki_current_idx." b:curr_idx=".s:vimwiki_idx().""
+  endif
   if &filetype == 'vimwiki'
     " cache global vars of current state XXX: SLOW!?
     call vimwiki#base#cache_wiki_state()
+  endif
+  if g:vimwiki_debug ==3
+    echom "  Setup_buffer_leave g:curr_idx=".g:vimwiki_current_idx." b:curr_idx=".s:vimwiki_idx().""
   endif
 
   " Set up menu
@@ -61,11 +76,17 @@ function! s:setup_buffer_leave() "{{{
 endfunction "}}}
 
 function! s:setup_filetype() "{{{
+  if g:vimwiki_debug ==3
+    echom "Setup_filetype g:curr_idx=".g:vimwiki_current_idx." b:curr_idx=".s:vimwiki_idx().""
+  endif
   let time0 = reltime()  " start the clock  "XXX
   " Find what wiki current buffer belongs to.
   let path = expand('%:p:h')
   " XXX: find_wiki() does not (yet) take into consideration the ext
   let idx = s:find_wiki(path)
+  if g:vimwiki_debug ==3
+    echom "  Setup_filetype g:curr_idx=".g:vimwiki_current_idx." find_idx=".idx." b:curr_idx=".s:vimwiki_idx().""
+  endif
 
   if idx == -1 && g:vimwiki_global_ext == 0
     return
@@ -88,14 +109,23 @@ function! s:setup_filetype() "{{{
   endif
   " initialize and cache global vars of current state
   call vimwiki#base#reset_wiki_state(idx)
+  if g:vimwiki_debug ==3
+    echom "  Setup_filetype g:curr_idx=".g:vimwiki_current_idx." (reset_wiki_state) b:curr_idx=".s:vimwiki_idx().""
+  endif
 
   unlet! b:vimwiki_fs_rescan
   set filetype=vimwiki
+  if g:vimwiki_debug ==3
+    echom "  Setup_filetype g:curr_idx=".g:vimwiki_current_idx." (set ft=vimwiki) b:curr_idx=".s:vimwiki_idx().""
+  endif
   let time1 = vimwiki#u#time(time0)  "XXX
   call VimwikiLog_extend('timing',['plugin:setup_filetype:time1',time1])
 endfunction "}}}
 
 function! s:setup_buffer_enter() "{{{
+  if g:vimwiki_debug ==3
+    echom "Setup_buffer_enter g:curr_idx=".g:vimwiki_current_idx." b:curr_idx=".s:vimwiki_idx().""
+  endif
   let time0 = reltime()  " start the clock  "XXX
   if !vimwiki#base#recall_wiki_state()
     " Find what wiki current buffer belongs to.
@@ -106,6 +136,9 @@ function! s:setup_buffer_enter() "{{{
     " XXX: find_wiki() does not (yet) take into consideration the ext
     let idx = s:find_wiki(path)
 
+    if g:vimwiki_debug ==3
+      echom "  Setup_buffer_enter g:curr_idx=".g:vimwiki_current_idx." find_idx=".idx." b:curr_idx=".s:vimwiki_idx().""
+    endif
     " The buffer's file is not in the path and user *does NOT* want his wiki
     " extension to be global -- Do not add new wiki.
     if idx == -1 && g:vimwiki_global_ext == 0
@@ -128,8 +161,12 @@ function! s:setup_buffer_enter() "{{{
     endif
     " initialize and cache global vars of current state
     call vimwiki#base#reset_wiki_state(idx)
+    if g:vimwiki_debug ==3
+      echom "  Setup_buffer_enter g:curr_idx=".g:vimwiki_current_idx." (reset_wiki_state) b:curr_idx=".s:vimwiki_idx().""
+    endif
 
   endif
+  call vimwiki#base#cache_wiki_state()
 
   " If you have
   "     au GUIEnter * VimwikiIndex
@@ -137,12 +174,18 @@ function! s:setup_buffer_enter() "{{{
   "     au GUIEnter * nested VimwikiIndex
   if &filetype == ''
     set filetype=vimwiki
+    if g:vimwiki_debug ==3
+      echom "  Setup_buffer_enter g:curr_idx=".g:vimwiki_current_idx." (set ft vimwiki) b:curr_idx=".s:vimwiki_idx().""
+    endif
   elseif &syntax == 'vimwiki'
     " to force a rescan of the filesystem which may have changed
     " and update VimwikiLinks syntax group that depends on it;
     " b:vimwiki_fs_rescan indicates that setup_filetype() has not been run
     if exists("b:vimwiki_fs_rescan") && VimwikiGet('maxhi')
       set syntax=vimwiki
+      if g:vimwiki_debug ==3
+        echom "  Setup_buffer_enter g:curr_idx=".g:vimwiki_current_idx." (set syntax=vimwiki) b:curr_idx=".s:vimwiki_idx().""
+      endif
     endif
     let b:vimwiki_fs_rescan = 1
   endif
@@ -171,6 +214,9 @@ function! s:setup_buffer_enter() "{{{
 endfunction "}}}
 
 function! s:setup_buffer_reenter() "{{{
+  if g:vimwiki_debug ==3
+    echom "Setup_buffer_reenter g:curr_idx=".g:vimwiki_current_idx." b:curr_idx=".s:vimwiki_idx().""
+  endif
   if !vimwiki#base#recall_wiki_state()
     " Do not repeat work of s:setup_buffer_enter() and s:setup_filetype()
     " Once should be enough ...
