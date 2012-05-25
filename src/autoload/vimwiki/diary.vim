@@ -236,12 +236,19 @@ function! vimwiki#diary#make_note(wnum, ...) "{{{
 
   call vimwiki#base#validate_wiki_options(idx)
   call vimwiki#base#mkdir(VimwikiGet('path', idx).VimwikiGet('diary_rel_path', idx))
+
   if a:0
-    let link = 'diary:'.a:1
+    let cmd = 'tabedit'
+  else
+    let cmd = 'edit'
+  endif
+  if len(a:0)>1
+    let link = 'diary:'.a:2
   else
     let link = 'diary:'.s:diary_date_link(idx)
   endif
-  call vimwiki#base#open_link(':e ', link, s:diary_index(idx))
+
+  call vimwiki#base#open_link(cmd, link, s:diary_index(idx))
   call vimwiki#base#reset_wiki_state(idx)
 endfunction "}}}
 
@@ -259,7 +266,7 @@ function! vimwiki#diary#goto_diary_index(wnum) "{{{
   endif
 
   call vimwiki#base#validate_wiki_options(idx)
-  call vimwiki#base#edit_file(':e', s:diary_index(idx))
+  call vimwiki#base#edit_file('e', s:diary_index(idx))
   call vimwiki#base#reset_wiki_state(idx)
 endfunction "}}}
 
@@ -335,7 +342,7 @@ function! vimwiki#diary#calendar_action(day, month, year, week, dir) "{{{
   endif
 
   " Create diary note for a selected date in default wiki.
-  call vimwiki#diary#make_note(1, link)
+  call vimwiki#diary#make_note(1, 0, link)
 endfunction "}}}
 
 " Sign function.
