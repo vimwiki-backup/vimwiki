@@ -123,7 +123,7 @@ function! vimwiki#base#file_pattern(files) "{{{ Get search regex from glob()
   " 6 is a regular vimwiki link with subdirectory...
   "
   let pattern = vimwiki#base#branched_pattern(a:files,"\n")
-  return '\V'.pattern
+  return '\V'.pattern.'\m'
 endfunction
 "}}}
 
