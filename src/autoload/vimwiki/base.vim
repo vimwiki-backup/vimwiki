@@ -28,7 +28,7 @@ function s:path_html(idx) "{{{
 endfunction "}}}
 
 function! vimwiki#base#validate_wiki_options(idx) " {{{ Validate wiki options
-  " let g:vimwiki_current_idx = a:idx
+  let g:vimwiki_current_idx = a:idx
 
   " update normalized path & path_html
   call VimwikiSet('path', s:normalize_path(VimwikiGet('path', a:idx)), a:idx)
@@ -39,7 +39,7 @@ function! vimwiki#base#validate_wiki_options(idx) " {{{ Validate wiki options
         \ s:normalize_path(VimwikiGet('diary_rel_path', a:idx)), a:idx)
 
   " update cache
-  " call vimwiki#base#cache_wiki_state()
+  call vimwiki#base#cache_wiki_state()
 endfunction " }}}
 
 function! vimwiki#base#reset_wiki_state(idx) " {{{ Init page-specific variables
@@ -769,7 +769,7 @@ function! vimwiki#base#goto_index(wnum, ...) "{{{
   call vimwiki#base#edit_file(cmd,
         \ VimwikiGet('path', idx).VimwikiGet('index', idx).
         \ VimwikiGet('ext', idx))
-  " call vimwiki#base#reset_wiki_state(idx)
+  call vimwiki#base#reset_wiki_state(idx)
 endfunction "}}}
 
 function! vimwiki#base#delete_link() "{{{
