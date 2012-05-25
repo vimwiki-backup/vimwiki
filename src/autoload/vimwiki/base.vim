@@ -745,7 +745,7 @@ function! vimwiki#base#go_back_link() "{{{
   endif
 endfunction " }}}
 
-function! vimwiki#base#goto_index(wnum) "{{{
+function! vimwiki#base#goto_index(wnum, ...) "{{{
   if a:wnum > len(g:vimwiki_list)
     echom "vimwiki: Wiki ".a:wnum." is not registered in g:vimwiki_list!"
     return
@@ -759,8 +759,14 @@ function! vimwiki#base#goto_index(wnum) "{{{
     let idx = 0
   endif
 
+  if a:0
+    let cmd = 'tabedit'
+  else
+    let cmd = 'edit'
+  endif
+
   call vimwiki#base#validate_wiki_options(idx)
-  call vimwiki#base#edit_file('e',
+  call vimwiki#base#edit_file(cmd,
         \ VimwikiGet('path', idx).VimwikiGet('index', idx).
         \ VimwikiGet('ext', idx))
   call vimwiki#base#reset_wiki_state(idx)
