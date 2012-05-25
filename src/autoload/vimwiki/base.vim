@@ -310,7 +310,7 @@ function! vimwiki#base#open_link(cmd, link, ...) "{{{
   endif
   " open/edit
   if g:vimwiki_debug
-    echom 'open_link: scheme='.scheme.', path='.path.', subdir='.subdir.', lnk='.lnk.', ext='.ext
+    echom 'open_link: scheme='.scheme.', path='.path.', subdir='.subdir.', lnk='.lnk.', ext='.ext.', url='.url
   endif
   if use_weblink_handler
     call VimwikiWeblinkHandler(url)
