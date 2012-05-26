@@ -68,19 +68,15 @@ function! VimwikiFoldLevel(lnum) "{{{
 
   " Header folding...
   if line =~ g:vimwiki_rxHeader
-    let n = vimwiki#base#count_first_sym(line)
+    let n = vimwiki#u#count_first_sym(line)
     return '>'.n
   endif
 
-  let nnline = getline(a:lnum + 1)
 
-  if nnline =~ g:vimwiki_rxHeader
-    let n = vimwiki#base#count_first_sym(nnline)
-    return '<'.n
-  endif
 
   " List item folding...
   if g:vimwiki_fold_lists
+    let nnline = getline(a:lnum + 1)
     let base_level = s:get_base_level(a:lnum)
     
     let rx_list_item = '\('.
@@ -96,8 +92,9 @@ function! VimwikiFoldLevel(lnum) "{{{
 
       if leveln > level
         return ">".(base_level+leveln-adj)
-      elseif (nnum-a:lnum) > 1 " check if multilined list item
-            \ (nline =~ rx_list_item || nnline !~ '^\s*$')
+      " check if multilined list item
+      elseif (nnum-a:lnum) > 1 
+            \ && nline =~ rx_list_item && nnline !~ '^\s*$'
         return ">".(base_level+level+1-adj)
       else
         return (base_level+level-adj)
@@ -124,7 +121,7 @@ function! s:get_base_level(lnum) "{{{
   let lnum = a:lnum - 1
   while lnum > 0
     if getline(lnum) =~ g:vimwiki_rxHeader
-      return vimwiki#base#count_first_sym(getline(lnum))
+      return vimwiki#u#count_first_sym(getline(lnum))
     endif
     let lnum -= 1
   endwhile
@@ -164,7 +161,7 @@ endfunction "}}}
 
 function! s:get_li_level(lnum) "{{{
   if VimwikiGet('syntax') == 'media'
-    let level = vimwiki#base#count_first_sym(getline(a:lnum))
+    let level = vimwiki#u#count_first_sym(getline(a:lnum))
   else
     let level = (indent(a:lnum) / &sw)
   endif
@@ -194,17 +191,17 @@ endfunction "}}}
 " COMMANDS {{{
 command! -buffer Vimwiki2HTML
       \ silent w <bar> 
-      \ call vimwiki#html#Wiki2HTML(expand(g:vimwiki_current_path_html),
+      \ call vimwiki#html#Wiki2HTML(expand(VimwikiGet('path_html')),
       \                             expand('%'))
       \<bar>
       \ echo 'HTML conversion is done.'
 command! -buffer Vimwiki2HTMLBrowse
       \ silent w <bar> 
       \ call VimwikiWeblinkHandler(vimwiki#html#Wiki2HTML(
-      \         expand(g:vimwiki_current_path_html),
+      \         expand(VimwikiGet('path_html')),
       \         expand('%')))
 command! -buffer VimwikiAll2HTML
-      \ call vimwiki#html#WikiAll2HTML(expand(g:vimwiki_current_path_html))
+      \ call vimwiki#html#WikiAll2HTML(expand(VimwikiGet('path_html')))
 
 command! -buffer VimwikiNextLink call vimwiki#base#find_next_link()
 command! -buffer VimwikiPrevLink call vimwiki#base#find_prev_link()
@@ -227,10 +224,10 @@ command! -buffer -nargs=0 VimwikiBacklinks call vimwiki#base#backlinks()
 command! -buffer -nargs=0 VWB call vimwiki#base#backlinks()
 
 exe 'command! -buffer -nargs=* VimwikiSearch lvimgrep <args> '.
-      \ escape(g:vimwiki_current_path.'**/*'.g:vimwiki_current_ext, ' ')
+      \ escape(VimwikiGet('path').'**/*'.VimwikiGet('ext'), ' ')
 
 exe 'command! -buffer -nargs=* VWS lvimgrep <args> '.
-      \ escape(g:vimwiki_current_path.'**/*'.g:vimwiki_current_ext, ' ')
+      \ escape(VimwikiGet('path').'**/*'.VimwikiGet('ext'), ' ')
 
 command! -buffer -nargs=1 VimwikiGoto call vimwiki#base#goto("<args>")
 
@@ -462,7 +459,7 @@ if VimwikiGet('auto_export')
   " Automatically generate HTML on page write.
   augroup vimwiki
     au BufWritePost <buffer> 
-      \ call vimwiki#html#Wiki2HTML(expand(g:vimwiki_current_path_html),
+      \ call vimwiki#html#Wiki2HTML(expand(VimwikiGet('path_html')),
       \                             expand('%'))
   augroup END
 endif
@@ -471,8 +468,8 @@ endif
 
 " PASTE, CAT URL {{{
 " html commands
-command! -buffer VimwikiPasteUrl call vimwiki#html#PasteUrl(expand('%'))
-command! -buffer VimwikiCatUrl call vimwiki#html#CatUrl(expand('%'))
+command! -buffer VimwikiPasteUrl call vimwiki#html#PasteUrl(expand('%:p'))
+command! -buffer VimwikiCatUrl call vimwiki#html#CatUrl(expand('%:p'))
 " }}}
 
 " DEBUGGING {{{

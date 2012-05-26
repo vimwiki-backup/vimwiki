@@ -1290,15 +1290,15 @@ Wiki files location: >
 *vimwiki-option-path_html*
 ------------------------------------------------------------------------------
 Key             Default value~
-path_html       ~/vimwiki_html/
+path_html       ''
 
 Description~
 Location of HTML files converted from wiki files: >
   let g:vimwiki_list = [{'path': '~/my_site/',
-                       \ 'path_html': '~/my_site_html/'}]
+                       \ 'path_html': '~/html_site/'}]
 
-If you omit this option, the value of path_html would be set to the value of
-path with the trailing slash ('/') removed and '_html' added; i.e. for: >
+If path_html is an empty string, the location is derived from
+|vimwiki-option-path| by adding '_html'; i.e. for: >
   let g:vimwiki_list = [{'path': '~/okidoki/'}]
 
 path_html will be set to '~/okidoki_html/'.

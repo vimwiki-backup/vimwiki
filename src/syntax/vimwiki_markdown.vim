@@ -65,12 +65,12 @@ let g:vimwiki_rxH = '#'
 let g:vimwiki_symH = 0
 
 
-" NEW! in v1.3
+" NEW! in v2.0
 " Link separators and templates (previously initialized together with per-wiki options)
 
 " wikilink, wikiincl separators
 let g:vimwiki_link_separator = ']['
-let g:vimwiki_incl_separator = '}{'
+let g:vimwiki_incl_separator = '|'
 
 " web_template, image_template
 let g:vimwiki_web_template = '[__LinkDescription__](__LinkUrl__)'

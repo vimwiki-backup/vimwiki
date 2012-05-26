@@ -14,10 +14,12 @@ set cpo&vim
 
 " Logging and performance instrumentation "{{{
 let g:VimwikiLog = {}
-let g:VimwikiLog.path = 0     " # of calls to VimwikiGet with path or path_html
-let g:VimwikiLog.subdir = 0   " # of calls to vimwiki#base#subdir()
-let g:VimwikiLog.timing = []  " various timing measurements
-let g:VimwikiLog.html = []    " html conversion timing
+let g:VimwikiLog.path = 0           " # of calls to VimwikiGet with path or path_html
+let g:VimwikiLog.path_html = 0      " # of calls to path_html()
+let g:VimwikiLog.normalize_path = 0 " # of calls to normalize_path()
+let g:VimwikiLog.subdir = 0         " # of calls to vimwiki#base#subdir()
+let g:VimwikiLog.timing = []        " various timing measurements
+let g:VimwikiLog.html = []          " html conversion timing
 function! VimwikiLog_extend(what,...)  "{{{
   call extend(g:VimwikiLog[a:what],a:000)
 endfunction "}}}
@@ -46,10 +48,25 @@ function! s:find_wiki(path) "{{{
   " an orphan page has been detected
 endfunction "}}}
 
+
+function! s:vimwiki_idx() " {{{
+  if exists('b:vimwiki_idx')
+    return b:vimwiki_idx
+  else
+    return -1
+  endif
+endfunction " }}}
+
 function! s:setup_buffer_leave() "{{{
+  if g:vimwiki_debug ==3
+    echom "Setup_buffer_leave g:curr_idx=".g:vimwiki_current_idx." b:curr_idx=".s:vimwiki_idx().""
+  endif
   if &filetype == 'vimwiki'
     " cache global vars of current state XXX: SLOW!?
     call vimwiki#base#cache_wiki_state()
+  endif
+  if g:vimwiki_debug ==3
+    echom "  Setup_buffer_leave g:curr_idx=".g:vimwiki_current_idx." b:curr_idx=".s:vimwiki_idx().""
   endif
 
   " Set up menu
@@ -59,11 +76,17 @@ function! s:setup_buffer_leave() "{{{
 endfunction "}}}
 
 function! s:setup_filetype() "{{{
+  if g:vimwiki_debug ==3
+    echom "Setup_filetype g:curr_idx=".g:vimwiki_current_idx." b:curr_idx=".s:vimwiki_idx().""
+  endif
   let time0 = reltime()  " start the clock  "XXX
   " Find what wiki current buffer belongs to.
   let path = expand('%:p:h')
   " XXX: find_wiki() does not (yet) take into consideration the ext
   let idx = s:find_wiki(path)
+  if g:vimwiki_debug ==3
+    echom "  Setup_filetype g:curr_idx=".g:vimwiki_current_idx." find_idx=".idx." b:curr_idx=".s:vimwiki_idx().""
+  endif
 
   if idx == -1 && g:vimwiki_global_ext == 0
     return
@@ -85,16 +108,24 @@ function! s:setup_filetype() "{{{
     let idx = len(g:vimwiki_list) - 1
   endif
   " initialize and cache global vars of current state
-  call vimwiki#base#reset_wiki_state(['idx', idx], 
-        \ ['subdir', vimwiki#base#current_subdir(idx)])
+  call vimwiki#base#reset_wiki_state(idx)
+  if g:vimwiki_debug ==3
+    echom "  Setup_filetype g:curr_idx=".g:vimwiki_current_idx." (reset_wiki_state) b:curr_idx=".s:vimwiki_idx().""
+  endif
 
   unlet! b:vimwiki_fs_rescan
   set filetype=vimwiki
+  if g:vimwiki_debug ==3
+    echom "  Setup_filetype g:curr_idx=".g:vimwiki_current_idx." (set ft=vimwiki) b:curr_idx=".s:vimwiki_idx().""
+  endif
   let time1 = vimwiki#u#time(time0)  "XXX
   call VimwikiLog_extend('timing',['plugin:setup_filetype:time1',time1])
 endfunction "}}}
 
 function! s:setup_buffer_enter() "{{{
+  if g:vimwiki_debug ==3
+    echom "Setup_buffer_enter g:curr_idx=".g:vimwiki_current_idx." b:curr_idx=".s:vimwiki_idx().""
+  endif
   let time0 = reltime()  " start the clock  "XXX
   if !vimwiki#base#recall_wiki_state()
     " Find what wiki current buffer belongs to.
@@ -105,6 +136,9 @@ function! s:setup_buffer_enter() "{{{
     " XXX: find_wiki() does not (yet) take into consideration the ext
     let idx = s:find_wiki(path)
 
+    if g:vimwiki_debug ==3
+      echom "  Setup_buffer_enter g:curr_idx=".g:vimwiki_current_idx." find_idx=".idx." b:curr_idx=".s:vimwiki_idx().""
+    endif
     " The buffer's file is not in the path and user *does NOT* want his wiki
     " extension to be global -- Do not add new wiki.
     if idx == -1 && g:vimwiki_global_ext == 0
@@ -126,8 +160,10 @@ function! s:setup_buffer_enter() "{{{
       let idx = len(g:vimwiki_list) - 1
     endif
     " initialize and cache global vars of current state
-    call vimwiki#base#reset_wiki_state(['idx', idx], 
-          \ ['subdir', vimwiki#base#current_subdir(idx)])
+    call vimwiki#base#reset_wiki_state(idx)
+    if g:vimwiki_debug ==3
+      echom "  Setup_buffer_enter g:curr_idx=".g:vimwiki_current_idx." (reset_wiki_state) b:curr_idx=".s:vimwiki_idx().""
+    endif
 
   endif
 
@@ -137,12 +173,18 @@ function! s:setup_buffer_enter() "{{{
   "     au GUIEnter * nested VimwikiIndex
   if &filetype == ''
     set filetype=vimwiki
+    if g:vimwiki_debug ==3
+      echom "  Setup_buffer_enter g:curr_idx=".g:vimwiki_current_idx." (set ft vimwiki) b:curr_idx=".s:vimwiki_idx().""
+    endif
   elseif &syntax == 'vimwiki'
     " to force a rescan of the filesystem which may have changed
     " and update VimwikiLinks syntax group that depends on it;
     " b:vimwiki_fs_rescan indicates that setup_filetype() has not been run
     if exists("b:vimwiki_fs_rescan") && VimwikiGet('maxhi')
       set syntax=vimwiki
+      if g:vimwiki_debug ==3
+        echom "  Setup_buffer_enter g:curr_idx=".g:vimwiki_current_idx." (set syntax=vimwiki) b:curr_idx=".s:vimwiki_idx().""
+      endif
     endif
     let b:vimwiki_fs_rescan = 1
   endif
@@ -171,6 +213,9 @@ function! s:setup_buffer_enter() "{{{
 endfunction "}}}
 
 function! s:setup_buffer_reenter() "{{{
+  if g:vimwiki_debug ==3
+    echom "Setup_buffer_reenter g:curr_idx=".g:vimwiki_current_idx." b:curr_idx=".s:vimwiki_idx().""
+  endif
   if !vimwiki#base#recall_wiki_state()
     " Do not repeat work of s:setup_buffer_enter() and s:setup_filetype()
     " Once should be enough ...
@@ -205,40 +250,46 @@ function! VimwikiGetOptions(...) "{{{
   return option_dict
 endfunction "}}}
 
-" return value of option for current wiki or if second parameter exists for
-" wiki with a given index.
+" Return value of option for current wiki or if second parameter exists for
+"   wiki with a given index.
+" If the option is not found, it is assumed to have been previously cached in a
+"   buffer local dictionary, that acts as a cache.
+" If the option is not found in the buffer local dictionary, an error is thrown
 function! VimwikiGet(option, ...) "{{{
   let idx = a:0 == 0 ? g:vimwiki_current_idx : a:1
-  if !has_key(g:vimwiki_list[idx], a:option) &&
-        \ has_key(s:vimwiki_defaults, a:option)
-    if a:option == 'path_html'
-      let g:vimwiki_list[idx][a:option] =
-            \VimwikiGet('path', idx)[:-2].'_html/'
-    else
-      let g:vimwiki_list[idx][a:option] =
-            \s:vimwiki_defaults[a:option]
-    endif
+
+  if has_key(g:vimwiki_list[idx], a:option)
+    let val = g:vimwiki_list[idx][a:option]
+  elseif has_key(s:vimwiki_defaults, a:option)
+    let val = s:vimwiki_defaults[a:option]
+    let g:vimwiki_list[idx][a:option] = val
+  else
+    let val = b:vimwiki_list[a:option]
   endif
 
-  " if path's ending is not a / or \
-  " then add it
-  if a:option == 'path' || a:option == 'path_html'
-    let g:VimwikiLog.path += 1  "XXX
-    let p = g:vimwiki_list[idx][a:option]
-    " resolve doesn't work quite right with symlinks ended with / or \
-    " XXX no call to vimwiki#base here or else the whole autoload/base gets loaded!
-    let p = resolve(expand(substitute(p, '[/\\]\+$', '', '')))
-    let g:vimwiki_list[idx][a:option] = p.'/'
-  endif
-
-  return g:vimwiki_list[idx][a:option]
+  " XXX no call to vimwiki#base here or else the whole autoload/base gets loaded!
+  return val
 endfunction "}}}
 
-" set option for current wiki or if third parameter exists for
-" wiki with a given index.
+" Set option for current wiki or if third parameter exists for
+"   wiki with a given index.
+" If the option is not found or recognized (i.e. does not exist in
+"   s:vimwiki_defaults), it is saved in a buffer local dictionary, that acts
+"   as a cache.
+" If the option is not found in the buffer local dictionary, an error is thrown
 function! VimwikiSet(option, value, ...) "{{{
   let idx = a:0 == 0 ? g:vimwiki_current_idx : a:1
-  let g:vimwiki_list[idx][a:option] = a:value
+
+  if has_key(s:vimwiki_defaults, a:option) || 
+        \ has_key(g:vimwiki_list[idx], a:option)
+    let g:vimwiki_list[idx][a:option] = a:value
+  elseif exists('b:vimwiki_list')
+    let b:vimwiki_list[a:option] = a:value
+  else
+    let b:vimwiki_list = {}
+    let b:vimwiki_list[a:option] = a:value
+  endif
+
 endfunction "}}}
 " }}}
 
@@ -288,7 +339,7 @@ endif "}}}
 " DEFAULT wiki {{{
 let s:vimwiki_defaults = {}
 let s:vimwiki_defaults.path = '~/vimwiki/'
-let s:vimwiki_defaults.path_html = '~/vimwiki_html/'
+let s:vimwiki_defaults.path_html = ''   " '' is replaced by derived path.'_html/'
 let s:vimwiki_defaults.css_name = 'style.css'
 let s:vimwiki_defaults.index = 'index'
 let s:vimwiki_defaults.ext = '.wiki'
@@ -423,17 +474,19 @@ augroup END
 
 " COMMANDS {{{
 command! VimwikiUISelect call vimwiki#base#ui_select()
-command! -count VimwikiIndex
+" XXX: why not using <count> instead of v:count1?
+" See Issue 324.
+command! -count=1 VimwikiIndex
       \ call vimwiki#base#goto_index(v:count1)
-command! -count VimwikiTabIndex tabedit <bar>
-      \ call vimwiki#base#goto_index(v:count1)
+command! -count=1 VimwikiTabIndex
+      \ call vimwiki#base#goto_index(v:count1, 1)
 
-command! -count VimwikiDiaryIndex
+command! -count=1 VimwikiDiaryIndex
       \ call vimwiki#diary#goto_diary_index(v:count1)
-command! -count VimwikiMakeDiaryNote
+command! -count=1 VimwikiMakeDiaryNote
       \ call vimwiki#diary#make_note(v:count1)
-command! -count VimwikiTabMakeDiaryNote tabedit <bar>
-      \ call vimwiki#diary#make_note(v:count1)
+command! -count=1 VimwikiTabMakeDiaryNote
+      \ call vimwiki#diary#make_note(v:count1, 1)
 
 command! VimwikiDiaryGenerateLinks
       \ call vimwiki#diary#generate_diary_section()

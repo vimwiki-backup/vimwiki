@@ -41,3 +41,5 @@ These syntaxes only work when 'link_separator' == '|'
  # [[http://github.com]] : Highlighted as link
  # [[file:///Users/stu/Downloads/2011-11-22-FlashReport_11_22_11.fin.pdf]] : Highlighted as link
 
+= Diary Scheme =
+ # [[diary:2012-05-22]]

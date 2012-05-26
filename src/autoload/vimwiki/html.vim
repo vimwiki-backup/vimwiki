@@ -28,7 +28,7 @@ function! s:root_path(subdir) "{{{
 endfunction "}}}
 
 function! s:syntax_supported() " {{{
-  return g:vimwiki_current_syntax == "default"
+  return VimwikiGet('syntax') == "default"
 endfunction " }}}
 
 function! s:remove_blank_lines(lines) " {{{
@@ -70,7 +70,7 @@ endfunction " }}}
 
 function! s:default_CSS_full_name(path) " {{{
   let path = expand(a:path)
-  let css_full_name = path.g:vimwiki_current_css_name
+  let css_full_name = path.VimwikiGet('css_name')
   return css_full_name
 endfunction "}}}
 
@@ -89,14 +89,13 @@ endfunction "}}}
 
 function! s:template_full_name(name) "{{{
   if a:name == ''
-    let name = g:vimwiki_current_template_default
+    let name = VimwikiGet('template_default')
   else
     let name = a:name
   endif
 
-  let fname = expand(g:vimwiki_current_template_path.
-        \ name.
-        \ g:vimwiki_current_template_ext)
+  let fname = expand(VimwikiGet('template_path').
+        \ name.VimwikiGet('template_ext'))
 
   if filereadable(fname)
     return fname
@@ -166,9 +165,9 @@ function! s:delete_html_files(path) "{{{
     endif
 
     " delete if there is no corresponding wiki file
-    let subdir = vimwiki#base#subdir(g:vimwiki_current_path_html, fname)
-    let wikifile = g:vimwiki_current_path.subdir.
-          \fnamemodify(fname, ":t:r").g:vimwiki_current_ext
+    let subdir = vimwiki#base#subdir(VimwikiGet('path_html'), fname)
+    let wikifile = VimwikiGet('path').subdir.
+          \fnamemodify(fname, ":t:r").VimwikiGet('ext')
     if filereadable(wikifile)
       continue
     endif
@@ -286,7 +285,7 @@ function! s:is_html_uptodate(wikifile) "{{{
   endif
 
   let wikifile = fnamemodify(a:wikifile, ":p")
-  let htmlfile = expand(g:vimwiki_current_path_html.g:vimwiki_current_subdir.
+  let htmlfile = expand(VimwikiGet('path_html').VimwikiGet('subdir').
         \fnamemodify(wikifile, ":t:r").".html")
 
   if getftime(wikifile) <= getftime(htmlfile) && tpl_time <= getftime(htmlfile)
@@ -1340,16 +1339,16 @@ function! s:parse_line(line, state) " {{{
 endfunction " }}}
 
 function! s:use_custom_wiki2html() "{{{
-  let custom_wiki2html = g:vimwiki_current_custom_wiki2html
+  let custom_wiki2html = VimwikiGet('custom_wiki2html')
   return !empty(custom_wiki2html) && s:file_exists(custom_wiki2html)
 endfunction " }}}
 
 function! vimwiki#html#CustomWiki2HTML(path, wikifile, force) "{{{
   call vimwiki#base#mkdir(a:path)
-  execute '!'.g:vimwiki_current_custom_wiki2html. ' '
+  execute '!'.VimwikiGet('custom_wiki2html'). ' '
       \ a:force. ' '.
-      \ g:vimwiki_current_syntax
-      \ strpart(g:vimwiki_current_ext, 1). ' '.
+      \ VimwikiGet('syntax'). ' '.
+      \ strpart(VimwikiGet('ext'), 1). ' '.
       \ a:path. ' '.
       \ a:wikifile. ' '.
       \ s:default_CSS_full_name(a:path)
@@ -1363,7 +1362,7 @@ function! vimwiki#html#Wiki2HTML(path_html, wikifile) "{{{
 
   let wikifile = fnamemodify(a:wikifile, ":p")
 
-  let path_html = expand(a:path_html).g:vimwiki_current_subdir
+  let path_html = expand(a:path_html).VimwikiGet('subdir') 
   let htmlfile = fnamemodify(wikifile, ":t:r").'.html'
 
   if s:use_custom_wiki2html()
@@ -1468,9 +1467,9 @@ function! vimwiki#html#Wiki2HTML(path_html, wikifile) "{{{
     " processing template variables (refactor to a function)
     call map(html_lines, 'substitute(v:val, "%title%", "'. title .'", "g")')
     call map(html_lines, 'substitute(v:val, "%root_path%", "'.
-          \ s:root_path(g:vimwiki_current_subdir) .'", "g")')
+          \ s:root_path(VimwikiGet('subdir')) .'", "g")')
 
-    let css_name = expand(g:vimwiki_current_css_name)
+    let css_name = expand(VimwikiGet('css_name'))
     let css_name = substitute(css_name, '\', '/', 'g')
     call map(html_lines, 'substitute(v:val, "%css%", "'. css_name .'", "g")')
 
@@ -1529,14 +1528,17 @@ function! vimwiki#html#WikiAll2HTML(path_html) "{{{
   setlocal nomore
 
   " temporarily adjust current_subdir global state variable
-  let current_subdir = g:vimwiki_current_subdir
+  let current_subdir = VimwikiGet('subdir')
+  let current_invsubdir = VimwikiGet('invsubdir')
 
-  let wikifiles = split(glob(g:vimwiki_current_path.'**/*'.g:vimwiki_current_ext), '\n')
+  let wikifiles = split(glob(VimwikiGet('path').'**/*'.VimwikiGet('ext')), '\n')
   for wikifile in wikifiles
     let wikifile = fnamemodify(wikifile, ":p")
-    " temporarily adjust current_subdir global state variable
-    let g:vimwiki_current_subdir = 
-          \ vimwiki#base#subdir(g:vimwiki_current_path, wikifile)
+
+    " temporarily adjust 'subdir' and 'invsubdir' state variables
+    let subdir = vimwiki#base#subdir(VimwikiGet('path'), wikifile)
+    call VimwikiSet('subdir', subdir)
+    call VimwikiSet('invsubdir', vimwiki#base#invsubdir(subdir))
 
     if !s:is_html_uptodate(wikifile)
       echomsg 'Processing '.wikifile
@@ -1546,8 +1548,9 @@ function! vimwiki#html#WikiAll2HTML(path_html) "{{{
       echomsg 'Skipping '.wikifile
     endif
   endfor
-  " reset current_subdir global state variable
-  let g:vimwiki_current_subdir = current_subdir
+  " reset 'subdir' state variable
+  call VimwikiSet('subdir', current_subdir)
+  call VimwikiSet('invsubdir', current_invsubdir)
 
   call s:create_default_CSS(path_html)
   echomsg 'Done!'
@@ -1559,18 +1562,18 @@ function! s:file_exists(fname) "{{{
   return !empty(getftype(a:fname))
 endfunction "}}}
 
-" uses g:vimwiki_current_path
-function! s:get_wikifile_url(wikifile) "{{{
-  return g:vimwiki_current_path_html.
-    \ vimwiki#base#subdir(g:vimwiki_current_path, a:wikifile).
+" uses VimwikiGet('path')
+function! vimwiki#html#get_wikifile_url(wikifile) "{{{
+  return VimwikiGet('path_html').
+    \ vimwiki#base#subdir(VimwikiGet('path'), a:wikifile).
     \ fnamemodify(a:wikifile, ":t:r").'.html'
 endfunction "}}}
 
 function! vimwiki#html#PasteUrl(wikifile) "{{{
-  execute 'r !echo file://'.s:get_wikifile_url(a:wikifile)
+  execute 'r !echo file://'.vimwiki#html#get_wikifile_url(a:wikifile)
 endfunction "}}}
 
 function! vimwiki#html#CatUrl(wikifile) "{{{
-  execute '!echo file://'.s:get_wikifile_url(a:wikifile)
+  execute '!echo file://'.vimwiki#html#get_wikifile_url(a:wikifile)
 endfunction "}}}
 "}}}

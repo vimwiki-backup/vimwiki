@@ -36,16 +36,19 @@ function! s:link_exists(lines, link) "{{{
   return link_exists
 endfunction "}}}
 
-function! s:diary_path() "{{{
-  return VimwikiGet('path').VimwikiGet('diary_rel_path')
+function! s:diary_path(...) "{{{
+  let idx = a:0 == 0 ? g:vimwiki_current_idx : a:1
+  return VimwikiGet('path', idx).VimwikiGet('diary_rel_path', idx)
 endfunction "}}}
 
-function! s:diary_index() "{{{
-  return s:diary_path().VimwikiGet('diary_index').VimwikiGet('ext')
+function! s:diary_index(...) "{{{
+  let idx = a:0 == 0 ? g:vimwiki_current_idx : a:1
+  return s:diary_path(idx).VimwikiGet('diary_index', idx).VimwikiGet('ext', idx)
 endfunction "}}}
 
-function! s:diary_date_link() "{{{
-  return s:get_date_link(VimwikiGet('diary_link_fmt'))
+function! s:diary_date_link(...) "{{{
+  let idx = a:0 == 0 ? g:vimwiki_current_idx : a:1
+  return s:get_date_link(VimwikiGet('diary_link_fmt', idx))
 endfunction "}}}
 
 function! s:get_position_links(link) "{{{
@@ -218,20 +221,53 @@ endfunction "}}}
 
 " Diary index stuff }}}
 
-function! vimwiki#diary#make_note(index, ...) "{{{
-  call vimwiki#base#select(a:index)
-  call vimwiki#base#mkdir(VimwikiGet('path').VimwikiGet('diary_rel_path'))
-  if a:0
-    let link = 'diary:'.a:1
-  else
-    let link = 'diary:'.s:diary_date_link()
+function! vimwiki#diary#make_note(wnum, ...) "{{{
+  if a:wnum > len(g:vimwiki_list)
+    echom "vimwiki: Wiki ".a:wnum." is not registered in g:vimwiki_list!"
+    return
   endif
-  call vimwiki#base#open_link(':e ', link, s:diary_index())
+
+  " TODO: refactor it. base#goto_index uses the same
+  if a:wnum > 0
+    let idx = a:wnum - 1
+  else
+    let idx = 0
+  endif
+
+  call vimwiki#base#validate_wiki_options(idx)
+  call vimwiki#base#mkdir(VimwikiGet('path', idx).VimwikiGet('diary_rel_path', idx))
+
+  if a:0
+    let cmd = 'tabedit'
+  else
+    let cmd = 'edit'
+  endif
+  if len(a:0)>1
+    let link = 'diary:'.a:2
+  else
+    let link = 'diary:'.s:diary_date_link(idx)
+  endif
+
+  call vimwiki#base#open_link(cmd, link, s:diary_index(idx))
+  call vimwiki#base#reset_wiki_state(idx)
 endfunction "}}}
 
-function! vimwiki#diary#goto_diary_index(index) "{{{
-  call vimwiki#base#select(a:index)
-  call vimwiki#base#edit_file(':e', s:diary_index())
+function! vimwiki#diary#goto_diary_index(wnum) "{{{
+  if a:wnum > len(g:vimwiki_list)
+    echom "vimwiki: Wiki ".a:wnum." is not registered in g:vimwiki_list!"
+    return
+  endif
+
+  " TODO: refactor it. base#goto_index uses the same
+  if a:wnum > 0
+    let idx = a:wnum - 1
+  else
+    let idx = 0
+  endif
+
+  call vimwiki#base#validate_wiki_options(idx)
+  call vimwiki#base#edit_file('e', s:diary_index(idx))
+  call vimwiki#base#reset_wiki_state(idx)
 endfunction "}}}
 
 function! vimwiki#diary#goto_next_day() "{{{
@@ -306,7 +342,7 @@ function! vimwiki#diary#calendar_action(day, month, year, week, dir) "{{{
   endif
 
   " Create diary note for a selected date in default wiki.
-  call vimwiki#diary#make_note(1, link)
+  call vimwiki#diary#make_note(1, 0, link)
 endfunction "}}}
 
 " Sign function.
