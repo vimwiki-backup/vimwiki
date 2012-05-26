@@ -470,7 +470,7 @@ function! vimwiki#base#edit_file(command, filename, ...) "{{{
 endfunction
 " }}}
 
-function! s:search_word(wikiRx, cmd) "{{{
+function! vimwiki#base#search_word(wikiRx, cmd) "{{{
   let match_line = search(a:wikiRx, 's'.a:cmd)
   if match_line == 0
     echomsg 'vimwiki: Wiki link not found.'
@@ -479,7 +479,7 @@ endfunction
 " }}}
 
 " Returns part of the line that matches wikiRX at cursor
-function! s:matchstr_at_cursor(wikiRX) "{{{
+function! vimwiki#base#matchstr_at_cursor(wikiRX) "{{{
   let col = col('.') - 1
   let line = getline('.')
   let ebeg = -1
@@ -501,7 +501,7 @@ function! s:matchstr_at_cursor(wikiRX) "{{{
   endif
 endf "}}}
 
-function! s:replacestr_at_cursor(wikiRX, sub) "{{{
+function! vimwiki#base#replacestr_at_cursor(wikiRX, sub) "{{{
   let col = col('.') - 1
   let line = getline('.')
   let ebeg = -1
@@ -691,16 +691,38 @@ endfunction "}}}
 
 " WIKI link following functions {{{
 function! vimwiki#base#find_next_link() "{{{
-  call s:search_word(g:vimwiki_rxWikiLink.'\|'.g:vimwiki_rxWikiIncl.'\|'.g:vimwiki_rxWeblink, '')
+  try
+    " Syntax-specific links
+    call vimwiki#base_{VimwikiGet('syntax')}#find_next_link()
+    return
+  catch /^Vim\%((\a\+)\)\=:E117/	" catch error E123
+  endtry
+  call vimwiki#base#search_word(g:vimwiki_rxWikiLink.'\|'.g:vimwiki_rxWikiIncl.'\|'.g:vimwiki_rxWeblink, '')
 endfunction
 " }}}
 
 function! vimwiki#base#find_prev_link() "{{{
-  call s:search_word(g:vimwiki_rxWikiLink.'\|'.g:vimwiki_rxWikiIncl.'\|'.g:vimwiki_rxWeblink, 'b')
+  try
+    " Syntax-specific links
+    call vimwiki#base_{VimwikiGet('syntax')}#find_prev_link()
+    return
+  catch /^Vim\%((\a\+)\)\=:E117/	" catch error E123
+  endtry
+  call vimwiki#base#search_word(g:vimwiki_rxWikiLink.'\|'.g:vimwiki_rxWikiIncl.'\|'.g:vimwiki_rxWeblink, 'b')
 endfunction
 " }}}
 
 function! vimwiki#base#follow_link(split, ...) "{{{
+  try
+    " Syntax-specific links
+    if a:0
+      call vimwiki#base_{VimwikiGet('syntax')}#follow_link(a:split, a:1)
+    else
+      call vimwiki#base_{VimwikiGet('syntax')}#follow_link(a:split)
+    endif
+    return
+  catch /^Vim\%((\a\+)\)\=:E117/	" catch error E123
+  endtry
   if a:split == "split"
     let cmd = ":split "
   elseif a:split == "vsplit"
@@ -712,21 +734,21 @@ function! vimwiki#base#follow_link(split, ...) "{{{
   endif
 
   " try WikiLink
-  let lnk = matchstr(s:matchstr_at_cursor(g:vimwiki_rxWikiLink),
+  let lnk = matchstr(vimwiki#base#matchstr_at_cursor(g:vimwiki_rxWikiLink),
         \ g:vimwiki_rxWikiLinkMatchUrl)
   if lnk != ""
     call vimwiki#base#open_link(cmd, lnk)
     return
   endif
   " try WikiIncl
-  let lnk = matchstr(s:matchstr_at_cursor(g:vimwiki_rxWikiIncl),
+  let lnk = matchstr(vimwiki#base#matchstr_at_cursor(g:vimwiki_rxWikiIncl),
         \ g:vimwiki_rxWikiInclMatchUrl)
   if lnk != ""
     call vimwiki#base#open_link(cmd, lnk)
     return
   endif
   " try Weblink
-  let lnk = matchstr(s:matchstr_at_cursor(g:vimwiki_rxWeblink),
+  let lnk = matchstr(vimwiki#base#matchstr_at_cursor(g:vimwiki_rxWeblink),
         \ g:vimwiki_rxWeblinkMatchUrl)
   if lnk != ""
     call VimwikiWeblinkHandler(lnk)
@@ -1241,7 +1263,7 @@ function! s:clean_url(url) " {{{
   return join(url, " ")
 endfunction " }}}
 
-function! s:normalize_link(str, rxUrl, rxDesc, template) " {{{
+function! vimwiki#base#normalize_link_helper(str, rxUrl, rxDesc, template) " {{{
   let str = a:str
   let url = matchstr(str, a:rxUrl)
   let descr = matchstr(str, a:rxDesc)
@@ -1254,16 +1276,23 @@ function! s:normalize_link(str, rxUrl, rxDesc, template) " {{{
   return lnk
 endfunction " }}}
 
+function! vimwiki#base#normalize_imagelink_helper(str, rxUrl, rxDesc, rxStyle, template) "{{{
+  let lnk = vimwiki#base#normalize_link_helper(a:str, a:rxUrl, a:rxDesc, a:template)
+  let style = matchstr(str, a:rxStyle)
+  let lnk = substitute(lnk, '__LinkStyle__', '\="'.style.'"', '')
+  return lnk
+endfunction " }}}
+
 function! s:normalize_link_syntax_n() " {{{
   let lnum = line('.')
 
   " try WikiLink
-  let lnk = s:matchstr_at_cursor(g:vimwiki_rxWikiLink)
+  let lnk = vimwiki#base#matchstr_at_cursor(g:vimwiki_rxWikiLink)
   if !empty(lnk)
-    let sub = s:normalize_link(lnk,
+    let sub = vimwiki#base#normalize_link_helper(lnk,
           \ g:vimwiki_rxWikiLinkMatchUrl, g:vimwiki_rxWikiLinkMatchDescr,
           \ g:vimwiki_WikiLinkTemplate2)
-    call s:replacestr_at_cursor(g:vimwiki_rxWikiLink, sub)
+    call vimwiki#base#replacestr_at_cursor(g:vimwiki_rxWikiLink, sub)
     if g:vimwiki_debug > 1
       echomsg "WikiLink: ".lnk." Sub: ".sub
     endif
@@ -1271,7 +1300,7 @@ function! s:normalize_link_syntax_n() " {{{
   endif
   
   " try WikiIncl
-  let lnk = s:matchstr_at_cursor(g:vimwiki_rxWikiIncl)
+  let lnk = vimwiki#base#matchstr_at_cursor(g:vimwiki_rxWikiIncl)
   if !empty(lnk)
     " NO-OP !!
     if g:vimwiki_debug > 1
@@ -1283,12 +1312,12 @@ function! s:normalize_link_syntax_n() " {{{
   " try Word (any characters except separators)
   " rxWord is less permissive than rxWikiLinkUrl which is used in
   " normalize_link_syntax_v
-  let lnk = s:matchstr_at_cursor(g:vimwiki_rxWord)
+  let lnk = vimwiki#base#matchstr_at_cursor(g:vimwiki_rxWord)
   if !empty(lnk)
-    let sub = s:normalize_link(lnk,
+    let sub = vimwiki#base#normalize_link_helper(lnk,
           \ g:vimwiki_rxWord, '',
           \ g:vimwiki_WikiLinkTemplate1)
-    call s:replacestr_at_cursor('\V'.lnk, sub)
+    call vimwiki#base#replacestr_at_cursor('\V'.lnk, sub)
     if g:vimwiki_debug > 1
       echomsg "Word: ".lnk." Sub: ".sub
     endif
@@ -1324,6 +1353,12 @@ function! s:normalize_link_syntax_v() " {{{
 endfunction " }}}
 
 function! vimwiki#base#normalize_link(is_visual_mode) "{{{
+  try
+    " Syntax-specific links
+    call vimwiki#base_{VimwikiGet('syntax')}#normalize_link(a:is_visual_mode)
+    return
+  catch /^Vim\%((\a\+)\)\=:E117/	" catch error E123
+  endtry
   if !a:is_visual_mode
     call s:normalize_link_syntax_n()
   elseif visualmode() ==# 'v' && line("'<") == line("'>")
