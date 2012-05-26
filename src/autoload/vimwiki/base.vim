@@ -695,7 +695,7 @@ function! vimwiki#base#find_next_link() "{{{
     " Syntax-specific links
     call vimwiki#base_{VimwikiGet('syntax')}#find_next_link()
     return
-  catch /^Vim\%((\a\+)\)\=:E117/	" catch error E123
+  catch /^Vim\%((\a\+)\)\=:E117/	" E117: Unknown function
   endtry
   call vimwiki#base#search_word(g:vimwiki_rxWikiLink.'\|'.g:vimwiki_rxWikiIncl.'\|'.g:vimwiki_rxWeblink, '')
 endfunction
@@ -706,7 +706,7 @@ function! vimwiki#base#find_prev_link() "{{{
     " Syntax-specific links
     call vimwiki#base_{VimwikiGet('syntax')}#find_prev_link()
     return
-  catch /^Vim\%((\a\+)\)\=:E117/	" catch error E123
+  catch /^Vim\%((\a\+)\)\=:E117/	" E117: Unknown function
   endtry
   call vimwiki#base#search_word(g:vimwiki_rxWikiLink.'\|'.g:vimwiki_rxWikiIncl.'\|'.g:vimwiki_rxWeblink, 'b')
 endfunction
@@ -721,7 +721,8 @@ function! vimwiki#base#follow_link(split, ...) "{{{
       call vimwiki#base_{VimwikiGet('syntax')}#follow_link(a:split)
     endif
     return
-  catch /^Vim\%((\a\+)\)\=:E117/	" catch error E123
+  catch /^Vim\%((\a\+)\)\=:E117/	" E117: Unknown function
+
   endtry
   if a:split == "split"
     let cmd = ":split "
@@ -1357,7 +1358,7 @@ function! vimwiki#base#normalize_link(is_visual_mode) "{{{
     " Syntax-specific links
     call vimwiki#base_{VimwikiGet('syntax')}#normalize_link(a:is_visual_mode)
     return
-  catch /^Vim\%((\a\+)\)\=:E117/	" catch error E123
+  catch /^Vim\%((\a\+)\)\=:E117/	" E117: Unknown function
   endtry
   if !a:is_visual_mode
     call s:normalize_link_syntax_n()
