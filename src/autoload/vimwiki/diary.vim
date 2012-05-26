@@ -249,7 +249,7 @@ function! vimwiki#diary#make_note(wnum, ...) "{{{
   endif
 
   call vimwiki#base#open_link(cmd, link, s:diary_index(idx))
-  call vimwiki#base#reset_wiki_state(idx)
+  call vimwiki#base#setup_buffer_state(idx)
 endfunction "}}}
 
 function! vimwiki#diary#goto_diary_index(wnum) "{{{
@@ -267,7 +267,7 @@ function! vimwiki#diary#goto_diary_index(wnum) "{{{
 
   call vimwiki#base#validate_wiki_options(idx)
   call vimwiki#base#edit_file('e', s:diary_index(idx))
-  call vimwiki#base#reset_wiki_state(idx)
+  call vimwiki#base#setup_buffer_state(idx)
 endfunction "}}}
 
 function! vimwiki#diary#goto_next_day() "{{{

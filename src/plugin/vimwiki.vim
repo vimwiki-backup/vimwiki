@@ -63,7 +63,7 @@ function! s:setup_buffer_leave() "{{{
   endif
   if &filetype == 'vimwiki'
     " cache global vars of current state XXX: SLOW!?
-    call vimwiki#base#cache_wiki_state()
+    call vimwiki#base#cache_buffer_state()
   endif
   if g:vimwiki_debug ==3
     echom "  Setup_buffer_leave g:curr_idx=".g:vimwiki_current_idx." b:curr_idx=".s:vimwiki_idx().""
@@ -109,7 +109,7 @@ function! s:setup_filetype() "{{{
     call vimwiki#base#validate_wiki_options(idx)
   endif
   " initialize and cache global vars of current state
-  call vimwiki#base#reset_wiki_state(idx)
+  call vimwiki#base#setup_buffer_state(idx)
   if g:vimwiki_debug ==3
     echom "  Setup_filetype g:curr_idx=".g:vimwiki_current_idx." (reset_wiki_state) b:curr_idx=".s:vimwiki_idx().""
   endif
@@ -128,7 +128,7 @@ function! s:setup_buffer_enter() "{{{
     echom "Setup_buffer_enter g:curr_idx=".g:vimwiki_current_idx." b:curr_idx=".s:vimwiki_idx().""
   endif
   let time0 = reltime()  " start the clock  "XXX
-  if !vimwiki#base#recall_wiki_state()
+  if !vimwiki#base#recall_buffer_state()
     " Find what wiki current buffer belongs to.
     " If wiki does not exist in g:vimwiki_list -- add new wiki there with
     " buffer's path and ext.
@@ -162,7 +162,7 @@ function! s:setup_buffer_enter() "{{{
       call vimwiki#base#validate_wiki_options(idx)
     endif
     " initialize and cache global vars of current state
-    call vimwiki#base#reset_wiki_state(idx)
+    call vimwiki#base#setup_buffer_state(idx)
     if g:vimwiki_debug ==3
       echom "  Setup_buffer_enter g:curr_idx=".g:vimwiki_current_idx." (reset_wiki_state) b:curr_idx=".s:vimwiki_idx().""
     endif
@@ -218,7 +218,7 @@ function! s:setup_buffer_reenter() "{{{
   if g:vimwiki_debug ==3
     echom "Setup_buffer_reenter g:curr_idx=".g:vimwiki_current_idx." b:curr_idx=".s:vimwiki_idx().""
   endif
-  if !vimwiki#base#recall_wiki_state()
+  if !vimwiki#base#recall_buffer_state()
     " Do not repeat work of s:setup_buffer_enter() and s:setup_filetype()
     " Once should be enough ...
   endif
