@@ -184,11 +184,12 @@ function! vimwiki#base#resolve_scheme(lnk, as_html) " {{{
   let path = ''
   let subdir = ''
   let ext = ''
+  let idx = g:vimwiki_current_idx
 
   " do nothing if scheme is unknown to vimwiki
   if !(scheme =~ 'wiki.*' || scheme =~ 'diary' || scheme =~ 'local' 
         \ || scheme =~ 'file')
-    return [scheme, path, subdir, lnk, ext, scheme.':'.lnk]
+    return [idx, scheme, path, subdir, lnk, ext, scheme.':'.lnk]
   endif
 
   " scheme behaviors
@@ -196,7 +197,11 @@ function! vimwiki#base#resolve_scheme(lnk, as_html) " {{{
     let idx = eval(matchstr(scheme, '\D\+\zs\d\+\ze'))
     if idx < 0 || idx >= len(g:vimwiki_list)
       echom 'Vimwiki Error: Numbered scheme refers to a non-existent wiki!'
-      return ['','','','','','']
+      return [idx,'','','','','','']
+    else
+      if idx != g:vimwiki_current_idx
+        call vimwiki#base#validate_wiki_options(idx)
+      endif
     endif
 
     if a:as_html
@@ -281,16 +286,16 @@ function! vimwiki#base#resolve_scheme(lnk, as_html) " {{{
   endif
 
   " result
-  return [scheme, path, subdir, lnk, ext, url]
+  return [idx, scheme, path, subdir, lnk, ext, url]
 endfunction "}}}
 
 function! vimwiki#base#open_link(cmd, link, ...) "{{{
-  let [scheme, path, subdir, lnk, ext, url] = 
+  let [idx, scheme, path, subdir, lnk, ext, url] = 
         \ vimwiki#base#resolve_scheme(a:link, 0)
 
   if url == ''
     if g:vimwiki_debug
-      echom 'open_link: scheme='.scheme.', path='.path.', subdir='.subdir.', lnk='.lnk.', ext='.ext.', url='.url
+      echom 'open_link: idx='.idx.', scheme='.scheme.', path='.path.', subdir='.subdir.', lnk='.lnk.', ext='.ext.', url='.url
     endif
     echom 'Vimwiki Error: Unable to resolve link!'
     return
@@ -323,6 +328,9 @@ function! vimwiki#base#open_link(cmd, link, ...) "{{{
   else
     call vimwiki#base#edit_file(a:cmd, url,
           \ vimwiki_prev_link, update_prev_link)
+    if idx != g:vimwiki_current_idx
+      call vimwiki#base#reset_wiki_state(idx)
+    endif
   endif
 endfunction
 " }}}
