@@ -44,10 +44,10 @@ function! vimwiki#base#validate_wiki_options(idx) " {{{ Validate wiki options
 
   " XXX: It's too early to update global / buffer variables, because they are
   "  still needed in their existing state for s:setup_buffer_leave()
-  "" call vimwiki#base#cache_wiki_state()
+  "" call vimwiki#base#cache_buffer_state()
 endfunction " }}}
 
-function! vimwiki#base#reset_wiki_state(idx) " {{{ Init page-specific variables
+function! vimwiki#base#setup_buffer_state(idx) " {{{ Init page-specific variables
   " Only call this function *after* opening a wiki page.
   let g:vimwiki_current_idx = a:idx
 
@@ -58,17 +58,17 @@ function! vimwiki#base#reset_wiki_state(idx) " {{{ Init page-specific variables
   call VimwikiSet('url', vimwiki#html#get_wikifile_url(expand('%:p')), a:idx)
 
   " update cache
-  call vimwiki#base#cache_wiki_state()
+  call vimwiki#base#cache_buffer_state()
 endfunction " }}}
 
-function! vimwiki#base#cache_wiki_state() "{{{
+function! vimwiki#base#cache_buffer_state() "{{{
   if !exists('g:vimwiki_current_idx') && g:vimwiki_debug
     echo "[Vimwiki Internal Error]: Missing global state variable: 'g:vimwiki_current_idx'"
   endif
   let b:vimwiki_idx = g:vimwiki_current_idx
 endfunction "}}}
 
-function! vimwiki#base#recall_wiki_state() "{{{
+function! vimwiki#base#recall_buffer_state() "{{{
   if !exists('b:vimwiki_idx')
     if g:vimwiki_debug
       echo "[Vimwiki Internal Error]: Missing buffer state variable: 'b:vimwiki_idx'"
@@ -329,7 +329,7 @@ function! vimwiki#base#open_link(cmd, link, ...) "{{{
     call vimwiki#base#edit_file(a:cmd, url,
           \ vimwiki_prev_link, update_prev_link)
     if idx != g:vimwiki_current_idx
-      call vimwiki#base#reset_wiki_state(idx)
+      call vimwiki#base#setup_buffer_state(idx)
     endif
   endif
 endfunction
@@ -787,7 +787,7 @@ function! vimwiki#base#goto_index(wnum, ...) "{{{
   call vimwiki#base#edit_file(cmd,
         \ VimwikiGet('path', idx).VimwikiGet('index', idx).
         \ VimwikiGet('ext', idx))
-  call vimwiki#base#reset_wiki_state(idx)
+  call vimwiki#base#setup_buffer_state(idx)
 endfunction "}}}
 
 function! vimwiki#base#delete_link() "{{{
