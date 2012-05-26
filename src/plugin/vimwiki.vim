@@ -106,6 +106,7 @@ function! s:setup_filetype() "{{{
     endif
     call add(g:vimwiki_list, {'path': path, 'ext': ext, 'syntax': syn, 'temp': 1})
     let idx = len(g:vimwiki_list) - 1
+    call vimwiki#base#validate_wiki_options(idx)
   endif
   " initialize and cache global vars of current state
   call vimwiki#base#reset_wiki_state(idx)
@@ -158,6 +159,7 @@ function! s:setup_buffer_enter() "{{{
       endif
       call add(g:vimwiki_list, {'path': path, 'ext': ext, 'syntax': syn, 'temp': 1})
       let idx = len(g:vimwiki_list) - 1
+      call vimwiki#base#validate_wiki_options(idx)
     endif
     " initialize and cache global vars of current state
     call vimwiki#base#reset_wiki_state(idx)
