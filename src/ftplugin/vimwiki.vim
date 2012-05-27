@@ -191,10 +191,10 @@ endfunction "}}}
 " COMMANDS {{{
 command! -buffer Vimwiki2HTML
       \ silent w <bar> 
-      \ call vimwiki#html#Wiki2HTML(expand(VimwikiGet('path_html')),
+      \ let res = vimwiki#html#Wiki2HTML(expand(VimwikiGet('path_html')),
       \                             expand('%'))
       \<bar>
-      \ echo 'Attempted HTML conversion is done.'
+      \ if res != '' | echo 'Vimwiki: HTML conversion is done.' | endif
 command! -buffer Vimwiki2HTMLBrowse
       \ silent w <bar> 
       \ call VimwikiWeblinkHandler(vimwiki#html#Wiki2HTML(
