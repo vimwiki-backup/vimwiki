@@ -78,7 +78,7 @@ function! vimwiki#base#recall_buffer_state() "{{{
     let g:vimwiki_current_idx = b:vimwiki_idx
     return 1
   endif
-endfunction
+endfunction " }}}
 
 function! vimwiki#base#print_wiki_state() "{{{ print wiki options
   "   and buffer state variables
@@ -169,7 +169,7 @@ endfunction"}}}
 
 function! vimwiki#base#invsubdir(subdir) " {{{
   return substitute(a:subdir, '[^/\.]\+/', '../', 'g')
-endfunction
+endfunction " }}}
 
 function! vimwiki#base#resolve_scheme(lnk, as_html) " {{{
   " if link is schemeless add wikiN: scheme
