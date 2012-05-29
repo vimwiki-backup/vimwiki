@@ -27,6 +27,8 @@ function s:path_html(idx) "{{{
   endif
 endfunction "}}}
 
+" }}}
+
 function! vimwiki#base#validate_wiki_options(idx) " {{{ Validate wiki options
   " Only call this function *before* opening a wiki page.
   "
@@ -461,7 +463,7 @@ function! vimwiki#base#edit_file(command, filename, ...) "{{{
   " then
   " [[test*file]]...
   " you'll have E77: Too many file names
-  let fname = escape(a:filename, '% *')
+  let fname = escape(a:filename, '% *|')
   let dir = fnamemodify(a:filename, ":p:h")
   if vimwiki#base#mkdir(dir, 1)
     execute a:command.' '.fname
