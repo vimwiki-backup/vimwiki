@@ -250,7 +250,8 @@ function! vimwiki#base#resolve_scheme(lnk, as_html) " {{{
     endif
     let subdir = VimwikiGet('diary_rel_path')
   elseif scheme =~ 'local'
-    let path = ''
+    " revisiting the 'lcd'-bug ...
+    let path = VimwikiGet('path')
     let subdir = VimwikiGet('subdir')
   elseif scheme =~ 'file'
     " RM repeated leading "/"'s within a link
@@ -321,7 +322,7 @@ function! vimwiki#base#open_link(cmd, link, ...) "{{{
   endif
   " open/edit
   if g:vimwiki_debug
-    echom 'open_link: scheme='.scheme.', path='.path.', subdir='.subdir.', lnk='.lnk.', ext='.ext.', url='.url
+    echom 'open_link: idx='.idx.', scheme='.scheme.', path='.path.', subdir='.subdir.', lnk='.lnk.', ext='.ext.', url='.url
   endif
   if use_weblink_handler
     call VimwikiWeblinkHandler(url)
@@ -705,7 +706,11 @@ function! vimwiki#base#find_next_link() "{{{
     return
   catch /^Vim\%((\a\+)\)\=:E117/	" E117: Unknown function
   endtry
-  call vimwiki#base#search_word(g:vimwiki_rxWikiLink.'\|'.g:vimwiki_rxWikiIncl.'\|'.g:vimwiki_rxWeblink, '')
+  call vimwiki#base#search_word(g:vimwiki_rxWikiLink.'\|'.
+        \ g:vimwiki_rxWikiIncl.'\|'.g:vimwiki_rxWeblink, 
+        \ '')
+        " TODO: define & use g:vimwiki_rxAnyLink
+        " TODO: ... syntax specific function no longer needed
 endfunction
 " }}}
 
@@ -716,7 +721,11 @@ function! vimwiki#base#find_prev_link() "{{{
     return
   catch /^Vim\%((\a\+)\)\=:E117/	" E117: Unknown function
   endtry
-  call vimwiki#base#search_word(g:vimwiki_rxWikiLink.'\|'.g:vimwiki_rxWikiIncl.'\|'.g:vimwiki_rxWeblink, 'b')
+  call vimwiki#base#search_word(g:vimwiki_rxWikiLink.'\|'.
+        \ g:vimwiki_rxWikiIncl.'\|'.g:vimwiki_rxWeblink, 
+        \ 'b')
+        " TODO: define & use g:vimwiki_rxAnyLink
+        " TODO: ... syntax specific function no longer needed
 endfunction
 " }}}
 
