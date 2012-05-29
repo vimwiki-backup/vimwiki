@@ -23,12 +23,6 @@ let timescans = vimwiki#u#time(starttime)  "XXX
   "endif
 
 " LINKS: assume this is common to all syntaxes "{{{
-" LINKS: WikiLinks  {{{
-" Words
-" - more permissive than '\<\w\+\>' which uses 'iskeyword' characters
-" - less permissive than rxWikiLinkUrl which uses non-separator characters
-let g:vimwiki_rxWord = '[^[:blank:]()\[\]]\+'
-" }}}
 
 " LINKS: WebLinks {{{
 " match URL for common protocols;
@@ -91,17 +85,17 @@ let g:vimwiki_WikiLinkTemplate2 = g:vimwiki_rxWikiLinkPrefix . '__LinkUrl__'.
       \ g:vimwiki_rxWikiLinkSuffix
 "
 let magic_chars = '.*[]\^$'
-" let exclude_chars = g:vimwiki_rxWikiLinkPrefix.g:vimwiki_rxWikiLinkSeparator.
-      " \ g:vimwiki_rxWikiLinkSuffix
-let exclude_chars = g:vimwiki_rxWikiLinkPrefix.g:vimwiki_rxWikiLinkSuffix
-let exclude_chars = s:get_unique_chars(exclude_chars)
-let valid_chars = '[^'.escape(exclude_chars, magic_chars).']'
-"
+let valid_chars = '[^\\]'
+
+
 let g:vimwiki_rxWikiLinkPrefix = escape(g:vimwiki_rxWikiLinkPrefix, magic_chars)
 let g:vimwiki_rxWikiLinkSuffix = escape(g:vimwiki_rxWikiLinkSuffix, magic_chars)
 let g:vimwiki_rxWikiLinkSeparator = escape(g:vimwiki_rxWikiLinkSeparator, magic_chars)
 let g:vimwiki_rxWikiLinkUrl = valid_chars.'\{-}'
-let g:vimwiki_rxWikiLinkDescr = valid_chars.'*'
+let g:vimwiki_rxWikiLinkDescr = valid_chars.'\{-}'
+
+let g:vimwiki_rxWord = '[^[:blank:]()\\]\+'
+
 "
 " 1. [[URL]], or [[URL|DESCRIPTION]]
 " 1a) match [[URL|DESCRIPTION]]
@@ -131,19 +125,13 @@ let g:vimwiki_WikiInclTemplate1 = g:vimwiki_rxWikiInclPrefix . '__LinkUrl__'.
 let g:vimwiki_WikiInclTemplate2 = g:vimwiki_rxWikiInclPrefix . '__LinkUrl__'. 
       \ '__LinkDescription__'.
       \ g:vimwiki_rxWikiInclSuffix
-"
-let magic_chars = '.*[]\^$'
-let exclude_chars = g:vimwiki_rxWikiInclPrefix. g:vimwiki_rxWikiInclSeparator.
-      \ g:vimwiki_rxWikiInclSuffix
-let exclude_chars = s:get_unique_chars(exclude_chars)
-let valid_chars = '[^'.escape(exclude_chars, magic_chars).']'
-"
+
 let g:vimwiki_rxWikiInclPrefix = escape(g:vimwiki_rxWikiInclPrefix, magic_chars)
 let g:vimwiki_rxWikiInclSuffix = escape(g:vimwiki_rxWikiInclSuffix, magic_chars)
 let g:vimwiki_rxWikiInclSeparator = escape(g:vimwiki_rxWikiInclSeparator, magic_chars)
-let g:vimwiki_rxWikiInclUrl = valid_chars.'\+'
-let g:vimwiki_rxWikiInclArg = valid_chars.'*'
-let g:vimwiki_rxWikiInclArgs = '\%('. g:vimwiki_rxWikiInclSeparator. g:vimwiki_rxWikiInclArg. '\)'.'*'
+let g:vimwiki_rxWikiInclUrl = valid_chars.'\{-}'
+let g:vimwiki_rxWikiInclArg = valid_chars.'\{-}'
+let g:vimwiki_rxWikiInclArgs = '\%('. g:vimwiki_rxWikiInclSeparator. g:vimwiki_rxWikiInclArg. '\)'.'\{-}'
 "
 "
 " *. {{URL}[{...}]}  - i.e.  {{URL}}, {{URL|ARG1}}, {{URL|ARG1|ARG2}}, etc.
