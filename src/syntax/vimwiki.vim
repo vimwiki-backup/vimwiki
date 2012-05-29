@@ -146,7 +146,6 @@ let g:vimwiki_rxWikiInclMatchUrl = g:vimwiki_rxWikiInclPrefix.
 " }}}
 
 " LINKS: Setup weblink regexps {{{
-" FIXME all submatches can be done with "numbered" \( \) groups
 " 0. URL : free-standing links: keep URL UR(L) strip trailing punct: URL; URL) UR(L)) 
 " let g:vimwiki_rxWeblink = '[\["(|]\@<!'. g:vimwiki_rxWeblinkUrl .
       " \ '\%([),:;.!?]\=\%([ \t]\|$\)\)\@='
