@@ -303,34 +303,8 @@ endfunction "}}}
 " CALLBACK functions "{{{
 " User can redefine it.
 if !exists("*VimwikiLinkHandler") "{{{
-  function VimwikiLinkHandler(link)
-    echom a:link
-    " handlers
-    function! s:win32_handler(link)
-      "execute '!start ' . shellescape(a:link, 1)
-      "http://vim.wikia.com/wiki/Opening_current_Vim_file_in_your_Windows_browser
-      execute 'silent ! start "Title" /B ' . shellescape(a:link, 1)
-    endfunction
-    function! s:macunix_handler(link)
-      execute '!open ' . shellescape(a:link, 1)
-    endfunction
-    function! s:linux_handler(link)
-      execute 'silent !xdg-open ' . shellescape(a:link, 1)
-    endfunction
-    let success = 0
-    try 
-      if vimwiki#u#is_windows()
-        call s:win32_handler(a:link)
-        return
-      elseif has("macunix")
-        call s:macunix_handler(a:link)
-        return
-      else
-        call s:linux_handler(a:link)
-        return
-      endif
-    endtry
-    echomsg 'Default Vimwiki link handler was unable to open the HTML file!'
+  function VimwikiLinkHandler(url)
+    return 0
   endfunction
 endif "}}}
 
