@@ -51,6 +51,10 @@ endfunction " }}}
 
 function! vimwiki#base#setup_buffer_state(idx) " {{{ Init page-specific variables
   " Only call this function *after* opening a wiki page.
+  if a:idx < 0
+    return
+  endif
+
   let g:vimwiki_current_idx = a:idx
 
   " The following state depends on the current active wiki page
@@ -173,7 +177,9 @@ function! vimwiki#base#invsubdir(subdir) " {{{
   return substitute(a:subdir, '[^/\.]\+/', '../', 'g')
 endfunction " }}}
 
-function! vimwiki#base#resolve_scheme(lnk, as_html) " {{{
+function! vimwiki#base#resolve_scheme(lnk, as_html) " {{{ Resolve scheme
+  " - Only return non-negative index when valid wiki link found
+  "
   " if link is schemeless add wikiN: scheme
   let lnk = a:lnk
   let is_schemeless = lnk !~ g:vimwiki_rxSchemeUrl
@@ -186,7 +192,7 @@ function! vimwiki#base#resolve_scheme(lnk, as_html) " {{{
   let path = ''
   let subdir = ''
   let ext = ''
-  let idx = g:vimwiki_current_idx
+  let idx = -1
 
   " do nothing if scheme is unknown to vimwiki
   if !(scheme =~ 'wiki.*' || scheme =~ 'diary' || scheme =~ 'local' 
@@ -332,6 +338,7 @@ function! vimwiki#base#open_link(cmd, link, ...) "{{{
     call vimwiki#base#edit_file(a:cmd, url,
           \ vimwiki_prev_link, update_prev_link)
     if idx != g:vimwiki_current_idx
+      " this call to setup_buffer_state may not be necessary
       call vimwiki#base#setup_buffer_state(idx)
     endif
   endif
