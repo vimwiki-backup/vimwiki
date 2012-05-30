@@ -702,32 +702,12 @@ endfunction "}}}
 
 " WIKI link following functions {{{
 function! vimwiki#base#find_next_link() "{{{
-  try
-    " Syntax-specific links
-    call vimwiki#base_{VimwikiGet('syntax')}#find_next_link()
-    return
-  catch /^Vim\%((\a\+)\)\=:E117/	" E117: Unknown function
-  endtry
-  call vimwiki#base#search_word(g:vimwiki_rxWikiLink.'\|'.
-        \ g:vimwiki_rxWikiIncl.'\|'.g:vimwiki_rxWeblink, 
-        \ '')
-        " TODO: define & use g:vimwiki_rxAnyLink
-        " TODO: ... syntax specific function no longer needed
+  call vimwiki#base#search_word(g:vimwiki_rxAnyLink, '')
 endfunction
 " }}}
 
 function! vimwiki#base#find_prev_link() "{{{
-  try
-    " Syntax-specific links
-    call vimwiki#base_{VimwikiGet('syntax')}#find_prev_link()
-    return
-  catch /^Vim\%((\a\+)\)\=:E117/	" E117: Unknown function
-  endtry
-  call vimwiki#base#search_word(g:vimwiki_rxWikiLink.'\|'.
-        \ g:vimwiki_rxWikiIncl.'\|'.g:vimwiki_rxWeblink, 
-        \ 'b')
-        " TODO: define & use g:vimwiki_rxAnyLink
-        " TODO: ... syntax specific function no longer needed
+  call vimwiki#base#search_word(g:vimwiki_rxAnyLink, 'b')
 endfunction
 " }}}
 
