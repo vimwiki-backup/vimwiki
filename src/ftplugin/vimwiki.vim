@@ -197,7 +197,7 @@ command! -buffer Vimwiki2HTML
       \ if res != '' | echo 'Vimwiki: HTML conversion is done.' | endif
 command! -buffer Vimwiki2HTMLBrowse
       \ silent w <bar> 
-      \ call VimwikiWeblinkHandler(vimwiki#html#Wiki2HTML(
+      \ call VimwikiLinkHandler(vimwiki#html#Wiki2HTML(
       \         expand(VimwikiGet('path_html')),
       \         expand('%')))
 command! -buffer VimwikiAll2HTML
