@@ -298,6 +298,34 @@ function! vimwiki#base#resolve_scheme(lnk, as_html) " {{{ Resolve scheme
   return [idx, scheme, path, subdir, lnk, ext, url]
 endfunction "}}}
 
+function! vimwiki#base#system_open_link(url) "{{{
+  " handlers
+  function! s:win32_handler(url)
+    "http://vim.wikia.com/wiki/Opening_current_Vim_file_in_your_Windows_browser
+    execute 'silent ! start "Title" /B ' . shellescape(a:url, 1)
+  endfunction
+  function! s:macunix_handler(url)
+    execute '!open ' . shellescape(a:url, 1)
+  endfunction
+  function! s:linux_handler(url)
+    execute 'silent !xdg-open ' . shellescape(a:url, 1)
+  endfunction
+  let success = 0
+  try 
+    if vimwiki#u#is_windows()
+      call s:win32_handler(a:url)
+      return
+    elseif has("macunix")
+      call s:macunix_handler(a:url)
+      return
+    else
+      call s:linux_handler(a:url)
+      return
+    endif
+  endtry
+  echomsg 'Default Vimwiki link handler was unable to open the HTML file!'
+endfunction "}}}
+
 function! vimwiki#base#open_link(cmd, link, ...) "{{{
   let [idx, scheme, path, subdir, lnk, ext, url] = 
         \ vimwiki#base#resolve_scheme(a:link, 0)
@@ -315,7 +343,7 @@ function! vimwiki#base#open_link(cmd, link, ...) "{{{
         \ scheme =~ 'wiki' || 
         \ scheme =~ 'diary' ? 1 : 0)
 
-  let use_weblink_handler = (
+  let use_system_open = (
         \ scheme == '' || 
         \ scheme =~ 'wiki' || 
         \ scheme =~ 'diary' || 
@@ -336,8 +364,8 @@ function! vimwiki#base#open_link(cmd, link, ...) "{{{
     echom 'open_link: idx='.idx.', scheme='.scheme.', path='.path.', subdir='.subdir.', lnk='.lnk.', ext='.ext.', url='.url
   endif
 
-  if use_weblink_handler
-    call VimwikiLinkHandler(url)
+  if use_system_open
+    call vimwiki#base#system_open_link(url)
   else
     call vimwiki#base#edit_file(a:cmd, url,
           \ vimwiki_prev_link, update_prev_link)
@@ -725,6 +753,7 @@ endfunction
 function! vimwiki#base#follow_link(split, ...) "{{{
   if exists('vimwiki#base_'.VimwikiGet('syntax').'#follow_link')
     " Syntax-specific links
+    " XXX: Stuart, do we still need it?
     if a:0
       call vimwiki#base_{VimwikiGet('syntax')}#follow_link(a:split, a:1)
     else
@@ -744,29 +773,27 @@ function! vimwiki#base#follow_link(split, ...) "{{{
     " try WikiLink
     let lnk = matchstr(vimwiki#base#matchstr_at_cursor(g:vimwiki_rxWikiLink),
           \ g:vimwiki_rxWikiLinkMatchUrl)
-    if lnk != ""
-      call vimwiki#base#open_link(cmd, lnk)
-      return
-    endif
     " try WikiIncl
-    let lnk = matchstr(vimwiki#base#matchstr_at_cursor(g:vimwiki_rxWikiIncl),
+    if lnk == ""
+      let lnk = matchstr(vimwiki#base#matchstr_at_cursor(g:vimwiki_rxWikiIncl),
           \ g:vimwiki_rxWikiInclMatchUrl)
-    if lnk != ""
-      call vimwiki#base#open_link(cmd, lnk)
-      return
     endif
     " try Weblink
-    let lnk = matchstr(vimwiki#base#matchstr_at_cursor(g:vimwiki_rxWeblink),
-          \ g:vimwiki_rxWeblinkMatchUrl)
+    if lnk == ""
+      let lnk = matchstr(vimwiki#base#matchstr_at_cursor(g:vimwiki_rxWeblink),
+            \ g:vimwiki_rxWeblinkMatchUrl)
+    endif
+
     if lnk != ""
-      call vimwiki#base#open_link('', lnk)
+      if !VimwikiLinkHandler(lnk)
+        call vimwiki#base#open_link(cmd, lnk)
+      endif
       return
     endif
 
     if a:0 > 0
       execute "normal! ".a:1
     else		
-      " execute "normal! \n"
       call vimwiki#base#normalize_link(0)
     endif
   endif

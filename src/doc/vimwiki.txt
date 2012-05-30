@@ -1740,7 +1740,7 @@ Default: 1
 
 ------------------------------------------------------------------------------
 *VimwikiLinkHandler*
-
+XXX: update doc!
 Vimwiki tries to open external weblinks in a default browser.
 
 You can redefine VimwikiLinkHandler function to do something else: >
