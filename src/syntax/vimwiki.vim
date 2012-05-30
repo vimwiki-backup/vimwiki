@@ -162,6 +162,11 @@ let g:vimwiki_rxWeblinkMatchUrl = g:vimwiki_rxWeblink
 let g:vimwiki_rxWeblinkMatchDescr = ''
 " }}}
 
+" LINKS: Setup AnyLink regexps {{{
+let g:vimwiki_rxAnyLink = g:vimwiki_rxWikiLink.'\|'.
+    \ g:vimwiki_rxWikiIncl.'\|'.g:vimwiki_rxWeblink
+" }}}
+
 " }}} end of Links
 
 "TODO
