@@ -361,7 +361,7 @@ function! vimwiki#base#generate_links() "{{{only get links from the current dir
         \ vimwiki#lst#default_symbol().' '
   for link in links
     call append(line('$'), bullet.
-          \ substitute(g:vimwiki_WikiLinkTemplate1, '__LinkUrl__', link, ''))
+          \ substitute(g:vimwiki_WikiLinkTemplate1, '__LinkUrl__', '\='."'".link."'", ''))
   endfor
 endfunction " }}}
 
