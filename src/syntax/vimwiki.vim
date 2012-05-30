@@ -108,7 +108,7 @@ let g:vimwiki_rxWikiLinkMatchUrl = g:vimwiki_rxWikiLinkPrefix.
       \ g:vimwiki_rxWikiLinkDescr.'\)\?'.g:vimwiki_rxWikiLinkSuffix
 " 1c) match DESCRIPTION within [[URL|DESCRIPTION]]
 let g:vimwiki_rxWikiLinkMatchDescr = g:vimwiki_rxWikiLinkPrefix.
-      \ g:vimwiki_rxWikiLinkUrl.g:vimwiki_rxWikiLinkSeparator.'\%('.
+      \ g:vimwiki_rxWikiLinkUrl.'\%('.g:vimwiki_rxWikiLinkSeparator.
       \ '\zs'. g:vimwiki_rxWikiLinkDescr. '\ze\)\?'. g:vimwiki_rxWikiLinkSuffix
 " }}}
 
@@ -160,6 +160,11 @@ let g:vimwiki_rxWeblink = '[[:alnum:]]\@<!'. g:vimwiki_rxWeblinkUrl .
 let g:vimwiki_rxWeblinkMatchUrl = g:vimwiki_rxWeblink
 " 0b) match DESCRIPTION within URL
 let g:vimwiki_rxWeblinkMatchDescr = ''
+" }}}
+
+" LINKS: Setup AnyLink regexps {{{
+let g:vimwiki_rxAnyLink = g:vimwiki_rxWikiLink.'\|'.
+    \ g:vimwiki_rxWikiIncl.'\|'.g:vimwiki_rxWeblink
 " }}}
 
 " }}} end of Links
