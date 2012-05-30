@@ -346,8 +346,7 @@ function! vimwiki#base#open_link(cmd, link, ...) "{{{
   let use_system_open = (
         \ scheme == '' || 
         \ scheme =~ 'wiki' || 
-        \ scheme =~ 'diary' || 
-        \ scheme =~ 'local' ? 0 : 1)
+        \ scheme =~ 'diary' ? 0 : 1)
 
   let vimwiki_prev_link = []
   " update previous link for wiki pages
