@@ -299,34 +299,35 @@ endfunction "}}}
 
 " CALLBACK functions "{{{
 " User can redefine it.
-if !exists("*VimwikiWeblinkHandler") "{{{
-  function VimwikiWeblinkHandler(weblink)
+if !exists("*VimwikiLinkHandler") "{{{
+  function VimwikiLinkHandler(link)
+    echom a:link
     " handlers
-    function! s:win32_handler(weblink)
-      "execute '!start ' . shellescape(a:weblink, 1)
+    function! s:win32_handler(link)
+      "execute '!start ' . shellescape(a:link, 1)
       "http://vim.wikia.com/wiki/Opening_current_Vim_file_in_your_Windows_browser
-      execute 'silent ! start "Title" /B ' . shellescape(a:weblink, 1)
+      execute 'silent ! start "Title" /B ' . shellescape(a:link, 1)
     endfunction
-    function! s:macunix_handler(weblink)
-      execute '!open ' . shellescape(a:weblink, 1)
+    function! s:macunix_handler(link)
+      execute '!open ' . shellescape(a:link, 1)
     endfunction
-    function! s:linux_handler(weblink)
-      execute 'silent !xdg-open ' . shellescape(a:weblink, 1)
+    function! s:linux_handler(link)
+      execute 'silent !xdg-open ' . shellescape(a:link, 1)
     endfunction
     let success = 0
     try 
       if vimwiki#u#is_windows()
-        call s:win32_handler(a:weblink)
+        call s:win32_handler(a:link)
         return
       elseif has("macunix")
-        call s:macunix_handler(a:weblink)
+        call s:macunix_handler(a:link)
         return
       else
-        call s:linux_handler(a:weblink)
+        call s:linux_handler(a:link)
         return
       endif
     endtry
-    echomsg 'Default Vimwiki Weblink Handler was unable to open the HTML file!'
+    echomsg 'Default Vimwiki link handler was unable to open the HTML file!'
   endfunction
 endif "}}}
 

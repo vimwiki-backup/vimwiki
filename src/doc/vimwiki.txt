@@ -1739,12 +1739,12 @@ Default: 1
 
 
 ------------------------------------------------------------------------------
-*VimwikiWeblinkHandler*
+*VimwikiLinkHandler*
 
 Vimwiki tries to open external weblinks in a default browser.
 
-You can redefine VimwikiWeblinkHandler function to do something else: >
-  function! VimwikiWeblinkHandler(weblink) 
+You can redefine VimwikiLinkHandler function to do something else: >
+  function! VimwikiLinkHandler(link) 
     let browser = 'C:\Program Files\Firefox\firefox.exe'
     execute '!start "'.browser.'" ' . a:weblink
   endfunction 
@@ -2038,6 +2038,8 @@ Vim plugins: http://www.vim.org/scripts/script.php?script_id=2226
 14. Changelog                                              *vimwiki-changelog*
 
 2.0 dev~
+    * VimwikiWeblinkHandler user defined function is renamed to
+      VimwikiLinkHandler.
     * Diary index page is no more autoregenerated. Use
       |:VimwikiDiaryGenerateLinks| command to update diary section.
     * List manipulation command and mappings |vimwiki_glm|, |vimwiki_gll|, etc.

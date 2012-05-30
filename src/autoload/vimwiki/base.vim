@@ -303,16 +303,18 @@ function! vimwiki#base#open_link(cmd, link, ...) "{{{
     echom 'Vimwiki Error: Unable to resolve link!'
     return
   endif
+
   let update_prev_link = (
         \ scheme == '' || 
         \ scheme =~ 'wiki' || 
         \ scheme =~ 'diary' ? 1 : 0)
+
   let use_weblink_handler = (
         \ scheme == '' || 
         \ scheme =~ 'wiki' || 
         \ scheme =~ 'diary' || 
-        \ scheme =~ 'local' || 
-        \ scheme =~ 'file' ? 0 : 1)
+        \ scheme =~ 'local' ? 0 : 1)
+
   let vimwiki_prev_link = []
   " update previous link for wiki pages
   if update_prev_link
@@ -322,12 +324,14 @@ function! vimwiki#base#open_link(cmd, link, ...) "{{{
       let vimwiki_prev_link = [expand('%:p'), getpos('.')]
     endif
   endif
+
   " open/edit
   if g:vimwiki_debug
     echom 'open_link: idx='.idx.', scheme='.scheme.', path='.path.', subdir='.subdir.', lnk='.lnk.', ext='.ext.', url='.url
   endif
+
   if use_weblink_handler
-    call VimwikiWeblinkHandler(url)
+    call VimwikiLinkHandler(url)
   else
     call vimwiki#base#edit_file(a:cmd, url,
           \ vimwiki_prev_link, update_prev_link)
@@ -771,7 +775,7 @@ function! vimwiki#base#follow_link(split, ...) "{{{
   let lnk = matchstr(vimwiki#base#matchstr_at_cursor(g:vimwiki_rxWeblink),
         \ g:vimwiki_rxWeblinkMatchUrl)
   if lnk != ""
-    call VimwikiWeblinkHandler(lnk)
+    call vimwiki#base#open_link('', lnk)
     return
   endif
 
