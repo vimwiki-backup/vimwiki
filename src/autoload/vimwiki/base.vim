@@ -712,54 +712,52 @@ endfunction
 " }}}
 
 function! vimwiki#base#follow_link(split, ...) "{{{
-  try
+  if exists('vimwiki#base_'.VimwikiGet('syntax').'#follow_link')
     " Syntax-specific links
     if a:0
       call vimwiki#base_{VimwikiGet('syntax')}#follow_link(a:split, a:1)
     else
       call vimwiki#base_{VimwikiGet('syntax')}#follow_link(a:split)
     endif
-    return
-  catch /^Vim\%((\a\+)\)\=:E117/	" E117: Unknown function
-
-  endtry
-  if a:split == "split"
-    let cmd = ":split "
-  elseif a:split == "vsplit"
-    let cmd = ":vsplit "
-  elseif a:split == "tabnew"
-    let cmd = ":tabnew "
   else
-    let cmd = ":e "
-  endif
+    if a:split == "split"
+      let cmd = ":split "
+    elseif a:split == "vsplit"
+      let cmd = ":vsplit "
+    elseif a:split == "tabnew"
+      let cmd = ":tabnew "
+    else
+      let cmd = ":e "
+    endif
 
-  " try WikiLink
-  let lnk = matchstr(vimwiki#base#matchstr_at_cursor(g:vimwiki_rxWikiLink),
-        \ g:vimwiki_rxWikiLinkMatchUrl)
-  if lnk != ""
-    call vimwiki#base#open_link(cmd, lnk)
-    return
-  endif
-  " try WikiIncl
-  let lnk = matchstr(vimwiki#base#matchstr_at_cursor(g:vimwiki_rxWikiIncl),
-        \ g:vimwiki_rxWikiInclMatchUrl)
-  if lnk != ""
-    call vimwiki#base#open_link(cmd, lnk)
-    return
-  endif
-  " try Weblink
-  let lnk = matchstr(vimwiki#base#matchstr_at_cursor(g:vimwiki_rxWeblink),
-        \ g:vimwiki_rxWeblinkMatchUrl)
-  if lnk != ""
-    call VimwikiWeblinkHandler(lnk)
-    return
-  endif
+    " try WikiLink
+    let lnk = matchstr(vimwiki#base#matchstr_at_cursor(g:vimwiki_rxWikiLink),
+          \ g:vimwiki_rxWikiLinkMatchUrl)
+    if lnk != ""
+      call vimwiki#base#open_link(cmd, lnk)
+      return
+    endif
+    " try WikiIncl
+    let lnk = matchstr(vimwiki#base#matchstr_at_cursor(g:vimwiki_rxWikiIncl),
+          \ g:vimwiki_rxWikiInclMatchUrl)
+    if lnk != ""
+      call vimwiki#base#open_link(cmd, lnk)
+      return
+    endif
+    " try Weblink
+    let lnk = matchstr(vimwiki#base#matchstr_at_cursor(g:vimwiki_rxWeblink),
+          \ g:vimwiki_rxWeblinkMatchUrl)
+    if lnk != ""
+      call VimwikiWeblinkHandler(lnk)
+      return
+    endif
 
-  if a:0 > 0
-    execute "normal! ".a:1
-  else		
-    " execute "normal! \n"
-    call vimwiki#base#normalize_link(0)
+    if a:0 > 0
+      execute "normal! ".a:1
+    else		
+      " execute "normal! \n"
+      call vimwiki#base#normalize_link(0)
+    endif
   endif
 
 endfunction " }}}
@@ -1353,17 +1351,16 @@ function! s:normalize_link_syntax_v() " {{{
 endfunction " }}}
 
 function! vimwiki#base#normalize_link(is_visual_mode) "{{{
-  try
+  if exists('vimwiki#base_'.VimwikiGet('syntax').'#normalize_link')
     " Syntax-specific links
     call vimwiki#base_{VimwikiGet('syntax')}#normalize_link(a:is_visual_mode)
-    return
-  catch /^Vim\%((\a\+)\)\=:E117/	" E117: Unknown function
-  endtry
-  if !a:is_visual_mode
-    call s:normalize_link_syntax_n()
-  elseif visualmode() ==# 'v' && line("'<") == line("'>")
-    " action undefined for 'line-wise' or 'multi-line' visual mode selections
-    call s:normalize_link_syntax_v()
+  else
+    if !a:is_visual_mode
+      call s:normalize_link_syntax_n()
+    elseif visualmode() ==# 'v' && line("'<") == line("'>")
+      " action undefined for 'line-wise' or 'multi-line' visual mode selections
+      call s:normalize_link_syntax_v()
+    endif
   endif
 endfunction "}}}
 
