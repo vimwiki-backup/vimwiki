@@ -283,11 +283,12 @@ function! vimwiki#base#resolve_scheme(lnk, as_html) " {{{ Resolve scheme
     endif
     let lnk = fnamemodify(lnk, ":p:t")
     let subdir = ''
+    
+    " ensure there are three slashes after 'file:'
+    let path = substitute(path, '\%(file://\)\?\zs'.'/\+', '/', 'g')
   endif
 
 
-  " ensure there are three slashes after 'file:'
-  let path = substitute(path, '\%(file://\)\?\zs'.'/\+', '/', 'g')
   " remove repeated /'s
   let subdir = substitute(subdir, '/\+', '/', 'g')
   let lnk = substitute(lnk, '/\+', '/', 'g')
