@@ -1740,14 +1740,49 @@ Default: 1
 
 ------------------------------------------------------------------------------
 *VimwikiLinkHandler*
-XXX: update doc!
-Vimwiki tries to open external weblinks in a default browser.
+
+A customizable link handler, VimwikiLinkHandler, can be defined to override
+Vimwiki's opening of links.  Each recognized link, whether it is a wikilink,
+wiki-include link or a weblink, is first passed to VimwikiLinkHandler to see 
+if it can be handled.  The return value 1/0 indicates success.  
+
+If the link is not handled successfully, the behaviour of Vimwiki depends on
+the scheme.  Wiki:, diary: or schemeless links are opened in Vim.  All others,
+including local: and file: schemes, are opened with a system default handler;
+i.e. Linux (!xdg-open), Mac (!open), and Windows (!start).  
 
 You can redefine VimwikiLinkHandler function to do something else: >
   function! VimwikiLinkHandler(link) 
     let browser = 'C:\Program Files\Firefox\firefox.exe'
-    execute '!start "'.browser.'" ' . a:weblink
+    execute '!start "'.browser.'" ' . a:link
   endfunction 
+
+A second example handles two new schemes, 'vlocal:' and 'vfile:', which behave
+similar to 'local:' and 'file:' schemes, but are always opened with Vim: >
+  function! VimwikiLinkHandler(link) "{{{ Use Vim to open links with the
+    " 'vlocal:' or 'vfile:' schemes.  E.g.:
+    "   1) [[vfile:///~/Code/PythonProject/abc123.py]], and
+    "   2) [[vlocal:./|Wiki Home]]
+    let link = a:link
+    if link =~ "vlocal:" || link =~ "vfile:"
+      let link = link[1:]
+    else
+      return 0
+    endif
+    let [idx, scheme, path, subdir, lnk, ext, url] = 
+         \ vimwiki#base#resolve_scheme(link, 0)
+    if g:vimwiki_debug
+      echom 'LinkHandler: idx='.idx.', scheme=[v]'.scheme.', path='.path.
+           \ ', subdir='.subdir.', lnk='.lnk.', ext='.ext.', url='.url
+    endif
+    if url == ''
+      echom 'Vimwiki Error: Unable to resolve link!'
+      return 0
+    else
+      call vimwiki#base#edit_file('tabnew', url, [], 0)
+      return 1
+    endif
+  endfunction " }}}
 
 
 -----------------------------------------------------------------------------
