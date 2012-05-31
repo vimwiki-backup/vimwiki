@@ -34,6 +34,76 @@ endfunction "}}}
 
 " }}}
 
+function! vimwiki#base#apply_wiki_options(options) " {{{ Update the current
+  " wiki using the options dictionary
+  for kk in keys(a:options)
+    let g:vimwiki_list[g:vimwiki_current_idx][kk] = a:options[kk]
+  endfor
+  call vimwiki#base#validate_wiki_options(g:vimwiki_current_idx)
+  call vimwiki#base#setup_buffer_state(g:vimwiki_current_idx)
+endfunction " }}}
+
+function! vimwiki#base#read_wiki_options(check) " {{{ Read wiki options from the
+  " current page's, or ancesters', directories.  If a vimrc file is found,
+  " which declares the variable g:local_wiki, a message alerts the user.  If
+  " the argument check=1, the user is queried before applying the update.
+  "
+  " hide global vimwiki options ... after all, the global list is often
+  " initialized for the first time in vimrc files, and we don't want to
+  " overwrite !!  (not to mention all the other globals ...)
+  let l:vimwiki_list = deepcopy(g:vimwiki_list, 1)
+  "
+  if a:check
+    call vimwiki#base#print_wiki_state()
+    echo " \n"
+  endif
+  "
+  let g:local_wiki = {}
+  let done = 0
+  " ... start the wild-goose chase!
+  for invsubdir in ['.', '..', '../..', '../../..']
+    for nm in ['vimrc', '.vimrc', 'vimwiki.vimrc']
+      if !done
+        let local_wiki_options_filename = expand('%:p:h').'/'.invsubdir.'/'.nm
+        try
+          execute 'source '.local_wiki_options_filename
+          if !empty(g:local_wiki)
+            echom 'Found local wiki options in : '.local_wiki_options_filename
+            "
+            " walk first, then run
+            if a:check
+              echom '  g:local_wiki = '.string(g:local_wiki)
+              if tolower(input("Vimwiki: Apply these options [Y]es/[n]o? ")) !~ "y"
+                let g:local_wiki = {}
+                continue
+              endif
+            endif
+            "
+            " restore global list
+            " - this prevents corruption by g:vimwiki_list in options_file
+            let g:vimwiki_list = deepcopy(l:vimwiki_list, 1)
+            "
+            call vimwiki#base#apply_wiki_options(g:local_wiki)
+            let done = 1
+          endif
+        catch /^Vim\%((\a\+)\)\=:E484/	" E484: Can't open file
+        endtry
+      endif
+    endfor
+  endfor
+  if !done
+    "
+    " restore global list, if no local options were found
+    " - this prevents corruption by g:vimwiki_list in options_file
+    let g:vimwiki_list = deepcopy(l:vimwiki_list, 1)
+    "
+  endif
+  if a:check
+    echo " \n "
+    call vimwiki#base#print_wiki_state()
+  endif
+endfunction " }}}
+
 function! vimwiki#base#validate_wiki_options(idx) " {{{ Validate wiki options
   " Only call this function *before* opening a wiki page.
   "
@@ -95,7 +165,7 @@ function! vimwiki#base#print_wiki_state() "{{{ print wiki options
   "   and buffer state variables
   let g_width = 18
   let b_width = 18
-  echo "- Wiki Options -"
+  echo "- Wiki Options (idx=".g:vimwiki_current_idx.") -"
   for kk in VimwikiGetOptionNames()
       echo "  '".kk."': ".repeat(' ', g_width-len(kk)).string(VimwikiGet(kk))
   endfor
