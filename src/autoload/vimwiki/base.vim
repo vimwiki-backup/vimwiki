@@ -43,14 +43,16 @@ function! vimwiki#base#apply_wiki_options(options) " {{{ Update the current
   call vimwiki#base#setup_buffer_state(g:vimwiki_current_idx)
 endfunction " }}}
 
-function! vimwiki#base#read_wiki_options(check) " {{{ Read wiki options from the
-  " current page's, or ancesters', directories.  If a vimrc file is found,
-  " which declares the variable g:local_wiki, a message alerts the user.  If
-  " the argument check=1, the user is queried before applying the update.
-  "
-  " hide global vimwiki options ... after all, the global list is often
-  " initialized for the first time in vimrc files, and we don't want to
-  " overwrite !!  (not to mention all the other globals ...)
+function! vimwiki#base#read_wiki_options(check) " {{{ Attempt to read wiki
+  " options from the current page's directory, or its ancesters.  If a vimrc
+  "   file is found, which declares a wiki-options dictionary named
+  "   g:local_wiki, a message alerts the user that an update has been found and
+  "   may be applied.  If the argument check=1, the user is queried before
+  "   applying the update to the current wiki's option.
+
+  " Save global vimwiki options ... after all, the global list is often
+  "   initialized for the first time in vimrc files, and we don't want to
+  "   overwrite !!  (not to mention all the other globals ...)
   let l:vimwiki_list = deepcopy(g:vimwiki_list, 1)
   "
   if a:check
