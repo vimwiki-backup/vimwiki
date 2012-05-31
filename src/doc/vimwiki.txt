@@ -1741,9 +1741,9 @@ Default: 1
 ------------------------------------------------------------------------------
 *VimwikiLinkHandler*
 
-A customizable link handler, VimwikiLinkHandler, can be defined to override
+A customizable link handler, |VimwikiLinkHandler|, can be defined to override
 Vimwiki's opening of links.  Each recognized link, whether it is a wikilink,
-wiki-include link or a weblink, is first passed to VimwikiLinkHandler to see 
+wiki-include link or a weblink, is first passed to |VimwikiLinkHandler| to see 
 if it can be handled.  The return value 1/0 indicates success.  
 
 If the link is not handled successfully, the behaviour of Vimwiki depends on
@@ -1751,7 +1751,8 @@ the scheme.  Wiki:, diary: or schemeless links are opened in Vim.  All others,
 including local: and file: schemes, are opened with a system default handler;
 i.e. Linux (!xdg-open), Mac (!open), and Windows (!start).  
 
-You can redefine VimwikiLinkHandler function to do something else: >
+You can redefine |VimwikiLinkHandler| function to do something else: >
+
   function! VimwikiLinkHandler(link) 
     let browser = 'C:\Program Files\Firefox\firefox.exe'
     execute '!start "'.browser.'" ' . a:link
@@ -1759,6 +1760,7 @@ You can redefine VimwikiLinkHandler function to do something else: >
 
 A second example handles two new schemes, 'vlocal:' and 'vfile:', which behave
 similar to 'local:' and 'file:' schemes, but are always opened with Vim: >
+
   function! VimwikiLinkHandler(link) "{{{ Use Vim to open links with the
     " 'vlocal:' or 'vfile:' schemes.  E.g.:
     "   1) [[vfile:///~/Code/PythonProject/abc123.py]], and
@@ -2073,6 +2075,7 @@ Vim plugins: http://www.vim.org/scripts/script.php?script_id=2226
 14. Changelog                                              *vimwiki-changelog*
 
 2.0 dev~
+    * local: scheme links are now handled by system handler
     * VimwikiWeblinkHandler user defined function is renamed to
       VimwikiLinkHandler.
     * Diary index page is no more autoregenerated. Use
