@@ -10,13 +10,13 @@ let g:loaded_vimwiki_auto = 1
 
 " MISC helper functions {{{
 
-function s:normalize_path(path) "{{{
+function! s:normalize_path(path) "{{{
   let g:VimwikiLog.normalize_path += 1  "XXX
   " resolve doesn't work quite right with symlinks ended with / or \
   return resolve(expand(substitute(a:path, '[/\\]\+$', '', ''))).'/'
 endfunction "}}}
 
-function s:path_html(idx) "{{{
+function! s:path_html(idx) "{{{
   let path_html = VimwikiGet('path_html', a:idx)
   if !empty(path_html)
     return path_html
@@ -261,6 +261,10 @@ function! vimwiki#base#resolve_scheme(lnk, as_html) " {{{ Resolve scheme
     " revisiting the 'lcd'-bug ...
     let path = VimwikiGet('path')
     let subdir = VimwikiGet('subdir')
+    if a:as_html
+      " prepend browser-specific file: scheme
+      let path = 'file://'.fnamemodify(path, ":p")
+    endif
   elseif scheme =~ 'file'
     " RM repeated leading "/"'s within a link
     let lnk = substitute(lnk, '^/*', '/', '')
@@ -277,8 +281,9 @@ function! vimwiki#base#resolve_scheme(lnk, as_html) " {{{ Resolve scheme
   endif
 
 
-  " remove repeated /'s
+  " ensure there are three slashes after 'file:'
   let path = substitute(path, '\%(file://\)\?\zs'.'/\+', '/', 'g')
+  " remove repeated /'s
   let subdir = substitute(subdir, '/\+', '/', 'g')
   let lnk = substitute(lnk, '/\+', '/', 'g')
   if vimwiki#u#is_windows()
@@ -290,7 +295,6 @@ function! vimwiki#base#resolve_scheme(lnk, as_html) " {{{ Resolve scheme
     let scheme = ''
     let url = lnk.ext
   else
-    " ensure there are three slashes after 'file:'
     let url = path.subdir.lnk.ext
   endif
 
