@@ -474,4 +474,5 @@ command! -buffer VimwikiCatUrl call vimwiki#html#CatUrl(expand('%:p'))
 
 " DEBUGGING {{{
 command! VimwikiPrintWikiState call vimwiki#base#print_wiki_state()
+command! VimwikiReadLocalOptions call vimwiki#base#read_wiki_options(1)
 " }}}
