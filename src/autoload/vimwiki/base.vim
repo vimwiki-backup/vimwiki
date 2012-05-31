@@ -8,6 +8,11 @@ if exists("g:loaded_vimwiki_auto") || &cp
 endif
 let g:loaded_vimwiki_auto = 1
 
+" -------------------------------------------------------------------------
+" Load syntax-specific Wiki functionality
+execute 'runtime! autoload/vimwiki/base_'.VimwikiGet('syntax').'.vim'
+" -------------------------------------------------------------------------
+
 " MISC helper functions {{{
 
 function! s:normalize_path(path) "{{{
@@ -753,10 +758,14 @@ function! vimwiki#base#find_prev_link() "{{{
 endfunction
 " }}}
 
-function! vimwiki#base#follow_link(split, ...) "{{{
-  if exists('vimwiki#base_'.VimwikiGet('syntax').'#follow_link')
+" follow_link
+function! vimwiki#base#follow_link(split, ...) "{{{ Parse link at cursor and pass 
+  " to VimwikiLinkHandler, or failing that, the default open_link handler
+  if exists('*vimwiki#base_'.VimwikiGet('syntax').'#follow_link')
     " Syntax-specific links
-    " XXX: Stuart, do we still need it?
+    " XXX: @Stuart: do we still need it?
+    " XXX: @Maxim: most likely!  I am still working on a seemless way to
+    " integrate regexp's without complicating syntax/vimwiki.vim
     if a:0
       call vimwiki#base_{VimwikiGet('syntax')}#follow_link(a:split, a:1)
     else
@@ -1391,8 +1400,9 @@ function! s:normalize_link_syntax_v() " {{{
 
 endfunction " }}}
 
+" normalize_link
 function! vimwiki#base#normalize_link(is_visual_mode) "{{{
-  if exists('vimwiki#base_'.VimwikiGet('syntax').'#normalize_link')
+  if exists('*vimwiki#base_'.VimwikiGet('syntax').'#normalize_link')
     " Syntax-specific links
     call vimwiki#base_{VimwikiGet('syntax')}#normalize_link(a:is_visual_mode)
   else
