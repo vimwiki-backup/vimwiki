@@ -44,11 +44,11 @@ function! vimwiki#base#apply_wiki_options(options) " {{{ Update the current
 endfunction " }}}
 
 function! vimwiki#base#read_wiki_options(check) " {{{ Attempt to read wiki
-  " options from the current page's directory, or its ancesters.  If a vimrc
-  "   file is found, which declares a wiki-options dictionary named
-  "   g:local_wiki, a message alerts the user that an update has been found and
-  "   may be applied.  If the argument check=1, the user is queried before
-  "   applying the update to the current wiki's option.
+  " options from the current page's directory, or its ancesters.  If a file
+  "   named vimwiki.vimrc is found, which declares a wiki-options dictionary
+  "   named g:local_wiki, a message alerts the user that an update has been
+  "   found and may be applied.  If the argument check=1, the user is queried
+  "   before applying the update to the current wiki's option.
 
   " Save global vimwiki options ... after all, the global list is often
   "   initialized for the first time in vimrc files, and we don't want to
@@ -64,33 +64,47 @@ function! vimwiki#base#read_wiki_options(check) " {{{ Attempt to read wiki
   let done = 0
   " ... start the wild-goose chase!
   for invsubdir in ['.', '..', '../..', '../../..']
-    for nm in ['vimrc', '.vimrc', 'vimwiki.vimrc']
-      if !done
-        let local_wiki_options_filename = expand('%:p:h').'/'.invsubdir.'/'.nm
-        try
-          execute 'source '.local_wiki_options_filename
-          if !empty(g:local_wiki)
-            echom 'Found local wiki options in : '.local_wiki_options_filename
-            "
-            " walk first, then run
-            if a:check
-              echom '  g:local_wiki = '.string(g:local_wiki)
-              if tolower(input("Vimwiki: Apply these options [Y]es/[n]o? ")) !~ "y"
-                let g:local_wiki = {}
-                continue
-              endif
-            endif
-            "
-            " restore global list
-            " - this prevents corruption by g:vimwiki_list in options_file
-            let g:vimwiki_list = deepcopy(l:vimwiki_list, 1)
-            "
-            call vimwiki#base#apply_wiki_options(g:local_wiki)
-            let done = 1
-          endif
-        catch /^Vim\%((\a\+)\)\=:E484/	" E484: Can't open file
-        endtry
+    " other names are possible, but most vimrc files will cause grief!
+    for nm in ['vimwiki.vimrc']
+      " TODO: use an alternate strategy, instead of source, to read options
+      if done |
+        continue
       endif
+      "
+      let local_wiki_options_filename = expand('%:p:h').'/'.invsubdir.'/'.nm
+      if !filereadable(local_wiki_options_filename)
+        continue
+      endif
+      "
+      echo "\nFound file : ".local_wiki_options_filename
+      let query = "Vimwiki: Check for options in this file [Y]es/[n]o? "
+      if a:check && (tolower(input(query)) !~ "y")
+        continue
+      endif
+      "
+      try
+        execute 'source '.local_wiki_options_filename
+      catch
+      endtry
+      if empty(g:local_wiki)
+        continue
+      endif
+      "
+      if a:check
+        echo "\n\nFound wiki options\n  g:local_wiki = ".string(g:local_wiki)
+        let query = "Vimwiki: Apply these options [Y]es/[n]o? "
+        if tolower(input(query)) !~ "y"
+          let g:local_wiki = {}
+          continue
+        endif
+      endif
+      "
+      " restore global list
+      " - this prevents corruption by g:vimwiki_list in options_file
+      let g:vimwiki_list = deepcopy(l:vimwiki_list, 1)
+      "
+      call vimwiki#base#apply_wiki_options(g:local_wiki)
+      let done = 1
     endfor
   endfor
   if !done
@@ -100,9 +114,13 @@ function! vimwiki#base#read_wiki_options(check) " {{{ Attempt to read wiki
     let g:vimwiki_list = deepcopy(l:vimwiki_list, 1)
     "
   endif
-  if a:check
+  if a:check 
     echo " \n "
-    call vimwiki#base#print_wiki_state()
+    if done
+      call vimwiki#base#print_wiki_state()
+    else
+      echo "Vimwiki: No options were applied."
+    endif
   endif
 endfunction " }}}
 
