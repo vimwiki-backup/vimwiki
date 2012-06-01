@@ -1754,8 +1754,14 @@ i.e. Linux (!xdg-open), Mac (!open), and Windows (!start).
 You can redefine |VimwikiLinkHandler| function to do something else: >
 
   function! VimwikiLinkHandler(link) 
-    let browser = 'C:\Program Files\Firefox\firefox.exe'
-    execute '!start "'.browser.'" ' . a:link
+    try
+      let browser = 'C:\Program Files\Firefox\firefox.exe'
+      execute '!start "'.browser.'" ' . a:link
+      return 1
+    catch
+      echo "This can happen for a variety of reasons ..."
+    endtry
+    return 0
   endfunction 
 
 A second example handles two new schemes, 'vlocal:' and 'vfile:', which behave
