@@ -365,26 +365,22 @@ function! vimwiki#base#resolve_scheme(lnk, as_html) " {{{ Resolve scheme
     let lnk = substitute(lnk, '^/*', '/', '')
     " convert "/~..." into "~..." for fnamemodify
     let lnk = substitute(lnk, '^/\~', '\~', '')
+    " convert /C: to C: (or fnamemodify(...":p:h") interpret it as C:\C:
+    if vimwiki#u#is_windows()
+      let lnk = substitute(lnk, '^/\ze[[:alpha:]]:', '', '')
+    endif
     if a:as_html
       " prepend browser-specific file: scheme
       let path = 'file://'.fnamemodify(lnk, ":p:h").'/'
+      " ensure there are three slashes after 'file:'
+      let path = substitute(path, '\%(file://\)\?\zs'.'/\+', '/', 'g')
     else
       let path = fnamemodify(lnk, ":p:h").'/'
     endif
     let lnk = fnamemodify(lnk, ":p:t")
     let subdir = ''
-    
-    " ensure there are three slashes after 'file:'
-    let path = substitute(path, '\%(file://\)\?\zs'.'/\+', '/', 'g')
   endif
 
-
-  " remove repeated /'s
-  let subdir = substitute(subdir, '/\+', '/', 'g')
-  let lnk = substitute(lnk, '/\+', '/', 'g')
-  if vimwiki#u#is_windows()
-    let lnk = substitute(lnk, '^/\ze[[:alpha:]]:', '', '')
-  endif
 
   " construct url from parts
   if is_schemeless && a:as_html
