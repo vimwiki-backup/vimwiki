@@ -72,7 +72,6 @@ function! s:get_unique_chars(str) "{{{
 endfunction "}}}
 
 " LINKS: setup wikilink regexps {{{
-" TODO: put these in 'syntax/vimwiki_xxx.vim'
 let g:vimwiki_rxWikiLinkPrefix = '[['
 let g:vimwiki_rxWikiLinkSuffix = ']]'
 let g:vimwiki_rxWikiLinkSeparator = g:vimwiki_link_separator
@@ -86,7 +85,6 @@ let g:vimwiki_WikiLinkTemplate2 = g:vimwiki_rxWikiLinkPrefix . '__LinkUrl__'.
 "
 let magic_chars = '.*[]\^$'
 let valid_chars = '[^\\]'
-
 
 let g:vimwiki_rxWikiLinkPrefix = escape(g:vimwiki_rxWikiLinkPrefix, magic_chars)
 let g:vimwiki_rxWikiLinkSuffix = escape(g:vimwiki_rxWikiLinkSuffix, magic_chars)
@@ -154,17 +152,16 @@ let g:vimwiki_rxWikiInclMatchUrl = g:vimwiki_rxWikiInclPrefix.
 " the whitespace.
 " Stuart, could you check it with markdown templated links? [](http://...), as
 " the last bracket is the part of URL now?
-let g:vimwiki_rxWeblink = '[[:alnum:]]\@<!'. g:vimwiki_rxWeblinkUrl .
-      \ '\S*'
+let g:vimwiki_rxWeblink = '[[:alnum:]]\@<!'. g:vimwiki_rxWeblinkUrl . '\S*'
 " 0a) match URL within URL
 let g:vimwiki_rxWeblinkMatchUrl = g:vimwiki_rxWeblink
 " 0b) match DESCRIPTION within URL
 let g:vimwiki_rxWeblinkMatchDescr = ''
 " }}}
 
-" LINKS: Setup AnyLink regexps {{{
-let g:vimwiki_rxAnyLink = g:vimwiki_rxWikiLink.'\|'.
-    \ g:vimwiki_rxWikiIncl.'\|'.g:vimwiki_rxWeblink
+" LINKS: Setup anylink regexps {{{
+let g:vimwiki_rxAnyLink = g:vimwiki_rxWikiLink.'\|'. 
+      \ g:vimwiki_rxWikiIncl.'\|'.g:vimwiki_rxWeblink
 " }}}
 
 " }}} end of Links
@@ -302,7 +299,7 @@ endif
 
 " Header levels, 1-6
 for i in range(1,6)
-  execute 'syntax match VimwikiHeader'.i.' /'.g:vimwiki_rxH{i}.'/ contains=VimwikiTodo,VimwikiHeaderChar,VimwikiNoExistsLink,VimwikiLink,VimwikiTemplLink,@Spell'
+  execute 'syntax match VimwikiHeader'.i.' /'.g:vimwiki_rxH{i}.'/ contains=VimwikiTodo,VimwikiHeaderChar,VimwikiNoExistsLink,VimwikiCode,VimwikiLink,VimwikiTemplLink,@Spell'
 endfor
 
 " }}}
@@ -320,13 +317,17 @@ let options = ' contained transparent contains=NONE'
 " conceal wikilinks
 execute 'syn match VimwikiLinkChar /'.g:vimwiki_rxWikiLinkPrefix.'/'.options
 execute 'syn match VimwikiLinkChar /'.g:vimwiki_rxWikiLinkSuffix.'/'.options
-execute 'syn match VimwikiLinkChar /'.g:vimwiki_rxWikiLinkPrefix.g:vimwiki_rxWikiLinkUrl.g:vimwiki_rxWikiLinkSeparator.'\ze'.g:vimwiki_rxWikiLinkDescr.g:vimwiki_rxWikiLinkSuffix.'/'.options
+execute 'syn match VimwikiLinkChar /'.g:vimwiki_rxWikiLinkPrefix.
+      \ g:vimwiki_rxWikiLinkUrl.g:vimwiki_rxWikiLinkSeparator.'\ze'.
+      \ g:vimwiki_rxWikiLinkDescr.g:vimwiki_rxWikiLinkSuffix.'/'.options
 
 " conceal wikiincls
 execute 'syn match VimwikiLinkChar /'.g:vimwiki_rxWikiInclPrefix.'/'.options
 execute 'syn match VimwikiLinkChar /'.g:vimwiki_rxWikiInclSuffix.'/'.options
-execute 'syn match VimwikiLinkChar /'.g:vimwiki_rxWikiInclPrefix.g:vimwiki_rxWikiInclUrl.g:vimwiki_rxWikiInclSeparator.'/'.options
-execute 'syn match VimwikiLinkChar /'.g:vimwiki_rxWikiInclArgs.g:vimwiki_rxWikiInclSuffix.'/'.options
+execute 'syn match VimwikiLinkChar /'.g:vimwiki_rxWikiInclPrefix.
+      \ g:vimwiki_rxWikiInclUrl.g:vimwiki_rxWikiInclSeparator.'/'.options
+execute 'syn match VimwikiLinkChar /'.g:vimwiki_rxWikiInclArgs.
+      \ g:vimwiki_rxWikiInclSuffix.'/'.options
 
 " A shortener for long URLs: LinkRest (a middle part of the URL) is concealed
 execute 'syn match VimwikiLinkRest contained `\%(///\=[^/ \t]\+/\)\zs\S\{'
