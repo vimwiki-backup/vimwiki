@@ -1366,7 +1366,7 @@ endfunction
 "   arguments rxUrl, rxDesc, and rxStyle are copied verbatim, without any
 "   special character escapes or substitutions.
 function! vimwiki#base#apply_template(template, rxUrl, rxDesc, rxStyle) "{{{
-  let magic_chars = '.*[]\^$'
+  let magic_chars = '.*[\^$'
   let lnk = escape(a:template, magic_chars)
   if a:rxUrl != ""
     let lnk = substitute(lnk, '__LinkUrl__', '\='."'".a:rxUrl."'", '') 
