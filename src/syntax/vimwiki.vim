@@ -74,7 +74,7 @@ endfunction "}}}
 " LINKS: setup wikilink regexps {{{
 let g:vimwiki_rxWikiLinkPrefix = '[['
 let g:vimwiki_rxWikiLinkSuffix = ']]'
-let g:vimwiki_rxWikiLinkSeparator = g:vimwiki_link_separator
+let g:vimwiki_rxWikiLinkSeparator = '|'
 " [[URL]]
 let g:vimwiki_WikiLinkTemplate1 = g:vimwiki_rxWikiLinkPrefix . '__LinkUrl__'. 
       \ g:vimwiki_rxWikiLinkSuffix
@@ -95,26 +95,25 @@ let g:vimwiki_rxWikiLinkDescr = valid_chars.'\{-}'
 let g:vimwiki_rxWord = '[^[:blank:]()\\]\+'
 
 "
-" 1. [[URL]], or [[URL|DESCRIPTION]]
-" 1a) match [[URL|DESCRIPTION]]
+" [[URL]], or [[URL|DESCRIPTION]]
+" a) match [[URL|DESCRIPTION]]
 let g:vimwiki_rxWikiLink = g:vimwiki_rxWikiLinkPrefix.
       \ g:vimwiki_rxWikiLinkUrl.'\%('.g:vimwiki_rxWikiLinkSeparator.
       \ g:vimwiki_rxWikiLinkDescr.'\)\?'.g:vimwiki_rxWikiLinkSuffix
-" 1b) match URL within [[URL|DESCRIPTION]]
+" b) match URL within [[URL|DESCRIPTION]]
 let g:vimwiki_rxWikiLinkMatchUrl = g:vimwiki_rxWikiLinkPrefix.
       \ '\zs'. g:vimwiki_rxWikiLinkUrl.'\ze\%('. g:vimwiki_rxWikiLinkSeparator.
       \ g:vimwiki_rxWikiLinkDescr.'\)\?'.g:vimwiki_rxWikiLinkSuffix
-" 1c) match DESCRIPTION within [[URL|DESCRIPTION]]
+" c) match DESCRIPTION within [[URL|DESCRIPTION]]
 let g:vimwiki_rxWikiLinkMatchDescr = g:vimwiki_rxWikiLinkPrefix.
       \ g:vimwiki_rxWikiLinkUrl.g:vimwiki_rxWikiLinkSeparator.'\%('.
       \ '\zs'. g:vimwiki_rxWikiLinkDescr. '\ze\)\?'. g:vimwiki_rxWikiLinkSuffix
 " }}}
 
 " LINKS: setup of wikiincl regexps {{{
-" TODO: put these in 'syntax/vimwiki_xxx.vim'
 let g:vimwiki_rxWikiInclPrefix = '{{'
 let g:vimwiki_rxWikiInclSuffix = '}}'
-let g:vimwiki_rxWikiInclSeparator = g:vimwiki_incl_separator
+let g:vimwiki_rxWikiInclSeparator = '|'
 "
 " '{{__LinkUrl__}}'
 let g:vimwiki_WikiInclTemplate1 = g:vimwiki_rxWikiInclPrefix . '__LinkUrl__'. 
@@ -159,14 +158,15 @@ let g:vimwiki_rxWeblinkMatchUrl = g:vimwiki_rxWeblink
 let g:vimwiki_rxWeblinkMatchDescr = ''
 " }}}
 
+
 " LINKS: Setup anylink regexps {{{
 let g:vimwiki_rxAnyLink = g:vimwiki_rxWikiLink.'\|'. 
       \ g:vimwiki_rxWikiIncl.'\|'.g:vimwiki_rxWeblink
 " }}}
 
+
 " }}} end of Links
 
-"TODO
 " LINKS: highlighting is complicated due to "nonexistent" links feature {{{
 function! s:add_target_syntax_ON(target, type) " {{{
   if g:vimwiki_debug > 1
@@ -488,6 +488,7 @@ else
 endif
 "}}}
 
+
 " syntax group highlighting "{{{ 
 
 hi def link VimwikiMarkers Normal
@@ -591,5 +592,6 @@ if !empty(nested)
   endfor
 endif
 "}}}
+
 let timeend = vimwiki#u#time(starttime)  "XXX
 call VimwikiLog_extend('timing',['syntax:scans',timescans],['syntax:regexloaded',time0],['syntax:beforeHLexisting',time01],['syntax:afterHLexisting',time02],['syntax:end',timeend])

@@ -46,17 +46,6 @@ let g:vimwiki_rxH = '='
 let g:vimwiki_symH = 1
 
 
-" NEW! in v2.0
-" Link separators and templates (previously initialized together with per-wiki options)
-
-" wikilink, wikiincl separators
-let g:vimwiki_link_separator = '|'
-let g:vimwiki_incl_separator = '|'
-
-" web_template, image_template TODO: replace these with mediawiki syntax
-let g:vimwiki_web_template = ''
-let g:vimwiki_image_template = ''
-
 
 " <hr>, horizontal rule
 let g:vimwiki_rxHR = '^-----*$'
