@@ -372,8 +372,6 @@ function! vimwiki#base#resolve_scheme(lnk, as_html) " {{{ Resolve scheme
     if a:as_html
       " prepend browser-specific file: scheme
       let path = 'file://'.fnamemodify(lnk, ":p:h").'/'
-      " ensure there are three slashes after 'file:'
-      let path = substitute(path, '\%(file://\)\?\zs'.'/\+', '/', 'g')
     else
       let path = fnamemodify(lnk, ":p:h").'/'
     endif
