@@ -91,6 +91,13 @@ let g:vimwiki_rxWikiLinkMatchDescr = g:vimwiki_rxWikiLinkPrefix.
       \ '\zs'. g:vimwiki_rxWikiLinkDescr. '\ze\)\?'. g:vimwiki_rxWikiLinkSuffix
 " }}}
 
+" LINKS: Syntax helper {{{
+let g:vimwiki_rxWikiLinkPrefix1 = g:vimwiki_rxWikiLinkPrefix.
+      \ g:vimwiki_rxWikiLinkUrl.g:vimwiki_rxWikiLinkSeparator
+let g:vimwiki_rxWikiLinkSuffix1 = g:vimwiki_rxWikiLinkSuffix
+" }}}
+
+
 " LINKS: setup of wikiincl regexps {{{
 let g:vimwiki_rxWikiInclPrefix = '{{'
 let g:vimwiki_rxWikiInclSuffix = '}}'
@@ -121,6 +128,13 @@ let g:vimwiki_rxWikiIncl = g:vimwiki_rxWikiInclPrefix.
 let g:vimwiki_rxWikiInclMatchUrl = g:vimwiki_rxWikiInclPrefix.
       \ '\zs'. g:vimwiki_rxWikiInclUrl. '\ze'.
       \ g:vimwiki_rxWikiInclArgs. g:vimwiki_rxWikiInclSuffix
+" }}}
+
+" LINKS: Syntax helper {{{
+let g:vimwiki_rxWikiInclPrefix1 = g:vimwiki_rxWikiInclPrefix.
+      \ g:vimwiki_rxWikiInclUrl.g:vimwiki_rxWikiInclSeparator
+let g:vimwiki_rxWikiInclSuffix1 = g:vimwiki_rxWikiInclArgs.
+      \ g:vimwiki_rxWikiInclSuffix
 " }}}
 
 " LINKS: Setup weblink regexps {{{
@@ -292,23 +306,27 @@ endif
 
 syntax spell toplevel
 
+if g:vimwiki_debug > 1
+  echom 'WikiLink Prefix: '.g:vimwiki_rxWikiLinkPrefix1
+  echom 'WikiLink Suffix: '.g:vimwiki_rxWikiLinkSuffix1
+  echom 'WikiIncl Prefix: '.g:vimwiki_rxWikiInclPrefix1
+  echom 'WikiIncl Suffix: '.g:vimwiki_rxWikiInclSuffix1
+endif
+
 " VimwikiLinkChar is for syntax markers (and also URL when a description
 " is present) and may be concealed
 let options = ' contained transparent contains=NONE'
 " conceal wikilinks
 execute 'syn match VimwikiLinkChar /'.g:vimwiki_rxWikiLinkPrefix.'/'.options
 execute 'syn match VimwikiLinkChar /'.g:vimwiki_rxWikiLinkSuffix.'/'.options
-execute 'syn match VimwikiLinkChar /'.g:vimwiki_rxWikiLinkPrefix.
-      \ g:vimwiki_rxWikiLinkUrl.g:vimwiki_rxWikiLinkSeparator.'\ze'.
-      \ g:vimwiki_rxWikiLinkDescr.g:vimwiki_rxWikiLinkSuffix.'/'.options
+execute 'syn match VimwikiLinkChar /'.g:vimwiki_rxWikiLinkPrefix1.'/'.options
+execute 'syn match VimwikiLinkChar /'.g:vimwiki_rxWikiLinkSuffix1.'/'.options
 
 " conceal wikiincls
 execute 'syn match VimwikiLinkChar /'.g:vimwiki_rxWikiInclPrefix.'/'.options
 execute 'syn match VimwikiLinkChar /'.g:vimwiki_rxWikiInclSuffix.'/'.options
-execute 'syn match VimwikiLinkChar /'.g:vimwiki_rxWikiInclPrefix.
-      \ g:vimwiki_rxWikiInclUrl.g:vimwiki_rxWikiInclSeparator.'/'.options
-execute 'syn match VimwikiLinkChar /'.g:vimwiki_rxWikiInclArgs.
-      \ g:vimwiki_rxWikiInclSuffix.'/'.options
+execute 'syn match VimwikiLinkChar /'.g:vimwiki_rxWikiInclPrefix1.'/'.options
+execute 'syn match VimwikiLinkChar /'.g:vimwiki_rxWikiInclSuffix1.'/'.options
 
 " A shortener for long URLs: LinkRest (a middle part of the URL) is concealed
 execute 'syn match VimwikiLinkRest contained `\%(///\=[^/ \t]\+/\)\zs\S\{'
