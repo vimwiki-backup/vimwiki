@@ -72,12 +72,11 @@ function! VimwikiFoldLevel(lnum) "{{{
     return '>'.n
   endif
 
-
+  let base_level = s:get_base_level(a:lnum)
 
   " List item folding...
   if g:vimwiki_fold_lists
     let nnline = getline(a:lnum + 1)
-    let base_level = s:get_base_level(a:lnum)
     
     let rx_list_item = '\('.
           \ g:vimwiki_rxListBullet.'\|'.g:vimwiki_rxListNumber.
@@ -110,11 +109,9 @@ function! VimwikiFoldLevel(lnum) "{{{
         endif
       endif
     endif
-
-    return base_level
   endif
 
-  return -1
+  return base_level
 endfunction "}}}
 
 function! s:get_base_level(lnum) "{{{
