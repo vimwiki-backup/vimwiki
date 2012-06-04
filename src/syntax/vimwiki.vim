@@ -245,7 +245,7 @@ else
 endif
 
 " Weblink
-call s:add_target_syntax_ON(g:vimwiki_rxWeblink, 'VimwikiTemplLink')
+call s:add_target_syntax_ON(g:vimwiki_rxWeblink, 'VimwikiLink')
 
 " WikiLink
 " All remaining schemes are highlighted automatically
@@ -294,7 +294,7 @@ endif
 
 " Header levels, 1-6
 for i in range(1,6)
-  execute 'syntax match VimwikiHeader'.i.' /'.g:vimwiki_rxH{i}.'/ contains=VimwikiTodo,VimwikiHeaderChar,VimwikiNoExistsLink,VimwikiCode,VimwikiLink,VimwikiTemplLink,@Spell'
+  execute 'syntax match VimwikiHeader'.i.' /'.g:vimwiki_rxH{i}.'/ contains=VimwikiTodo,VimwikiHeaderChar,VimwikiNoExistsLink,VimwikiCode,VimwikiLink,@Spell'
 endfor
 
 " }}}
@@ -372,7 +372,6 @@ execute 'syntax match VimwikiTodo /'. g:vimwiki_rxTodo .'/'
 syntax match VimwikiTableRow /^\s*|.\+|\s*$/ 
       \ transparent contains=VimwikiCellSeparator,
                            \ VimwikiLinkT,
-                           \ VimwikiTemplLinkT,
                            \ VimwikiNoExistsLinkT,
                            \ VimwikiEmoticons,
                            \ VimwikiTodo,
@@ -521,9 +520,7 @@ hi def link VimwikiNoExistsLink SpellBad
 hi def link VimwikiNoExistsLinkT VimwikiNoExistsLink
 
 hi def link VimwikiLink Underlined
-hi def link VimwikiTemplLink VimwikiLink
 hi def link VimwikiLinkT VimwikiLink
-hi def link VimwikiTemplLinkT VimwikiLink
 
 hi def link VimwikiList Identifier
 hi def link VimwikiListTodo VimwikiList
