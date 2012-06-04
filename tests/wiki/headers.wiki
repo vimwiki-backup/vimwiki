@@ -5,3 +5,8 @@
 ===== Fifth =====
 ====== Sixth ======
 ======= Seventh =======
+
+
+= Header with `code text` ! =
+== Header with _italic face_ ! ==
+=== Header with *bold face* ! ===

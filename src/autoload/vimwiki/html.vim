@@ -415,12 +415,12 @@ function! s:tag_wikiincl(value) "{{{
     let descr = matchstr(str, vimwiki#html#incl_match_arg(1))
     let verbatim_str = matchstr(str, vimwiki#html#incl_match_arg(2))
     " resolve url
-    let [scheme, path, subdir, lnk, ext, url] = 
+    let [idx, scheme, path, subdir, lnk, ext, url] = 
           \ vimwiki#base#resolve_scheme(url_0, 1)
     " generate html output
     " TODO: migrate non-essential debugging messages into g:VimwikiLog
     if g:vimwiki_debug > 1
-      echom '{{scheme='.scheme.', path='.path.', subdir='.subdir.', lnk='.lnk.', ext='.ext.'}}'
+      echom '{{idx='.idx.', scheme='.scheme.', path='.path.', subdir='.subdir.', lnk='.lnk.', ext='.ext.'}}'
     endif
     let url = escape(url, '#')
     let line = vimwiki#html#linkify_image(url, descr, verbatim_str)
@@ -441,13 +441,13 @@ function! s:tag_wikilink(value) "{{{
   let descr = (substitute(descr,'^\s*\(.*\)\s*$','\1','') != '' ? descr : url)
 
   " resolve url
-  let [scheme, path, subdir, lnk, ext, url] = 
+  let [idx, scheme, path, subdir, lnk, ext, url] = 
         \ vimwiki#base#resolve_scheme(url, 1)
 
   " generate html output
   " TODO: migrate non-essential debugging messages into g:VimwikiLog
   if g:vimwiki_debug > 1
-    echom '[[scheme='.scheme.', path='.path.', subdir='.subdir.', lnk='.lnk.', ext='.ext.']]'
+    echom '[[idx='.idx.', scheme='.scheme.', path='.path.', subdir='.subdir.', lnk='.lnk.', ext='.ext.']]'
   endif
   let url = escape(url, '#')
   let line = vimwiki#html#linkify_link(url, descr)

@@ -23,12 +23,6 @@ let timescans = vimwiki#u#time(starttime)  "XXX
   "endif
 
 " LINKS: assume this is common to all syntaxes "{{{
-" LINKS: WikiLinks  {{{
-" Words
-" - more permissive than '\<\w\+\>' which uses 'iskeyword' characters
-" - less permissive than rxWikiLinkUrl which uses non-separator characters
-let g:vimwiki_rxWord = '[^[:blank:]()\[\]]\+'
-" }}}
 
 " LINKS: WebLinks {{{
 " match URL for common protocols;
@@ -47,18 +41,6 @@ let g:vimwiki_rxWeblinkUrl = g:vimwiki_rxWebProtocols .
     \ '\S\{-1,}'. '\%(([^ \t()]*)\)\='
 " }}}
 
-" LINKS: Images {{{
-
-" match URL
-let g:vimwiki_rxImagelinkProtocols = ''.  
-      \ '\%('.
-        \ '\%('.join(split(g:vimwiki_web_schemes1, '\s*,\s*'), '\|'). '\):'.
-        \ '\%(//\)'.
-      \ '\)\?'
-
-let g:vimwiki_rxImagelinkUrl = g:vimwiki_rxImagelinkProtocols .
-    \ '\S\{-1,}'. '\%(([^ \t()]*)\)\='
-" }}}
 " }}}
 
 " -------------------------------------------------------------------------
@@ -90,78 +72,42 @@ function! s:get_unique_chars(str) "{{{
 endfunction "}}}
 
 " LINKS: setup wikilink regexps {{{
-" TODO: put these in 'syntax/vimwiki_xxx.vim'
 let g:vimwiki_rxWikiLinkPrefix = '[['
 let g:vimwiki_rxWikiLinkSuffix = ']]'
 let g:vimwiki_rxWikiLinkSeparator = g:vimwiki_link_separator
 " [[URL]]
 let g:vimwiki_WikiLinkTemplate1 = g:vimwiki_rxWikiLinkPrefix . '__LinkUrl__'. 
       \ g:vimwiki_rxWikiLinkSuffix
-if VimwikiGet('syntax')!='markdown'
 " [[URL|DESCRIPTION]]
-  let g:vimwiki_WikiLinkTemplate2 = g:vimwiki_rxWikiLinkPrefix . '__LinkUrl__'. 
-        \ g:vimwiki_rxWikiLinkSeparator. '__LinkDescription__'.
-        \ g:vimwiki_rxWikiLinkSuffix
-else
-" [[DESCRIPTION][URL]]
-  let g:vimwiki_WikiLinkTemplate2 = g:vimwiki_rxWikiLinkPrefix . '__LinkDescription__'. 
-        \ g:vimwiki_rxWikiLinkSeparator. '__LinkUrl__'.
-        \ g:vimwiki_rxWikiLinkSuffix
-endif
+let g:vimwiki_WikiLinkTemplate2 = g:vimwiki_rxWikiLinkPrefix . '__LinkUrl__'. 
+      \ g:vimwiki_rxWikiLinkSeparator. '__LinkDescription__'.
+      \ g:vimwiki_rxWikiLinkSuffix
 "
 let magic_chars = '.*[]\^$'
-" let exclude_chars = g:vimwiki_rxWikiLinkPrefix.g:vimwiki_rxWikiLinkSeparator.
-      " \ g:vimwiki_rxWikiLinkSuffix
-let exclude_chars = g:vimwiki_rxWikiLinkPrefix.g:vimwiki_rxWikiLinkSuffix
-let exclude_chars = s:get_unique_chars(exclude_chars)
-let valid_chars = '[^'.escape(exclude_chars, magic_chars).']'
-"
+let valid_chars = '[^\\]'
+
 let g:vimwiki_rxWikiLinkPrefix = escape(g:vimwiki_rxWikiLinkPrefix, magic_chars)
 let g:vimwiki_rxWikiLinkSuffix = escape(g:vimwiki_rxWikiLinkSuffix, magic_chars)
 let g:vimwiki_rxWikiLinkSeparator = escape(g:vimwiki_rxWikiLinkSeparator, magic_chars)
 let g:vimwiki_rxWikiLinkUrl = valid_chars.'\{-}'
-let g:vimwiki_rxWikiLinkDescr = valid_chars.'*'
+let g:vimwiki_rxWikiLinkDescr = valid_chars.'\{-}'
+
+let g:vimwiki_rxWord = '[^[:blank:]()\\]\+'
+
 "
-if VimwikiGet('syntax')!='markdown'
-  " 1. [[URL]], or [[URL|DESCRIPTION]]
-  " 1a) match [[URL|DESCRIPTION]]
-  let g:vimwiki_rxWikiLink = g:vimwiki_rxWikiLinkPrefix.
-        \ g:vimwiki_rxWikiLinkUrl.'\%('.g:vimwiki_rxWikiLinkSeparator.
-        \ g:vimwiki_rxWikiLinkDescr.'\)\?'.g:vimwiki_rxWikiLinkSuffix
-  " 1b) match URL within [[URL|DESCRIPTION]]
-  let g:vimwiki_rxWikiLinkMatchUrl = g:vimwiki_rxWikiLinkPrefix.
-        \ '\zs'. g:vimwiki_rxWikiLinkUrl.'\ze\%('. g:vimwiki_rxWikiLinkSeparator.
-        \ g:vimwiki_rxWikiLinkDescr.'\)\?'.g:vimwiki_rxWikiLinkSuffix
-  " 1c) match DESCRIPTION within [[URL|DESCRIPTION]]
-  let g:vimwiki_rxWikiLinkMatchDescr = g:vimwiki_rxWikiLinkPrefix.
-        \ g:vimwiki_rxWikiLinkUrl.'\%('.g:vimwiki_rxWikiLinkSeparator.
-        \ '\zs'. g:vimwiki_rxWikiLinkDescr. '\ze\)\?'. g:vimwiki_rxWikiLinkSuffix
-else
-  " 1. [[URL]], or [[DESCRIPTION][URL]]
-  " 1a) match [[DESCRIPTION][URL]]
-  let g:vimwiki_rxWikiLink = g:vimwiki_rxWikiLinkPrefix.
-        \ '\%('.g:vimwiki_rxWikiLinkDescr.g:vimwiki_rxWikiLinkSeparator.'\)\?'.
-        \ g:vimwiki_rxWikiLinkUrl.g:vimwiki_rxWikiLinkSuffix
-  " 1b) match URL within [[DESCRIPTION][URL]]
-  let g:vimwiki_rxWikiLinkMatchUrl = g:vimwiki_rxWikiLinkPrefix.
-        \ '\%('.g:vimwiki_rxWikiLinkDescr.g:vimwiki_rxWikiLinkSeparator.'\)\?'.
-        \ '\zs'. g:vimwiki_rxWikiLinkUrl. '\ze'. g:vimwiki_rxWikiLinkSuffix
-  " 1c) match DESCRIPTION within [[DESCRIPTION][URL]]
-  let g:vimwiki_rxWikiLinkMatchDescr = g:vimwiki_rxWikiLinkPrefix.
-        \ '\%(\zs'. g:vimwiki_rxWikiLinkDescr.'\ze'. g:vimwiki_rxWikiLinkSeparator.'\)\?'.
-        \ g:vimwiki_rxWikiLinkUrl.g:vimwiki_rxWikiLinkSuffix
-endif
-" Syntax helper
-let rxWikilink_helper = vimwiki#base#apply_template(g:vimwiki_WikiLinkTemplate2, 
-      \ g:vimwiki_rxWikiLinkUrl, 
-      \ '__LinkDescription__',
-      \ '')
-let g:vimwiki_rxWikilinkPrefix = s:get_prefix(rxWikilink_helper, '__LinkDescription__')
-let g:vimwiki_rxWikilinkSuffix = s:get_suffix(rxWikilink_helper, '__LinkDescription__')
-if g:vimwiki_debug > 1
-  echom 'Wikilink Prefix: '.g:vimwiki_rxWikilinkPrefix
-  echom 'Wikilink Suffix: '.g:vimwiki_rxWikilinkSuffix
-endif
+" 1. [[URL]], or [[URL|DESCRIPTION]]
+" 1a) match [[URL|DESCRIPTION]]
+let g:vimwiki_rxWikiLink = g:vimwiki_rxWikiLinkPrefix.
+      \ g:vimwiki_rxWikiLinkUrl.'\%('.g:vimwiki_rxWikiLinkSeparator.
+      \ g:vimwiki_rxWikiLinkDescr.'\)\?'.g:vimwiki_rxWikiLinkSuffix
+" 1b) match URL within [[URL|DESCRIPTION]]
+let g:vimwiki_rxWikiLinkMatchUrl = g:vimwiki_rxWikiLinkPrefix.
+      \ '\zs'. g:vimwiki_rxWikiLinkUrl.'\ze\%('. g:vimwiki_rxWikiLinkSeparator.
+      \ g:vimwiki_rxWikiLinkDescr.'\)\?'.g:vimwiki_rxWikiLinkSuffix
+" 1c) match DESCRIPTION within [[URL|DESCRIPTION]]
+let g:vimwiki_rxWikiLinkMatchDescr = g:vimwiki_rxWikiLinkPrefix.
+      \ g:vimwiki_rxWikiLinkUrl.g:vimwiki_rxWikiLinkSeparator.'\%('.
+      \ '\zs'. g:vimwiki_rxWikiLinkDescr. '\ze\)\?'. g:vimwiki_rxWikiLinkSuffix
 " }}}
 
 " LINKS: setup of wikiincl regexps {{{
@@ -177,19 +123,13 @@ let g:vimwiki_WikiInclTemplate1 = g:vimwiki_rxWikiInclPrefix . '__LinkUrl__'.
 let g:vimwiki_WikiInclTemplate2 = g:vimwiki_rxWikiInclPrefix . '__LinkUrl__'. 
       \ '__LinkDescription__'.
       \ g:vimwiki_rxWikiInclSuffix
-"
-let magic_chars = '.*[]\^$'
-let exclude_chars = g:vimwiki_rxWikiInclPrefix. g:vimwiki_rxWikiInclSeparator.
-      \ g:vimwiki_rxWikiInclSuffix
-let exclude_chars = s:get_unique_chars(exclude_chars)
-let valid_chars = '[^'.escape(exclude_chars, magic_chars).']'
-"
+
 let g:vimwiki_rxWikiInclPrefix = escape(g:vimwiki_rxWikiInclPrefix, magic_chars)
 let g:vimwiki_rxWikiInclSuffix = escape(g:vimwiki_rxWikiInclSuffix, magic_chars)
 let g:vimwiki_rxWikiInclSeparator = escape(g:vimwiki_rxWikiInclSeparator, magic_chars)
-let g:vimwiki_rxWikiInclUrl = valid_chars.'\+'
-let g:vimwiki_rxWikiInclArg = valid_chars.'*'
-let g:vimwiki_rxWikiInclArgs = '\%('. g:vimwiki_rxWikiInclSeparator. g:vimwiki_rxWikiInclArg. '\)'.'*'
+let g:vimwiki_rxWikiInclUrl = valid_chars.'\{-}'
+let g:vimwiki_rxWikiInclArg = valid_chars.'\{-}'
+let g:vimwiki_rxWikiInclArgs = '\%('. g:vimwiki_rxWikiInclSeparator. g:vimwiki_rxWikiInclArg. '\)'.'\{-}'
 "
 "
 " *. {{URL}[{...}]}  - i.e.  {{URL}}, {{URL|ARG1}}, {{URL|ARG1|ARG2}}, etc.
@@ -204,7 +144,6 @@ let g:vimwiki_rxWikiInclMatchUrl = g:vimwiki_rxWikiInclPrefix.
 " }}}
 
 " LINKS: Setup weblink regexps {{{
-" FIXME all submatches can be done with "numbered" \( \) groups
 " 0. URL : free-standing links: keep URL UR(L) strip trailing punct: URL; URL) UR(L)) 
 " let g:vimwiki_rxWeblink = '[\["(|]\@<!'. g:vimwiki_rxWeblinkUrl .
       " \ '\%([),:;.!?]\=\%([ \t]\|$\)\)\@='
@@ -213,162 +152,18 @@ let g:vimwiki_rxWikiInclMatchUrl = g:vimwiki_rxWikiInclPrefix.
 " the whitespace.
 " Stuart, could you check it with markdown templated links? [](http://...), as
 " the last bracket is the part of URL now?
-let g:vimwiki_rxWeblink = '[[:alnum:]]\@<!'. g:vimwiki_rxWeblinkUrl .
-      \ '\S*'
+let g:vimwiki_rxWeblink = '[[:alnum:]]\@<!'. g:vimwiki_rxWeblinkUrl . '\S*'
 " 0a) match URL within URL
 let g:vimwiki_rxWeblinkMatchUrl = g:vimwiki_rxWeblink
 " 0b) match DESCRIPTION within URL
 let g:vimwiki_rxWeblinkMatchDescr = ''
 " }}}
 
-
-
-" LINKS: TEMPLATED weblink and imagelinks {{{
-"
-function! s:setup_weblink_regexps() " {{{
-  let g:vimwiki_rxWeblink0 = g:vimwiki_rxWeblink
-  let g:vimwiki_rxWeblinkMatchUrl0 = g:vimwiki_rxWeblinkMatchUrl
-  let g:vimwiki_rxWeblinkMatchDescr0 = g:vimwiki_rxWeblinkMatchDescr
-  "
-  let template_args = '\%(__LinkUrl__\|__LinkDescription__\)'
-  let t_Web = g:vimwiki_web_template
-  if g:vimwiki_debug > 1
-    echom 'Weblink Template: '.t_Web
-  endif
-  let magic_chars = '.*[]\^$'
-  " list all delimiters that appear in Template *after* DESCRIPTION
-  let exclude_chars = s:get_suffix(t_Web, '__LinkDescription__')
-  let exclude_chars = join(split(exclude_chars, template_args), '')
-  let exclude_chars = s:get_unique_chars(exclude_chars)
-  let valid_chars = '[^'.escape(exclude_chars, magic_chars).']'
-  let g:vimwiki_rxWeblinkDescr = valid_chars.'*'
-  "
-  " " 2012-02-04 TODO not starting with [[ or ][ ?  ... prefix = '[\[\]]\@<!\[' 
-  " 1. web template
-  let g:vimwiki_rxWeblink1 = vimwiki#base#apply_template(t_Web, 
-        \ g:vimwiki_rxWeblinkUrl, 
-        \ g:vimwiki_rxWeblinkDescr, 
-        \ '')
-  " 1a) match URL within web template
-  let g:vimwiki_rxWeblinkMatchUrl1 = vimwiki#base#apply_template(t_Web,
-        \ '\zs'.g:vimwiki_rxWeblinkUrl.'\ze', 
-        \ g:vimwiki_rxWeblinkDescr, 
-        \ '')
-  " 1b) match DESCRIPTION within web template
-  let g:vimwiki_rxWeblinkMatchDescr1 = vimwiki#base#apply_template(t_Web,
-        \ g:vimwiki_rxWeblinkUrl, 
-        \ '\zs'.g:vimwiki_rxWeblinkDescr.'\ze', 
-        \ '')
-  " Syntax helper
-  let rxWeblink_helper = vimwiki#base#apply_template(t_Web, 
-        \ g:vimwiki_rxWeblinkUrl, 
-        \ '__LinkDescription__',
-        \ '')
-  let g:vimwiki_rxWeblinkPrefix = s:get_prefix(rxWeblink_helper, '__LinkDescription__')
-  let g:vimwiki_rxWeblinkSuffix = s:get_suffix(rxWeblink_helper, '__LinkDescription__')
-  if g:vimwiki_debug > 1
-    echom 'Web Prefix: '.g:vimwiki_rxWeblinkPrefix
-    echom 'Web Suffix: '.g:vimwiki_rxWeblinkSuffix
-  endif
-  "
-  " *. ANY weblink
-  " *a) match ANY weblink
-  let g:vimwiki_rxWeblink = ''.
-        \ g:vimwiki_rxWeblink1.'\|'.
-        \ g:vimwiki_rxWeblink0
-  " *b) match URL within ANY weblink
-  let g:vimwiki_rxWeblinkMatchUrl = ''.
-        \ g:vimwiki_rxWeblinkMatchUrl1.'\|'.
-        \ g:vimwiki_rxWeblinkMatchUrl0
-  " *c) match DESCRIPTION within ANY weblink
-  let g:vimwiki_rxWeblinkMatchDescr = ''.
-        \ g:vimwiki_rxWeblinkMatchDescr1.'\|'.
-        \ g:vimwiki_rxWeblinkMatchDescr0
-endfunction " }}}
-"
-function! s:setup_imagelink_regexps() " {{{
-  let template_args = '\%(__LinkUrl__\|__LinkDescription__\|__LinkStyle__\)'
-  let t_Image = g:vimwiki_image_template
-  if g:vimwiki_debug > 1
-    echom 'Image Template: '.t_Image
-  endif
-  let magic_chars = '.*[]\^$'
-  " list all delimiters that appear in Template *after* DESCRIPTION
-  let exclude_chars = s:get_suffix(t_Image, '__LinkDescription__')
-  let exclude_chars = join(split(exclude_chars, template_args), '')
-  let exclude_chars = s:get_unique_chars(exclude_chars)
-  let valid_chars = '[^'.escape(exclude_chars, magic_chars).']'
-  let g:vimwiki_rxImagelinkDescr = valid_chars.'*'
-  " list all delimiters that appear in Template *after* STYLE
-  let exclude_chars = s:get_suffix(t_Image, '__LinkStyle__')
-  let exclude_chars = join(split(exclude_chars, template_args), '')
-  let exclude_chars = s:get_unique_chars(exclude_chars)
-  let valid_chars = '[^'.escape(exclude_chars, magic_chars).']'
-  let g:vimwiki_rxImagelinkStyle = valid_chars.'*'
-  "
-  " 1. image template
-  let g:vimwiki_rxImagelink1 = vimwiki#base#apply_template(t_Image, 
-        \ g:vimwiki_rxImagelinkUrl, 
-        \ g:vimwiki_rxImagelinkDescr,
-        \ g:vimwiki_rxImagelinkStyle)
-  " 1a) match URL within image template
-  let g:vimwiki_rxImagelinkMatchUrl1 = vimwiki#base#apply_template(t_Image,
-        \ '\zs'.g:vimwiki_rxImagelinkUrl.'\ze', 
-        \ g:vimwiki_rxImagelinkDescr, 
-        \ g:vimwiki_rxImagelinkStyle)
-  " 1b) match DESCRIPTION within image template
-  let g:vimwiki_rxImagelinkMatchDescr1 = vimwiki#base#apply_template(t_Image,
-        \ g:vimwiki_rxImagelinkUrl, 
-        \ '\zs'.g:vimwiki_rxImagelinkDescr.'\ze', 
-        \ g:vimwiki_rxImagelinkStyle)
-  " 1c) match STYLE within image template
-  let g:vimwiki_rxImagelinkMatchStyle1 = vimwiki#base#apply_template(t_Image,
-        \ g:vimwiki_rxImagelinkUrl, 
-        \ g:vimwiki_rxImagelinkDescr,
-        \ '\zs'.g:vimwiki_rxImagelinkStyle.'\ze')
-  " Syntax helper
-  let rxImagelink_helper = vimwiki#base#apply_template(t_Image, 
-        \ g:vimwiki_rxImagelinkUrl, 
-        \ '__LinkDescription__',
-        \ g:vimwiki_rxImagelinkStyle)
-  let g:vimwiki_rxImagelinkPrefix = s:get_prefix(rxImagelink_helper, '__LinkDescription__')
-  let g:vimwiki_rxImagelinkSuffix = s:get_suffix(rxImagelink_helper, '__LinkDescription__')
-  if g:vimwiki_debug > 1
-    echom 'Image Prefix: '.g:vimwiki_rxImagelinkPrefix
-    echom 'Image Suffix: '.g:vimwiki_rxImagelinkSuffix
-  endif
-  " 
-  " *. ANY image
-  " *a) match ANY image
-  let g:vimwiki_rxImagelink = ''.
-        \ g:vimwiki_rxImagelink1
-  " *b) match URL within ANY image
-  let g:vimwiki_rxImagelinkMatchUrl = ''.
-        \ g:vimwiki_rxImagelinkMatchUrl1
-  " *c) match DESCRIPTION within ANY image
-  let g:vimwiki_rxImagelinkMatchDescr = ''.
-        \ g:vimwiki_rxImagelinkMatchDescr1
-  " *c) match STYLE within ANY image
-  let g:vimwiki_rxImagelinkMatchStyle = ''.
-        \ g:vimwiki_rxImagelinkMatchStyle1
-endfunction " }}}
-
-" LINKS: Setup templated weblink regexps {{{
-if !empty(g:vimwiki_web_template)
-  call s:setup_weblink_regexps()
-endif
+" LINKS: Setup anylink regexps {{{
+let g:vimwiki_rxAnyLink = g:vimwiki_rxWikiLink.'\|'. 
+      \ g:vimwiki_rxWikiIncl.'\|'.g:vimwiki_rxWeblink
 " }}}
 
-" LINKS: Setup templated imagelink regexps {{{
-if !empty(g:vimwiki_image_template)
-  let g:vimwiki_rxImagelink = ''
-  let g:vimwiki_rxImagelinkMatchUrl = ''
-  let g:vimwiki_rxImagelinkMatchDescr = ''
-  let g:vimwiki_rxImagelinkMatchStyle = ''
-  call s:setup_imagelink_regexps()
-endif
-" }}}
-" }}} end of TEMPLATED Links
 " }}} end of Links
 
 "TODO
@@ -456,10 +251,6 @@ endif
 
 " Weblink
 call s:add_target_syntax_ON(g:vimwiki_rxWeblink, 'VimwikiTemplLink')
-" Image
-if !empty(g:vimwiki_image_template)
-  call s:add_target_syntax_ON(g:vimwiki_rxImagelink, 'VimwikiTemplLink')
-endif
 
 " WikiLink
 " All remaining schemes are highlighted automatically
@@ -508,7 +299,7 @@ endif
 
 " Header levels, 1-6
 for i in range(1,6)
-  execute 'syntax match VimwikiHeader'.i.' /'.g:vimwiki_rxH{i}.'/ contains=VimwikiTodo,VimwikiHeaderChar,VimwikiNoExistsLink,VimwikiLink,VimwikiTemplLink,@Spell'
+  execute 'syntax match VimwikiHeader'.i.' /'.g:vimwiki_rxH{i}.'/ contains=VimwikiTodo,VimwikiHeaderChar,VimwikiNoExistsLink,VimwikiCode,VimwikiLink,VimwikiTemplLink,@Spell'
 endfor
 
 " }}}
@@ -526,30 +317,17 @@ let options = ' contained transparent contains=NONE'
 " conceal wikilinks
 execute 'syn match VimwikiLinkChar /'.g:vimwiki_rxWikiLinkPrefix.'/'.options
 execute 'syn match VimwikiLinkChar /'.g:vimwiki_rxWikiLinkSuffix.'/'.options
-
-" execute 'syn match VimwikiLinkChar /'.g:vimwiki_rxWikiLinkPrefix.g:vimwiki_rxWikiLinkUrl.g:vimwiki_rxWikiLinkSeparator.'\ze'.g:vimwiki_rxWikiLinkDescr.g:vimwiki_rxWikiLinkSuffix.'/'.options
-execute 'syn match VimwikiLinkChar "'.g:vimwiki_rxWikilinkPrefix.'"'.options
-execute 'syn match VimwikiLinkChar "'.g:vimwiki_rxWikilinkSuffix.'"'.options
-
+execute 'syn match VimwikiLinkChar /'.g:vimwiki_rxWikiLinkPrefix.
+      \ g:vimwiki_rxWikiLinkUrl.g:vimwiki_rxWikiLinkSeparator.'\ze'.
+      \ g:vimwiki_rxWikiLinkDescr.g:vimwiki_rxWikiLinkSuffix.'/'.options
 
 " conceal wikiincls
 execute 'syn match VimwikiLinkChar /'.g:vimwiki_rxWikiInclPrefix.'/'.options
 execute 'syn match VimwikiLinkChar /'.g:vimwiki_rxWikiInclSuffix.'/'.options
-execute 'syn match VimwikiLinkChar /'.g:vimwiki_rxWikiInclPrefix.g:vimwiki_rxWikiInclUrl.g:vimwiki_rxWikiInclSeparator.'/'.options
-execute 'syn match VimwikiLinkChar /'.g:vimwiki_rxWikiInclArgs.g:vimwiki_rxWikiInclSuffix.'/'.options
-
-" conceal weblinks
-if !empty(g:vimwiki_web_template)
-  execute 'syn match VimwikiTemplLinkChar "'.g:vimwiki_rxWeblinkPrefix.'"'.options
-  execute 'syn match VimwikiTemplLinkChar "'.g:vimwiki_rxWeblinkSuffix.'"'.options
-endif
-
-" conceal imagelinks
-if !empty(g:vimwiki_image_template)
-  execute 'syn match VimwikiTemplLinkChar "'.g:vimwiki_rxImagelinkPrefix.'"'.options
-  execute 'syn match VimwikiTemplLinkChar "'.g:vimwiki_rxImagelinkSuffix.'"'.options
-endif
-
+execute 'syn match VimwikiLinkChar /'.g:vimwiki_rxWikiInclPrefix.
+      \ g:vimwiki_rxWikiInclUrl.g:vimwiki_rxWikiInclSeparator.'/'.options
+execute 'syn match VimwikiLinkChar /'.g:vimwiki_rxWikiInclArgs.
+      \ g:vimwiki_rxWikiInclSuffix.'/'.options
 
 " A shortener for long URLs: LinkRest (a middle part of the URL) is concealed
 execute 'syn match VimwikiLinkRest contained `\%(///\=[^/ \t]\+/\)\zs\S\{'
