@@ -72,12 +72,11 @@ function! VimwikiFoldLevel(lnum) "{{{
     return '>'.n
   endif
 
-
+  let base_level = s:get_base_level(a:lnum)
 
   " List item folding...
   if g:vimwiki_fold_lists
     let nnline = getline(a:lnum + 1)
-    let base_level = s:get_base_level(a:lnum)
     
     let rx_list_item = '\('.
           \ g:vimwiki_rxListBullet.'\|'.g:vimwiki_rxListNumber.
@@ -110,11 +109,9 @@ function! VimwikiFoldLevel(lnum) "{{{
         endif
       endif
     endif
-
-    return base_level
   endif
 
-  return -1
+  return base_level
 endfunction "}}}
 
 function! s:get_base_level(lnum) "{{{
@@ -191,13 +188,13 @@ endfunction "}}}
 " COMMANDS {{{
 command! -buffer Vimwiki2HTML
       \ silent w <bar> 
-      \ call vimwiki#html#Wiki2HTML(expand(VimwikiGet('path_html')),
+      \ let res = vimwiki#html#Wiki2HTML(expand(VimwikiGet('path_html')),
       \                             expand('%'))
       \<bar>
-      \ echo 'HTML conversion is done.'
+      \ if res != '' | echo 'Vimwiki: HTML conversion is done.' | endif
 command! -buffer Vimwiki2HTMLBrowse
       \ silent w <bar> 
-      \ call VimwikiWeblinkHandler(vimwiki#html#Wiki2HTML(
+      \ call vimwiki#base#system_open_link(vimwiki#html#Wiki2HTML(
       \         expand(VimwikiGet('path_html')),
       \         expand('%')))
 command! -buffer VimwikiAll2HTML
@@ -474,4 +471,5 @@ command! -buffer VimwikiCatUrl call vimwiki#html#CatUrl(expand('%:p'))
 
 " DEBUGGING {{{
 command! VimwikiPrintWikiState call vimwiki#base#print_wiki_state()
+command! VimwikiReadLocalOptions call vimwiki#base#read_wiki_options(1)
 " }}}

@@ -63,7 +63,7 @@ function! s:setup_buffer_leave() "{{{
   endif
   if &filetype == 'vimwiki'
     " cache global vars of current state XXX: SLOW!?
-    call vimwiki#base#cache_wiki_state()
+    call vimwiki#base#cache_buffer_state()
   endif
   if g:vimwiki_debug ==3
     echom "  Setup_buffer_leave g:curr_idx=".g:vimwiki_current_idx." b:curr_idx=".s:vimwiki_idx().""
@@ -107,8 +107,9 @@ function! s:setup_filetype() "{{{
     call add(g:vimwiki_list, {'path': path, 'ext': ext, 'syntax': syn, 'temp': 1})
     let idx = len(g:vimwiki_list) - 1
   endif
+  call vimwiki#base#validate_wiki_options(idx)
   " initialize and cache global vars of current state
-  call vimwiki#base#reset_wiki_state(idx)
+  call vimwiki#base#setup_buffer_state(idx)
   if g:vimwiki_debug ==3
     echom "  Setup_filetype g:curr_idx=".g:vimwiki_current_idx." (reset_wiki_state) b:curr_idx=".s:vimwiki_idx().""
   endif
@@ -127,7 +128,7 @@ function! s:setup_buffer_enter() "{{{
     echom "Setup_buffer_enter g:curr_idx=".g:vimwiki_current_idx." b:curr_idx=".s:vimwiki_idx().""
   endif
   let time0 = reltime()  " start the clock  "XXX
-  if !vimwiki#base#recall_wiki_state()
+  if !vimwiki#base#recall_buffer_state()
     " Find what wiki current buffer belongs to.
     " If wiki does not exist in g:vimwiki_list -- add new wiki there with
     " buffer's path and ext.
@@ -159,8 +160,9 @@ function! s:setup_buffer_enter() "{{{
       call add(g:vimwiki_list, {'path': path, 'ext': ext, 'syntax': syn, 'temp': 1})
       let idx = len(g:vimwiki_list) - 1
     endif
+    call vimwiki#base#validate_wiki_options(idx)
     " initialize and cache global vars of current state
-    call vimwiki#base#reset_wiki_state(idx)
+    call vimwiki#base#setup_buffer_state(idx)
     if g:vimwiki_debug ==3
       echom "  Setup_buffer_enter g:curr_idx=".g:vimwiki_current_idx." (reset_wiki_state) b:curr_idx=".s:vimwiki_idx().""
     endif
@@ -216,9 +218,12 @@ function! s:setup_buffer_reenter() "{{{
   if g:vimwiki_debug ==3
     echom "Setup_buffer_reenter g:curr_idx=".g:vimwiki_current_idx." b:curr_idx=".s:vimwiki_idx().""
   endif
-  if !vimwiki#base#recall_wiki_state()
+  if !vimwiki#base#recall_buffer_state()
     " Do not repeat work of s:setup_buffer_enter() and s:setup_filetype()
     " Once should be enough ...
+  endif
+  if g:vimwiki_debug ==3
+    echom "  Setup_buffer_reenter g:curr_idx=".g:vimwiki_current_idx." b:curr_idx=".s:vimwiki_idx().""
   endif
 endfunction "}}}
 
@@ -297,34 +302,9 @@ endfunction "}}}
 
 " CALLBACK functions "{{{
 " User can redefine it.
-if !exists("*VimwikiWeblinkHandler") "{{{
-  function VimwikiWeblinkHandler(weblink)
-    " handlers
-    function! s:win32_handler(weblink)
-      "execute '!start ' . shellescape(a:weblink, 1)
-      "http://vim.wikia.com/wiki/Opening_current_Vim_file_in_your_Windows_browser
-      execute 'silent ! start "Title" /B ' . shellescape(a:weblink, 1)
-    endfunction
-    function! s:macunix_handler(weblink)
-      execute '!open ' . shellescape(a:weblink, 1)
-    endfunction
-    function! s:linux_handler(weblink)
-      execute 'silent !xdg-open ' . shellescape(a:weblink, 1)
-    endfunction
-    let success = 0
-    try 
-      if vimwiki#u#is_windows()
-        call s:win32_handler(a:weblink)
-        return
-      elseif has("macunix")
-        call s:macunix_handler(a:weblink)
-        return
-      else
-        call s:linux_handler(a:weblink)
-        return
-      endif
-    endtry
-    echomsg 'Default Vimwiki Weblink Handler was unable to open the HTML file!'
+if !exists("*VimwikiLinkHandler") "{{{
+  function VimwikiLinkHandler(url)
+    return 0
   endfunction
 endif "}}}
 
