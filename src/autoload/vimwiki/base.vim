@@ -1470,8 +1470,7 @@ function! s:normalize_link_syntax_v() " {{{
   try
     norm! gvy
     let visual_selection = @"
-    " TODO: make it rxAware
-    let visual_selection = '[['.visual_selection.']]'
+    let visual_selection = substitute(g:vimwiki_WikiLinkTemplate1, '__LinkUrl__', '\='."'".visual_selection."'", '')
 
     call setreg('"', visual_selection, 'v')
 
