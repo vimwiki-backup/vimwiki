@@ -551,5 +551,5 @@ function! vimwiki#lst#change_level(...) "{{{
 
   " replace
   call setline(lnum, line)
-  call cursor(lnum, match(line, s:rx_list_item().'\zs'))
+  call cursor(lnum, match(line, '\S') + 1)
 endfunction "}}}
