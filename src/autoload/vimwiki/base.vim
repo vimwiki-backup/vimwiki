@@ -10,7 +10,7 @@ let g:loaded_vimwiki_auto = 1
 
 " -------------------------------------------------------------------------
 " Load syntax-specific Wiki functionality
-execute 'runtime! autoload/vimwiki/base_'.VimwikiGet('syntax').'.vim'
+execute 'runtime! autoload/vimwiki/'.VimwikiGet('syntax').'_base.vim'
 " -------------------------------------------------------------------------
 
 " MISC helper functions {{{
@@ -1487,9 +1487,9 @@ endfunction " }}}
 
 " normalize_link
 function! vimwiki#base#normalize_link(is_visual_mode) "{{{
-  if exists('*vimwiki#base_'.VimwikiGet('syntax').'#normalize_link')
+  if exists('*vimwiki#'.VimwikiGet('syntax').'_base#normalize_link')
     " Syntax-specific links
-    call vimwiki#base_{VimwikiGet('syntax')}#normalize_link(a:is_visual_mode)
+    call vimwiki#{VimwikiGet('syntax')}_base#normalize_link(a:is_visual_mode)
   else
     if !a:is_visual_mode
       call s:normalize_link_syntax_n()
