@@ -51,25 +51,6 @@ let time0 = vimwiki#u#time(starttime)  "XXX
 
 
 " LINKS: setup of larger regexes {{{
-function! s:get_prefix(template, tag) "{{{
-  let match_start = match(a:template, a:tag)
-  let prefix = (match_start > 0) ? a:template[: (match_start-1)] : ''
-  return prefix
-endfunction "}}}
-
-function! s:get_suffix(template, tag) "{{{
-  let match_end = matchend(a:template, a:tag)
-  let match_end = (match_end > 0) ? match_end : 0
-  return a:template[match_end :]
-endfunction "}}}
-
-function! s:get_unique_chars(str) "{{{
-  let char_dict = {}
-  for chr in split(a:str, '\zs')
-    let char_dict[chr] = 1
-  endfor
-  return join(keys(char_dict), '')
-endfunction "}}}
 
 " LINKS: setup wikilink regexps {{{
 let g:vimwiki_rxWikiLinkPrefix = '[['
