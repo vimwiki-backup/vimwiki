@@ -571,6 +571,11 @@ hi def link VimwikiLinkCharT VimwikiLinkT
 hi def link VimwikiNoExistsLinkCharT VimwikiNoExistsLinkT
 "}}}
 
+" -------------------------------------------------------------------------
+" Load syntax-specific functionality
+execute 'runtime! syntax/vimwiki_'.VimwikiGet('syntax').'_custom.vim'
+" -------------------------------------------------------------------------
+
 let b:current_syntax="vimwiki"
 
 " EMBEDDED syntax setup "{{{
