@@ -8,13 +8,26 @@
 function! s:normalize_link_syntax_n() " {{{
   let lnum = line('.')
 
-  " try WikiLink
-  let lnk = vimwiki#base#matchstr_at_cursor(g:vimwiki_rxWikiLink)
+  " try WikiLink0
+  let lnk = vimwiki#base#matchstr_at_cursor(g:vimwiki_rxWikiLink0)
   if !empty(lnk)
     let sub = vimwiki#base#normalize_link_helper(lnk,
           \ g:vimwiki_rxWikiLinkMatchUrl, g:vimwiki_rxWikiLinkMatchDescr,
           \ g:vimwiki_WikiLinkTemplate2)
-    call vimwiki#base#replacestr_at_cursor(g:vimwiki_rxWikiLink, sub)
+    call vimwiki#base#replacestr_at_cursor(g:vimwiki_rxWikiLink0, sub)
+    if g:vimwiki_debug > 1
+      echomsg "WikiLink: ".lnk." Sub: ".sub
+    endif
+    return
+  endif
+  
+  " try WikiLink1
+  let lnk = vimwiki#base#matchstr_at_cursor(g:vimwiki_rxWikiLink1)
+  if !empty(lnk)
+    let sub = vimwiki#base#normalize_link_helper(lnk,
+          \ g:vimwiki_rxWikiLinkMatchUrl, g:vimwiki_rxWikiLinkMatchDescr,
+          \ g:vimwiki_WikiLink1Template2)
+    call vimwiki#base#replacestr_at_cursor(g:vimwiki_rxWikiLink1, sub)
     if g:vimwiki_debug > 1
       echomsg "WikiLink: ".lnk." Sub: ".sub
     endif
@@ -36,7 +49,7 @@ function! s:normalize_link_syntax_n() " {{{
   if !empty(lnk)
     let sub = vimwiki#base#normalize_link_helper(lnk,
           \ g:vimwiki_rxWeblinkMatchUrl, g:vimwiki_rxWeblinkMatchDescr,
-          \ g:vimwiki_WeblinkTemplate)
+          \ g:vimwiki_Weblink1Template)
     call vimwiki#base#replacestr_at_cursor(g:vimwiki_rxWeblink, sub)
     if g:vimwiki_debug > 1
       echomsg "WebLink: ".lnk." Sub: ".sub
@@ -51,7 +64,7 @@ function! s:normalize_link_syntax_n() " {{{
   if !empty(lnk)
     let sub = vimwiki#base#normalize_link_helper(lnk,
           \ g:vimwiki_rxWord, '',
-          \ g:vimwiki_WikiLinkTemplate1)
+          \ g:vimwiki_WikiLink1Template1)
     call vimwiki#base#replacestr_at_cursor('\V'.lnk, sub)
     if g:vimwiki_debug > 1
       echomsg "Word: ".lnk." Sub: ".sub
@@ -72,7 +85,7 @@ function! s:normalize_link_syntax_v() " {{{
   try
     norm! gvy
     let visual_selection = @"
-    let visual_selection = substitute(g:vimwiki_WikiLinkTemplate1, '__LinkUrl__', '\='."'".visual_selection."'", '')
+    let visual_selection = substitute(g:vimwiki_WikiLink1Template1, '__LinkUrl__', '\='."'".visual_selection."'", '')
 
     call setreg('"', visual_selection, 'v')
 

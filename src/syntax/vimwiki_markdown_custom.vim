@@ -122,7 +122,7 @@ let g:vimwiki_rxWeblink1Prefix = '['
 let g:vimwiki_rxWeblink1Suffix = ')'
 let g:vimwiki_rxWeblink1Separator = ']('
 " [DESCRIPTION](URL)
-let g:vimwiki_WeblinkTemplate1 = g:vimwiki_rxWeblink1Prefix . '__LinkDescription__'. 
+let g:vimwiki_Weblink1Template = g:vimwiki_rxWeblink1Prefix . '__LinkDescription__'. 
       \ g:vimwiki_rxWeblink1Separator. '__LinkUrl__'.
       \ g:vimwiki_rxWeblink1Suffix
 
