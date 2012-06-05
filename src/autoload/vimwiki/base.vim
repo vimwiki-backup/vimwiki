@@ -10,7 +10,7 @@ let g:loaded_vimwiki_auto = 1
 
 " -------------------------------------------------------------------------
 " Load syntax-specific Wiki functionality
-execute 'runtime! autoload/vimwiki/base_'.VimwikiGet('syntax').'.vim'
+execute 'runtime! autoload/vimwiki/'.VimwikiGet('syntax').'_base.vim'
 " -------------------------------------------------------------------------
 
 " MISC helper functions {{{
@@ -1366,7 +1366,7 @@ endfunction
 "   arguments rxUrl, rxDesc, and rxStyle are copied verbatim, without any
 "   special character escapes or substitutions.
 function! vimwiki#base#apply_template(template, rxUrl, rxDesc, rxStyle) "{{{
-  let magic_chars = '.*[]\^$'
+  let magic_chars = '.*[\^$'
   let lnk = escape(a:template, magic_chars)
   if a:rxUrl != ""
     let lnk = substitute(lnk, '__LinkUrl__', '\='."'".a:rxUrl."'", '') 
@@ -1470,8 +1470,7 @@ function! s:normalize_link_syntax_v() " {{{
   try
     norm! gvy
     let visual_selection = @"
-    " TODO: make it rxAware
-    let visual_selection = '[['.visual_selection.']]'
+    let visual_selection = substitute(g:vimwiki_WikiLinkTemplate1, '__LinkUrl__', '\='."'".visual_selection."'", '')
 
     call setreg('"', visual_selection, 'v')
 
@@ -1487,9 +1486,9 @@ endfunction " }}}
 
 " normalize_link
 function! vimwiki#base#normalize_link(is_visual_mode) "{{{
-  if exists('*vimwiki#base_'.VimwikiGet('syntax').'#normalize_link')
+  if exists('*vimwiki#'.VimwikiGet('syntax').'_base#normalize_link')
     " Syntax-specific links
-    call vimwiki#base_{VimwikiGet('syntax')}#normalize_link(a:is_visual_mode)
+    call vimwiki#{VimwikiGet('syntax')}_base#normalize_link(a:is_visual_mode)
   else
     if !a:is_visual_mode
       call s:normalize_link_syntax_n()
