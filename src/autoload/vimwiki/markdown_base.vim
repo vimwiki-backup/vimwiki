@@ -8,32 +8,6 @@
 function! s:normalize_link_syntax_n() " {{{
   let lnum = line('.')
 
-  " try WikiLink0
-  let lnk = vimwiki#base#matchstr_at_cursor(g:vimwiki_rxWikiLink0)
-  if !empty(lnk)
-    let sub = vimwiki#base#normalize_link_helper(lnk,
-          \ g:vimwiki_rxWikiLinkMatchUrl, g:vimwiki_rxWikiLinkMatchDescr,
-          \ g:vimwiki_WikiLinkTemplate2)
-    call vimwiki#base#replacestr_at_cursor(g:vimwiki_rxWikiLink0, sub)
-    if g:vimwiki_debug > 1
-      echomsg "WikiLink: ".lnk." Sub: ".sub
-    endif
-    return
-  endif
-  
-  " try WikiLink1
-  let lnk = vimwiki#base#matchstr_at_cursor(g:vimwiki_rxWikiLink1)
-  if !empty(lnk)
-    let sub = vimwiki#base#normalize_link_helper(lnk,
-          \ g:vimwiki_rxWikiLinkMatchUrl, g:vimwiki_rxWikiLinkMatchDescr,
-          \ g:vimwiki_WikiLink1Template2)
-    call vimwiki#base#replacestr_at_cursor(g:vimwiki_rxWikiLink1, sub)
-    if g:vimwiki_debug > 1
-      echomsg "WikiLink: ".lnk." Sub: ".sub
-    endif
-    return
-  endif
-  
   " try WikiIncl
   let lnk = vimwiki#base#matchstr_at_cursor(g:vimwiki_rxWikiIncl)
   if !empty(lnk)
@@ -44,6 +18,32 @@ function! s:normalize_link_syntax_n() " {{{
     return
   endif
 
+  " try WikiLink0: replace with WikiLink1
+  let lnk = vimwiki#base#matchstr_at_cursor(g:vimwiki_rxWikiLink0)
+  if !empty(lnk)
+    let sub = vimwiki#base#normalize_link_helper(lnk,
+          \ g:vimwiki_rxWikiLinkMatchUrl, g:vimwiki_rxWikiLinkMatchDescr,
+          \ g:vimwiki_WikiLink1Template2)
+    call vimwiki#base#replacestr_at_cursor(g:vimwiki_rxWikiLink0, sub)
+    if g:vimwiki_debug > 1
+      echomsg "WikiLink: ".lnk." Sub: ".sub
+    endif
+    return
+  endif
+  
+  " try WikiLink1: replace with WikiLink0
+  let lnk = vimwiki#base#matchstr_at_cursor(g:vimwiki_rxWikiLink1)
+  if !empty(lnk)
+    let sub = vimwiki#base#normalize_link_helper(lnk,
+          \ g:vimwiki_rxWikiLinkMatchUrl, g:vimwiki_rxWikiLinkMatchDescr,
+          \ g:vimwiki_WikiLinkTemplate2)
+    call vimwiki#base#replacestr_at_cursor(g:vimwiki_rxWikiLink1, sub)
+    if g:vimwiki_debug > 1
+      echomsg "WikiLink: ".lnk." Sub: ".sub
+    endif
+    return
+  endif
+  
   " try Weblink
   let lnk = vimwiki#base#matchstr_at_cursor(g:vimwiki_rxWeblink)
   if !empty(lnk)
@@ -64,7 +64,7 @@ function! s:normalize_link_syntax_n() " {{{
   if !empty(lnk)
     let sub = vimwiki#base#normalize_link_helper(lnk,
           \ g:vimwiki_rxWord, '',
-          \ g:vimwiki_WikiLink1Template1)
+          \ g:vimwiki_WikiLinkTemplate1)
     call vimwiki#base#replacestr_at_cursor('\V'.lnk, sub)
     if g:vimwiki_debug > 1
       echomsg "Word: ".lnk." Sub: ".sub
@@ -85,7 +85,7 @@ function! s:normalize_link_syntax_v() " {{{
   try
     norm! gvy
     let visual_selection = @"
-    let visual_selection = substitute(g:vimwiki_WikiLink1Template1, '__LinkUrl__', '\='."'".visual_selection."'", '')
+    let visual_selection = substitute(g:vimwiki_WikiLinkTemplate1, '__LinkUrl__', '\='."'".visual_selection."'", '')
 
     call setreg('"', visual_selection, 'v')
 
