@@ -2099,6 +2099,22 @@ Vim plugins: http://www.vim.org/scripts/script.php?script_id=2226
 
 2.0 dev~
 
+Summary ~
+
+    * redesign of link syntaxes
+    * no more camelcase
+    * interwiki links
+    * link schemes
+    * transclusions
+    * normalize link command
+    * improved diary organization and generation
+    * list manipulation
+    * markdown support
+    * mathjax support
+    * improved handling of special characters and punctuation in filenames and urls
+    * back links command: list links referring to the current page
+    * hook for custom html conversion
+
 Issues Labeled Fixed And Modified Since 1.2 ~
 
     * Issue 338: Scheme behaviors
