@@ -68,17 +68,21 @@ wiki file. By default it is located in: >
 Feed it with the following example:
 
 = My knowledge base =
-    * [[My urgent tasks]] -- things to be done _yesterday_!!!
+    * Tasks -- things to be done _yesterday_!!!
+    * Project Gutenberg -- good books are power.
+    * Scratchpad -- various temporary stuff.
+
+Place your cursor on 'Tasks' and press Enter to create a link. Once
+pressed 'Tasks' will become '[[Tasks]]' -- vimwiki link. Press Enter again to
+open it. Edit and save then press Backspace to return back.
+
+Vimwiki link can have more than one word. Just visually select them and press
+Enter. Do it with 'Project Gutenberg'. You should have something like:
+
+= My knowledge base =
+    * [[Tasks]] -- things to be done _yesterday_!!!
     * [[Project Gutenberg]] -- good books are power.
-    * [[scratch pad]] -- various temporary stuff.
-
-
-All the stuff in double brackets are links.
-
-Place cursor on [[Project Gutenberg]] and press <Enter> to follow it. 'Project
-Guttenberg.wiki' file should be opened. Edit and save it, then press
-Backspace to return back.
-
+    * Scratchpad -- various temporary stuff.
 
 ==============================================================================
 2. Prerequisites                                       *vimwiki-prerequisites*
@@ -2106,8 +2110,8 @@ Summary ~
 
     * Quick page-link creation.
     * Redesign of link syntaxes (!)
-        * No more CamelCase links.
-          http://code.google.com/p/vimwiki/howtosemiautolinkoldcamelcased
+        * No more CamelCase links. Check the ways to convert them
+          https://groups.google.com/forum/?fromgroups#!topic/vimwiki/NdS9OBG2dys
         * No more [[link][desc]] links.
         * No more [http://link description] links.
         * No more plain image links. Use transclusions.
