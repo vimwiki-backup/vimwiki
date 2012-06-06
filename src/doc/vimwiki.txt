@@ -2098,6 +2098,75 @@ Vim plugins: http://www.vim.org/scripts/script.php?script_id=2226
 14. Changelog                                              *vimwiki-changelog*
 
 2.0 dev~
+
+Issues Labeled Fixed And Modified Since 1.2 ~
+
+    * Issue 338: Scheme behaviors
+    * Issue 337: File links [[file:///absolute path to file/file name.pdf]] doesn't work on Windows
+    * Issue 340: Folding not working as expected
+    * Issue 140: Feature: Added additional support for manipulating lists
+    * Issue 315: Backtick code blocks within headers
+    * Issue 316: Highlight_existing_links() fails when wiki has filename containing "&", e.g. [[Test&File]]
+    * Issue 328: open schemes with program like utl.vim
+    * Issue 339: User function VimwikiLinkHandler should be called before inner open_link
+    * Issue 334: VimwikiGenerateLinks don't escape & symbol in filenames
+    * Issue 335: file:///~/Documents/test.pdf should be expanded to full path before opening in an external program
+    * Issue 336: [[file:///~/Documents/test.pdf]] should be opened in an external program
+    * Issue 329: Markdown open link error
+    * Issue 325: Incorrect link highlighting while jumping different wikies back and forth
+    * Issue 331: Do not say that HTML conversion is done if syntax is not supported
+    * Issue 330: Html conversion issues error E687
+    * Issue 324: 1<leader>ww is broken
+    * Issue 323: Directory links doesn't work for file:///~/Documents/
+    * Issue 322: Error when <BS> to previous page
+    * Issue 321: Make VimwikiGenerateLinks current syntax aware
+    * Issue 318: Unable to visually select folded headers
+    * Issue 317: Incorrect folding when list folding is on and
+    * Issue 319: Select wiki that doesn't exist shouts bunch of errors
+    * Issue 314: Wrong subdirectory link in the second wiki if came from first
+    * Issue 310: Navigation to sub wikis from with in subfolders gets wrong path
+    * Issue 308: Links to other wikies are highlighted as non-existed
+    * Issue 309: vim -c VimwikiMakeDiaryNote doesn't load options correctly.
+    * Issue 307: <leader>w<leader>{w,t} throws a bunch of errors with a URL on the page
+    * Issue 239: Improved support for markdown blockquotes and lists
+    * Issue 302: Diary entries are attempting to be created relative to home directory instead of wiki.path
+    * Issue 306: Broken file:/// links
+    * Issue 300: Following local wiki links in subdirectories sometimes breaks (tip)
+    * Issue 301: Navigating between interwiki links on windows causes path to get out of sync
+    * Issue 296: HTML generation for diary generates a complete local file path instead of relative
+    * Issue 269: Provide option to recreate diary index
+    * Issue 273: Better distinguish automatically generated files.
+    * Issue 293: Autoexport is called first when opening vimwiki diary entry from a blank document
+    * Issue 290: Open daily diary entry doesn't work from non-wiki or empty files
+    * Issue 193: wiki page absolute link path or vimwiki variables
+    * Issue 198: Some Small issues.
+    * Issue 187: problems with double-bracketed image links   Usability
+    * Issue 186: problems with [[file://...] links   Usability
+    * Issue 258: Not good in the formatoptions setting
+    * Issue 287: Remove CamelCased links
+    * Issue 298: Using .txt file suffix
+    * Issue 181: Difficult to link from subdirectory to parent directory
+    * Issue 89: Relative paths for links to local file
+    * Issue 212: } and }} is eliminated in <pre>
+    * Issue 176: Link anything with relative path.
+    * Issue 179: Create wiki leaks relative to "root" path of current wiki
+    * Issue 291: A page titled CharacterPrefix-2012-03-18 confuses s:group_links() in diary.vim when diary_rel_path = the empty string
+    * Issue 295: Diary html generates wrong link code
+    * Issue 292: VimwikiNormalizeLink corrupts other link on the line
+    * Issue 249: Image positioning
+    * Issue 285: Image thumbnail links display style information in addition to image alt text
+    * Issue 155: Interwiki links
+    * Issue 280: Backspace doesn't jump back to the previous wiki page
+    * Issue 279: <CR> on "vim":http://www.vim.org don't open that link
+    * Issue 256: OS X terminal vim conceal: Invalid argument: VimwikiLinkRest contained...
+    * Issue 222: Some words were recognized as link unexpectedly.
+    * Issue 229: Turn off the saving message
+    * Issue 58: How to add new line by <br /> ?
+    * Issue 231: spell mistake of example for vimwiki_html_header_numbering_sym
+    * Issue 230: Generic headers
+    * Issue 213: path bug in vimwiki-dev-2011-05-28.zip for Windows.
+
+
     * local: scheme links are now handled by system handler
     * VimwikiWeblinkHandler user defined function is renamed to
       VimwikiLinkHandler.
