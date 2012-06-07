@@ -9,7 +9,7 @@
               |___|  |___| |_|   |_||__| |__||___| |___| |_||___|            ~
 
 
-                               Version: 2.0 'stu' dev
+                               Version: 2.0 'stu'
 
 ==============================================================================
 CONTENTS                                                    *vimwiki-contents*
@@ -2172,7 +2172,7 @@ Vim plugins: http://www.vim.org/scripts/script.php?script_id=2226
 
 2.0 'stu'~
 
-This release is partly incompatible with previous
+This release is partly incompatible with previous.
 
 Summary ~
 
