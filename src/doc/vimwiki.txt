@@ -9,7 +9,7 @@
               |___|  |___| |_|   |_||__| |__||___| |___| |_||___|            ~
 
 
-                               Version: 2.0 'stu'
+                               Version: 2.0 'stu' dev
 
 ==============================================================================
 CONTENTS                                                    *vimwiki-contents*
@@ -44,6 +44,10 @@ CONTENTS                                                    *vimwiki-contents*
     9. Tables                        |vimwiki-tables|
     10. Diary                        |vimwiki-diary|
     11. Options                      |vimwiki-options|
+        11.1. Registered Wiki        |vimwiki-register-wiki|
+        11.2. Temporary Wiki         |vimwiki-temporary-wiki|
+        11.3. Per-Wiki Options       |vimwiki-local-options|
+        11.4. Global Options         |viwmiki-global-options|
     12. Help                         |vimwiki-help|
     13. Developers                   |vimwiki-developers|
     14. Changelog                    |vimwiki-changelog|
@@ -62,7 +66,7 @@ With vimwiki you can:
     - write documentation.
 
 To do a quick start press <Leader>ww (this is usually \ww) to go to your index
-wiki file. By default it is located in: >
+wiki file.  By default it is located in: >
     ~/vimwiki/index.wiki
 
 Feed it with the following example:
@@ -72,12 +76,14 @@ Feed it with the following example:
     * Project Gutenberg -- good books are power.
     * Scratchpad -- various temporary stuff.
 
-Place your cursor on 'Tasks' and press Enter to create a link. Once
-pressed 'Tasks' will become '[[Tasks]]' -- vimwiki link. Press Enter again to
-open it. Edit and save then press Backspace to return back.
+Place your cursor on 'Tasks' and press Enter to create a link.  Once pressed,
+'Tasks' will become '[[Tasks]]' -- a vimwiki link.  Press Enter again to
+open it.  Edit the file, save it, and then press Backspace to jump back to your
+index.
 
-Vimwiki link can have more than one word. Just visually select them and press
-Enter. Do it with 'Project Gutenberg'. You should have something like:
+A vimwiki link can be constructed from more than one word.  Just visually
+select the words to be linked and press Enter.  Try it with 'Project
+Gutenberg'.  The result should look something like:
 
 = My knowledge base =
     * [[Tasks]] -- things to be done _yesterday_!!!
@@ -209,7 +215,7 @@ NORMAL MODE                                           *vimwiki-local-mappings*
 <
                         *vimwiki_<Leader>w<Leader>i*
 <Leader>w<Leader>i      Update diary section (delete old, insert new)
-                        Works only for diary index file.
+                        Only works from the diary index.
                         Maps to |:VimwikiDiaryGenerateLinks|
                         To remap: >
                         :nmap <Leader>wcr <Plug>VimwikiDiaryGenerateLinks
@@ -294,11 +300,13 @@ NORMAL MODE                                           *vimwiki-local-mappings*
                         :nmap -- <Plug>VimwikiRemoveHeaderLevel
 <
                         *vimwiki_+*
-+                       Normalize link syntax: E.g. Add placeholder text to
-                        Wiki- or Weblinks that are missing descriptions.
-                        Convert raw URLs into Wikilinks.  Convert words into
-                        Wikilinks.  Can be activated in normal mode with the
-                        cursor over a word or link.
++                       Create and/or decorate links.  Depending on the 
+                        context, this command will: convert words into
+                        Wikilinks; convert raw URLs into Wikilinks; and add
+                        placeholder text to Wiki- or Weblinks that are missing
+                        descriptions.  Can be activated in normal mode with
+                        the cursor over a word or link, or in visual mode with
+                        the selected text .
 
                         *vimwiki_glm*
 glm                     Increase the indent of a single-line list item.
@@ -451,10 +459,11 @@ ic                      An inner column in a table.
     Rename the wiki page that you are in.
 
 *:Vimwiki2HTML*
-    Convert current wiki page to HTML.
+    Convert current wiki page to HTML using vimwiki's own converter or a
+    user-supplied script (see |vimwiki-option-custom_wiki2html|).
 
 *:Vimwiki2HTMLBrowse*
-    Convert current wiki page to HTML and open in in webbrowser.
+    Convert current wiki page to HTML and open it in webbrowser.
 
 *:VimwikiAll2HTML*
     Convert all wiki pages to HTML.
@@ -541,14 +550,24 @@ ic                      An inner column in a table.
 ==============================================================================
 5. Wiki syntax                                                *vimwiki-syntax*
 
+
 There are a lot of different wikies out there. Most of them have their own
-syntax and vimwiki is not an exception here. Default vimwiki's syntax is a
-subset of google's wiki syntax markup.
+syntax and vimwiki's default syntax is not an exception here. 
 
-There is MediaWiki syntax file included in the distribution (it doesn't have
-all the fancy stuff original MediaWiki syntax has though).
-See |vimwiki-option-syntax|.
+Vimwiki has evolved its own syntax that closely resembles google's wiki
+markup.  This syntax is described in detail below.
 
+Vimwiki also supports alternative syntaxes, like Markdown and MediaWiki, to
+varying degrees; see |vimwiki-option-syntax|.  Static elements like headers,
+quotations, and lists are customized in syntax/vimwiki_xxx.vim, where xxx
+stands for the chosen syntax.
+
+Interactive elements such as links and vimwiki commands are supported by
+definitions and routines in syntax/vimwiki_xxx_custom.vim and
+autoload/vimwiki/xxx_base.vim.  Currently, only Markdown includes this level
+of support.
+
+Vimwiki2HTML is currently functional only for the default syntax.
 
 ------------------------------------------------------------------------------
 5.1. Typefaces                                      *vimwiki-syntax-typefaces*
@@ -573,33 +592,41 @@ Link with spaces in it: >
 or: >
   [[This is a link source|Description of the link]]
 
-The separator is customizable, using |g:vimwiki_link_separator| in your chosen
-syntax file; the prefix / suffix pair "[[", "]]" is not.
+Links to directories (ending with a "/") are also supported: >
+  [[/home/somebody/|Home Directory]]
 
-
-Templated Weblinks~
-
-The weblink template |g:vimwiki_web_template| can be configured in your chosen
-syntax to support additional links; e.g. in vimwiki/syntax/vimwiki_markdown.vim
-
-Link with description: >
-  let g:vimwiki_web_template = '[__LinkDescription__](__LinkUrl__)'
-
-Templated Imagelinks~
-
-Similarly, |g:vimwiki_image_template| can be configured for additional image
-links; e.g. in vimwiki/syntax/vimwiki_markdown.vim 
-
-Image with description: >
-  let g:vimwiki_image_template = '![__LinkDescription__](__LinkUrl__)'
+Use |g:vimwiki_dir_link| to control the behaviour when opening directories.
 
 Raw URLs~
 
 Raw URLs are also supported: >
- http://code.google.com/p/vimwiki
- mailto:habamax@gmail.com
- ftp://vim.org
+  http://code.google.com/p/vimwiki
+  mailto:habamax@gmail.com
+  ftp://vim.org
 
+
+Markdown Links~
+
+These links are only available for Markdown syntax.  See
+http://daringfireball.net/projects/markdown/syntax#link. 
+
+Inline links: >
+  [Looks like this](URL)
+
+Image links: >
+  ![Looks like this](URL)
+
+The URL can be anything recognized by vimwiki as a raw URL.
+
+
+Reference-style links: >
+  a) [Link Name][Id] 
+  b) [Id][], using the "implicit link name" shortcut
+  
+Vimwiki treats reference style links just like default "Wikilinks". In the
+current implementation: the Id field must be a valid wiki page name,
+reference style links must always include *two* consecutive pairs of
+[-brackets, and entries can not use "[" or "]".
 
 
 ------------------------------------------------------------------------------
@@ -886,14 +913,9 @@ In addition to standard web schemes (e.g. `http:`, `https:`, `ftp:`, etc.) a
 number of special schemes are supported: "wiki#:", "local:", "diary:",
 "file:", and schemeless.
 
-The "wiki#:", "local:", and "diary:" schemes prepend absolute paths to the
-URLs: >
-  file:///abs_path_to_html#/relpath/wikipage.html
-
-When |vimwiki-option-maxhi| equals 1, a distinct highlighting style is used to
-identify schemeless links whose targets are not found.  All other "SCHEME:URL"
-links appear as regular links even if they do not exist.
-
+While "wiki:#", "diary" and schemeless links are automatically opened in Vi,
+all other links are opened with the system command.  To customize this
+behavior, see |VimwikiLinkHandler|.
 
 Interwiki:~
 
@@ -932,42 +954,51 @@ absolute paths and extensions: >
 
 Schemeless:~
 
-The default, schemeless URLs are treated internally as "wiki#:" URLs in all
-respects except when converted to Html.  Schemeless links convert to plain
-relative path URLs, nearly verbatim: >
+Schemeless URLs, which are the default, are treated internally as "wiki#:"
+URLs in all respects except when converted to Html.  
+
+Schemeless links convert to plain relative path URLs, nearly verbatim: >
   relpath/wikipage.html
+
+The "wiki#:", "local:", and "diary:" schemes use absolute paths as URLs: >
+  file:///abs_path_to_html#/relpath/wikipage.html
+
+When |vimwiki-option-maxhi| equals 1, a distinct highlighting style is used to
+identify schemeless links whose targets are not found.  All other links appear
+as regular links even if the files to which they refer do not exist.
 
 
 ------------------------------------------------------------------------------
 5.13. Transclusions                                *vimwiki-syntax-transclude*
 
-Transclusion, or Wiki-Include, Links~
+Transclusion (Wiki-Include) Links~
 
-A wikilink that uses "{{" and "}}" delims signifies content that is to be
+Links that use "{{" and "}}" delimiters signify content that is to be
 included into the Html output, rather than referenced via hyperlink.  
 
-The primary purpose for wiki-include links is to include images.  Image URLs
-may use any of the supported schemes, may be absolute or relative, and need
-not end with an extension.
+Wiki-include URLs may use any of the supported schemes, may be absolute or
+relative, and need not end with an extension.
 
-Include from a local URL: >
+The primary purpose for wiki-include links is to include images.  
+
+Transclude from a local URL: >
   {{local:../../images/vimwiki_logo.png}}
 or from a universal URL: >
   {{http://vimwiki.googlecode.com/hg/images/vimwiki_logo.png}}
 
-{{-Wiki-include link to an image with alternate text: >
+Transclude image with alternate text: >
   {{http://vimwiki.googlecode.com/hg/images/vimwiki_logo.png|Vimwiki}}
 in HTML: >
   <img src="http://vimwiki.googlecode.com/hg/images/vimwiki_logo.png" 
   alt="Vimwiki"/>
 
-{{-Wiki-include link to an image with alternate text and some style: >
+Transclude image with alternate text and some style: >
   {{http://.../vimwiki_logo.png|cool stuff|style="width:150px; height: 120px;"}}
 in HTML: >
   <img src="http://vimwiki.googlecode.com/hg/images/vimwiki_logo.png" 
   alt="cool stuff" style="width:150px; height:120px"/>
 
-{{-Wiki-include link to an image _without_ alternate text and css class: >
+Transclude image _without_ alternate text and with css class: >
   {{http://.../vimwiki_logo.png||class="center flow blabla"}}
 in HTML: >
   <img src="http://vimwiki.googlecode.com/hg/images/vimwiki_logo.png" 
@@ -976,13 +1007,13 @@ in HTML: >
 A trial feature allows you to supply your own handler for wiki-include links.
 See |VimwikiWikiIncludeHandler|.
 
+
 ------------------------------------------------------------------------------
 5.14. Thumbnails                                    *vimwiki-syntax-thumbnails*
 
 Thumbnail links~
 >
-Thumbnail links are specified via a {{-transcluded image as description for
-a wikilink: >
+Thumbnail links are constructed like this: >
   [[http://someaddr.com/bigpicture.jpg|{{http://someaddr.com/thumbnail.jpg}}]]
 
 in HTML: >
@@ -1026,7 +1057,7 @@ Hit |zr| one more time:
   * [ ] Do stuff 2~
   * [ ] Do stuff 3~
 
-NOTE:If you use default vimwiki syntax, folding on list items will work
+NOTE:If you use the default vimwiki syntax, folding on list items will work
 properly only if all of them are indented using current |shiftwidth|.
 For MediaWiki, * or # should be in the first column.
 
@@ -1229,43 +1260,51 @@ Get it from http://www.vim.org/scripts/script.php?script_id=52
 See |g:vimwiki_use_calendar| option to turn it off/on.
 
 
+
 ==============================================================================
 11. Options                                                  *vimwiki-options*
 
-There are global and per-wiki (local) options available to tune vimwiki.
-All global options are set using the following pattern: >
-    let g:option_name=option_value
+There are global options and local (per-wiki) options available to tune
+vimwiki.  
 
-All per-wiki options are dictionaries (see |Dictionary|) in a list of wikies.
-See |g:vimwiki_list| option for more details.
+Global options are configured via global variables.  For a complete list of
+them, see |viwmiki-global-options|.
+
+Local options for multiple independent wikis are stored in a single global
+variable |g:vimwiki_list|.  The per-wiki options can be registered in advance,
+as described in |vimwiki-register-wiki|, or may be registered on the fly as
+described in |vimwiki-temporary-wiki|.  For a list of per-wiki options, see
+|vimwiki-local-options|.
+
 
 ------------------------------------------------------------------------------
-*g:vimwiki_list* *vimwiki-multiple-wikies*
+11.1 Registered Wiki                    *g:vimwiki_list* *vimwiki-register-wiki*
 
-Each item in g:vimwiki_list is a |Dictionary| that holds all customization
-available for a wiki represented by that item. It is in the form: >
+One or more wikis can be registered using the |g:vimwiki_list| variable.
+
+Each item in |g:vimwiki_list| is a |Dictionary| that holds all customizations
+available for a distinct wiki. The options dictionary has the form: >
   {'option1': 'value1', 'option2: 'value2', ...}
 
-Consider the following example: >
+Consider the following: >
   let g:vimwiki_list = [{'path': '~/my_site/', 'path_html': '~/public_html/'}]
 
-It gives us one wiki located at ~/my_site/ that could be htmlized to
+This defines one wiki located at ~/my_site/ that could be htmlized to
 ~/public_html/
 
-The next example: >
+Another example: >
   let g:vimwiki_list = [{'path': '~/my_site/', 'path_html': '~/public_html/'},
             \ {'path': '~/my_docs/', 'ext': '.mdox'}]
-gives us 2 wikies, the first wiki as in the previous example, and the second
-one located in ~/my_docs/, with files that have the .mdox extension.
+
+defines two wikis: the first as before, and the second one located in
+~/my_docs/, with files that have the .mdox extension.
 
 An empty |Dictionary| in g:vimwiki_list is the wiki with default options: >
   let g:vimwiki_list = [{},
             \ {'path': '~/my_docs/', 'ext': '.mdox'}]
 
-<
-
-You can also create wikis as separate |Dictionary|s. >
-
+For clarity, in your .vimrc file you can define wiki options using separate
+|Dictionary| variables and subsequently compose them into |g:vimwiki_list|. >
     let wiki_1 = {}
     let wiki_1.path = '~/my_docs/'
     let wiki_1.html_template = '~/public_html/template.tpl'
@@ -1276,10 +1315,38 @@ You can also create wikis as separate |Dictionary|s. >
     let wiki_2.index = 'main'
 
     let g:vimwiki_list = [wiki_1, wiki_2]
-
 <
 
-PER WIKI OPTIONS                                       *vimwiki-local-options*
+
+------------------------------------------------------------------------------
+11.2 Temporary Wiki                                    *vimwiki-temporary-wiki*
+
+
+The creation of temporary wikis allows you to open files that would not
+normally be recognized by vimwiki.  
+
+If a file with a registered wiki extension (see |vimwiki-register-extension|)
+is opened in a directory that: 1) is not listed in |g:vimwiki_list|, and 2) is
+not a subdirectory of any such directory, then a temporary wiki may be created
+and appended to the list of configured wikis in |g:vimwiki_list|.
+
+In addition to vimwiki's editing functionality, the temporary wiki enables: 1)
+wiki-linking to other files in the same subtree, 2) highlighting of existing
+wiki pages when |vimwiki-option-maxhi| is activated, and 3) html generation to
+|vimwiki-option-path_html|.
+
+Temporary wikis are configured using default |vimwiki-local-options|, except
+for the path, extension, and syntax options.  The path and extension are set
+using the file's location and extension.  The syntax is set to vimwiki's
+default unless another syntax is registered via |vimwiki-register-extension|.
+
+Use |g:vimwiki_global_ext| to turn off creation of temporary wikis.
+
+NOTE: Vimwiki assumes that the locations of distinct wikis do not overlap.
+
+
+------------------------------------------------------------------------------
+11.3 Per-Wiki Options                                  *vimwiki-local-options*
 
 
 *vimwiki-option-path*
@@ -1347,15 +1414,16 @@ Extension of wiki files: >
 *vimwiki-option-syntax*
 ------------------------------------------------------------------------------
 Key             Default value     Values~
-syntax          default           default, media, markdown
+syntax          default           default, markdown, or media
 
 Description~
-Wiki syntax.
-You can use different markup languages (currently default vimwiki and
-MediaWiki), but only vimwiki's default markup will be converted to HTML at the
-moment.
-To use MediaWiki's wiki markup: >
-  let g:vimwiki_list = [{'path': '~/my_site/', 'syntax': 'media'}]
+Wiki syntax.  You can use different markup languages (currently: vimwiki's
+default, Markdown, and MediaWiki), but only vimwiki's default markup will be
+converted to HTML at the moment.
+
+To use Markdown's wiki markup: >
+  let g:vimwiki_list = [{'path': '~/my_site/', 
+                       \ 'syntax': 'markdown', 'ext': '.md'}]
 <
 
 *vimwiki-option-template_path*
@@ -1579,12 +1647,14 @@ is used.  This affects the behavior of the list manipulation commands
 
 
 
+------------------------------------------------------------------------------
+11.4 Global Options                                   *viwmiki-global-options*
 
-GLOBAL OPTIONS                                        *viwmiki-global-options*
 
-Use: >
-    let g:option_name=option_value
-to set them.
+Global options are configured using the following pattern: >
+
+    let g:option_name = option_value
+
 
 -----------------------------------------------------------------------------
 *g:vimwiki_hl_headers*
@@ -1614,45 +1684,43 @@ Default: 0
 
 
 ------------------------------------------------------------------------------
-*g:vimwiki_global_ext* *vimwiki-temporary-wiki*
+*g:vimwiki_global_ext*
 
-If a file with a registered wiki extension is opened in a directory that is
-not listed in |g:vimwiki_list| then:
+Control the creation of |vimwiki-temporary-wiki|s.
+
+If a file with a registered extension (see |vimwiki-register-extension|) is
+opened in a directory that is: 1) not listed in |g:vimwiki_list|, and 2) not a
+subdirectory of any such directory, then:
 
 Value           Description~
-1               make a temporary wiki in that dir.
+1               make temporary wiki and append it to |g:vimwiki_list|.
 0               don't make temporary wiki in that dir.
 
-A temporary wiki is created to scan the filesystem for available links to
-highlight.
-
-Consider your wiki extension is .txt then you can >
+If your preferred wiki extension is .txt then you can >
     let g:vimwiki_global_ext = 0
-to make it local to vimwiki paths listed in g:vimwiki_list. So other text
-files wouldn't be treated as wiki pages.
+to restrict vimwiki's operation to only those paths listed in g:vimwiki_list. 
+Other text files wouldn't be treated as wiki pages.
 
 Default: 1
 
 
 ------------------------------------------------------------------------------
-*g:vimwiki_ext2syntax*
+*g:vimwiki_ext2syntax* *vimwiki-register-extension*
 
-A map listing the default syntax to associate with a given wiki extension.
+A many-to-one map between file extensions and syntaxes whose purpose is to
+register the extensions with vimwiki.  
 
 E.g.: >
-  let g:vimwiki_ext2syntax = {'md': 'markdown', 
-                  \ 'mkd': 'markdown', 
-                  \ 'wiki': 'default'}
+  let g:vimwiki_ext2syntax = {'.md': 'markdown', 
+                  \ '.mkd': 'markdown',
+                  \ '.wiki': 'media'}
 
-The existence of a mapping from an extension to a syntax is sufficient to
-register the extension for the creation of a temporary wiki, when
-g:vimwiki_global_ext equals 1.
+An extension that is registered with vimwiki can trigger creation of a
+|vimwiki-temporary-wiki| with the associated syntax.  File extensions used in
+|g:vimwiki_list| are automatically registered with vimwiki using the default
+syntax.
 
-The creation of two temporary wikis with different extensions (and possibly
-different syntaxes) in the same directory is not currently possible.
-
-Default: {}
-
+Default: {'.md': 'markdown'}
 
 ------------------------------------------------------------------------------
 *g:vimwiki_auto_checkbox*
@@ -1816,7 +1884,7 @@ similar to 'local:' and 'file:' schemes, but are always opened with Vim: >
 
 
 -----------------------------------------------------------------------------
-VimwikiWikiIncludeHandler~
+*VimwikiWikiIncludeHandler*~
 
 Vimwiki includes the contents of a wiki-include URL as an image by default.
 
