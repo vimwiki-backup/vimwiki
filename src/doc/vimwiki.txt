@@ -1193,21 +1193,21 @@ Use the  :VimwikiTable command to create a default table with 5 columns and 2
 rows: >
  
  |   |   |   |   |   |
- |---+---+---+---+---|
+ |---|---|---|---|---|
  |   |   |   |   |   |
 <
 
 Tables are auto-formattable. Let's add some text into first cell: >
 
  | First Name  |   |   |   |   |
- |---+---+---+---+---|
+ |---|---|---|---|---|
  |   |   |   |   |   |
 <
 
 Whenever you press <TAB>, <CR> or leave Insert mode, the table is formatted: >
 
  | First Name |   |   |   |   |
- |------------+---+---+---+---|
+ |------------|---|---|---|---|
  |            |   |   |   |   |
 <
 
@@ -1215,7 +1215,7 @@ You can easily create nice-looking text tables, just press <TAB> and enter new
 values: >
 
  | First Name | Last Name  | Age | City     | e-mail               |
- |------------+------------+-----+----------+----------------------|
+ |------------|------------|-----|----------|----------------------|
  | Vladislav  | Pokrishkin | 31  | Moscow   | vlad_pok@smail.com   |
  | James      | Esfandiary | 27  | Istanbul | esfandiary@tmail.com |
 <
