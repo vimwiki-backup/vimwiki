@@ -799,8 +799,9 @@ function! vimwiki#base#nested_syntax(filetype, start, end, textSnipHl) abort "{{
   " let b:skip_set_iskeyword = 1
   let is_keyword = &iskeyword
 
-  execute 'syntax include @'.group.' syntax/'.a:filetype.'.vim'
   try
+    " keep going even if syntax file is not found
+    execute 'syntax include @'.group.' syntax/'.a:filetype.'.vim'
     execute 'syntax include @'.group.' after/syntax/'.a:filetype.'.vim'
   catch
   endtry
