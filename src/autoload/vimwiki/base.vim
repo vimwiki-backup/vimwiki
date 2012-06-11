@@ -86,7 +86,7 @@ function! vimwiki#base#read_wiki_options(check) " {{{ Attempt to read wiki
   "   overwrite !!  (not to mention all the other globals ...)
   let l:vimwiki_list = deepcopy(g:vimwiki_list, 1)
   "
-  if a:check
+  if a:check > 1
     call vimwiki#base#print_wiki_state()
     echo " \n"
   endif
@@ -98,7 +98,7 @@ function! vimwiki#base#read_wiki_options(check) " {{{ Attempt to read wiki
     " other names are possible, but most vimrc files will cause grief!
     for nm in ['vimwiki.vimrc']
       " TODO: use an alternate strategy, instead of source, to read options
-      if done |
+      if done
         continue
       endif
       "
@@ -109,7 +109,7 @@ function! vimwiki#base#read_wiki_options(check) " {{{ Attempt to read wiki
       "
       echo "\nFound file : ".local_wiki_options_filename
       let query = "Vimwiki: Check for options in this file [Y]es/[n]o? "
-      if a:check && (tolower(input(query)) !~ "y")
+      if a:check > 0 && (tolower(input(query)) !~ "y")
         continue
       endif
       "
@@ -121,7 +121,7 @@ function! vimwiki#base#read_wiki_options(check) " {{{ Attempt to read wiki
         continue
       endif
       "
-      if a:check
+      if a:check > 0
         echo "\n\nFound wiki options\n  g:local_wiki = ".string(g:local_wiki)
         let query = "Vimwiki: Apply these options [Y]es/[n]o? "
         if tolower(input(query)) !~ "y"
@@ -145,7 +145,7 @@ function! vimwiki#base#read_wiki_options(check) " {{{ Attempt to read wiki
     let g:vimwiki_list = deepcopy(l:vimwiki_list, 1)
     "
   endif
-  if a:check 
+  if a:check > 1
     echo " \n "
     if done
       call vimwiki#base#print_wiki_state()
