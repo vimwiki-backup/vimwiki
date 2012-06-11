@@ -424,8 +424,8 @@ function! s:tag_wikiincl(value) "{{{
     endif
 
     " Issue 343: Image transclusions: schemeless links have .html appended.
-    " If link is schemeless or wiki# pass it as it is
-    if scheme =~ 'wiki\d' || scheme == ''
+    " If link is schemeless pass it as it is
+    if scheme == ''
       let url = lnk
     endif
 
