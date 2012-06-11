@@ -415,19 +415,7 @@ call s:default('rxSchemeUrlMatchUrl', rxSchemes.':\zs.*\ze')
 "}}}
 
 " AUTOCOMMANDS for all known wiki extensions {{{
-" Getting all extensions that different wikis could have
-let extensions = {}
-for wiki in g:vimwiki_list
-  if has_key(wiki, 'ext')
-    let extensions[wiki.ext] = 1
-  else
-    let extensions['.wiki'] = 1
-  endif
-endfor
-" append map g:vimwiki_ext2syntax
-for ext in keys(g:vimwiki_ext2syntax)
-  let extensions[ext] = 1
-endfor
+let extensions = vimwiki#base#get_known_extensions()
 
 augroup filetypedetect
   " clear FlexWiki's stuff
@@ -436,7 +424,7 @@ augroup end
 
 augroup vimwiki
   autocmd!
-  for ext in keys(extensions)
+  for ext in extensions
     exe 'autocmd BufEnter *'.ext.' call s:setup_buffer_reenter()'
     exe 'autocmd BufWinEnter *'.ext.' call s:setup_buffer_enter()'
     exe 'autocmd BufLeave,BufHidden *'.ext.' call s:setup_buffer_leave()'
