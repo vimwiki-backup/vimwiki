@@ -296,6 +296,19 @@ function! VimwikiSet(option, value, ...) "{{{
   endif
 
 endfunction "}}}
+
+" Clear option for current wiki or if third parameter exists for
+"   wiki with a given index.
+" Currently, only works if option was previously saved in the buffer local
+"   dictionary, that acts as a cache.
+function! VimwikiClear(option, ...) "{{{
+  let idx = a:0 == 0 ? g:vimwiki_current_idx : a:1
+
+  if exists('b:vimwiki_list') && has_key(b:vimwiki_list, a:option)
+    call remove(b:vimwiki_list, a:option)
+  endif
+
+endfunction "}}}
 " }}}
 
 " }}}
