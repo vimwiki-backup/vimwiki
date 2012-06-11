@@ -513,7 +513,7 @@ function! vimwiki#base#get_links(pat) "{{{ return string-list for files
   " in the current wiki matching the pattern "pat"
   " search all wiki files (or directories) in wiki 'path' and its subdirs.
 
-  let time1 = reltime()  " start the clock  XXX
+  let time1 = reltime()  " start the clock
 
   " XXX: 
   " if maxhi = 1 and <leader>w<leader>w before loading any vimwiki file
