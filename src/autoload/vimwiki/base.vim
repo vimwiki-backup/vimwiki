@@ -273,8 +273,7 @@ function! vimwiki#base#invsubdir(subdir) " {{{
 endfunction " }}}
 
 function! vimwiki#base#resolve_scheme(lnk, as_html) " {{{ Resolve scheme
-  " - Only return non-negative index when valid wiki link found
-  "
+  " ... is for transcluded links
   " if link is schemeless add wikiN: scheme
   let lnk = a:lnk
   let is_schemeless = lnk !~ g:vimwiki_rxSchemeUrl
