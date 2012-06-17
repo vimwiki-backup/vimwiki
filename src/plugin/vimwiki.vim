@@ -195,7 +195,10 @@ function! s:setup_buffer_enter() "{{{
   " Settings foldmethod, foldexpr and foldtext are local to window. Thus in a
   " new tab with the same buffer folding is reset to vim defaults. So we
   " insist vimwiki folding here.
-  if g:vimwiki_folding == 1 && &fdm != 'expr'
+  if g:vimwiki_folding == 2 && &fdm != 'expr'
+    " User-defined fold-expression, and fold-text
+  endif
+  if g:vimwiki_folding == 1
     setlocal fdm=expr
     setlocal foldexpr=VimwikiFoldLevel(v:lnum)
     setlocal foldtext=VimwikiFoldText()
