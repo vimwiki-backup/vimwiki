@@ -242,7 +242,7 @@ function! vimwiki#diary#make_note(wnum, ...) "{{{
   else
     let cmd = 'edit'
   endif
-  if len(a:0)>1
+  if a:0>1
     let link = 'diary:'.a:2
   else
     let link = 'diary:'.s:diary_date_link(idx)
