@@ -9,7 +9,7 @@
               |___|  |___| |_|   |_||__| |__||___| |___| |_||___|            ~
 
 
-                               Version: 2.0 'stu'
+                               Version: 2.0.1 'stu'
 
 ==============================================================================
 CONTENTS                                                    *vimwiki-contents*
@@ -2186,10 +2186,16 @@ Vim plugins: http://www.vim.org/scripts/script.php?script_id=2226
 ==============================================================================
 14. Changelog                                              *vimwiki-changelog*
 
+2.0.1 'stu'~
+
+    * Follow (i.e. open target of) markdown reference-style links.
+    * Bug fixes.
+
+
 2.0 'stu'~
 
 This release is partly incompatible with previous.
-
+    *
 Summary ~
 
     * Quick page-link creation.
