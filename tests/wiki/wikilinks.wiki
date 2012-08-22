@@ -43,3 +43,6 @@ These syntaxes only work when 'link_separator' == '|'
 
 = Diary Scheme =
  # [[diary:2012-05-22]]
+
+= With special symbols =
+ # [[https://hello#world.com]]
