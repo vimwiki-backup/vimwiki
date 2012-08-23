@@ -4,7 +4,15 @@
 " Author: Maxim Kim <habamax@gmail.com>
 " Home: http://code.google.com/p/vimwiki/
 
-" XXX: This file should be refactored!
+" TODO: We need vimwiki abstract syntax tree. If properly designed it wourld
+" greatly symplify different syntax to HTML generation.
+" 
+" vimwiki   --            --> PDF 
+"             \          /
+" markdown  -----> AST -----> HTML
+"             /          \
+" mediawiki --            --> Latex
+"
 
 " Load only once {{{
 if exists("g:loaded_vimwiki_html_auto") || &cp
