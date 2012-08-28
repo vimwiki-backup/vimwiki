@@ -65,7 +65,7 @@ let g:vimwiki_WikiLinkTemplate2 = g:vimwiki_rxWikiLinkPrefix . '__LinkUrl__'.
       \ g:vimwiki_rxWikiLinkSuffix
 "
 let magic_chars = '.*[]\^$'
-let valid_chars = '[^\\]'
+let valid_chars = '[^\\\]]'
 
 let g:vimwiki_rxWikiLinkPrefix = escape(g:vimwiki_rxWikiLinkPrefix, magic_chars)
 let g:vimwiki_rxWikiLinkSuffix = escape(g:vimwiki_rxWikiLinkSuffix, magic_chars)
@@ -110,6 +110,8 @@ let g:vimwiki_WikiInclTemplate1 = g:vimwiki_rxWikiInclPrefix . '__LinkUrl__'.
 let g:vimwiki_WikiInclTemplate2 = g:vimwiki_rxWikiInclPrefix . '__LinkUrl__'. 
       \ '__LinkDescription__'.
       \ g:vimwiki_rxWikiInclSuffix
+
+let valid_chars = '[^\\\}]'
 
 let g:vimwiki_rxWikiInclPrefix = escape(g:vimwiki_rxWikiInclPrefix, magic_chars)
 let g:vimwiki_rxWikiInclSuffix = escape(g:vimwiki_rxWikiInclSuffix, magic_chars)
@@ -309,8 +311,10 @@ endif
 syntax spell toplevel
 
 if g:vimwiki_debug > 1
-  echom 'WikiLink Prefix: '.g:vimwiki_rxWikiLinkPrefix1
-  echom 'WikiLink Suffix: '.g:vimwiki_rxWikiLinkSuffix1
+  echom 'WikiLink Prefix: '.g:vimwiki_rxWikiLinkPrefix
+  echom 'WikiLink Suffix: '.g:vimwiki_rxWikiLinkSuffix
+  echom 'WikiLink Prefix1: '.g:vimwiki_rxWikiLinkPrefix1
+  echom 'WikiLink Suffix1: '.g:vimwiki_rxWikiLinkSuffix1
   echom 'WikiIncl Prefix: '.g:vimwiki_rxWikiInclPrefix1
   echom 'WikiIncl Suffix: '.g:vimwiki_rxWikiInclSuffix1
 endif
