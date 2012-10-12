@@ -549,7 +549,7 @@ endfunction "}}}
 function! vimwiki#base#backlinks() "{{{
     execute 'lvimgrep "\%(^\|[[:blank:][:punct:]]\)'.
           \ expand("%:t:r").
-          \ '\([[:blank:][:punct:]]\|$\)" '. 
+          \ '\([[:blank:][:punct:]]\|$\)\C" '. 
           \ escape(VimwikiGet('path').'**/*'.VimwikiGet('ext'), ' ')
 endfunction "}}}
 
