@@ -377,7 +377,7 @@ call s:default('fold_trailing_empty_lines', 0)
 call s:default('fold_lists', 0)
 call s:default('menu', 'Vimwiki')
 call s:default('global_ext', 1)
-call s:default('ext2syntax', {'.md': 'markdown'}) " syntax map keyed on extension
+call s:default('ext2syntax', {}) " syntax map keyed on extension
 call s:default('hl_headers', 0)
 call s:default('hl_cb_checked', 0)
 call s:default('list_ignore_newline', 1)

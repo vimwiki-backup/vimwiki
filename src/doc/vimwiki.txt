@@ -1736,7 +1736,7 @@ An extension that is registered with vimwiki can trigger creation of a
 |g:vimwiki_list| are automatically registered with vimwiki using the default
 syntax.
 
-Default: {'.md': 'markdown'}
+Default: {}
 
 ------------------------------------------------------------------------------
 *g:vimwiki_auto_checkbox*
