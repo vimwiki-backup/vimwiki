@@ -2186,6 +2186,11 @@ Vim plugins: http://www.vim.org/scripts/script.php?script_id=2226
 ==============================================================================
 14. Changelog                                              *vimwiki-changelog*
 
+'DEV'~
+
+    * Issue 393: Custom_wiki2html script can contain tilde character
+    * Issue 392: Custom_wiki2html arguments are quoted, e.g names with spaces
+
 2.0.1 'stu'~
 
     * Follow (i.e. open target of) markdown reference-style links.
