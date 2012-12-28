@@ -1365,7 +1365,11 @@ function! vimwiki#html#CustomWiki2HTML(path, wikifile, force) "{{{
       \ strpart(VimwikiGet('ext'), 1). ' '.
       \ shellescape(a:path, 1). ' '.
       \ shellescape(a:wikifile, 1). ' '.
-      \ shellescape(s:default_CSS_full_name(a:path), 1)
+      \ shellescape(s:default_CSS_full_name(a:path), 1). ' '.
+      \ shellescape(expand(VimwikiGet('template_path')), 1). ' '.
+      \ VimwikiGet('template_default'). ' '.
+      \ VimwikiGet('template_ext')
+
 endfunction " }}}
 
 function! vimwiki#html#Wiki2HTML(path_html, wikifile) "{{{

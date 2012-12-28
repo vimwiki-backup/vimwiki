@@ -1641,13 +1641,18 @@ The following arguments, in this order, are passed to the
 4. output_dir : the full path of the output directory, i.e. 'path_html'
 5. input_file : the full path of the wiki page
 6. css_file : the full path of the css file for this wiki
+7. template_path : the full path to the wiki's templates
+8. template_default : the default template name
+9. template_ext : the extension of template files
 
 For an example and further instructions, refer to the following script:
 
   $VIMHOME/autoload/vimwiki/customwiki2html.sh
 
-To use the internal wiki2html converter, use an empty string (the default).
+An alternative converter was developed by Jason6Anderson, and can
+be located at http://code.google.com/p/vimwiki/issues/detail?id=384
 
+To use the internal wiki2html converter, use an empty string (the default).
 
 *vimwiki-option-list_margin*
 ------------------------------------------------------------------------------
