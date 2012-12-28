@@ -2193,7 +2193,8 @@ Vim plugins: http://www.vim.org/scripts/script.php?script_id=2226
 
 'DEV'~
 
-    * Issue 393: Custom_wiki2html script can contain tilde character
+    * Issue 384: Custom_wiki2html script now receives templating arguments
+    * Issue 393: Custom_wiki2html script path can contain tilde character
     * Issue 392: Custom_wiki2html arguments are quoted, e.g names with spaces
 
 2.0.1 'stu'~
