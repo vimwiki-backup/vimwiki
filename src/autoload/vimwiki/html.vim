@@ -1359,13 +1359,13 @@ endfunction " }}}
 
 function! vimwiki#html#CustomWiki2HTML(path, wikifile, force) "{{{
   call vimwiki#base#mkdir(a:path)
-  execute '!'.VimwikiGet('custom_wiki2html'). ' '
+  execute '!'.VimwikiGet('custom_wiki2html'). ' '.
       \ a:force. ' '.
       \ VimwikiGet('syntax'). ' '.
       \ strpart(VimwikiGet('ext'), 1). ' '.
-      \ a:path. ' '.
-      \ a:wikifile. ' '.
-      \ s:default_CSS_full_name(a:path)
+      \ shellescape(a:path, 1). ' '.
+      \ shellescape(a:wikifile, 1). ' '.
+      \ shellescape(s:default_CSS_full_name(a:path), 1)
 endfunction " }}}
 
 function! vimwiki#html#Wiki2HTML(path_html, wikifile) "{{{
@@ -1573,7 +1573,7 @@ function! vimwiki#html#WikiAll2HTML(path_html) "{{{
 endfunction "}}}
 
 function! s:file_exists(fname) "{{{
-  return !empty(getftype(a:fname))
+  return !empty(getftype(expand(a:fname)))
 endfunction "}}}
 
 " uses VimwikiGet('path')
