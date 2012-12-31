@@ -490,6 +490,9 @@ function! vimwiki#tbl#kbd_shift_tab() "{{{
 endfunction "}}}
 
 function! vimwiki#tbl#format(lnum, ...) "{{{
+  if !(&filetype == 'vimwiki')
+    return
+  endif
   let line = getline(a:lnum)
   if !s:is_table(line)
     return
@@ -557,6 +560,9 @@ function! vimwiki#tbl#align_or_cmd(cmd) "{{{
 endfunction "}}}
 
 function! vimwiki#tbl#reset_tw(lnum) "{{{
+  if !(&filetype == 'vimwiki')
+    return
+  endif
   let line = getline(a:lnum)
   if !s:is_table(line)
     return
