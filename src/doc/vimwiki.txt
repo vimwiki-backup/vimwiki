@@ -2073,7 +2073,7 @@ Default: '' (empty)
 ------------------------------------------------------------------------------
 *g:vimwiki_valid_html_tags*
 
-Comma-separated list of HTML tags that can be used in vimwiki.
+Case-insensitive comma separated list of HTML tags that can be used in vimwiki.
 
 Default: 'b,i,s,u,sub,sup,kbd,br,hr'
 
@@ -2193,6 +2193,7 @@ Vim plugins: http://www.vim.org/scripts/script.php?script_id=2226
 
 'DEV'~
 
+    * Issue 372: Ignore case in g:vimwiki_valid_html_tags
     * Issue 380: Fixed
     * Issue 384: Custom_wiki2html script now receives templating arguments
     * Issue 393: Custom_wiki2html script path can contain tilde character

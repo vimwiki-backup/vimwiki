@@ -145,22 +145,12 @@ endfunction "}}}
 
 function! s:safe_html(line) "{{{
   " escape & < > when producing HTML text
-  " uses variables s:lt_pattern, s:gt_pattern that are
-  " set in vimwiki#html#Wiki2HTML() according to  g:vimwiki_valid_html_tags
-  "" htmlize symbols: < > &
-
+  " s:lt_pattern, s:gt_pattern depend on g:vimwiki_valid_html_tags
+  " and are set in vimwiki#html#Wiki2HTML()
   let line = substitute(a:line, '&', '\&amp;', 'g')
-  " the following depends on g:vimwiki_valid_html_tags
   let line = substitute(line,s:lt_pattern,'\&lt;', 'g')
   let line = substitute(line,s:gt_pattern,'\&gt;', 'g')
 
-  "let tags = join(split(g:vimwiki_valid_html_tags, '\s*,\s*'), '\|')
-  "let line = substitute(line,'<\%(/\?\%('
-  "      \.tags.'\)\%(\s\{-1}\S\{-}\)\{-}/\?>\)\@!', 
-  "      \'\&lt;', 'g')
-  "let line = substitute(line,'\%(</\?\%('
-  "      \.tags.'\)\%(\s\{-1}\S\{-}\)\{-}/\?\)\@<!>',
-  "      \'\&gt;', 'g')
   return line
 endfunction "}}}
 
@@ -1426,8 +1416,8 @@ function! vimwiki#html#Wiki2HTML(path_html, wikifile) "{{{
     let s:gt_pattern = '>'
     if g:vimwiki_valid_html_tags != ''
       let tags = join(split(g:vimwiki_valid_html_tags, '\s*,\s*'), '\|')
-      let s:lt_pattern = '<\%(/\?\%('.tags.'\)\%(\s\{-1}\S\{-}\)\{-}/\?>\)\@!' 
-      let s:gt_pattern = '\%(</\?\%('.tags.'\)\%(\s\{-1}\S\{-}\)\{-}/\?\)\@<!>'
+      let s:lt_pattern = '\c<\%(/\?\%('.tags.'\)\%(\s\{-1}\S\{-}\)\{-}/\?>\)\@!' 
+      let s:gt_pattern = '\c\%(</\?\%('.tags.'\)\%(\s\{-1}\S\{-}\)\{-}/\?\)\@<!>'
     endif
 
     for line in lsource
