@@ -1644,6 +1644,12 @@ The following arguments, in this order, are passed to the
 7. template_path : the full path to the wiki's templates
 8. template_default : the default template name
 9. template_ext : the extension of template files
+10. root_path : a count of ../ for pages buried in subdirs
+    if you have wikilink [[dir1/dir2/dir3/my page in a subdir]] then
+    %root_path% is replaced by '../../../'.
+
+Options 7-10 are experimental and may change in the future.  If any of these
+parameters is empty, then a hyphen "-" is passed to the script in its place.
 
 For an example and further instructions, refer to the following script:
 
