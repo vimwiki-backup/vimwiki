@@ -58,7 +58,7 @@ function! s:is_table(line) "{{{
 endfunction "}}}
 
 function! s:is_separator(line) "{{{
-  return a:line =~ '^\s*'.s:rxSep().'\(--\+'.s:rxSep().'\)\+\s*$'
+  return a:line =~ '^\s*'.s:rxSep().'\(:\?-\+:\?'.s:rxSep().'\)\+\s*$'
 endfunction "}}}
 
 function! s:is_separator_tail(line) "{{{
@@ -259,7 +259,7 @@ function! s:get_aligned_rows(lnum, col1, col2) "{{{
   let rows = []
   for [lnum, row] in s:get_rows(a:lnum)
     if s:is_separator(row)
-      let new_row = s:fmt_sep(max_lens, a:col1, a:col2)
+      let new_row = s:fmt_sep(row, max_lens, a:col1, a:col2)
     else
       let new_row = s:fmt_row(row, max_lens, a:col1, a:col2)
     endif
@@ -324,23 +324,40 @@ function! s:fmt_row(line, max_lens, col1, col2) "{{{
   return new_line
 endfunction "}}}
 
-function! s:fmt_cell_sep(max_len) "{{{
-  if a:max_len == 0
-    return repeat('-', 3)
-  else
-    return repeat('-', a:max_len+2)
+function! s:fmt_cell_sep(max_len, align) "{{{
+  let len = max([1, a:max_len])
+  let prefix = '-'
+  let suffix = '-'
+  if a:align == 'CENTER' || a:align == 'LEFT'
+    let prefix = ':'
   endif
+  if a:align == 'CENTER' || a:align == 'RIGHT'
+    let suffix = ':'
+  endif
+  return prefix.repeat('-', len).suffix
 endfunction "}}}
 
-function! s:fmt_sep(max_lens, col1, col2) "{{{
+function! s:fmt_sep(line, max_lens, col1, col2) "{{{
   let new_line = s:rxSep()
+  let cells = vimwiki#tbl#get_cells(a:line)
   for idx in range(len(a:max_lens))
     if idx == a:col1
       let idx = a:col2
     elseif idx == a:col2
       let idx = a:col1
     endif
-    let new_line .= s:fmt_cell_sep(a:max_lens[idx]).s:rxSep()
+    let cell = cells[idx]
+    let align = 'NONE'
+    if cell[strlen(cell)-1] == ':'
+      if cell[0] == ':'
+        let align = 'CENTER'
+      else
+        let align = 'RIGHT'
+      endif
+    elseif cell[0] == ':'
+      let align = 'LEFT'
+    endif
+    let new_line .= s:fmt_cell_sep(a:max_lens[idx], align).s:rxSep()
   endfor
   return new_line
 endfunction "}}}
