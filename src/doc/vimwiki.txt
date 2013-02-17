@@ -1811,10 +1811,16 @@ Enable/disable vimwiki's folding/outline functionality. Folding in vimwiki
 uses the 'expr' foldmethod which is very flexible but really slow.
 
 Value           Description~
-0               Disable folding.
-1               Enable folding.
+''              Disable folding.
+'expr'          Enable folding based on expression function (slow but powerful).
+'syntax'        Enable folding based on syntax (a bit faster but lacks some features).
 
-Default: 0
+Default: ''
+
+
+'syntax' limitations:
+  - folding for list items don't work.
+  - only available for default syntax (this might be improved)
 
 
 ------------------------------------------------------------------------------
@@ -1827,6 +1833,8 @@ Value           Description~
 1               Enable list subitem's folding.
 
 Default: 0
+
+Works only with 'expr' method of |g:vimwiki_folding|
 
 
 ------------------------------------------------------------------------------
@@ -2199,6 +2207,8 @@ Vim plugins: http://www.vim.org/scripts/script.php?script_id=2226
 
 'DEV'~
 
+    * Issue 261: Syntax folding is back. |g:vimwiki_folding| values are
+      changed to '', 'expr', 'syntax'.
     * Issue 372: Ignore case in g:vimwiki_valid_html_tags
     * Issue 380: Fixed
     * Issue 384: Custom_wiki2html script now receives templating arguments
