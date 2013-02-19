@@ -49,6 +49,9 @@ execute 'runtime! syntax/vimwiki_'.VimwikiGet('syntax').'.vim'
 " -------------------------------------------------------------------------
 let time0 = vimwiki#u#time(starttime)  "XXX
 
+let g:vimwiki_rxListItem = '\('.
+      \ g:vimwiki_rxListBullet.'\|'.g:vimwiki_rxListNumber.
+      \ '\)'
 
 " LINKS: setup of larger regexes {{{
 

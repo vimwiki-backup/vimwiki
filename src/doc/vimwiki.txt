@@ -1808,25 +1808,26 @@ Default: 0
 *g:vimwiki_folding*
 
 Enable/disable vimwiki's folding/outline functionality. Folding in vimwiki 
-uses the 'expr' foldmethod which is very flexible but really slow.
+can uses either the 'expr' or the 'syntax' foldmethod of Vim.
 
 Value           Description~
 ''              Disable folding.
-'expr'          Enable folding based on expression function (slow but powerful).
-'syntax'        Enable folding based on syntax (a bit faster but lacks some features).
+'expr'          Enable folding based on expression function (more flexible).
+'syntax'        Enable folding based on syntax (might be faster).
 
 Default: ''
 
 
 'syntax' limitations:
-  - folding for list items don't work.
-  - only available for default syntax (this might be improved)
+  - folding for list items is not possible,
+  - only available for default syntax so far.
 
 
 ------------------------------------------------------------------------------
 *g:vimwiki_fold_lists*
 
-Enable/disable folding of list subitems.
+Enable/disable folding of list subitems. Enabling this option can make
+work with larger files very slow.
 
 Value           Description~
 0               Disable list subitem's folding.
@@ -1834,7 +1835,7 @@ Value           Description~
 
 Default: 0
 
-Works only with 'expr' method of |g:vimwiki_folding|
+List folding works only with the 'expr' method of |g:vimwiki_folding|.
 
 
 ------------------------------------------------------------------------------
