@@ -92,11 +92,12 @@ function! VimwikiFoldLevel(lnum) "{{{
       let leveln = s:get_li_level(nnum)
       let adj = s:get_li_level(s:get_start_list(g:vimwiki_rxListItem, a:lnum))
 
+
       if leveln > level
         return ">".(base_level+leveln-adj)
       " check if multilined list item
       elseif (nnum-a:lnum) > 1 
-            \ && nline =~ g:vimwiki_rxListItem && nnline !~ '^\s*$'
+            \ && (nline =~ g:vimwiki_rxListItem || nnline !~ '^\s*$')
         return ">".(base_level+level+1-adj)
       else
         return (base_level+level-adj)
