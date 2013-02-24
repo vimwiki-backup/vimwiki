@@ -199,8 +199,13 @@ function! s:setup_buffer_enter() "{{{
     setlocal fdm=expr
     setlocal foldexpr=VimwikiFoldLevel(v:lnum)
     setlocal foldtext=VimwikiFoldText()
+  elseif g:vimwiki_folding == 'list' || g:vimwiki_folding == 'lists'
+    setlocal fdm=expr
+    setlocal foldexpr=VimwikiFoldListLevel(v:lnum)
+    setlocal foldtext=VimwikiFoldText()
   elseif g:vimwiki_folding == 'syntax'
     setlocal fdm=syntax
+    setlocal foldtext=VimwikiFoldText()
   endif
 
   " And conceal level too.
@@ -372,8 +377,6 @@ call s:default('list', [s:vimwiki_defaults])
 call s:default('auto_checkbox', 1)
 call s:default('use_mouse', 0)
 call s:default('folding', '')
-call s:default('fold_trailing_empty_lines', 0)
-call s:default('fold_lists', 0)
 call s:default('menu', 'Vimwiki')
 call s:default('global_ext', 1)
 call s:default('ext2syntax', {}) " syntax map keyed on extension
