@@ -49,6 +49,9 @@ execute 'runtime! syntax/vimwiki_'.VimwikiGet('syntax').'.vim'
 " -------------------------------------------------------------------------
 let time0 = vimwiki#u#time(starttime)  "XXX
 
+let g:vimwiki_rxListItem = '\('.
+      \ g:vimwiki_rxListBullet.'\|'.g:vimwiki_rxListNumber.
+      \ '\)'
 
 " LINKS: setup of larger regexes {{{
 
@@ -283,6 +286,8 @@ if g:vimwiki_symH
   for i in range(1,6)
     let g:vimwiki_rxH{i}_Template = repeat(g:vimwiki_rxH, i).' __Header__ '.repeat(g:vimwiki_rxH, i)
     let g:vimwiki_rxH{i} = '^\s*'.g:vimwiki_rxH.'\{'.i.'}[^'.g:vimwiki_rxH.'].*[^'.g:vimwiki_rxH.']'.g:vimwiki_rxH.'\{'.i.'}\s*$'
+    let g:vimwiki_rxH{i}_Start = '^\s*'.g:vimwiki_rxH.'\{'.i.'}[^'.g:vimwiki_rxH.'].*[^'.g:vimwiki_rxH.']'.g:vimwiki_rxH.'\{'.i.'}\s*$'
+    let g:vimwiki_rxH{i}_End = '^\s*'.g:vimwiki_rxH.'\{1,'.i.'}[^'.g:vimwiki_rxH.'].*[^'.g:vimwiki_rxH.']'.g:vimwiki_rxH.'\{1,'.i.'}\s*$'
   endfor
   let g:vimwiki_rxHeader = '^\s*\('.g:vimwiki_rxH.'\{1,6}\)\zs[^'.g:vimwiki_rxH.'].*[^'.g:vimwiki_rxH.']\ze\1\s*$'
 else
@@ -290,6 +295,8 @@ else
   for i in range(1,6)
     let g:vimwiki_rxH{i}_Template = repeat(g:vimwiki_rxH, i).' __Header__'
     let g:vimwiki_rxH{i} = '^\s*'.g:vimwiki_rxH.'\{'.i.'}[^'.g:vimwiki_rxH.'].*$'
+    let g:vimwiki_rxH{i}_Start = '^\s*'.g:vimwiki_rxH.'\{'.i.'}[^'.g:vimwiki_rxH.'].*$'
+    let g:vimwiki_rxH{i}_End = '^\s*'.g:vimwiki_rxH.'\{1,'.i.'}[^'.g:vimwiki_rxH.'].*$'
   endfor
   let g:vimwiki_rxHeader = '^\s*\('.g:vimwiki_rxH.'\{1,6}\)\zs[^'.g:vimwiki_rxH.'].*\ze$'
 endif
@@ -297,7 +304,10 @@ endif
 " Header levels, 1-6
 for i in range(1,6)
   execute 'syntax match VimwikiHeader'.i.' /'.g:vimwiki_rxH{i}.'/ contains=VimwikiTodo,VimwikiHeaderChar,VimwikiNoExistsLink,VimwikiCode,VimwikiLink,@Spell'
+  execute 'syntax region VimwikiH'.i.'Folding start=/'.g:vimwiki_rxH{i}_Start.
+        \ '/ end=/'.g:vimwiki_rxH{i}_End.'/me=s-1 transparent fold'
 endfor
+
 
 " }}}
 
@@ -307,8 +317,6 @@ if exists("+conceallevel")
   syntax conceal on
   let cchar = ' cchar=~ '
 endif
-
-syntax spell toplevel
 
 if g:vimwiki_debug > 1
   echom 'WikiLink Prefix: '.g:vimwiki_rxWikiLinkPrefix
@@ -493,6 +501,7 @@ endif
 "}}}
 
 
+
 " syntax group highlighting "{{{ 
 
 hi def link VimwikiMarkers Normal
@@ -600,6 +609,9 @@ call vimwiki#base#nested_syntax('tex',
       \ '\%([[:blank:][:punct:]].*\)\?',
       \ '^\s*'.g:vimwiki_rxMathEnd, 'VimwikiMath')
 "}}}
+
+
+syntax spell toplevel
 
 let timeend = vimwiki#u#time(starttime)  "XXX
 call VimwikiLog_extend('timing',['syntax:scans',timescans],['syntax:regexloaded',time0],['syntax:beforeHLexisting',time01],['syntax:afterHLexisting',time02],['syntax:end',timeend])
