@@ -1042,9 +1042,10 @@ in HTML: >
 ==============================================================================
 6. Folding/Outline                                           *vimwiki-folding*
 
-Vimwiki can fold or outline headers and list items.
+Vimwiki can fold or outline sections using headers and preformatted blocks.
+Alternatively, one can fold list subitems instead.
 
-Example:
+Example for list folding:
 = My current task =
   * [ ] Do stuff 1
     * [ ] Do substuff 1.1
@@ -1807,26 +1808,22 @@ Default: 0
 ------------------------------------------------------------------------------
 *g:vimwiki_folding*
 
-Enable/disable vimwiki's folding/outline functionality. Folding in vimwiki 
-uses the 'expr' foldmethod which is very flexible but really slow.
+Enable/disable vimwiki's folding (outline) functionality. Folding in vimwiki
+can uses either the 'expr' or the 'syntax' |foldmethod| of Vim.
 
 Value           Description~
-0               Disable folding.
-1               Enable folding.
+''              Disable folding.
+'expr'          Folding based on expression (folds sections and code blocks).
+'syntax'        Folding based on syntax (folds sections; slower than 'expr').
+'list'          Folding based on expression (folds list subitems; much slower).
 
-Default: 0
+Default: ''
 
-
-------------------------------------------------------------------------------
-*g:vimwiki_fold_lists*
-
-Enable/disable folding of list subitems.
-
-Value           Description~
-0               Disable list subitem's folding.
-1               Enable list subitem's folding.
-
-Default: 0
+Limitations:
+  - Opening very large files may be slow when folding is enabled.
+  - 'list' folding is particularly slow with larger files.
+  - 'list' is intended to work with lists nicely indented with 'shiftwidth'.
+  - 'syntax' is only available for the default syntax so far.
 
 
 ------------------------------------------------------------------------------
@@ -2199,6 +2196,10 @@ Vim plugins: http://www.vim.org/scripts/script.php?script_id=2226
 
 'DEV'~
 
+    * |g:vimwiki_folding| also accepts value 'list'; with 'expr' both sections
+      and code blocks folded, g:vimwiki_fold_lists option was removed
+    * Issue 261: Syntax folding is back. |g:vimwiki_folding| values are
+      changed to '', 'expr', 'syntax'.
     * Issue 372: Ignore case in g:vimwiki_valid_html_tags
     * Issue 380: Fixed
     * Issue 384: Custom_wiki2html script now receives templating arguments
