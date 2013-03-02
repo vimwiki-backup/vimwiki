@@ -1,6 +1,6 @@
 " vim:tabstop=2:shiftwidth=2:expandtab:foldmethod=marker:textwidth=79
 " Vimwiki autoload plugin file
-" Desc: Link functions for gitit syntax
+" Desc: Link functions for pandoc syntax
 " Author: Macropodus <the.macropodus@gmail.com>
 " Home: http://code.google.com/p/vimwiki/
 
@@ -48,9 +48,9 @@
 " vimwiki#base#find_prev_link
 
 " vimwiki#base#follow_link
-function! vimwiki#gitit_base#follow_link(split, ...) "{{{ Parse link at cursor and pass
+function! vimwiki#pandoc_base#follow_link(split, ...) "{{{ Parse link at cursor and pass
   " to VimwikiLinkHandler, or failing that, the default open_link handler
-  " echom "gitit_base#follow_link"
+  " echom "pandoc_base#follow_link"
 
   if 0
     " Syntax-specific links
