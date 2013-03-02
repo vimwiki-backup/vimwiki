@@ -153,7 +153,7 @@ function! vimwiki#markdown_base#follow_link(split, ...) "{{{ Parse link at curso
 
     if a:0 > 0
       execute "normal! ".a:1
-    else		
+    else
       call vimwiki#base#normalize_link(0)
     endif
   endif
