@@ -634,7 +634,7 @@ If the Id is defined elsewhere in the source, as per the Markdown standard: >
   [Id]: URL
 
 then the URL is opened with the system default handler.  Otherwise, Vimwiki
-treats the reference-sytle link as a Wikilink, interpreting the Id field as a
+treats the reference-style link as a Wikilink, interpreting the Id field as a
 wiki page name.
 
 Highlighting of existing links when |vimwiki-option-maxhi| is activated
@@ -2105,30 +2105,33 @@ a new tab or window, it would be set to default value.
 Vimwiki sets |conceallevel| to g:vimwiki_conceallevel everytime vimwiki buffer
 is entered.
 
+With default settings, Vimwiki conceals one-character markers, shortens long
+URLs and hides markers and URL for links that have a description.
+
 Default: 2
-
-
-------------------------------------------------------------------------------
-*g:vimwiki_url_mingain*
-
-The minimum number of characters that should be gained by concealing URLs. If
-the length of the concealed part of the URL would be less than
-|g:vimwiki_url_mingain|, the URL is not concealed at all.
-The conceal feature works only with vim >= 7.3.
-
-Default: 12
 
 
 ------------------------------------------------------------------------------
 *g:vimwiki_url_maxsave*
 
-The maximum number of characters that is retained at the end after concealing
-URLs. At most there will be |g:vimwiki_url_maxsave| characters left at the end of the URL.
-However, it could be less when one of /,#,? can be found at the end.
-In that case the URL will be concealed right before the last occurrence of one
-of these characters.
-The conceal feature works only with vim >= 7.3. Beware: when using the default
-'wrap' option, the effect is not always pleasing.
+Setting the value of |g:vimwiki_url_maxsave| to 0 will prevent any link
+shortening: you will see the full URL in all types of links, with no parts
+being concealed. Concealing of one-character markers is not affected.
+
+When positive, the value determines the maximum number of characters that
+are retained at the end after concealing the middle part of a long URL.
+It could be less: in case one of the characters /,#,? is found near the end,
+the URL will be concealed up to the last occurrence of that character.
+
+Note: 
+  * The conceal feature works only with Vim >= 7.3. 
+  * When using the default |wrap| option of Vim, the effect of concealed links
+    is not always pleasing, because the visible text on longer lines with
+    a lot of concealed parts may appear to be strangely broken across several
+    lines. This is a limitation of Vim's |conceal| feature.
+  * Many color schemes do not define an unobtrusive color for the Conceal 
+    highlight group - this might be quite noticeable on shortened URLs.  
+
 
 Default: 15
 
@@ -2144,6 +2147,7 @@ Value           Description~
 1               Show debug messages.
 
 Default: 0
+
 
 ------------------------------------------------------------------------------
 *g:vimwiki_diary_months*
@@ -2196,6 +2200,8 @@ Vim plugins: http://www.vim.org/scripts/script.php?script_id=2226
 
 'DEV'~
 
+    * Concealing of links can be turned off - set |g:vimwiki_url_maxsave| to 0.
+      The option g:vimwiki_url_mingain was removed
     * |g:vimwiki_folding| also accepts value 'list'; with 'expr' both sections
       and code blocks folded, g:vimwiki_fold_lists option was removed
     * Issue 261: Syntax folding is back. |g:vimwiki_folding| values are
@@ -2241,7 +2247,7 @@ Summary ~
     * Table syntax change. Row separator uses | instead of +.
     * Fold multilined list items.
     * Custom wiki to HTML converters. See |vimwiki-option-custom_wiki2html|.
-    * Conceal long weblinks. See |g:vimwiki_url_mingain|.
+    * Conceal long weblinks. See g:vimwiki_url_mingain.
     * Option to disable table mappings. See |g:vimwiki_table_mappings|.
 
 For detailed information see issues list on

@@ -311,13 +311,21 @@ endfor
 
 " }}}
 
-" concealed chars " {{{
-let cchar = ''
-if exists("+conceallevel")
-  syntax conceal on
-  let cchar = ' cchar=~ '
-endif
+" possibly concealed chars " {{{
+let conceal = exists("+conceallevel") ? ' conceal' : ''
 
+execute 'syn match VimwikiEqInChar contained /'.g:vimwiki_char_eqin.'/'.conceal
+execute 'syn match VimwikiBoldChar contained /'.g:vimwiki_char_bold.'/'.conceal
+execute 'syn match VimwikiItalicChar contained /'.g:vimwiki_char_italic.'/'.conceal
+execute 'syn match VimwikiBoldItalicChar contained /'.g:vimwiki_char_bolditalic.'/'.conceal
+execute 'syn match VimwikiItalicBoldChar contained /'.g:vimwiki_char_italicbold.'/'.conceal
+execute 'syn match VimwikiCodeChar contained /'.g:vimwiki_char_code.'/'.conceal
+execute 'syn match VimwikiDelTextChar contained /'.g:vimwiki_char_deltext.'/'.conceal
+execute 'syn match VimwikiSuperScript contained /'.g:vimwiki_char_superscript.'/'.conceal
+execute 'syn match VimwikiSubScript contained /'.g:vimwiki_char_subscript.'/'.conceal
+" }}}
+
+" concealed link parts " {{{
 if g:vimwiki_debug > 1
   echom 'WikiLink Prefix: '.g:vimwiki_rxWikiLinkPrefix
   echom 'WikiLink Suffix: '.g:vimwiki_rxWikiLinkSuffix
@@ -327,9 +335,22 @@ if g:vimwiki_debug > 1
   echom 'WikiIncl Suffix: '.g:vimwiki_rxWikiInclSuffix1
 endif
 
+" define the conceal attribute for links only if Vim is new enough to handle it
+" and the user has g:vimwiki_url_maxsave > 0
+
+let options = ' contained transparent contains=NONE'
+"
+" A shortener for long URLs: LinkRest (a middle part of the URL) is concealed
+" VimwikiLinkRest group is left undefined if link shortening is not desired
+if exists("+conceallevel") && g:vimwiki_url_maxsave > 0
+  let options .= conceal
+  execute 'syn match VimwikiLinkRest `\%(///\=[^/ \t]\+/\)\zs\S\+\ze'
+        \.'\%([/#?]\w\|\S\{'.g:vimwiki_url_maxsave.'}\)`'.' cchar=~'.options
+endif
+
 " VimwikiLinkChar is for syntax markers (and also URL when a description
 " is present) and may be concealed
-let options = ' contained transparent contains=NONE'
+
 " conceal wikilinks
 execute 'syn match VimwikiLinkChar /'.g:vimwiki_rxWikiLinkPrefix.'/'.options
 execute 'syn match VimwikiLinkChar /'.g:vimwiki_rxWikiLinkSuffix.'/'.options
@@ -341,24 +362,6 @@ execute 'syn match VimwikiLinkChar /'.g:vimwiki_rxWikiInclPrefix.'/'.options
 execute 'syn match VimwikiLinkChar /'.g:vimwiki_rxWikiInclSuffix.'/'.options
 execute 'syn match VimwikiLinkChar /'.g:vimwiki_rxWikiInclPrefix1.'/'.options
 execute 'syn match VimwikiLinkChar /'.g:vimwiki_rxWikiInclSuffix1.'/'.options
-
-" A shortener for long URLs: LinkRest (a middle part of the URL) is concealed
-execute 'syn match VimwikiLinkRest `\%(///\=[^/ \t]\+/\)\zs\S\{'
-        \.g:vimwiki_url_mingain.',}\ze\%([/#?]\w\|\S\{'
-        \.g:vimwiki_url_maxsave.'}\)`'.cchar.options
-
-execute 'syn match VimwikiEqInChar contained /'.g:vimwiki_char_eqin.'/'
-execute 'syn match VimwikiBoldChar contained /'.g:vimwiki_char_bold.'/'
-execute 'syn match VimwikiItalicChar contained /'.g:vimwiki_char_italic.'/'
-execute 'syn match VimwikiBoldItalicChar contained /'.g:vimwiki_char_bolditalic.'/'
-execute 'syn match VimwikiItalicBoldChar contained /'.g:vimwiki_char_italicbold.'/'
-execute 'syn match VimwikiCodeChar contained /'.g:vimwiki_char_code.'/'
-execute 'syn match VimwikiDelTextChar contained /'.g:vimwiki_char_deltext.'/'
-execute 'syn match VimwikiSuperScript contained /'.g:vimwiki_char_superscript.'/'
-execute 'syn match VimwikiSubScript contained /'.g:vimwiki_char_subscript.'/'
-if exists("+conceallevel")
-  syntax conceal off
-endif
 " }}}
 
 " non concealed chars " {{{
@@ -591,6 +594,7 @@ hi def link VimwikiNoExistsLinkCharT VimwikiNoExistsLinkT
 execute 'runtime! syntax/vimwiki_'.VimwikiGet('syntax').'_custom.vim'
 " -------------------------------------------------------------------------
 
+" FIXME it now does not make sense to pretend there is a single syntax "vimwiki"
 let b:current_syntax="vimwiki"
 
 " EMBEDDED syntax setup "{{{
