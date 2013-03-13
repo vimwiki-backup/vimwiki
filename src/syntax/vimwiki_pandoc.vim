@@ -79,8 +79,8 @@ let g:vimwiki_rxListNumber = '^\s*[0-9]\+\.\s'
 let g:vimwiki_rxListDefine = '^\%(\s\)*:\%(\s\|$\)'
 
 " Preformatted text
-let g:vimwiki_rxPreStart = '\~\~\~'
-let g:vimwiki_rxPreEnd = '\~\~\~'
+let g:vimwiki_rxPreStart = '\~\~\~\+'
+let g:vimwiki_rxPreEnd = '\~\~\~\+'
 
 " Math block
 let g:vimwiki_rxMathStart = '\$\$'
