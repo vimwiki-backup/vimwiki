@@ -12,14 +12,12 @@ let b:did_ftplugin = 1  " Don't load another plugin for this buffer
 " Reset the following options to undo this plugin.
 let b:undo_ftplugin = "setlocal ".
       \ "suffixesadd< isfname< comments< ".
-      \ "autowriteall< ".
       \ "formatoptions< foldtext< ".
       \ "foldmethod< foldexpr< commentstring< "
 " UNDO }}}
 
 " MISC STUFF {{{
 
-setlocal autowriteall
 setlocal commentstring=%%%s
 
 if g:vimwiki_conceallevel && exists("+conceallevel")
