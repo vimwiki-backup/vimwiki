@@ -2112,6 +2112,19 @@ Default: 2
 
 
 ------------------------------------------------------------------------------
+*g:vimwiki_autowriteall*
+
+In vim |autowriteall| is a global setting. With g:vimwiki_autowriteall vimwiki
+makes it local to its buffers.
+
+Value           Description~
+0               autowriteall is off
+1               autowriteall is on
+
+Default: 1
+
+
+------------------------------------------------------------------------------
 *g:vimwiki_url_maxsave*
 
 Setting the value of |g:vimwiki_url_maxsave| to 0 will prevent any link
@@ -2207,7 +2220,7 @@ Vim plugins: http://www.vim.org/scripts/script.php?script_id=2226
     * Issue 261: Syntax folding is back. |g:vimwiki_folding| values are
       changed to '', 'expr', 'syntax'.
     * Issue 372: Ignore case in g:vimwiki_valid_html_tags
-    * Issue 380: Fixed
+    * Issue 374: Make autowriteall local to vimwiki
     * Issue 384: Custom_wiki2html script now receives templating arguments
     * Issue 393: Custom_wiki2html script path can contain tilde character
     * Issue 392: Custom_wiki2html arguments are quoted, e.g names with spaces

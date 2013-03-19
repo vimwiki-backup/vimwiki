@@ -69,6 +69,8 @@ function! s:setup_buffer_leave() "{{{
     echom "  Setup_buffer_leave g:curr_idx=".g:vimwiki_current_idx." b:curr_idx=".s:vimwiki_idx().""
   endif
 
+  let &autowriteall = s:vimwiki_autowriteall
+
   " Set up menu
   if g:vimwiki_menu != ""
     exe 'nmenu disable '.g:vimwiki_menu.'.Table'
@@ -207,6 +209,11 @@ function! s:setup_buffer_enter() "{{{
     setlocal fdm=syntax
     setlocal foldtext=VimwikiFoldText()
   endif
+
+  if !exists("s:vimwiki_autowriteall")
+    let s:vimwiki_autowriteall = &autowriteall
+  endif
+  let &autowriteall = g:vimwiki_autowriteall
 
   " And conceal level too.
   if g:vimwiki_conceallevel && exists("+conceallevel")
@@ -392,6 +399,7 @@ call s:default('CJK_length', 0)
 call s:default('dir_link', '')
 call s:default('valid_html_tags', 'b,i,s,u,sub,sup,kbd,br,hr,div,center,strong,em')
 call s:default('user_htmls', '')
+call s:default('autowriteall', 1)
 
 call s:default('html_header_numbering', 0)
 call s:default('html_header_numbering_sym', '')
