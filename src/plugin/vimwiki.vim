@@ -210,11 +210,6 @@ function! s:setup_buffer_enter() "{{{
     setlocal foldtext=VimwikiFoldText()
   endif
 
-  if !exists("s:vimwiki_autowriteall")
-    let s:vimwiki_autowriteall = &autowriteall
-  endif
-  let &autowriteall = g:vimwiki_autowriteall
-
   " And conceal level too.
   if g:vimwiki_conceallevel && exists("+conceallevel")
     let &conceallevel = g:vimwiki_conceallevel
@@ -239,6 +234,10 @@ function! s:setup_buffer_reenter() "{{{
   if g:vimwiki_debug ==3
     echom "  Setup_buffer_reenter g:curr_idx=".g:vimwiki_current_idx." b:curr_idx=".s:vimwiki_idx().""
   endif
+  if !exists("s:vimwiki_autowriteall")
+    let s:vimwiki_autowriteall = &autowriteall
+  endif
+  let &autowriteall = g:vimwiki_autowriteall
 endfunction "}}}
 
 function! s:setup_cleared_syntax() "{{{ highlight groups that get cleared
