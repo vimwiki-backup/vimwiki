@@ -77,6 +77,9 @@ function! vimwiki#pandoc_base#follow_link(split, ...) "{{{ Parse link at cursor 
     endif
 
     if lnk != ""
+      if lnk !~ '^\%(https://\|http://\|www.\|ftp://\|file://\|mailto:\)'
+        let lnk = split(lnk, '#')[0]
+      endif
       if !VimwikiLinkHandler(lnk)
         call vimwiki#base#open_link(cmd, lnk)
       endif
