@@ -38,10 +38,11 @@ FORCEFLAG=
 OUTPUT="$OUTPUTDIR"/$(basename "$INPUT" .$EXTENSION).html
 
 VALID_CHARS='[^][\\]'  # ']' must be the first character in the '[...]' or '[^...]
-PROTOCOLS='\(https:\/\/\|http:\/\/\|www.\|ftp:\/\/\|file:\/\/\|mailto:\)'
-SED_CMD1="s/\[\($VALID_CHARS\+\)\](\($VALID_CHARS\+\))/[\1](\2.html)/g"
-SED_CMD2="s/\[\($VALID_CHARS\+\)\](\($PROTOCOLS\($VALID_CHARS\)\+\).html)/[\1](\2)/g"
-SED_CMD3="s/\[\($VALID_CHARS\+\)\]()/[\1](\1.html)/g"
+FILENAME_CHARS='[^][\\#]'  # ']' must be the first character in the '[...]' or '[^...]
+PROTOCOLS='https:\/\/\|http:\/\/\|www.\|ftp:\/\/\|file:\/\/\|mailto:'
+SED_CMD1="s/\[\($VALID_CHARS\+\)\]()/[\1](\1)/g"
+SED_CMD2="s/\[\($VALID_CHARS\+\)\](\($FILENAME_CHARS\+\)\(#$VALID_CHARS\+\)\?)/[\1](\2.html\3)/g"
+SED_CMD3="s/\[\($VALID_CHARS\+\)\](\($PROTOCOLS\)\($VALID_CHARS\+\)\.html\(#$VALID_CHARS\+\)\?)/[\1](\2\3\4)/g"
 
 cat "$INPUT" | \
     sed "$SED_CMD1; $SED_CMD2; $SED_CMD3;" |
