@@ -346,16 +346,18 @@ function! s:fmt_sep(line, max_lens, col1, col2) "{{{
     elseif idx == a:col2
       let idx = a:col1
     endif
-    let cell = cells[idx]
     let align = 'NONE'
-    if cell[strlen(cell)-1] == ':'
-      if cell[0] == ':'
-        let align = 'CENTER'
-      else
-        let align = 'RIGHT'
+    if idx < len(cells)
+      let cell = cells[idx]
+      if cell[strlen(cell)-1] == ':'
+        if cell[0] == ':'
+          let align = 'CENTER'
+        else
+          let align = 'RIGHT'
+        endif
+      elseif cell[0] == ':'
+        let align = 'LEFT'
       endif
-    elseif cell[0] == ':'
-      let align = 'LEFT'
     endif
     let new_line .= s:fmt_cell_sep(a:max_lens[idx], align).s:rxSep()
   endfor
