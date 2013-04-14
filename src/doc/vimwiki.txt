@@ -2211,7 +2211,7 @@ Vim plugins: http://www.vim.org/scripts/script.php?script_id=2226
 ==============================================================================
 14. Changelog                                              *vimwiki-changelog*
 
-'DEV'~
+2.1~
 
     * Concealing of links can be turned off - set |g:vimwiki_url_maxsave| to 0.
       The option g:vimwiki_url_mingain was removed
@@ -2220,10 +2220,12 @@ Vim plugins: http://www.vim.org/scripts/script.php?script_id=2226
     * Issue 261: Syntax folding is back. |g:vimwiki_folding| values are
       changed to '', 'expr', 'syntax'.
     * Issue 372: Ignore case in g:vimwiki_valid_html_tags
-    * Issue 374: Make autowriteall local to vimwiki
+    * Issue 374: Make autowriteall local to vimwiki. It is not 100% local
+      though.
     * Issue 384: Custom_wiki2html script now receives templating arguments
     * Issue 393: Custom_wiki2html script path can contain tilde character
     * Issue 392: Custom_wiki2html arguments are quoted, e.g names with spaces
+    * Various small bug fixes.
 
 2.0.1 'stu'~
 
@@ -2234,7 +2236,7 @@ Vim plugins: http://www.vim.org/scripts/script.php?script_id=2226
 2.0 'stu'~
 
 This release is partly incompatible with previous.
-    *
+
 Summary ~
 
     * Quick page-link creation.
